@@ -42,7 +42,7 @@ fi
 
 VERSION="$1"
 [ -n "$VERSION" ] || error "Usage: $0 [-f] <version>"
-(echo "$VERSION" | egrep -q '^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$') || error "Version number must be of the form 1.0.19, 2.1.0, etc."
+(echo "$VERSION" | egrep -q '^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}-[a-z]+$') || error "Version number must be of the form 1.0.19-beta, 2.1.0-release, etc."
 DIST_DIR="/fabric-distribution/$VERSION"
 
 if [ "$FORCE" = 1 ]; then
@@ -65,10 +65,14 @@ BIN_DIR="$DIST_DIR/bin"
 rexec mkdir -p "$BIN_DIR" || error
 LOCAL_DIST_DIR="$FABRIC_CORE_PATH/Native/dist"
 for PLATFORM in Windows-x86 Darwin-universal Linux-i686 Linux-x86_64; do
-  rcp "$LOCAL_DIST_DIR/FabricEngine-$PLATFORM.crx" "$BIN_DIR/" || error
-  rcp "$LOCAL_DIST_DIR/FabricEngine-$PLATFORM.xpi" "$BIN_DIR/" || error
-  rcp "$LOCAL_DIST_DIR/crx-update-$PLATFORM.xml" "$BIN_DIR/" || error
-  rcp "$LOCAL_DIST_DIR/xpi-update-$PLATFORM.rdf" "$BIN_DIR/" || error
+  rexec cp "~/FabricEngine-ChromeExtension-$PLATFORM-$VERSION.crx" "$BIN_DIR/" || error
+  rexec cp "~/FabricEngine-FirefoxExtension-$PLATFORM-$VERSION.xpi" "$BIN_DIR/" || error
+  if [ "$PLATFORM" != "Windows-x86" ]; then
+    rexec cp "~/FabricEngine-NodeModule-$PLATFORM-$VERSION.tar.bz2" "$BIN_DIR/" || error
+    rexec cp "~/FabricEngine-PythonModule-$PLATFORM-$VERSION.tar.bz2" "$BIN_DIR/" || error
+  fi
+  rexec cp "~/crx-update-$PLATFORM.xml" "$BIN_DIR/" || error
+  rexec cp "~/xpi-update-$PLATFORM.rdf" "$BIN_DIR/" || error
 done
 
 rexec ln -snf "$VERSION" "/fabric-distribution/testing" || error

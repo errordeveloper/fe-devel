@@ -4,7 +4,7 @@ User file name: default.txt
 File not found error
 File content: FileBody
 File content with appended text: FileBody with appended text
-File info: {"writeAccess": true, "type": "file", "fileSize": 27, "exists": true, "fileName": "testfile2.txt"}
+File info: [{"exists": true}, {"fileName": "testfile2.txt"}, {"fileSize": 27}, {"type": "file"}, {"writeAccess": true}]
 bad url load failure
 url file load succeeded
 Resource data saved to file: FileBody with appended text

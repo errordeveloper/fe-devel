@@ -1,0 +1,139 @@
+# [ andrew 2012-02-13 ]
+# Many of these borrowed from here:
+# http://hg.python.org/cpython/file/tip/Misc/valgrind-python.supp
+#
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Addr4
+   fun:Py_ADDRESS_IN_RANGE
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Value4
+   fun:Py_ADDRESS_IN_RANGE
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 8 (x86_64 aka amd64)
+   Memcheck:Value8
+   fun:Py_ADDRESS_IN_RANGE
+}
+
+{
+   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
+   Memcheck:Cond
+   fun:Py_ADDRESS_IN_RANGE
+}
+
+{
+   Suppress leaking the GIL.  Happens once per process, see comment in ceval.c.
+   Memcheck:Leak
+   fun:malloc
+   fun:PyThread_allocate_lock
+   fun:PyEval_InitThreads
+}
+
+{
+   Suppress leaking the GIL after a fork.
+   Memcheck:Leak
+   fun:malloc
+   fun:PyThread_allocate_lock
+   fun:PyEval_ReInitThreads
+}
+
+{
+   Suppress leaking the autoTLSkey.  This looks like it shouldn't leak though.
+   Memcheck:Leak
+   fun:malloc
+   fun:PyThread_create_key
+   fun:_PyGILState_Init
+   fun:Py_InitializeEx
+   fun:Py_Main
+}
+
+{
+   Hmmm, is this a real leak or like the GIL?
+   Memcheck:Leak
+   fun:malloc
+   fun:PyThread_ReInitTLS
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Addr4
+   fun:PyObject_Free
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Value4
+   fun:PyObject_Free
+}
+
+{
+   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
+   Memcheck:Cond
+   fun:PyObject_Free
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Addr4
+   fun:PyObject_Realloc
+}
+
+{
+   ADDRESS_IN_RANGE/Invalid read of size 4
+   Memcheck:Value4
+   fun:PyObject_Realloc
+}
+
+{
+   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
+   Memcheck:Cond
+   fun:PyObject_Realloc
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_PyObject_GC_Malloc
+   fun:_PyObject_GC_New
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_PyObject_GC_Malloc
+   fun:_PyObject_GC_NewVar
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_PyObject_GC_Malloc
+   fun:PyType_GenericAlloc
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Value8
+   fun:PyObject_Free
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/bin/python2.7
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Value8
+   fun:PyObject_Realloc
+}

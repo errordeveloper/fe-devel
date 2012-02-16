@@ -84,7 +84,6 @@ namespace Fabric
         );
       ~Code();
       
-      void compileSourceCode();
       void compileAST( bool optimize );
       void linkModule( RC::Handle<CG::Context> const &cgContext, llvm::OwningPtr<llvm::Module> &module, bool optimize );
       
@@ -98,15 +97,16 @@ namespace Fabric
       }
     
       RC::WeakConstHandle<Context> m_contextWeakRef;
-      mutable Util::Mutex m_mutex;
       std::string m_filename;
       std::string m_sourceCode;
 #if defined(FABRIC_BUILD_DEBUG)
       std::string m_byteCode;
 #endif
       RC::ConstHandle<AST::GlobalList> m_ast;
-      CG::Diagnostics m_diagnostics;
+      
+      mutable Util::Mutex m_executionEngineAndDiagnosticsMutex;
       RC::ConstHandle<ExecutionEngine> m_executionEngine;
+      CG::Diagnostics m_diagnostics;
       
       mutable Util::Mutex m_registeredFunctionSetMutex;
       mutable RegisteredFunctionSet m_registeredFunctionSet;

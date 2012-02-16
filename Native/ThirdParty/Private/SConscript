@@ -126,6 +126,14 @@ else:
         libpngFlags['LIBS'] = [archLibs( 'libpng', ['png14'] ), 'z']
 Export( 'libpngFlags' )
 
+jpegFlags = {}
+jpegFlags['CPPPATH'] = [os.path.join( includeBaseDir, 'jpeg' ), os.path.join( osArchIncludeBaseDir, 'jpeg' )]
+if buildOS == 'Windows':
+  jpegFlags['LIBS'] = [archLibs( 'jpeg', ['libjpeg'] )]
+else:
+  jpegFlags['LIBS'] = [archLibs( 'jpeg', ['jpeg'] )]
+Export('jpegFlags')
+
 tiffFlags = {}
 tiffFlags['CPPPATH'] = [os.path.join( includeBaseDir, 'tiff' ), os.path.join( osArchIncludeBaseDir, 'tiff' )]
 if buildOS == 'Windows':
@@ -151,6 +159,21 @@ else:
       'LIBS': [archLibs( 'ffmpeg', ['swscale','avformat','avcodec','avutil'] ), 'z', 'bz2'],
   }
 Export( 'ffmpegFlags' )
+
+# opencv
+opencvOSLibs = []
+if buildOS == 'Windows':
+  opencvOSLibs = archLibs( 'zlib', ['zlib'] )
+else:
+  opencvOSLibs = ['z']
+if buildOS == 'Linux':
+  opencvOSLibs.append('rt')
+opencvFlags = {}
+opencvFlags = {
+  'CPPPATH': [os.path.join( osArchIncludeBaseDir, 'OpenCV' ), os.path.join( osArchIncludeBaseDir, 'OpenCV', 'opencv' ), os.path.join( osArchIncludeBaseDir, 'OpenCV', 'opencv2' )],
+  'LIBS': [archLibs( 'OpenCV', ['opencv_calib3d', 'opencv_flann', 'opencv_legacy', 'opencv_contrib', 'opencv_gpu', 'opencv_ml', 'opencv_objdetect', 'opencv_features2d', 'opencv_imgproc', 'opencv_highgui', 'opencv_video', 'opencv_core'] ), opencvOSLibs],
+}
+Export( 'opencvFlags' )
 
 # alembic
 alembicLibs = []

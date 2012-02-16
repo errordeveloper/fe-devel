@@ -2,14 +2,13 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'ExtSLName', 'buildOS', 'tiffFlags' )
+Import( 'extsEnv', 'ExtSLName', 'buildOS', 'tiffFlags', 'jpegFlags' )
 
 cimgPluginEnv = extsEnv.Clone()
 sources = Glob('*.cpp')
 
-libtiffRoot = '../../../ThirdParty/Private/libtiff'
-
 cimgPluginEnv.MergeFlags(tiffFlags)
+cimgPluginEnv.MergeFlags(jpegFlags)
 cimgPlugin = cimgPluginEnv.SharedLibrary( ExtSLName('FabricCIMG'), sources ),
 cimgManifest = cimgPluginEnv.File('FabricCIMG.fpm.json'),
 cimgKL = cimgPluginEnv.File('FabricCIMG.kl'),

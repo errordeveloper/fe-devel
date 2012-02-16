@@ -3,11 +3,11 @@
 #
 
 import os.path
-Import( 'coreEnv', 'buildOS' )
+Import( 'coreEnv', 'buildOS', 'buildObject' )
 
 klEnv = coreEnv.Clone()
 
-extraObjects = []
+extraObjects = [buildObject]
 
 if buildOS == 'Windows':
     Import( 'getoptFlags' )

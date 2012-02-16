@@ -1,0 +1,41 @@
+struct RGB {
+  Byte r;
+  Byte g;
+  Byte b;
+};
+
+struct RGBA {
+  Byte r;
+  Byte g;
+  Byte b;
+  Byte a;
+};
+
+struct FaceLocation {
+  Size left;
+  Size right;
+  Size top;
+  Size bottom;
+};
+
+struct FaceDetector{
+  Data pointer;
+};
+
+function FabricFACE_DeleteDetector(io FaceDetector detector);
+function FabricFACE_CreateDetector(io FaceDetector detector, in String fileHandle);
+function FabricFACE_Detect(io FaceDetector detector, Data pixels, Size width, Size height, Size channels, Scalar ratio, Size searchWidth, Size searchHeight, io FaceLocation faces[]);
+
+function ~FaceDetector() = "FabricFACE_DeleteDetector";
+
+function FaceDetector.init(in String fileHandle) {
+  FabricFACE_CreateDetector(this,fileHandle);
+}
+
+function FaceDetector.detectRGB(io RGB pixels[], Size width, Size height, Scalar ratio, Size searchWidth, Size searchHeight, io FaceLocation faces[]) {
+  FabricFACE_Detect(this,pixels.data(),width,height,3,ratio,searchHeight,searchWidth,faces);
+}
+
+function FaceDetector.detectRGBA(io RGBA pixels[], Size width, Size height, Scalar ratio, Size searchWidth, Size searchHeight, io FaceLocation faces[]) {
+  FabricFACE_Detect(this,pixels.data(),width,height,4,ratio,searchHeight,searchWidth,faces);
+}

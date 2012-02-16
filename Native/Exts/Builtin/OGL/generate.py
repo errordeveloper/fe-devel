@@ -144,10 +144,10 @@ def main():
   for name in registeredConstants:
     value = registeredConstants[name]
     if value.startswith('0x'):
-      jsonConstants.append('const Size '+name+' = '+value+';')
+      jsonConstants.append('const Integer '+name+' = '+value+';')
       sceneGraphConstants.append('\\"'+name+'\\":'+str(int(value,0)))
     elif value.isdigit():
-      jsonConstants.append('const Size '+name+' = '+value+';')
+      jsonConstants.append('const Integer '+name+' = '+value+';')
       sceneGraphConstants.append('\\"'+name+'\\":'+value)
     
   # DEFINE A MAPPING FOR THE DATATYPE
@@ -158,27 +158,27 @@ def main():
     'int':['int','%d','int','Integer'],
     'char':['char','%s','const char*','String'],
     'int64_t':['int64_t','%d','int','Integer'],
-    'uint':['unsigned','0x%04X','unsigned','Size'],
+    'uint':['unsigned','0x%04X','unsigned','Integer'],
     'GLfloat':['GLfloat','%f','float','Scalar'],
     'GLint':['GLint','%d','int','Integer'],
-    'GLsizei':['GLsizei','%d','int','Size'],
+    'GLsizei':['GLsizei','%d','int','Integer'],
     'GLushort':['unsigned','0x%04X','unsigned','Integer'],
     'GLvoid':['GLvoid','void*','','Data'],
     'GLboolean':['GLboolean','%d','int','Boolean'],
     'GLint':['GLint','%d','int','Integer'],
-    'GLuint':['GLuint','0x%04X','unsigned','Size'],
-    'GLenum':['GLenum','%d','int','Size'],
+    'GLuint':['GLuint','0x%04X','unsigned','Integer'],
+    'GLenum':['GLenum','%d','int','Integer'],
     'GLdouble':['GLdouble','%f','float','Scalar'],
     'GLbyte':['GLbyte','%d','int','Byte'],
-    'GLubyte':['GLubyte','0x%04X','unsigned','Size'],
+    'GLubyte':['GLubyte','0x%04X','unsigned','Integer'],
     'GLhalf':['GLhalf','%d','integer','Integer'],
     'GLshort':['GLshort','%d','int','Integer'],
     'GLchar':['GLchar','%s','const char*','String'],
     'GLintptr':['GLintptr','%d','int','Integer'],
-    'GLsizeiptr':['GLsizeiptr','%d','int','Size'],
+    'GLsizeiptr':['GLsizeiptr','%d','int','Integer'],
     'GLclampf':['GLclampf','%f','float','Scalar'],
     'GLclampd':['GLclampd','%f','float','Scalar'],
-    'GLbitfield':['GLbitfield','0x%04X','unsigned','Size'],
+    'GLbitfield':['GLbitfield','0x%04X','unsigned','Integer'],
   }
   
   klKeyWords = {
@@ -381,18 +381,10 @@ def main():
                 cParameters.append('KL::Data '+varname)
                 klCast.append('('+fulltype+')'+varname)
             elif variables[i].startswith('const'):
-                
-              if(knownCTypes[type][0] == "GLenum"):
-                print(name+" : "+str(knownCTypes[type]))
-                # THIS IS THE 64 BIT issue case
-                klParameters.append('io Integer '+klvarname+'['+digit+']')
-                cParameters.append('const KL::VariableArray<KL::Integer> & '+varname)
-                klCast.append('('+fulltype+')&'+varname+'[0]')
-              else:
-                # THIS CAN BE DONE BASED ON THE DIGITS
-                klParameters.append('io '+knownCTypes[type][3]+' '+klvarname+'['+digit+']')
-                cParameters.append('const KL::VariableArray<KL::'+knownCTypes[type][3]+'> & '+varname)
-                klCast.append('('+fulltype+')&'+varname+'[0]')
+              # THIS CAN BE DONE BASED ON THE DIGITS
+              klParameters.append('io '+knownCTypes[type][3]+' '+klvarname+'['+digit+']')
+              cParameters.append('const KL::VariableArray<KL::'+knownCTypes[type][3]+'> & '+varname)
+              klCast.append('('+fulltype+')&'+varname+'[0]')
             else:
               # this is really flaky, it should be >Data, but that's not possible.
               # the rvalue is still able to write to though.

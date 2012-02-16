@@ -169,6 +169,28 @@ class _ASYNCTHREAD( threading.Thread ):
       elif ( callback is not None ):
         callback( result[ 'result' ] )
 
+# for unit tests only, make floats use same precision across different
+# versions of python which have different repr() implementations and
+# change dicts to sorted lists so ordering doesn't change
+def _normalizeForUnitTests( obj ):
+  if type( obj ) is list:
+    objlist = []
+    for elem in obj:
+      objlist.append( _normalizeForUnitTests( elem ) )
+    return objlist
+  elif type( obj ) is dict:
+    objdictlist = []
+    for member in obj:
+      elemobj = {}
+      elemobj[ member ] = _normalizeForUnitTests( obj[ member ] )
+      objdictlist.append( elemobj )
+    objdictlist.sort()
+    return objdictlist
+  elif type( obj ) is float:
+    return format( obj, '.4f' )
+  else:
+    return obj
+
 # take a python class and convert its members down to a hierarchy of
 # dictionaries, ignoring methods
 def _typeToDict( obj ):

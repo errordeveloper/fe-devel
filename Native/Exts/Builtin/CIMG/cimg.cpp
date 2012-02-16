@@ -7,6 +7,7 @@
 #define cimg_display 0
 #define cimg_use_tif 1
 #define cimg_use_tiff 1
+#define cimg_use_jpeg 1
 
 #include "CImg.h"
 
@@ -17,6 +18,7 @@ using namespace cimg_library;
 
 void readImageFromFile(
   const KL::String & fileName,
+  const KL::String & ext,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
   KL::VariableArray<KL::RGBA> &imagePixels
@@ -24,7 +26,7 @@ void readImageFromFile(
 {
   CImg<unsigned char> img;
   try{
-    img.load(fileName.data());
+    img.load(fileName.data(), ext.data());
   }catch(CImgIOException e) {
     throwException("CIMG Exception: %s",e.what());
     return;
@@ -74,6 +76,7 @@ void readImageFromFile(
 
 FABRIC_EXT_EXPORT void FabricCIMGDecode(
   KL::Data data,
+  const KL::String & ext,
   KL::Size dataSize,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
@@ -101,11 +104,12 @@ FABRIC_EXT_EXPORT void FabricCIMGDecode(
   fclose(file);
   file = NULL;
   
-  return readImageFromFile(fileName,imageWidth,imageHeight,imagePixels);
+  return readImageFromFile(fileName,ext,imageWidth,imageHeight,imagePixels);
 }
 
 FABRIC_EXT_EXPORT void FabricCIMGOpenFileHandle(
   const KL::String & fileHandle,
+  const KL::String & ext,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
   KL::VariableArray<KL::RGBA> &imagePixels
@@ -113,7 +117,7 @@ FABRIC_EXT_EXPORT void FabricCIMGOpenFileHandle(
 {
   KL::FileHandleWrapper wrapper(fileHandle);
   wrapper.ensureIsValidFile();
-  return readImageFromFile(wrapper.getPath(),imageWidth,imageHeight,imagePixels);
+  return readImageFromFile(wrapper.getPath(),ext,imageWidth,imageHeight,imagePixels);
 }
 
 FABRIC_EXT_EXPORT void FabricCIMGCreateFromText(

@@ -65,26 +65,17 @@ namespace Fabric
       CG::CompileOptions const *compileOptions
       )
       : m_contextWeakRef( context )
-      , m_mutex( "DG::Code" )
       , m_filename( filename )
       , m_sourceCode( sourceCode )
+      , m_executionEngineAndDiagnosticsMutex( "DG::Code::m_executionEngineAndDiagnosticsMutex" )
       , m_registeredFunctionSetMutex( "DG::Code::m_registeredFunctionSet" )
       , m_optimizeSynchronously( optimizeSynchronously )
       , m_compileOptions( compileOptions )
     {
-      compileSourceCode();
-    }
-    
-    Code::~Code()
-    {
-    }
-
-    void Code::compileSourceCode()
-    {
-      Util::Mutex::Lock mutexLock( m_mutex );
-
       llvm::InitializeNativeTarget();
       LLVMLinkInJIT();
+      llvm::NoFramePointerElim = true;
+      llvm::JITExceptionHandling = true;
       
       FABRIC_ASSERT( m_filename.length() > 0 );
       FABRIC_ASSERT( m_sourceCode.length() > 0 );
@@ -96,16 +87,19 @@ namespace Fabric
         compileAST( m_optimizeSynchronously );
     }
     
+    Code::~Code()
+    {
+    }
+    
     void Code::compileAST( bool optimize )
     {
-      Util::Mutex::Lock mutexLock( m_mutex );
-
       RC::ConstHandle<Context> context = m_contextWeakRef.makeStrong();
       if ( !context )
         return;
         
       FABRIC_ASSERT( m_ast );
       RC::ConstHandle<AST::GlobalList> ast = m_ast;
+      CG::Diagnostics diagnostics;
       
       AST::UseNameToLocationMap uses;
       m_ast->collectUses( uses );
@@ -131,12 +125,12 @@ namespace Fabric
             ast = AST::GlobalList::Create( useAST, ast );
             includedUses.insert( name );
           }
-          else m_diagnostics.addError( it->second, "no registered type or plugin named " + _(it->first) );
+          else diagnostics.addError( it->second, "no registered type or plugin named " + _(it->first) );
         }
         uses.erase( it );
       }
 
-      if ( !m_diagnostics.containsError() )
+      if ( !diagnostics.containsError() )
       {
         RC::Handle<CG::Manager> cgManager = context->getCGManager();
         RC::Handle<CG::Context> cgContext = CG::Context::Create();
@@ -146,12 +140,6 @@ namespace Fabric
         OCL::llvmPrepareModule( moduleBuilder, context->getRTManager() );
 #endif
 
-        CG::Diagnostics optimizeDiagnostics;
-        CG::Diagnostics &diagnostics = (false && optimize)? optimizeDiagnostics: m_diagnostics;
-
-        llvm::NoFramePointerElim = true;
-        llvm::JITExceptionHandling = true;
-        
         RC::Handle<IRCache> irCache =  IRCache::Instance( m_compileOptions ); 
         std::string irCacheKeyForAST = irCache->keyForAST( ast );
         std::string ir = irCache->get( irCacheKeyForAST );
@@ -216,6 +204,11 @@ namespace Fabric
           linkModule( cgContext, module, optimize );
         }
       }
+      
+      {
+        Util::Mutex::Lock executionEngineAndDiagnosticsMutexLock( m_executionEngineAndDiagnosticsMutex );
+        m_diagnostics = diagnostics;
+      }
     }
     
     void Code::linkModule( RC::Handle<CG::Context> const &cgContext, llvm::OwningPtr<llvm::Module> &module, bool optimize )
@@ -223,22 +216,23 @@ namespace Fabric
       RC::ConstHandle<Context> context = m_contextWeakRef.makeStrong();
       if ( !context )
         return;
-        
-      Util::Mutex::Lock mutexLock( m_mutex );
-
-      RC::ConstHandle<ExecutionEngine> executionEngine = ExecutionEngine::Create( context, cgContext, module.take() );
       
       {
-        Util::Mutex::Lock lock( m_registeredFunctionSetMutex );
-        for ( RegisteredFunctionSet::const_iterator it=m_registeredFunctionSet.begin();
-          it!=m_registeredFunctionSet.end(); ++it )
+        Util::Mutex::Lock executionEngineAndDiagnosticsMutexLock( m_executionEngineAndDiagnosticsMutex );
+        RC::ConstHandle<ExecutionEngine> executionEngine = ExecutionEngine::Create( context, cgContext, module.take() );
+        
         {
-          Function *function = *it;
-          function->onExecutionEngineChange( executionEngine );
+          Util::Mutex::Lock lock( m_registeredFunctionSetMutex );
+          for ( RegisteredFunctionSet::const_iterator it=m_registeredFunctionSet.begin();
+            it!=m_registeredFunctionSet.end(); ++it )
+          {
+            Function *function = *it;
+            function->onExecutionEngineChange( executionEngine );
+          }
         }
+        
+        m_executionEngine = executionEngine;
       }
-      
-      m_executionEngine = executionEngine;
       
       if ( !optimize )
       {
@@ -279,7 +273,7 @@ namespace Fabric
     
     RC::ConstHandle<ExecutionEngine> Code::getExecutionEngine() const
     {
-      Util::Mutex::Lock mutexLock( m_mutex );
+      Util::Mutex::Lock mutexLock( m_executionEngineAndDiagnosticsMutex );
       return m_executionEngine;
     }
     

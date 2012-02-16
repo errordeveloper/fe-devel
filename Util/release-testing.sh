@@ -23,7 +23,7 @@ fi
 
 VERSION="$1"
 [ -n "$VERSION" ] || error "Usage: $0 [-f] <version>"
-(echo "$VERSION" | egrep -q '^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$') || error "Version number must be of the form 1.0.19, 2.1.0, etc."
+(echo "$VERSION" | egrep -q '^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}-[a-z]+$') || error "Version number must be of the form 1.0.19-beta, 2.1.0-release, etc."
 DIST_DIR="/fabric-distribution/$VERSION"
 
 if [ "$FORCE" -eq 1 ]; then

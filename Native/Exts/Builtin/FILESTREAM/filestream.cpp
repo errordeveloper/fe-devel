@@ -4,6 +4,7 @@
  
 #include "filestream.h"
 #include <stdint.h>
+#include <zlib.h>
 
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
@@ -182,6 +183,51 @@ FABRIC_EXT_EXPORT void FabricFileStream_SetSeek(
   stream.m_data->mSeek = seek;
 }
 
+FABRIC_EXT_EXPORT void FabricFileStream_WriteSize(
+  FabricFileStream & stream,
+  KL::Size size
+)
+{
+  if(!FabricFileStream_IsValid(stream))
+    return;
+  if(!stream.m_data->mWriteable)
+  {
+    throwException( "The FileStream is readOnly, cannot write to it." );
+    return;
+  }
+  uint32_t value = size;
+  fwrite(&value,sizeof(uint32_t),1,stream.m_data->mFile);
+  stream.m_data->mSeek += sizeof(uint32_t);
+  if(stream.m_data->mSeek > stream.m_data->mSize)
+    stream.m_data->mSize = stream.m_data->mSeek;
+}
+
+FABRIC_EXT_EXPORT void FabricFileStream_ReadSize(
+  FabricFileStream & stream,
+  KL::Size & size
+)
+{
+  if(!FabricFileStream_IsValid(stream))
+    return;
+  if(!stream.m_data->mReadable)
+  {
+    throwException( "The FileStream is writeOnly, cannot read from it." );
+    return;
+  }
+  if(stream.m_data->mSeek + sizeof(uint32_t) > stream.m_data->mSize)
+  {
+    throwException( "The FileStream does not contain enough data, EOF reached." );
+    return;
+  }
+  uint32_t value = 0;
+  size_t readSize = fread(&value,sizeof(uint32_t),1,stream.m_data->mFile);
+  size = value;
+  stream.m_data->mSizeRead += sizeof(uint32_t);
+  stream.m_data->mSeek += sizeof(uint32_t);
+  if(stream.m_data->mCloseOnFullyRead && stream.m_data->mSizeRead >= stream.m_data->mSize)
+    FabricFileStream_Free(stream);
+}
+
 FABRIC_EXT_EXPORT void FabricFileStream_WriteData(
   FabricFileStream & stream,
   KL::Data data,
@@ -224,6 +270,97 @@ FABRIC_EXT_EXPORT void FabricFileStream_ReadData(
   stream.m_data->mSeek += size;
   if(stream.m_data->mCloseOnFullyRead && stream.m_data->mSizeRead >= stream.m_data->mSize)
     FabricFileStream_Free(stream);
+}
+
+FABRIC_EXT_EXPORT void FabricFileStream_WriteDataCompressed(
+  FabricFileStream & stream,
+  KL::Data data,
+  KL::Size size
+)
+{
+  if(!FabricFileStream_IsValid(stream))
+    return;
+  if(!stream.m_data->mWriteable)
+  {
+    throwException( "The FileStream is readOnly, cannot write to it." );
+    return;
+  }
+  
+  // compress the data in a temporary buffer
+  Bytef * compressed = (Bytef*)malloc(size);
+  uLongf compressedSize = size;
+  compress2(compressed, &compressedSize, (const Bytef*)data, size, Z_BEST_COMPRESSION);
+
+  // write the original size, as well as the compressed size
+  FabricFileStream_WriteSize(stream,size);
+  FabricFileStream_WriteSize(stream,compressedSize);
+  
+  // write the compressed buffer
+  fwrite(compressed,compressedSize,1,stream.m_data->mFile);
+  stream.m_data->mSeek += compressedSize;
+  if(stream.m_data->mSeek > stream.m_data->mSize)
+    stream.m_data->mSize = stream.m_data->mSeek;
+    
+  // free the temporary buffer
+  free(compressed);
+}
+
+FABRIC_EXT_EXPORT void FabricFileStream_ReadDataCompressed(
+  FabricFileStream & stream,
+  KL::Data data,
+  KL::Size size
+)
+{
+  if(!FabricFileStream_IsValid(stream))
+    return;
+  if(!stream.m_data->mReadable)
+  {
+    throwException( "The FileStream is writeOnly, cannot read from it." );
+    return;
+  }
+  
+  // write the original size, as well as the compressed size
+  KL::Size originalSize = 0;
+  KL::Size compressedSize = 0;
+  FabricFileStream_ReadSize(stream,originalSize);
+  FabricFileStream_ReadSize(stream,compressedSize);
+
+  if(stream.m_data->mSeek + compressedSize > stream.m_data->mSize)
+  {
+    throwException( "The FileStream does not contain enough data, EOF reached." );
+    return;
+  }
+
+  // allocate the compressed buffer and fill it
+  Bytef * compressed = (Bytef*)malloc(compressedSize);
+  size_t readSize = fread(compressed,compressedSize,1,stream.m_data->mFile);
+  
+  stream.m_data->mSizeRead += compressedSize;
+  stream.m_data->mSeek += compressedSize;
+  if(stream.m_data->mCloseOnFullyRead && stream.m_data->mSizeRead >= stream.m_data->mSize)
+    FabricFileStream_Free(stream);
+
+  // check if we can uncompress
+  if(size != originalSize)
+  {
+    free(compressed);
+    throwException( "The original data size doesn't not match the provided one." );
+    return;
+  }
+  
+  // perform uncompression
+  uLongf uncompressedSize = (uLongf)originalSize;
+  uncompress((Bytef*)data, &uncompressedSize, compressed, compressedSize);
+  
+  // check if the sizes match
+  if(uncompressedSize != originalSize)
+  {
+    free(compressed);
+    throwException( "The was an error during uncompression." );
+    return;
+  }
+  
+  free(compressed);
 }
 
 FABRIC_EXT_EXPORT void FabricFileStream_WriteString(
@@ -335,47 +472,3 @@ FABRIC_EXT_EXPORT void FabricFileStream_ReadStringArray(
     FabricFileStream_ReadString(stream,strings[i]);
 }
 
-FABRIC_EXT_EXPORT void FabricFileStream_WriteSize(
-  FabricFileStream & stream,
-  KL::Size size
-)
-{
-  if(!FabricFileStream_IsValid(stream))
-    return;
-  if(!stream.m_data->mWriteable)
-  {
-    throwException( "The FileStream is readOnly, cannot write to it." );
-    return;
-  }
-  uint32_t value = size;
-  fwrite(&value,sizeof(uint32_t),1,stream.m_data->mFile);
-  stream.m_data->mSeek += sizeof(uint32_t);
-  if(stream.m_data->mSeek > stream.m_data->mSize)
-    stream.m_data->mSize = stream.m_data->mSeek;
-}
-
-FABRIC_EXT_EXPORT void FabricFileStream_ReadSize(
-  FabricFileStream & stream,
-  KL::Size & size
-)
-{
-  if(!FabricFileStream_IsValid(stream))
-    return;
-  if(!stream.m_data->mReadable)
-  {
-    throwException( "The FileStream is writeOnly, cannot read from it." );
-    return;
-  }
-  if(stream.m_data->mSeek + sizeof(uint32_t) > stream.m_data->mSize)
-  {
-    throwException( "The FileStream does not contain enough data, EOF reached." );
-    return;
-  }
-  uint32_t value = 0;
-  size_t readSize = fread(&value,sizeof(uint32_t),1,stream.m_data->mFile);
-  size = value;
-  stream.m_data->mSizeRead += sizeof(uint32_t);
-  stream.m_data->mSeek += sizeof(uint32_t);
-  if(stream.m_data->mCloseOnFullyRead && stream.m_data->mSizeRead >= stream.m_data->mSize)
-    FabricFileStream_Free(stream);
-}

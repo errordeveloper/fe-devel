@@ -261,7 +261,7 @@ extern "C" {
 // (see methods 'CImg<T>::{load,save}_jpeg()').
 #ifdef cimg_use_jpeg
 extern "C" {
-#include "jpeglib.h"
+#include <jpeg/jpeglib.h>
 #include "setjmp.h"
 }
 #endif
@@ -33582,20 +33582,13 @@ namespace cimg_library_suffixed {
        \note The extension of \c filename defines the file format. If no filename
        extension is provided, CImg<T>::get_load() will try to load a .cimg file.
     **/
-    CImg<T>& load(const char *const filename) {
+    CImg<T>& load(const char *const filename, const char *const ext) {
       if (!filename)
         throw CImgArgumentException(_cimg_instance
                                     "load() : Specified filename is (null).",
                                     cimg_instance);
 
-      if (!cimg::strncasecmp(filename,"http://",7) || !cimg::strncasecmp(filename,"https://",8)) {
-        char filename_local[1024] = { 0 };
-        load(cimg::load_network_external(filename,filename_local));
-        std::remove(filename_local);
-        return *this;
-      }
-
-      const char *const ext = cimg::split_filename(filename);
+      
       const unsigned int omode = cimg::exception_mode();
       cimg::exception_mode() = 0;
       try {
@@ -33739,6 +33732,23 @@ namespace cimg_library_suffixed {
       }
       cimg::exception_mode() = omode;
       return *this;
+    }
+    
+    CImg<T>& load(const char *const filename) {
+      if (!filename)
+        throw CImgArgumentException(_cimg_instance
+                                    "load() : Specified filename is (null).",
+                                    cimg_instance);
+      
+      if (!cimg::strncasecmp(filename,"http://",7) || !cimg::strncasecmp(filename,"https://",8)) {
+        char filename_local[1024] = { 0 };
+        load(cimg::load_network_external(filename,filename_local));
+        std::remove(filename_local);
+        return *this;
+      }
+      
+      const char *const ext = cimg::split_filename(filename);
+      return load(filename, ext);
     }
 
     static CImg<T> get_load(const char *const filename) {

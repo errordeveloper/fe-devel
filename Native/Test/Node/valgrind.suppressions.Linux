@@ -1,0 +1,164 @@
+{
+   v8_handle_api_call_1
+   Memcheck:Cond
+   fun:_ZN2v88internalL21Builtin_HandleApiCallENS0_9ArgumentsE
+}
+{
+   v8_handle_api_call_2
+   Memcheck:Value4
+   fun:_ZN2v88internalL21Builtin_HandleApiCallENS0_9ArgumentsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4node20ImmutableAsciiSource17CreateFromLiteralEPKcj
+   fun:_ZN4node16DefineJavaScriptEN2v86HandleINS0_6ObjectEEE
+   fun:_ZN4nodeL7BindingERKN2v89ArgumentsE
+   fun:_ZN2v88internalL21Builtin_HandleApiCallENS0_12_GLOBAL__N_116BuiltinArgumentsILNS0_21BuiltinExtraArgumentsE1EEEPNS0_7IsolateE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   fun:uv_fs_readlink
+   fun:_ZN4nodeL8ReadLinkERKN2v89ArgumentsE
+   fun:_ZN2v88internalL21Builtin_HandleApiCallENS0_12_GLOBAL__N_116BuiltinArgumentsILNS0_21BuiltinExtraArgumentsE1EEEPNS0_7IsolateE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znaj
+   fun:_ZN2v88internal8DebuggerC1EPNS0_7IsolateE
+   fun:_ZN4node5StartEiPPc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znaj
+   fun:_ZN2v88internal8DebuggerC1EPNS0_7IsolateE
+   fun:_ZN4node5StartEiPPc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4node20ImmutableAsciiSource17CreateFromLiteralEPKcj
+   fun:_ZN4node4LoadEN2v86HandleINS0_6ObjectEEE
+   fun:_ZN4node5StartEiPPc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4node20ImmutableAsciiSource17CreateFromLiteralEPKcj
+   fun:_ZN4node10MainSourceEv
+   fun:_ZN4node4LoadEN2v86HandleINS0_6ObjectEEE
+   fun:_ZN4node5StartEiPPc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4node7TTYWrap3NewERKN2v89ArgumentsE
+   fun:_ZN2v88internalL30Builtin_HandleApiCallConstructENS0_12_GLOBAL__N_116BuiltinArgumentsILNS0_21BuiltinExtraArgumentsE1EEEPNS0_7IsolateE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4node8PipeWrap3NewERKN2v89ArgumentsE
+   fun:_ZN2v88internalL30Builtin_HandleApiCallConstructENS0_12_GLOBAL__N_116BuiltinArgumentsILNS0_21BuiltinExtraArgumentsE1EEEPNS0_7IsolateE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4node20ImmutableAsciiSource17CreateFromLiteralEPKcm
+   fun:_ZN4node4LoadEN2v86HandleINS0_6ObjectEEE
+   fun:_ZN4node5StartEiPPc
+   fun:(below main)
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4node20ImmutableAsciiSource17CreateFromLiteralEPKcm
+   fun:_ZN4node10MainSourceEv
+   fun:_ZN4node4LoadEN2v86HandleINS0_6ObjectEEE
+   fun:_ZN4node5StartEiPPc
+   fun:(below main)
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN2v88internal8DebuggerC1EPNS0_7IsolateE
+   fun:_ZN2v88internal7Isolate18InitializeDebuggerEv
+   fun:_ZN2v88internal7Isolate4InitEPNS0_12DeserializerE
+   fun:_ZN2v88internal8Snapshot11DeserializeEPKhi
+   fun:_ZN2v88internal8Snapshot10InitializeEPKc
+   fun:_ZN2v85Debug30SetDebugMessageDispatchHandlerEPFvvEb
+   fun:_ZN4node4InitEiPPc
+   fun:_ZN4node5StartEiPPc
+   fun:(below main)
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN2v88internal8DebuggerC1EPNS0_7IsolateE
+   fun:_ZN2v88internal7Isolate18InitializeDebuggerEv
+   fun:_ZN2v88internal7Isolate4InitEPNS0_12DeserializerE
+   fun:_ZN2v88internal8Snapshot11DeserializeEPKhi
+   fun:_ZN2v88internal8Snapshot10InitializeEPKc
+   fun:_ZN2v85Debug30SetDebugMessageDispatchHandlerEPFvvEb
+   fun:_ZN4node4InitEiPPc
+   fun:_ZN4node5StartEiPPc
+   fun:(below main)
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4node20ImmutableAsciiSource17CreateFromLiteralEPKcm
+   fun:_ZN4node16DefineJavaScriptEN2v86HandleINS0_6ObjectEEE
+   fun:_ZN4nodeL7BindingERKN2v89ArgumentsE
+   fun:_ZN2v88internalL21Builtin_HandleApiCallENS0_12_GLOBAL__N_116BuiltinArgumentsILNS0_21BuiltinExtraArgumentsE1EEEPNS0_7IsolateE
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   fun:_ZN2v88internalL6InvokeEbNS0_6HandleINS0_10JSFunctionEEENS1_INS0_6ObjectEEEiPPPS4_Pb
+   fun:_ZN2v88internal9Execution4CallENS0_6HandleINS0_6ObjectEEES4_iPPPS3_Pbb
+   fun:_ZN2v88Function4CallENS_6HandleINS_6ObjectEEEiPNS1_INS_5ValueEEE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4node8Platform9SetupArgsEiPPc
+   fun:_ZN4node4InitEiPPc
+   fun:_ZN4node5StartEiPPc
+   fun:(below main)
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4node7TTYWrap3NewERKN2v89ArgumentsE
+   fun:_ZN2v88internalL30Builtin_HandleApiCallConstructENS0_12_GLOBAL__N_116BuiltinArgumentsILNS0_21BuiltinExtraArgumentsE1EEEPNS0_7IsolateE
+   ...
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4node8PipeWrap3NewERKN2v89ArgumentsE
+   fun:_ZN2v88internalL30Builtin_HandleApiCallConstructENS0_12_GLOBAL__N_116BuiltinArgumentsILNS0_21BuiltinExtraArgumentsE1EEEPNS0_7IsolateE
+   ...
+}

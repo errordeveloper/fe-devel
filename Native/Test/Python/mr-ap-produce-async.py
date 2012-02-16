@@ -14,11 +14,11 @@ ap = fabricClient.MR.createArrayGenerator(
 def callback1( result ):
   def callback2( result ):
     def callback3( result ):
-      print( 'callback3: ' + str(result) )
+      print( 'callback3: ' + fabric.stringify(result) )
       fabricClient.close()
-    print( 'callback2: ' + str(result) )
+    print( 'callback2: ' + fabric.stringify(result) )
     ap.produceAsync(  4, 8, callback3 )
-  print( 'callback1: ' + str(result) )
+  print( 'callback1: ' + fabric.stringify(result) )
   ap.produceAsync( 5, callback2 )
 
 ap.produceAsync( callback1 )

@@ -26,6 +26,7 @@ namespace Fabric
 {
   namespace DG
   {
+    Util::Mutex ExecutionEngine::s_llvmJITMutex( "DG::ExecutionEngine::s_llvmJITMutex" );
     Util::TLSVar< RC::ConstHandle<Context> > ExecutionEngine::s_currentContext;
     
     void ExecutionEngine::Report( char const *data, size_t length )
@@ -96,13 +97,18 @@ namespace Fabric
       RC::ConstHandle<Context> context = m_contextWeakRef.makeStrong();
       if ( !context )
         return 0;
-      ContextSetter contextSetter( context );
       
-      GenericFunctionPtr result = 0;
-      llvm::Function *llvmFunction = m_llvmExecutionEngine->FindFunctionNamed( functionName.c_str() );
-      if ( llvmFunction )
-        result = GenericFunctionPtr( m_llvmExecutionEngine->getPointerToFunction( llvmFunction ) );
-      return result;
+      {
+        Util::Mutex::Lock llvmJITMutexLock( s_llvmJITMutex );
+          
+        ContextSetter contextSetter( context );
+        
+        GenericFunctionPtr result = 0;
+        llvm::Function *llvmFunction = m_llvmExecutionEngine->FindFunctionNamed( functionName.c_str() );
+        if ( llvmFunction )
+          result = GenericFunctionPtr( m_llvmExecutionEngine->getPointerToFunction( llvmFunction ) );
+        return result;
+      }
     }
 
     RC::ConstHandle<Context> ExecutionEngine::GetCurrentContext()

@@ -6,7 +6,9 @@
 # with the MIME type application/x-xpinstall
 
 import os
-Import( 'baseEnv', 'buildOS', 'buildArch', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'installerName', 'generateDistZip', 'installerExtFiles', 'distDir' )
+Import( 'baseEnv', 'buildOS', 'buildArch', 'FABRIC_BASE_VERSION', 'FABRIC_VERSION', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'generateDistZip', 'installerExtFiles', 'distDir' )
+
+installerName = 'FabricEngine-FirefoxExtension-' + buildOS + '-' + buildArch + '-' + FABRIC_VERSION
 
 firefoxExtensionDir = archDistDir.Dir( 'FirefoxExtension' )
 
@@ -71,11 +73,20 @@ installerEnv.DistZip(
   installerFile,
   installerFiles
 )
-updateFile = distDir.File("xpi-update-"+buildOS+"-"+buildArch+".rdf")
-baseEnv.Template( updateFile, "xpi-update.rdf.template" )
-print( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-print( "!! Firefox Installer: you MUST perform the following steps before uploading:")
-print( "!! 1. Calculate the SHA1 hash of "+installerFile.abspath+" and insert it into "+updateFile.abspath )
-print( "!! 2. Sign "+updateFile.abspath+" using the McCoy tool" )
-print( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-Alias( 'firefoxInstaller', [installerFile, updateFile] )
+
+xpiUpdateKey = baseEnv.File("xpi-update.pem")
+if buildOS == 'Windows':
+  perlCmd = 'c:\\cygwin\\bin\\perl'
+else:
+  perlCmd = 'perl'
+updateFile = baseEnv.Command(
+  distDir.File("xpi-update-"+buildOS+"-"+buildArch+".rdf"),
+  installerFile,
+  [[perlCmd, baseEnv.File('#/ThirdParty/Private/uhura.pl'), '-o', '$TARGET', '-k', '$KEY', '$SOURCE', 'http://dist.fabric-engine.com/' + FABRIC_VERSION + '/' + installerName + '.xpi']],
+  KEY=xpiUpdateKey
+  )[0]
+baseEnv.Depends( updateFile, xpiUpdateKey )
+
+firefoxInstaller = [installerFile, updateFile]
+Alias( 'firefoxInstaller', firefoxInstaller )
+Return( 'firefoxInstaller' )

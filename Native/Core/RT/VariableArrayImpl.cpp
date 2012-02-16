@@ -94,7 +94,13 @@ namespace Fabric
       dst->numMembers = src->numMembers;
 
       dst->allocNumMembers = src->numMembers;
-      if ( dst->memberDatas )
+      if ( dst->allocNumMembers == 0 )
+      {
+        if ( dst->memberDatas )
+          free( dst->memberDatas );
+        dst->memberDatas = 0;
+      }
+      else if ( dst->memberDatas )
         dst->memberDatas = reinterpret_cast<uint8_t *>( realloc( dst->memberDatas, dst->allocNumMembers * m_memberSize ) );
       else
         dst->memberDatas = reinterpret_cast<uint8_t *>( malloc( dst->allocNumMembers * m_memberSize ) );

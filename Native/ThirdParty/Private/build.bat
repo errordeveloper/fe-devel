@@ -16,6 +16,11 @@ set HDF5_NAME=hdf5-1.8.7
 set ALEMBIC_NAME=alembic-1.0_2011080800
 set TEEM_NAME=teem-1.10.0
 set TIFF_NAME=tiff-3.9.5
+set JPEG_SOURCE=jpegsrc.v8d
+set JPEG_NAME=jpeg-8d
+set OPENCV_NAME=OpenCV-2.3.1
+set OPENCV_SOURCE=OpenCV-2.3.1a
+set OPENCV_VER=231
 
 if "%1" NEQ "" goto %1
 
@@ -536,5 +541,113 @@ robocopy libtiff %INCLUDE_ARCH_DEBUG_DIR%\tiff\libtiff *.h /s > NUL:
 robocopy libtiff %INCLUDE_ARCH_RELEASE_DIR%\tiff\libtiff *.h /s > NUL:
 touch %CHECKPOINT_DIR%\tiff_install
 :tiff_install_done
+
+rem ============= JPEG ===============
+if EXIST %CHECKPOINT_DIR%\jpeg_unpack goto jpeg_unpack_done
+echo JPEG - Unpacking
+cd %BUILD_DIR%
+type "%TOP%\SourcePackages\%JPEG_SOURCE%.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
+type "%TOP%\Patches\Windows\%JPEG_SOURCE%-patch.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
+touch %CHECKPOINT_DIR%\jpeg_unpack
+:jpeg_unpack_done
+
+if EXIST %CHECKPOINT_DIR%\jpeg_build goto jpeg_build_done
+echo JPEG - Building (only Release). Note: this builds too but we just want to generate config files.
+cd %BUILD_DIR%\%JPEG_NAME%\
+copy /Y jconfig.vc jconfig.h
+nmake /f makefile.vc nodebug=1
+touch %CHECKPOINT_DIR%\jpeg_build_done
+:jpeg_build_done
+
+if EXIST %CHECKPOINT_DIR%\jpeg_install goto jpeg_install_done
+echo JPEG - Installing
+cd %BUILD_DIR%\%JPEG_NAME%
+echo D | xcopy "libjpeg.lib" %LIB_ARCH_DEBUG_DIR%\jpeg\ /Y > NUL:
+echo D | xcopy "libjpeg.lib" %LIB_ARCH_RELEASE_DIR%\jpeg\ /Y > NUL:
+robocopy . %INCLUDE_ARCH_DEBUG_DIR%\jpeg\jpeg *.h /s > NUL:
+robocopy . %INCLUDE_ARCH_RELEASE_DIR%\jpeg\jpeg *.h /s > NUL:
+touch %CHECKPOINT_DIR%\tiff_install
+:tiff_install_done
+
+rem ============= OPENCV ===============
+if EXIST %CHECKPOINT_DIR%\opencv_unpack goto opencv_unpack_done
+echo OPENCV - Unpacking
+cd %BUILD_DIR%
+type "%TOP%\SourcePackages\%OPENCV_SOURCE%.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
+rem type "%TOP%\Patches\Windows\%OPENCV_SOURCE%-patch.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
+touch %CHECKPOINT_DIR%\opencv_unpack
+:opencv_unpack_done
+
+if EXIST %CHECKPOINT_DIR%\opencv_cmake goto opencv_cmake_done
+echo OPENCV - CMake - generating projects
+cd %BUILD_DIR%\%OPENCV_NAME%
+echo %BUILD_DIR%\%OPENCV_NAME%
+cmake -G "Visual Studio 10" -DWITH_CUDA=OFF -DBUILD_WITH_STATIC_CRT=ON -DCMAKE_CXX_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0" -DCMAKE_C_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0"
+touch %CHECKPOINT_DIR%\opencv_cmake
+:opencv_cmake_done
+
+if EXIST %CHECKPOINT_DIR%\opencv_compile_debug goto opencv_compile_debug_done
+echo OPENCV - Compiling debug
+cd %BUILD_DIR%\%OPENCV_NAME%
+devenv OpenCV.sln /build "Debug|%VSARCH%"
+touch %CHECKPOINT_DIR%\opencv_compile_debug
+:opencv_compile_debug_done
+
+if EXIST %CHECKPOINT_DIR%\opencv_compile_release goto opencv_compile_release_done
+echo OPENCV - Compiling release
+cd %BUILD_DIR%\%OPENCV_NAME%
+devenv OpenCV.sln /build "Release|%VSARCH%"
+touch %CHECKPOINT_DIR%\opencv_compile_release
+:opencv_compile_release_done
+
+if EXIST %CHECKPOINT_DIR%\opencv_install goto opencv_install_done
+echo OPENCV - Installing
+cd %BUILD_DIR%\%OPENCV_NAME%\lib\Debug
+if NOT EXIST %LIB_ARCH_DEBUG_DIR%\opencv mkdir %LIB_ARCH_DEBUG_DIR%\opencv
+echo DOS batch files are just SOOO bad. Can't even remove suffix from a filename in batch!
+copy opencv_calib3d%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_calib3d.lib
+copy opencv_contrib%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_contrib.lib
+copy opencv_flann%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_flann.lib
+copy opencv_legacy%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_legacy.lib
+copy opencv_gpu%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_gpu.lib
+copy opencv_ml%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_ml.lib
+copy opencv_objdetect%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_objdetect.lib
+copy opencv_features2d%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_features2d.lib
+copy opencv_imgproc%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_imgproc.lib
+copy opencv_highgui%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_highgui.lib
+copy opencv_video%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_video.lib
+copy opencv_core%OPENCV_VER%d.lib %LIB_ARCH_DEBUG_DIR%\opencv\opencv_core.lib
+cd %BUILD_DIR%\%OPENCV_NAME%\lib\Release
+if NOT EXIST %LIB_ARCH_RELEASE_DIR%\opencv mkdir %LIB_ARCH_RELEASE_DIR%\opencv
+copy opencv_calib3d%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_calib3d.lib
+copy opencv_contrib%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_contrib.lib
+copy opencv_flann%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_flann.lib
+copy opencv_legacy%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_legacy.lib
+copy opencv_gpu%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_gpu.lib
+copy opencv_ml%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_ml.lib
+copy opencv_objdetect%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_objdetect.lib
+copy opencv_features2d%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_features2d.lib
+copy opencv_imgproc%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_imgproc.lib
+copy opencv_highgui%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_highgui.lib
+copy opencv_video%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_video.lib
+copy opencv_core%OPENCV_VER%.lib %LIB_ARCH_RELEASE_DIR%\opencv\opencv_core.lib
+cd %BUILD_DIR%\%OPENCV_NAME%
+robocopy include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\calib3d\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\contrib\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\flann\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\legacy\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\gpu\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\ml\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\objdetect\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\features2d\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\imgproc\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\highgui\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\video\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+robocopy modules\core\include %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ *.h *.hpp /s > NUL:
+
+robocopy %INCLUDE_ARCH_DEBUG_DIR%\OpenCV\ %INCLUDE_ARCH_RELEASE_DIR%\OpenCV\ *.* /s > NUL:
+touch %CHECKPOINT_DIR%\opencv_install
+:opencv_install_done
 
 rem exit

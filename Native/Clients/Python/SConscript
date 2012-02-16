@@ -4,7 +4,7 @@
 
 import os.path
 
-Import( 'coreEnv', 'buildOS', 'buildType', 'buildObject', 'archDistDir', 'packageName' )
+Import( 'coreEnv', 'buildOS', 'buildType', 'buildObject', 'archDistDir' )
 
 pythonEnv = coreEnv.Clone()
 if buildOS == 'Darwin':
@@ -26,8 +26,7 @@ Export('pythonLibraryName')
 
 pythonLoadableModule = pythonEnv.LoadableModule( 'FabricPython', [Glob('*.cpp'), buildObject, extraObjects] )
 
-pythonModulesDistDir = archDistDir.Dir(packageName).Dir('python_modules')
-fabricPythonModuleDistDir = pythonModulesDistDir.Dir('fabric')
+fabricPythonModuleDistDir = archDistDir.Dir('PythonModule')
 
 fabricPythonLib = pythonEnv.Command(
   fabricPythonModuleDistDir.File(pythonLibraryName),

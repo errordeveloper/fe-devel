@@ -62,11 +62,13 @@ namespace Fabric
     
       static void *LazyFunctionCreator( std::string const &functionName );
       static void Report( char const *data, size_t length );
+      
     
       RC::WeakConstHandle<Context> m_contextWeakRef;
       RC::Handle<CG::Context> m_cgContext;
       llvm::OwningPtr<llvm::ExecutionEngine> m_llvmExecutionEngine;
       
+      static Util::Mutex s_llvmJITMutex;
       static Util::TLSVar< RC::ConstHandle<Context> > s_currentContext;
     };
   };

@@ -3,9 +3,9 @@
 #
 
 import os
-Import( 'baseEnv', 'buildOS', 'buildArch', 'distDir', 'FABRIC_VERSION', 'fabricPythonModule', 'fabricPythonLib', 'pythonLibraryName' )
+Import( 'baseEnv', 'buildOS', 'buildArch', 'distDir', 'FABRIC_VERSION', 'fabricPythonModule', 'fabricPythonLib', 'pythonLibraryName', 'installerExtFiles' )
 
-pythonPackageName = "FabricEnginePythonModule-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
+pythonPackageName = "FabricEngine-PythonModule-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
 
 pythonPackageDir = distDir.Dir(pythonPackageName)
 pythonModuleDir = pythonPackageDir.Dir('python_modules').Dir('fabric')
@@ -36,6 +36,11 @@ installerFiles.append( baseEnv.Command(
   [ Copy( '$TARGET', '$SOURCE' ) ]
 ) )
 
+installerFiles.append( Install(
+  pythonPackageDir.Dir('Exts'),
+  installerExtFiles
+) )
+
 pythonInstaller = baseEnv.Command(
   distDir.File(pythonPackageName+".tar.bz2"),
   installerFiles,
@@ -44,3 +49,4 @@ pythonInstaller = baseEnv.Command(
   ]
 )
 Alias( 'pythonInstaller', pythonInstaller )
+Return( 'pythonInstaller' )

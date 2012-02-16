@@ -6,7 +6,9 @@
 # with the MIME type application/x-chrome-extension
 
 import os
-Import( 'baseEnv', 'buildOS', 'buildArch', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'installerName', 'installerExtFiles', 'distDir' )
+Import( 'baseEnv', 'buildOS', 'buildArch', 'FABRIC_VERSION', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'installerExtFiles', 'distDir' )
+
+installerName = 'FabricEngine-ChromeExtension-' + buildOS + '-' + buildArch + '-' + FABRIC_VERSION
 
 chromeExtensionDir = archDistDir.Dir('Chrome').Dir(installerName)
 
@@ -80,5 +82,7 @@ baseEnv.Command(
     Move( chromeInstallerFile, archDistDir.Dir('Chrome').File(installerName+'.crx') ),
   ]
 )
-chromeUpdateFile = baseEnv.Template( distDir.File("crx-update-"+buildOS+"-"+buildArch+".xml"), "crx-update.xml.template" )
-Alias( 'chromeInstaller', [chromeInstallerFile, chromeUpdateFile] )
+chromeUpdateFile = baseEnv.Template( distDir.File("crx-update-"+buildOS+"-"+buildArch+".xml"), "crx-update.xml.template" )[0]
+chromeInstaller = [chromeInstallerFile, chromeUpdateFile]
+Alias( 'chromeInstaller', chromeInstaller )
+Return( 'chromeInstaller' )

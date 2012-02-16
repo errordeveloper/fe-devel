@@ -13,6 +13,8 @@ function Size FabricFileStream_GetSeek( in FabricFileStream stream );
 function FabricFileStream_SetSeek( in FabricFileStream stream, in Size seek );
 function FabricFileStream_WriteData( io FabricFileStream stream, in Data data, in Size size );
 function FabricFileStream_ReadData( io FabricFileStream stream, in Data data, in Size size );
+function FabricFileStream_WriteDataCompressed( io FabricFileStream stream, in Data data, in Size size );
+function FabricFileStream_ReadDataCompressed( io FabricFileStream stream, in Data data, in Size size );
 function FabricFileStream_WriteString( io FabricFileStream stream, in String string );
 function FabricFileStream_ReadString( io FabricFileStream stream, io String string );
 function FabricFileStream_WriteStringArray( io FabricFileStream stream, io String strings[] );
@@ -72,6 +74,14 @@ function FabricFileStream.writeData(in Data data, in Size size) {
 
 function FabricFileStream.readData(in Data data, in Size size) {
   FabricFileStream_ReadData(this,data,size);
+}
+
+function FabricFileStream.writeDataCompressed(in Data data, in Size size) {
+  FabricFileStream_WriteDataCompressed(this,data,size);
+}
+
+function FabricFileStream.readDataCompressed(in Data data, in Size size) {
+  FabricFileStream_ReadDataCompressed(this,data,size);
 }
 
 function FabricFileStream.writeString(in String string) {

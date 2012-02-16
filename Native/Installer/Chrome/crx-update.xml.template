@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
   <app appid='kdijpapodgbchkehlmacojcegohcmbel'>
-    <updatecheck codebase='http://dist.fabric-engine.com/{{FABRIC_VERSION_MAJ}}.{{FABRIC_VERSION_MIN}}.{{FABRIC_VERSION_REV}}/FabricEngine-{{FABRIC_OS}}-{{FABRIC_ARCH}}.crx' version='{{FABRIC_VERSION_MAJ}}.{{FABRIC_VERSION_MIN}}.{{FABRIC_VERSION_REV}}' />
+    <updatecheck codebase='http://dist.fabric-engine.com/{{FABRIC_VERSION_MAJ}}.{{FABRIC_VERSION_MIN}}.{{FABRIC_VERSION_REV}}{{FABRIC_VERSION_SUFFIX}}/FabricEngine-ChromeExtension-{{FABRIC_OS}}-{{FABRIC_ARCH}}-{{FABRIC_VERSION_MAJ}}.{{FABRIC_VERSION_MIN}}.{{FABRIC_VERSION_REV}}{{FABRIC_VERSION_SUFFIX}}.crx' version='{{FABRIC_VERSION_MAJ}}.{{FABRIC_VERSION_MIN}}.{{FABRIC_VERSION_REV}}' />
   </app>
 </gupdate>
