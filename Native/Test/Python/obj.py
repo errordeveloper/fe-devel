@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -19,7 +20,7 @@ operator load(\n\
 ')
 
 if len( loadOp.getDiagnostics() ) > 0:
-  print('load: ' + fabric.stringify(loadOp.getDiagnostics()))
+  print('load: ' + fabrictest.stringify(loadOp.getDiagnostics()))
 
 loadOpBinding = fabricClient.DG.createBinding()
 loadOpBinding.setOperator(loadOp)
@@ -51,7 +52,7 @@ operator resize(\n\
 ')
 
 if len( resizeOp.getDiagnostics() ) > 0:
-  print('resize: ' + fabric.stringify(resizeOp.getDiagnostics()))
+  print('resize: ' + fabrictest.stringify(resizeOp.getDiagnostics()))
 
 resizeBinding = fabricClient.DG.createBinding()
 resizeBinding.setOperator( resizeOp )
@@ -76,7 +77,7 @@ operator setData(\n\
 ')
 
 if len( setDataOp.getDiagnostics() ) > 0:
-  print('setData: ' + fabric.stringify(setDataOp.getDiagnostics()))
+  print('setData: ' + fabrictest.stringify(setDataOp.getDiagnostics()))
 
 setDataBinding = fabricClient.DG.createBinding()
 setDataBinding.setOperator( setDataOp )
@@ -91,7 +92,7 @@ node.bindings.append(resizeBinding)
 node.bindings.append(setDataBinding)
 node.setDependency(rlnode, "rlnode")
 if len( node.getErrors() ) > 0:
-  print('node: ' + fabric.stringify((node.getErrors())))
+  print('node: ' + fabrictest.stringify((node.getErrors())))
 node.evaluate()
 
 fabricClient.close()

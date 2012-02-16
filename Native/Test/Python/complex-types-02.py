@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -41,8 +42,8 @@ else:
   parentNode.resize( 2 )
   parentNode.setData( "msa", 0, [MyStruct( 42, 3.141 ), MyStruct( 64, 5.67 ) ] )
   parentNode.setData( "msa", 1, [MyStruct( 7, 2.718 )] )
-  print(fabric.stringify( parentNode.getData("msa", 0) ))
-  print(fabric.stringify( parentNode.getData("msa", 1) ))
+  print(fabrictest.stringify( parentNode.getData("msa", 0) ))
+  print(fabrictest.stringify( parentNode.getData("msa", 1) ))
 
   binding = fabricClient.DG.createBinding()
   binding.setOperator(op)

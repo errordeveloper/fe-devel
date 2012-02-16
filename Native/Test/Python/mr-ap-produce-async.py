@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 
 fabricClient = fabric.createClient()
@@ -14,11 +15,11 @@ ap = fabricClient.MR.createArrayGenerator(
 def callback1( result ):
   def callback2( result ):
     def callback3( result ):
-      print( 'callback3: ' + fabric.stringify(result) )
+      print( 'callback3: ' + fabrictest.stringify(result) )
       fabricClient.close()
-    print( 'callback2: ' + fabric.stringify(result) )
+    print( 'callback2: ' + fabrictest.stringify(result) )
     ap.produceAsync(  4, 8, callback3 )
-  print( 'callback1: ' + fabric.stringify(result) )
+  print( 'callback1: ' + fabrictest.stringify(result) )
   ap.produceAsync( 5, callback2 )
 
 ap.produceAsync( callback1 )

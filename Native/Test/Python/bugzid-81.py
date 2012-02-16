@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 F = fabric.createClient()
 
@@ -30,7 +31,7 @@ operatorInit.setSourceCode(
 operatorInit.setEntryFunctionName('initiate')
 if len( operatorInit.getErrors() ) > 0:
   if len( operatorInit.getDiagnostics() ) > 0:
-    print(fabric.stringify(opreatorInit.getDiagnostics()))
+    print(fabrictest.stringify(opreatorInit.getDiagnostics()))
 
 operatorAdd = F.DG.createOperator("add")
 operatorAdd.setSourceCode(
@@ -41,7 +42,7 @@ operatorAdd.setEntryFunctionName('add')
 
 if len( operatorAdd.getErrors() ) > 0:
   if len( operatorAdd.getDiagnostics() ) > 0:
-    print(fabric.stringify(opreatorAdd.getDiagnostics()))
+    print(fabrictest.stringify(opreatorAdd.getDiagnostics()))
 
 operatorMul = F.DG.createOperator("operatorMul")
 operatorMul.setSourceCode(
@@ -52,7 +53,7 @@ operatorMul.setEntryFunctionName('mul')
 
 if len( operatorMul.getErrors() ) > 0:
   if len( operatorMul.getDiagnostics() ) > 0:
-    print(fabric.stringify(opreatorMul.getDiagnostics()))
+    print(fabrictest.stringify(opreatorMul.getDiagnostics()))
 
 # create bindings between the nodes and the operator
 binding1init = F.DG.createBinding()
@@ -81,10 +82,10 @@ binding2.setParameterLayout([
 dgnode1.bindings.append(binding1init)
 dgnode1.bindings.append(binding1add)
 if len( dgnode1.getErrors() ) > 0:
-  print(fabric.stringify(dgnode1.getErrors()))
+  print(fabrictest.stringify(dgnode1.getErrors()))
 dgnode2.bindings.append(binding2)
 if len( dgnode2.getErrors() ) > 0:
-  print(fabric.stringify(dgnode2.getErrors()))
+  print(fabrictest.stringify(dgnode2.getErrors()))
 
 # evaluate the node!
 dgnode2.evaluate()
@@ -95,7 +96,7 @@ indices = []
 for i in range( 0, displayCount ):
   indices.append(i)
 
-print(fabric.stringify(dgnode1.getSlicesBulkData(indices)))
-print(fabric.stringify(dgnode2.getSlicesBulkData(indices)))
+print(fabrictest.stringify(dgnode1.getSlicesBulkData(indices)))
+print(fabrictest.stringify(dgnode2.getSlicesBulkData(indices)))
 
 F.close()

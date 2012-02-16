@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -26,35 +27,35 @@ node.setData( 'input', 1, 7 )
 node.setData( 'output', 0, 0 )
 node.setData( 'output', 1, 0 )
 node.evaluate()
-print(fabric.stringify(node.getBulkData()))
+print(fabrictest.stringify(node.getBulkData()))
 print("bindings.length = " + str(node.bindings.getLength()))
 
 node.setData( 'output', 0, 0 )
 node.setData( 'output', 1, 0 )
 node.bindings.append( bindingOne )
 node.evaluate()
-print(fabric.stringify(node.getBulkData()))
+print(fabrictest.stringify(node.getBulkData()))
 print("bindings.length = " + str(node.bindings.getLength()))
 
 node.setData( 'output', 0, 0 )
 node.setData( 'output', 1, 0 )
 node.bindings.remove(0)
 node.evaluate()
-print(fabric.stringify(node.getBulkData()))
+print(fabrictest.stringify(node.getBulkData()))
 print("bindings.length = " + str(node.bindings.getLength()))
 
 node.setData( 'output', 0, 0 )
 node.setData( 'output', 1, 0 )
 node.bindings.append(bindingTwo)
 node.evaluate()
-print(fabric.stringify(node.getBulkData()))
+print(fabrictest.stringify(node.getBulkData()))
 print("bindings.length = " + str(node.bindings.getLength()))
 
 node.setData( 'output', 0, 0 )
 node.setData( 'output', 1, 0 )
 node.bindings.remove(0)
 node.evaluate()
-print(fabric.stringify(node.getBulkData()))
+print(fabrictest.stringify(node.getBulkData()))
 print("bindings.length = " + str(node.bindings.getLength()))
 
 fabricClient.close()

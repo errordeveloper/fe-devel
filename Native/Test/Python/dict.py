@@ -1,34 +1,35 @@
+import fabrictest
 import fabric
 F = fabric.createClient()
 n = F.DG.createNode("n")
 
 n.addMember("foo","String[String]")
 a = n.getData("foo", 0)
-print(fabric.stringify(a))
+print(fabrictest.stringify(a))
 a['x'] = "bar"
 n.setData("foo",0,a)
 a = n.getData("foo", 0)
-print(fabric.stringify(a))
+print(fabrictest.stringify(a))
 a['x'] = "baz"
 n.setData("foo",0,a)
 a = n.getData("foo", 0)
-print(fabric.stringify(a))
+print(fabrictest.stringify(a))
 
 n.addMember("bar","Scalar[Scalar]")
 a = n.getData("bar", 0)
-print(fabric.stringify(a))
+print(fabrictest.stringify(a))
 a[2.4] = 3.14
 a[7.9] = 2.71
 n.setData("bar", 0, a )
 a = n.getData("bar", 0)
-print(fabric.stringify(a))
+print(fabrictest.stringify(a))
 
 a = {}
 for i in range( 0, 4096 ):
   a["key "+str(i)] = "value "+str(i)
 n.setData("foo",0,a)
 a = n.getData("foo", 0)
-print(fabric.stringify(a))
+print(fabrictest.stringify(a))
 
 n.addMember("baz","Scalar[String][String]")
 a = {
@@ -43,6 +44,6 @@ a = {
 }
 n.setData("baz", 0, a)
 a = n.getData("baz", 0)
-print(fabric.stringify(a))
+print(fabrictest.stringify(a))
 
 F.close()

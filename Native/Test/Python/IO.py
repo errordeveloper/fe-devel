@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -33,7 +34,7 @@ body = fabricClient.IO.getTextFileContent(relativeFileHandle)
 print('File content with appended text: ' + body)
 
 fileInfo = fabricClient.IO.getFileHandleInfo(relativeFileHandle)
-print('File info: ' + fabric.stringify(fileInfo))
+print('File info: ' + fabrictest.stringify(fileInfo))
 
 node = fabricClient.DependencyGraph.createResourceLoadNode("node")
 

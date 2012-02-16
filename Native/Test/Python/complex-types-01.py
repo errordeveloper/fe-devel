@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -53,6 +54,6 @@ else:
       print( errors[i] )
   else:
     node.evaluate()
-    print(fabric.stringify( node.getData("msaa", 0) ))
+    print(fabrictest.stringify( node.getData("msaa", 0) ))
 
 fabricClient.close()

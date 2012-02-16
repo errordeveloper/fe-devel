@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 F = fabric.createClient()
 
@@ -11,10 +12,10 @@ e = F.DG.createEvent("event")
 print(e.getName())
 print(e.getType())
 
-print(fabric.stringify(mapNamedObjectsToNames(e.getEventHandlers())))
+print(fabrictest.stringify(mapNamedObjectsToNames(e.getEventHandlers())))
 eh = F.DG.createEventHandler("eventHandler")
 e.appendEventHandler(eh)
-print(fabric.stringify(mapNamedObjectsToNames(e.getEventHandlers())))
+print(fabrictest.stringify(mapNamedObjectsToNames(e.getEventHandlers())))
 
 e.fire()
 

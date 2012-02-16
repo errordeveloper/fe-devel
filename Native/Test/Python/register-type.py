@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -31,13 +32,13 @@ function Vec2(Scalar x, Scalar y)\n\
 }
 
 fabricClient.RegisteredTypesManager.registerType( 'Vec2', desc )
-print(fabric.stringify(fabricClient.RT.getRegisteredTypes()['Vec2']))
+print(fabrictest.stringify(fabricClient.RT.getRegisteredTypes()['Vec2']))
 
 node = fabricClient.DependencyGraph.createNode("foo")
 node.addMember( 'vec2', 'Vec2' )
 node.setData( 'vec2', 0, Vec2( 5.6, 4.3 ) )
 data = node.getData("vec2", 0)
-print( fabric.stringify( data ) )
+print( fabrictest.stringify( data ) )
 print( data.sum() )
 
 op = fabricClient.DG.createOperator("op")
@@ -55,7 +56,7 @@ binding.setParameterLayout(["self.vec2"])
 node.bindings.append(binding)
 node.evaluate()
 data = node.getData("vec2", 0)
-print( fabric.stringify( data ) )
+print( fabrictest.stringify( data ) )
 print(data.sum())
 
 class ComplexType():
@@ -73,8 +74,8 @@ complexTypeDesc = {
 }
 
 fabricClient.RT.registerType('ComplexType', complexTypeDesc)
-print(fabric.stringify(fabricClient.RT.getRegisteredTypes()['ComplexType'][ 'defaultValue' ]))
+print(fabrictest.stringify(fabricClient.RT.getRegisteredTypes()['ComplexType'][ 'defaultValue' ]))
 node.addMember( 'ct', 'ComplexType' )
-print(fabric.stringify( node.getData( 'ct', 0 ) ) )
+print(fabrictest.stringify( node.getData( 'ct', 0 ) ) )
 
 fabricClient.close()

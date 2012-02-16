@@ -169,47 +169,6 @@ class _ASYNCTHREAD( threading.Thread ):
       elif ( callback is not None ):
         callback( result[ 'result' ] )
 
-# for unit tests only, make floats use same precision across different
-# versions of python which have different repr() implementations and
-# change dicts to sorted lists so ordering doesn't change
-def _normalizeForUnitTests( obj ):
-  if type( obj ) is list:
-    objlist = []
-    for elem in obj:
-      objlist.append( _normalizeForUnitTests( elem ) )
-    return objlist
-  elif type( obj ) is dict:
-    objdictlist = []
-    for member in obj:
-      elemobj = {}
-      elemobj[ member ] = _normalizeForUnitTests( obj[ member ] )
-      objdictlist.append( elemobj )
-    objdictlist.sort()
-    return objdictlist
-  elif type( obj ) is float:
-    return format( obj, '.3f' )
-  else:
-    return obj
-
-# take a python class and convert its members down to a hierarchy of
-# dictionaries, ignoring methods
-def _typeToDict( obj ):
-  if type( obj ) is list:
-    objlist = []
-    for elem in obj:
-      objlist.append( _typeToDict( elem ) )
-    return objlist
-
-  elif not hasattr( obj, '__dict__' ):
-    return obj
-
-  else:
-    objdict = {}
-    for member in vars( obj ):
-      attr = getattr( obj, member )
-      objdict[ member ] = _typeToDict( attr )
-    return objdict
-
 # this is the interface object that gets returned to the user
 class _INTERFACE( object ):
   def __init__( self, fabric ):
@@ -2019,7 +1978,22 @@ _fabric = _FABRIC()
 def createClient():
   return _fabric.createClient()
 
-# used in unit tests
-def stringify( obj ):
-  return json.dumps( _typeToDict( obj ) )
+# take a python class and convert its members down to a hierarchy of
+# dictionaries, ignoring methods
+def _typeToDict( obj ):
+  if type( obj ) is list:
+    objlist = []
+    for elem in obj:
+      objlist.append( _typeToDict( elem ) )
+    return objlist
+
+  elif not hasattr( obj, '__dict__' ):
+    return obj
+
+  else:
+    objdict = {}
+    for member in vars( obj ):
+      attr = getattr( obj, member )
+      objdict[ member ] = _typeToDict( attr )
+    return objdict
 

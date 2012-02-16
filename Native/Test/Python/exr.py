@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -27,7 +28,7 @@ operator load( io String url, io FabricResource resource )\n\
 ')
 
 if len( op.getDiagnostics() ) > 0:
-  print(fabric.stringify(op.getDiagnostics()))
+  print(fabrictest.stringify(op.getDiagnostics()))
 
 binding = fabricClient.DG.createBinding()
 binding.setOperator(op)

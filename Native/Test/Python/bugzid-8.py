@@ -1,3 +1,4 @@
+import fabrictest
 import fabric
 F = fabric.createClient()
 
@@ -20,6 +21,6 @@ n = F.DG.createNode("node")
 n.addMember("foo", "String")
 n.addMember("bar", "Size")
 n.bindings.append(b)
-print(fabric.stringify(n.getErrors()))
+print(fabrictest.stringify(n.getErrors()))
 
 F.close()
