@@ -1,6 +1,11 @@
+/*
+ *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ */
+ 
 #include "FunctionBuilder.h"
 #include "ModuleBuilder.h"
 #include "Manager.h"
+#include <Fabric/Core/CG/Mangling.h>
 #include <Fabric/Core/RT/Manager.h>
 
 #include <llvm/Module.h>
@@ -12,36 +17,35 @@ namespace Fabric
   namespace CG
   {
     FunctionBuilder::FunctionBuilder(
-      ModuleBuilder &moduleBuilder,
-      std::string const &entryName,
-      ExprType const &returnExprType,
-      std::vector< FunctionParam > const &params,
-      bool exportSymbol,
-      std::string const *friendlyName, 
-      bool returnsStaticDataPtr
+      ModuleBuilder &moduleBuilder, 
+      std::string const &pencilKey, 
+      std::string const &symbolName,
+      std::string const &desc,
+      RC::ConstHandle<Adapter> const &returnAdapter, 
+      ParamVector const &params,
+      size_t flags,
+      size_t cost
       )
       : m_moduleBuilder( moduleBuilder )
       , m_functionScope( NULL )
     {
-      
-      build( entryName, returnExprType, params, exportSymbol, friendlyName, returnsStaticDataPtr );
+      build( pencilKey, symbolName, desc, returnAdapter, params, flags, cost );
     }
     
     FunctionBuilder::FunctionBuilder( 
       ModuleBuilder &moduleBuilder, 
-      std::string const &entryName, 
+      std::string const &pencilKey, 
+      std::string const &symbolName,
+      std::string const &desc,
       std::string const &paramLayout,
-      bool exportSymbol,
-      std::string const *friendlyName,
-      bool returnsStaticDataPtr
+      size_t flags
       )
       : m_moduleBuilder( moduleBuilder )
       , m_functionScope( NULL )
     {
-      
       RC::Handle<CG::Manager> manager = moduleBuilder.getManager();
-      std::vector< CG::FunctionParam > paramList;
-      CG::ExprType    returnExprType;
+      CG::ParamVector paramList;
+      RC::ConstHandle<Adapter> returnAdapter;
       
       if( !paramLayout.empty() )
       {
@@ -64,13 +68,12 @@ namespace Fabric
             usage = CG::USAGE_LVALUE;
           else if ( paramLayout[ start ] == '=' )
           {
-            if ( returnExprType.isValid() )
+            if ( returnAdapter )
               throw Exception( "Malformed function param layout string. Return type already specified: " + paramLayout );
             
             std::string rtype = paramLayout.substr( start + 1, end - start - 1 );
             RC::ConstHandle<RT::Desc> typeDesc = manager->getRTManager()->getDesc( rtype );
-            RC::ConstHandle<CG::Adapter> typeAdapter = manager->getAdapter( typeDesc );
-            returnExprType = CG::ExprType( typeAdapter, CG::USAGE_RVALUE );
+            returnAdapter = manager->getAdapter( typeDesc );
           }
           else
             throw Exception( "Malformed function param layout string. Missing in/out marker: " + paramLayout.substr( start, end - start ) );
@@ -96,59 +99,64 @@ namespace Fabric
         } while( end != std::string::npos );
       }
       
-      build( entryName, returnExprType, paramList, exportSymbol, friendlyName, returnsStaticDataPtr );
+      build( pencilKey, symbolName, desc, returnAdapter, paramList, flags );
     }
     
     void FunctionBuilder::build( 
-      std::string const &entryName, 
-      ExprType const &returnExprType, 
-      std::vector< FunctionParam > const &params,
-      bool exportSymbol,
-      std::string const *friendlyName, 
-      bool returnsStaticDataPtr
+      std::string const &pencilKey,
+      std::string const &symbolName, 
+      std::string const &desc,
+      RC::ConstHandle<Adapter> const &returnAdapter, 
+      ParamVector const &params, 
+      size_t flags,
+      size_t cost
       )
     {
       RC::Handle<Context> context = getContext();
       
-      ReturnInfo returnInfo( returnExprType, returnsStaticDataPtr );
-
       llvm::Type const *llvmReturnType = 0;
-      if ( returnExprType && !returnInfo.usesReturnLValue() )
+      std::vector<llvm::Type const *> llvmParamTypes;
+
+      if ( flags & DirectlyReturnLValue )
       {
-        switch ( returnExprType.getUsage() )
+        m_haveHiddenReturnLValue = false;
+        llvmReturnType = returnAdapter->llvmLType( context );
+      }
+      else if ( flags & DirectlyReturnRValue )
+      {
+        m_haveHiddenReturnLValue = false;
+        llvmReturnType = returnAdapter->llvmRType( context );
+      }
+      else if ( returnAdapter )
+      {
+        if ( returnAdapter->usesReturnLValue() )
         {
-          case USAGE_RVALUE:
-            llvmReturnType = returnExprType.getAdapter()->llvmRType( context );
-            break;
-          case USAGE_LVALUE:
-            llvmReturnType = returnExprType.getAdapter()->llvmLType( context );
-            break;            
-          case USAGE_UNSPECIFIED:
-            FABRIC_ASSERT( false );
-            throw Exception( "unspecified usage" );
+          m_haveHiddenReturnLValue = true;
+          llvmReturnType = llvm::Type::getVoidTy( context->getLLVMContext() );
+          llvmParamTypes.push_back( returnAdapter->llvmLType( context ) );
+        }
+        else
+        {
+          m_haveHiddenReturnLValue = false;
+          llvmReturnType = returnAdapter->llvmRType( context );
         }
       }
-      else llvmReturnType = llvm::Type::getVoidTy( context->getLLVMContext() );
-
-      std::vector< llvm::Type const * > llvmParamTypes;
-    
-      if( returnInfo.usesReturnLValue() )
-        llvmParamTypes.push_back( returnExprType.getAdapter()->llvmLType( context ) );
+      else
+      {
+        m_haveHiddenReturnLValue = false;
+        llvmReturnType = llvm::Type::getVoidTy( context->getLLVMContext() );
+      }
 
       for ( size_t i=0; i<params.size(); ++i )
         llvmParamTypes.push_back( params[i].getLLVMType( context ) );
         
       m_llvmFunctionType = llvm::FunctionType::get( llvmReturnType, llvmParamTypes, false );
 
-      llvm::Attributes attrs = llvm::Attribute::InlineHint;
-      if( returnInfo.usesReturnLValue() )
-        attrs |= llvm::Attribute::StructRet;
-
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint );
       llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get(AWI, 1);
       
-      llvm::Function *existingLLVMFunction = m_moduleBuilder->getFunction( entryName.c_str() );
+      llvm::Function *existingLLVMFunction = m_moduleBuilder->getFunction( symbolName.c_str() );
       if ( existingLLVMFunction )
       {
         // [pzion 20110825] FIXME: should verify sanity here through asserts on types, attributes
@@ -157,23 +165,39 @@ namespace Fabric
       }
       else
       {
-        m_llvmFunction = llvm::cast<llvm::Function>( m_moduleBuilder->getOrInsertFunction( entryName.c_str(), m_llvmFunctionType, attrListPtr ) );
-        m_llvmFunction->setLinkage( exportSymbol? llvm::GlobalValue::ExternalLinkage: llvm::GlobalValue::PrivateLinkage );
+        m_llvmFunction = llvm::cast<llvm::Function>( m_moduleBuilder->getOrInsertFunction( symbolName.c_str(), m_llvmFunctionType, attrListPtr ) );
+        m_llvmFunction->setLinkage( (flags & ExportSymbol)? llvm::GlobalValue::ExternalLinkage: llvm::GlobalValue::PrivateLinkage );
       }
-      
+    
       llvm::Function::arg_iterator ai = m_llvmFunction->arg_begin();
-      if( returnInfo.usesReturnLValue() )
+      
+      ReturnInfo returnInfo( ExprType( returnAdapter, (flags & DirectlyReturnLValue)? USAGE_LVALUE: USAGE_RVALUE ) );
+      if ( m_haveHiddenReturnLValue )
       {
-        ai->setName( "returnVal" );
+        ai->setName( "resultLValue" );
         ai->addAttr( llvm::Attribute::NoCapture );
         ai->addAttr( llvm::Attribute::NoAlias );
         ai->addAttr( llvm::Attribute::StructRet );
-        returnInfo = ReturnInfo( returnExprType, ai );
+        returnInfo = ReturnInfo( ExprType( returnAdapter, USAGE_LVALUE ), ai );
         ++ai;
       }
 
       m_functionScope = new FunctionScope( m_moduleBuilder.getScope(), returnInfo );
 
+      bool haveContainer = false;
+      llvm::Function::arg_iterator savedAI = ai;
+      for ( size_t i=0; i<params.size(); ++i, ++ai )
+      {
+        FunctionParam const &param = params[i];
+        if ( param.getUsage() == USAGE_LVALUE
+          && param.getAdapter()->getDesc()->isNoAliasSafe() )
+        {
+          haveContainer = true;
+          break;
+        }
+      }
+      ai = savedAI;
+      
       for ( size_t i=0; i<params.size(); ++i, ++ai )
       {
         FunctionParam const &param = params[i];
@@ -182,13 +206,25 @@ namespace Fabric
           || param.getAdapter()->isPassByReference()  )
         {
           ai->addAttr( llvm::Attribute::NoCapture );
-          ai->addAttr( llvm::Attribute::NoAlias );
+          if ( !haveContainer
+            || ( !RT::isSlicedArray( param.getAdapter()->getType() )
+              && param.getAdapter()->getDesc()->isNoAliasSafe() ) )
+            ai->addAttr( llvm::Attribute::NoAlias );
         }
         m_functionScope->put( param.getName(), ParameterSymbol::Create( CG::ExprValue( param.getExprType(), context, ai ) ) );
       }
       
-      RC::ConstHandle<FunctionSymbol> functionSymbol = CG::FunctionSymbol::Create( m_llvmFunction, returnInfo, params );
-      m_moduleBuilder.addFunction( entryName, functionSymbol, friendlyName );
+      if ( !pencilKey.empty() )
+        m_pencil = m_moduleBuilder.addFunction(
+          pencilKey,
+          Function(
+            desc,
+            m_llvmFunction,
+            returnInfo,
+            params,
+            cost
+            )
+          );
     }
 
     FunctionBuilder::FunctionBuilder(
@@ -199,8 +235,9 @@ namespace Fabric
       : m_moduleBuilder( moduleBuilder )
       , m_llvmFunctionType( llvmFunctionType )
       , m_llvmFunction( llvmFunction )
+      , m_haveHiddenReturnLValue( false )
     {
-      ReturnInfo returnInfo( ExprType(), false );
+      ReturnInfo returnInfo( ExprType(), 0 );
       m_functionScope = new FunctionScope( m_moduleBuilder.getScope(), returnInfo );
     }
     
@@ -231,7 +268,6 @@ namespace Fabric
     
     FunctionBuilder::~FunctionBuilder()
     {
-
       delete m_functionScope;
     }
       
@@ -241,7 +277,7 @@ namespace Fabric
       llvm::Function::ArgumentListType::iterator it = argumentList.begin();
       
       // Skip the 'hidden' return value.
-      if( m_functionScope && m_functionScope->getReturnInfo().usesReturnLValue() )
+      if ( m_haveHiddenReturnLValue )
         ++it;
 
       while ( index-- )
@@ -259,11 +295,6 @@ namespace Fabric
       FABRIC_ASSERT( m_functionScope );
       return *m_functionScope;
     }
-
-    RC::ConstHandle<FunctionSymbol> FunctionBuilder::maybeGetFunction( std::string const &entryName ) const
-    {
-      return m_moduleBuilder.maybeGetFunction( entryName );
-    }
     
     RC::ConstHandle<Adapter> FunctionBuilder::maybeGetAdapter( std::string const &userName ) const
     {
@@ -274,5 +305,56 @@ namespace Fabric
     {
       return m_moduleBuilder.getAdapter( userName, location );
     }
-  };
-};
+
+    FunctionBuilder::FunctionBuilder(
+      ModuleBuilder &moduleBuilder, 
+      RC::ConstHandle<CG::Adapter> const &returnAdapter,
+      std::string const &functionName,
+      std::string const &param1Name,
+      RC::ConstHandle<CG::Adapter> const &param1Adapter,
+      Usage param1Usage,
+      size_t flags
+      )
+      : m_moduleBuilder( moduleBuilder )
+      , m_functionScope( NULL )
+    {
+      ParamVector params;
+      params.push_back( FriendlyFunctionParam( param1Name, param1Adapter, param1Usage ) );
+      std::string pencilKey = FunctionPencilKey( functionName );
+      std::string symbolName = FunctionDefaultSymbolName( functionName, params.getTypes() );
+      std::string desc = FunctionFullDesc( returnAdapter, functionName, params.getTypes() );
+      build( pencilKey, symbolName, desc, returnAdapter, params, flags );
+      getModuleBuilder().getScope().put( functionName, getPencil() );
+    }
+
+    FunctionBuilder::FunctionBuilder(
+      ModuleBuilder &moduleBuilder, 
+      RC::ConstHandle<CG::Adapter> const &returnAdapter,
+      std::string const &functionName,
+      std::string const &param1Name,
+      RC::ConstHandle<CG::Adapter> const &param1Adapter,
+      Usage param1Usage,
+      std::string const &param2Name,
+      RC::ConstHandle<CG::Adapter> const &param2Adapter,
+      Usage param2Usage,
+      size_t flags
+      )
+      : m_moduleBuilder( moduleBuilder )
+      , m_functionScope( NULL )
+    {
+      ParamVector params;
+      params.push_back( FriendlyFunctionParam( param1Name, param1Adapter, param1Usage ) );
+      params.push_back( FriendlyFunctionParam( param2Name, param2Adapter, param2Usage ) );
+      std::string pencilKey = FunctionPencilKey( functionName );
+      std::string symbolName = FunctionDefaultSymbolName( functionName, params.getTypes() );
+      std::string desc = FunctionFullDesc( returnAdapter, functionName, params.getTypes() );
+      build( pencilKey, symbolName, desc, returnAdapter, params, flags );
+      getModuleBuilder().getScope().put( functionName, getPencil() );
+    }
+    
+    RC::ConstHandle<PencilSymbol> FunctionBuilder::getPencil() const
+    {
+      return m_pencil;
+    }
+  }
+}

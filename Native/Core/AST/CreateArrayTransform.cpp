@@ -61,9 +61,9 @@ namespace Fabric
         m_shared->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> CreateArrayTransform::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType CreateArrayTransform::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return m_input->getType( basicBlockBuilder );
+      return m_input->getExprType( basicBlockBuilder );
     }
     
     CG::ExprValue CreateArrayTransform::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -78,17 +78,18 @@ namespace Fabric
       RC::ConstHandle<CG::Symbol> operatorSymbol = basicBlockBuilder.getScope().get( m_operatorName );
       if ( !operatorSymbol )
         throw CG::Error( getLocation(), _(m_operatorName) + ": operator not found" );
-      if ( !operatorSymbol->isFunction() )
+      if ( !operatorSymbol->isPencil() )
         throw CG::Error( getLocation(), _(m_operatorName) + ": not an operator" );
-      RC::ConstHandle<CG::FunctionSymbol> operator_ = RC::ConstHandle<CG::FunctionSymbol>::StaticCast( operatorSymbol );
-      std::vector<CG::FunctionParam> const &operatorParams = operator_->getParams();
+      RC::ConstHandle<CG::PencilSymbol> pencil = RC::ConstHandle<CG::PencilSymbol>::StaticCast( operatorSymbol );
+      CG::Function const *function = pencil->getUniqueFunction( getLocation(), "operator " + _(m_operatorName) );
+      std::vector<CG::FunctionParam> const &operatorParams = function->getParams();
       if ( operatorParams.size() < 1 )
         throw MR::ArrayTransformOperator::GetPrototypeException();
 
-      RC::ConstHandle<CG::Adapter> ioArrayProducerAdapter_ = m_input->getType( basicBlockBuilder );
-      if ( !RT::isArrayProducer( ioArrayProducerAdapter_->getType() ) )
+      CG::ExprType inputExprType = m_input->getExprType( basicBlockBuilder );
+      if ( !RT::isArrayProducer( inputExprType.getAdapter()->getType() ) )
         throw CG::Error( getLocation(), "input must be an array producer" );
-      RC::ConstHandle<CG::ArrayProducerAdapter> ioArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( ioArrayProducerAdapter_ );
+      RC::ConstHandle<CG::ArrayProducerAdapter> ioArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( inputExprType.getAdapter() );
       RC::ConstHandle<CG::Adapter> inputAdapter = ioArrayProducerAdapter->getElementAdapter();
       if ( operatorParams[0].getAdapter() != inputAdapter )
         throw CG::Error( getLocation(), "operator value parameter type (" + operatorParams[0].getAdapter()->getUserName() + ") does not match input array producer element type (" + inputAdapter->getUserName() + ")" );
@@ -132,10 +133,10 @@ namespace Fabric
             if ( !m_shared )
               throw CG::Error( getLocation(), "operator takes a shared value but no shared value is provided" );
               
-            RC::ConstHandle<CG::Adapter> sharedAdapter_ = m_shared->getType( basicBlockBuilder );
-            if ( !RT::isValueProducer( sharedAdapter_->getType() ) )
+            CG::ExprType sharedExprType = m_shared->getExprType( basicBlockBuilder );
+            if ( !RT::isValueProducer( sharedExprType.getAdapter()->getType() ) )
               throw CG::Error( getLocation(), "shared value must be a value producer" );
-            RC::ConstHandle<CG::ValueProducerAdapter> sharedValueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( sharedAdapter_ );
+            RC::ConstHandle<CG::ValueProducerAdapter> sharedValueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( sharedExprType.getAdapter() );
             RC::ConstHandle<CG::Adapter> sharedAdapter = sharedValueProducerAdapter->getValueAdapter();
 
             if ( operatorParams[3].getAdapter() != sharedAdapter )
@@ -156,7 +157,7 @@ namespace Fabric
             
             std::vector<llvm::Value *> args;
             args.push_back( basicBlockBuilder->CreateBitCast(
-              operator_->getLLVMFunction(),
+              function->getLLVMFunction(),
               llvm::Type::getInt8PtrTy( llvmContext )
               ) );
             args.push_back( sizeAdapter->llvmConst( context, operatorParams.size() ) );
@@ -182,7 +183,7 @@ namespace Fabric
         
         std::vector<llvm::Value *> args;
         args.push_back( basicBlockBuilder->CreateBitCast(
-          operator_->getLLVMFunction(),
+          function->getLLVMFunction(),
           llvm::Type::getInt8PtrTy( llvmContext )
           ) );
         args.push_back( sizeAdapter->llvmConst( context, operatorParams.size() ) );

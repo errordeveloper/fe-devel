@@ -1,1 +1,1 @@
-missing-method.kl:7:10: error: type Foo has no method 'baz(String,Integer,Boolean)'
+missing-method.kl:7:10: error: no such method Foo.baz(String, Integer, Boolean)

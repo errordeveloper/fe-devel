@@ -69,6 +69,7 @@ namespace Fabric
       
       bool isEquivalentTo( RC::ConstHandle< RT::Desc > const &desc ) const;
       bool isShallow() const;
+      bool isNoAliasSafe() const;
       bool isExportable() const;
       
       void jsonDesc( JSON::Encoder &resultEncoder ) const;

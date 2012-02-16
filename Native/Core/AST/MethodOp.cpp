@@ -1,9 +1,15 @@
+/*
+ *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ */
+
 #include <Fabric/Core/AST/MethodOp.h>
 #include <Fabric/Core/AST/ExprVector.h>
 #include <Fabric/Core/CG/Adapter.h>
-#include <Fabric/Core/CG/OverloadNames.h>
-#include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Core/CG/Error.h>
+#include <Fabric/Core/CG/ModuleBuilder.h>
+#include <Fabric/Core/CG/Mangling.h>
+#include <Fabric/Core/CG/PencilSymbol.h>
+#include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Base/Util/SimpleString.h>
 
 namespace Fabric
@@ -43,29 +49,26 @@ namespace Fabric
       m_args->appendJSON( jsonObjectEncoder.makeMember( "args" ), includeLocation );
     }
     
-    RC::ConstHandle<CG::FunctionSymbol> MethodOp::getFunctionSymbol( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::Function const *MethodOp::getFunction( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> thisType = m_expr->getType( basicBlockBuilder );
+      CG::ExprType thisType = m_expr->getExprType( basicBlockBuilder );
       
-      std::vector< RC::ConstHandle<CG::Adapter> > argTypes;
-      m_args->appendTypes( basicBlockBuilder, argTypes );
-      
-      std::string functionName = CG::methodOverloadName( m_name, thisType, argTypes );
-      RC::ConstHandle<CG::FunctionSymbol> functionSymbol = basicBlockBuilder.maybeGetFunction( functionName );
-      if ( !functionSymbol )
-      {
-        std::string functionDesc = m_name + "(";
-        for ( size_t i=0; i<argTypes.size(); ++i )
-        {
-          if ( i > 0 )
-            functionDesc += ",";
-          functionDesc += argTypes[i]->getUserName();
-        }
-        functionDesc += ")";
-        
-        throw CG::Error( getLocation(), "type " + thisType->getUserName() + " has no method " + _(functionDesc) );
-      }
-      return functionSymbol;
+      CG::ExprTypeVector argTypes;
+      m_args->appendExprTypes( basicBlockBuilder, argTypes );
+
+      return basicBlockBuilder.getModuleBuilder().getFunction(
+        getLocation(),
+        CG::MethodPencilKey( thisType.getAdapter(), m_name ),
+        CG::ExprTypeVector(
+          thisType,
+          argTypes
+          ),
+        CG::MethodQueryDesc(
+          thisType,
+          m_name,
+          argTypes
+          )
+        );
     }
     
     void MethodOp::registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const
@@ -74,17 +77,21 @@ namespace Fabric
       m_args->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> MethodOp::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType MethodOp::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> adapter = getFunctionSymbol( basicBlockBuilder )->getReturnInfo().getAdapter();
-      adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      return adapter;
+      RC::ConstHandle<CG::Adapter> adapter = getFunction( basicBlockBuilder )->getReturnInfo().getAdapter();
+      if ( adapter )
+      {
+        adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+        return CG::ExprType( adapter, CG::USAGE_RVALUE );
+      }
+      else return CG::ExprType();
     }
     
     CG::ExprValue MethodOp::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
     {
-      RC::ConstHandle<CG::FunctionSymbol> functionSymbol = getFunctionSymbol( basicBlockBuilder );
-      std::vector<CG::FunctionParam> const &functionParams = functionSymbol->getParams();
+      CG::Function const *function = getFunction( basicBlockBuilder );
+      CG::ParamVector const &functionParams = function->getParams();
       
       try
       {
@@ -98,10 +105,10 @@ namespace Fabric
         argExprValues.push_back( thisExprValue );
         m_args->appendExprValues( basicBlockBuilder, argUsages, argExprValues, "cannot be used as an io argument" );
         
-        CG::ExprValue callResultExprValue = functionSymbol->llvmCreateCall( basicBlockBuilder, argExprValues );
+        CG::ExprValue callResultExprValue = function->llvmCreateCall( basicBlockBuilder, argExprValues );
 
         CG::ExprValue result( basicBlockBuilder.getContext() );
-        if ( functionSymbol->getReturnInfo().getExprType() )
+        if ( function->getReturnInfo().getExprType() )
           result = callResultExprValue;
         else result = thisExprValue;
 

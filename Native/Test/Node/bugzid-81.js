@@ -13,8 +13,8 @@ F = require('Fabric').createClient();
   
   // increase the slicecount of the nodes
   var count = 1000000;
-  dgnode1.setCount(count);
-  dgnode2.setCount(count);
+  dgnode1.resize(count);
+  dgnode2.resize(count);
   
   // create dependencies between the nodes
   dgnode2.setDependency(dgnode1, 'otherNode');

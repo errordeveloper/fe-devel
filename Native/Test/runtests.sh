@@ -26,6 +26,7 @@ fi
 
 REPLACE=0
 OS_SPEC=0
+KEEP_GOING=0
 if [ "$1" = "-r" ]; then
   REPLACE=1
   shift
@@ -33,6 +34,10 @@ fi
 if [ "$1" = "-s" ]; then
   REPLACE=1
   OS_SPEC=1
+  shift
+fi
+if [ "$1" = "-k" ]; then
+  KEEP_GOING=1
   shift
 fi
 
@@ -43,6 +48,7 @@ else
 fi
 
 ERROR=0
+FAILED=""
 for f in "$@"; do
   TMPFILE=$(tmpfilename)
 
@@ -94,10 +100,22 @@ for f in "$@"; do
       echo "To debug, run:"
       echo "gdb --args" $CMD
       ERROR=1
-      break
+      FAILED="$FAILED $(basename $f)"
+      if [ $KEEP_GOING -eq 0 ]; then
+        break
+      fi
     else
       echo "PASS $(basename $f)";
       rm $TMPFILE
     fi
   fi
 done
+
+if [ $KEEP_GOING -eq 1 -a $ERROR -ne 0 ]; then
+  echo ""
+  echo "Tests Failed:"
+  for f in $FAILED; do
+    echo "  $f"
+  done
+fi
+

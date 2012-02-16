@@ -39,15 +39,17 @@ namespace Fabric
         : Impl( codeName, implType )
         , m_memberImpl( memberImpl )
         , m_memberIsShallow( memberImpl->isShallow() )
+        , m_memberIsNoAliasSafe( memberImpl->isNoAliasSafe() )
       {
       }
 
       bool isMemberShallow() const{ return m_memberIsShallow; }
+      bool isMemberNoAliasSafe() const{ return m_memberIsNoAliasSafe; }
       
     private:
     
       RC::ConstHandle<Impl> m_memberImpl;
-      bool m_memberIsShallow;
+      bool m_memberIsShallow, m_memberIsNoAliasSafe;
    };
   };
 };

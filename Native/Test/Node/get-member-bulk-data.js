@@ -2,7 +2,7 @@ F = require('Fabric').createClient();
 
 n = F.DG.createNode('n');
 n.addMember('foo', 'String');
-n.setCount(3);
+n.resize(3);
 for (var i=0; i<3; ++i) {
   n.setData('foo', i, "bar-"+i);
 }

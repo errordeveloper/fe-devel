@@ -19,6 +19,9 @@ except:
 
 thirdPartyDir = os.path.join(os.getcwd(), 'ThirdParty' )
 
+SetOption('num_jobs', int(os.environ.get('FABRIC_BUILD_JOBS', 1)))
+print "Running with -j" + str(GetOption('num_jobs'))
+
 # [pzion 20110726] !!!!!!!!!!!!!!!!!!!!
 # When you change the version number,
 # don't forget to consider the expiry
@@ -35,7 +38,7 @@ FABRIC_VERSION_REV='21'
 FABRIC_VERSION_SUFFIX='-beta'
 # To generate expiry 30 days from now: echo $(($(date +%s) + 30*24*60*60))
 FABRIC_EXPIRY='1331141348'
-FABRIC_CACHE_GENERATION='16'
+FABRIC_CACHE_GENERATION='18'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 FABRIC_BASE_VERSION = FABRIC_VERSION_MAJ + '.' + FABRIC_VERSION_MIN + '.' + FABRIC_VERSION_REV

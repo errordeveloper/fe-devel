@@ -4,9 +4,9 @@
  
 #include <Fabric/Core/CG/ComparableAdapter.h>
 #include <Fabric/Core/CG/IntegerAdapter.h>
-#include <Fabric/Core/CG/FunctionBuilder.h>
+#include <Fabric/Core/CG/MethodBuilder.h>
 #include <Fabric/Core/CG/Manager.h>
-#include <Fabric/Core/CG/OverloadNames.h>
+#include <Fabric/Core/CG/Mangling.h>
 #include <Fabric/Core/CG/SizeAdapter.h>
 #include <Fabric/Core/RT/ComparableDesc.h>
 
@@ -30,20 +30,26 @@ namespace Fabric
     llvm::Value *ComparableAdapter::llvmHash( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {
       RC::ConstHandle<SizeAdapter> sizeAdapter = getManager()->getSizeAdapter();
-      std::vector<FunctionParam> params;
-      params.push_back( FunctionParam( "rValue", this, CG::USAGE_RVALUE ) );
-      FunctionBuilder functionBuilder( basicBlockBuilder.getModuleBuilder(), methodOverloadName( "hash", this ), ExprType( sizeAdapter, USAGE_RVALUE ), params, false );
+      MethodBuilder functionBuilder(
+        basicBlockBuilder.getModuleBuilder(),
+        sizeAdapter,
+        this, USAGE_RVALUE,
+        "hash"
+        );
       return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), rValue );
     }
     
     llvm::Value *ComparableAdapter::llvmCompare( BasicBlockBuilder &basicBlockBuilder, llvm::Value *lhsRValue, llvm::Value *rhsRValue ) const
     {
       RC::ConstHandle<IntegerAdapter> integerAdapter = getManager()->getIntegerAdapter();
-      std::vector<FunctionParam> params;
-      params.push_back( FunctionParam( "lhsRValue", this, CG::USAGE_RVALUE ) );
-      params.push_back( FunctionParam( "rhsRValue", this, CG::USAGE_RVALUE ) );
-      FunctionBuilder functionBuilder( basicBlockBuilder.getModuleBuilder(), methodOverloadName( "compare", this, this ), ExprType( integerAdapter, USAGE_RVALUE ), params, false );
+      MethodBuilder functionBuilder(
+        basicBlockBuilder.getModuleBuilder(),
+        integerAdapter,
+        this, USAGE_RVALUE,
+        "compare",
+        "that", this, USAGE_RVALUE
+        );
       return basicBlockBuilder->CreateCall2( functionBuilder.getLLVMFunction(), lhsRValue, rhsRValue );
     }
-  };
-};
+  }
+}

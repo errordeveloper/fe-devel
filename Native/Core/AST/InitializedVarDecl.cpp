@@ -8,8 +8,12 @@
 #include <Fabric/Core/AST/InitializedVarDecl.h>
 #include <Fabric/Core/AST/ExprVector.h>
 #include <Fabric/Core/CG/Adapter.h>
+#include <Fabric/Core/CG/ExprType.h>
+#include <Fabric/Core/CG/Function.h>
+#include <Fabric/Core/CG/ModuleBuilder.h>
+#include <Fabric/Core/CG/Mangling.h>
+#include <Fabric/Core/CG/PencilSymbol.h>
 #include <Fabric/Core/CG/Scope.h>
-#include <Fabric/Core/CG/OverloadNames.h>
 #include <Fabric/Base/Util/SimpleString.h>
 
 namespace Fabric
@@ -54,30 +58,35 @@ namespace Fabric
     void InitializedVarDecl::llvmCompileToBuilder( std::string const &baseType, CG::BasicBlockBuilder &basicBlockBuilder, CG::Diagnostics &diagnostics ) const
     {
       CG::ExprValue result = VarDecl::llvmAllocateVariable( baseType, basicBlockBuilder, diagnostics );
+      FABRIC_ASSERT( result.getUsage() == CG::USAGE_LVALUE );
       
-      std::vector< RC::ConstHandle<CG::Adapter> > argTypes;
-      m_args->appendTypes( basicBlockBuilder, argTypes );
+      CG::ExprTypeVector argTypes;
+      m_args->appendExprTypes( basicBlockBuilder, argTypes );
+        
+      CG::Function const *function = basicBlockBuilder.getModuleBuilder().getFunction(
+        getLocation(),
+        CG::ConstructorPencilKey( result.getAdapter() ),
+        CG::ExprTypeVector(
+          result.getExprType(),
+          argTypes
+          ),
+        CG::ConstructorQueryDesc(
+          result.getAdapter(),
+          argTypes.getAdapters()
+          )
+        );
+
+      CG::ParamVector const functionParams = function->getParams();
       
-      RC::ConstHandle<CG::Adapter> adapter = result.getAdapter();
-      std::string initializerName = constructOverloadName( adapter, argTypes );
+      std::vector<CG::Usage> argUsages;
+      for ( size_t i=1; i<functionParams.size(); ++i )
+        argUsages.push_back( functionParams[i].getUsage() );
         
-      RC::ConstHandle<CG::FunctionSymbol> functionSymbol = basicBlockBuilder.maybeGetFunction( initializerName );
-      if ( !functionSymbol )
-        addError( diagnostics, ("initializer " + _(initializerName) + " not found").c_str() );
-      else
-      {
-        std::vector<CG::FunctionParam> const functionParams = functionSymbol->getParams();
-        
-        std::vector<CG::Usage> argUsages;
-        for ( size_t i=1; i<functionParams.size(); ++i )
-          argUsages.push_back( functionParams[i].getUsage() );
-          
-        std::vector<CG::ExprValue> exprValues;
-        exprValues.push_back( result );
-        m_args->appendExprValues( basicBlockBuilder, argUsages, exprValues, "cannot be used as an io argument" );
-        
-        functionSymbol->llvmCreateCall( basicBlockBuilder, exprValues );
-      }
+      std::vector<CG::ExprValue> exprValues;
+      exprValues.push_back( result );
+      m_args->appendExprValues( basicBlockBuilder, argUsages, exprValues, "cannot be used as an io argument" );
+      
+      function->llvmCreateCall( basicBlockBuilder, exprValues );
     }
-  };
-};
+  }
+}

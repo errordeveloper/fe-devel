@@ -1,2 +1,2 @@
-CORE-130.kl:9:3: error: constants cannot be used as l-values
-CORE-130.kl:10:3: error: calling function 'myFunction': incorrect number of arguments: expected 2, actual 4
+CORE-130.kl:9:3: error: no definition found for function myFunction(Integer, io Integer)
+CORE-130.kl:10:3: error: no definition found for function myFunction(Integer, Integer, Integer, io Integer)

@@ -142,8 +142,6 @@ namespace Fabric
         
       if ( m_context->getLogCollector() )
         m_context->getLogCollector()->flush();
-      
-      jsonNotify( "didFire", 7 );
     }
     
       

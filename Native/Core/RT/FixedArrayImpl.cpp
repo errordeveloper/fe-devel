@@ -17,7 +17,6 @@ namespace Fabric
       : ArrayImpl( codeName, DT_FIXED_ARRAY, memberImpl )
       , m_memberImpl( memberImpl )
       , m_memberSize( memberImpl->getAllocSize() )
-      , m_memberIsShallow( memberImpl->isShallow() )
       , m_length( length )
     {
       setSize( m_memberSize * m_length );
@@ -42,7 +41,7 @@ namespace Fabric
 
     void FixedArrayImpl::setData( void const *src, void *dst ) const
     {
-      if ( !m_memberIsShallow )
+      if ( !isMemberShallow() )
       {
         for ( size_t i=0; i<m_length; ++i )
           m_memberImpl->setData( getImmutableMemberData_NoCheck( src, i ), getMutableMemberData_NoCheck( dst, i ) );
@@ -136,7 +135,12 @@ namespace Fabric
     
     bool FixedArrayImpl::isShallow() const
     {
-      return m_memberIsShallow;
+      return isMemberShallow();
+    }
+
+    bool FixedArrayImpl::isNoAliasSafe() const
+    {
+      return isMemberNoAliasSafe();
     }
 
     size_t FixedArrayImpl::getIndirectMemoryUsage( void const *data ) const

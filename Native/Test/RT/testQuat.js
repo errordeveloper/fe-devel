@@ -1,8 +1,7 @@
 FABRIC = require('Fabric').createClient();
 require( "./include/unitTestUtils.js" );
-require( "../../../Web/SceneGraph/RT/Math.js" );
+require( "../../../Web/RT/Math.js" );
 Math.verboseLogFunction = console.log;
-
 FABRIC.UnitTestUtils.loadType( 'Vec3' );
 FABRIC.UnitTestUtils.appendToKLCode('Mat33', "\nfunction Vec3 Mat33.multiplyVector( in Vec3 other ) {\n  return this * other;\n}\n\n");
 FABRIC.UnitTestUtils.loadType( 'Mat33' );

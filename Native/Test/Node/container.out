@@ -1,0 +1,11 @@
+Runtime eval error (container member): Fabric core exception: DG.testDGNode.addMember('{"name":"containerMember","type"...'): cannot add member containerMember of type Container: members cannot contain Container type
+[FABRIC] [MT] Container string: testDGNode Count: 1 Is valid: true
+[FABRIC] [MT] Uninitialized Container string: (uninitialized Container) Is valid: false
+[FABRIC] [MT] Before resize: Member sizes: 1
+[FABRIC] [MT] Members: [0] [""]
+[FABRIC] [MT] Container string: testDGNode Count: 3 Is valid: true
+[FABRIC] [MT] After resize: Member sizes: 3
+[FABRIC] [MT] Member sizes: 3
+[FABRIC] [MT] Members: [0,0,1] ["","","test"]
+Runtime eval error (uninit container access): Fabric core exception: DG.testDGNode.evaluate(): Calling size() on an uninitialized Container
+Bad bindings error: ["binding 1: operator 'badOp': node 'self': cannot have both per-slice data parameters and an 'io' Container parameter (calling Container::resize() would invalidate the data)"]

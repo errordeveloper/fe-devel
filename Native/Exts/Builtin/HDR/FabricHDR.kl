@@ -5,5 +5,5 @@ struct Color {
   Scalar a;
 };
 
-function FabricHDRDecode( Data hdrData, Size hdrDataSize, io Size imageWidth, io Size imageHeight, io Color imagePixels[] );
-function FabricHDROpenFileHandle( String handle, io Size imageWidth, io Size imageHeight, io Color imagePixels[] );
+function FabricHDRDecode( Data hdrData, Size hdrDataSize, io Size imageWidth, io Size imageHeight, io Color imagePixels[] ) = "FabricHDRDecode";
+function FabricHDROpenFileHandle( String handle, io Size imageWidth, io Size imageHeight, io Color imagePixels[] ) = "FabricHDROpenFileHandle";

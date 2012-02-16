@@ -5,13 +5,13 @@
 #ifndef _FABRIC_AST_DESTRUCTOR_H
 #define _FABRIC_AST_DESTRUCTOR_H
 
-#include <Fabric/Core/AST/Function.h>
+#include <Fabric/Core/AST/FunctionBase.h>
 
 namespace Fabric
 {
   namespace AST
   {
-    class Destructor : public Function
+    class Destructor : public FunctionBase
     {
       FABRIC_AST_NODE_DECL( Destructor );
 
@@ -20,15 +20,17 @@ namespace Fabric
       static RC::ConstHandle<Destructor> Create(
         CG::Location const &location,
         std::string const &thisTypeName,
-        std::string const &entryName,
+        std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body
         );
 
       virtual bool isDestructor() const { return true; }
       
       std::string getThisTypeName() const;
-      virtual std::string const *getFriendlyName( RC::Handle<CG::Manager> const &cgManager ) const;
-      virtual std::string getEntryName( RC::Handle<CG::Manager> const &cgManager ) const;
+      
+      virtual std::string getPencilKey( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getDefaultSymbolName( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getDesc( RC::Handle<CG::Manager> const &cgManager ) const;
       virtual RC::ConstHandle<ParamVector> getParams( RC::Handle<CG::Manager> const &cgManager ) const;
       
     protected:
@@ -36,7 +38,7 @@ namespace Fabric
       Destructor(
         CG::Location const &location,
         std::string const &thisTypeName,
-        std::string const &entryName,
+        std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body
         );
       
@@ -47,9 +49,8 @@ namespace Fabric
     private:
     
       std::string m_thisTypeName;
-      std::string m_entryName;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_AST_DESTRUCTOR_H

@@ -1,0 +1,21 @@
+struct S
+{
+  Integer a;
+  Integer b;
+};
+
+function S(Integer a, Integer b) {
+  this.a = a;
+  this.b = b;
+}
+
+function Integer S.lc(Integer x) {
+  return this.a * x + this.b;
+}
+
+operator entry() {
+  S s(3, -2);
+  report s.lc(1);
+  report s.lc(3);
+  report s.lc(-2);
+}

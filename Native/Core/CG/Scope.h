@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-12-04.
- *  Copyright 2010 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_CG_SCOPE_H
@@ -13,6 +10,9 @@
 #include <Fabric/Core/CG/Adapter.h>
 #include <Fabric/Core/CG/Error.h>
 #include <Fabric/Core/CG/Location.h>
+#include <Fabric/Core/CG/FunctionParam.h>
+#include <Fabric/Core/CG/ReturnInfo.h>
+#include <Fabric/Core/CG/Symbol.h>
 #include <Fabric/Core/Util/UnorderedMap.h>
 #include <Fabric/Base/Exception.h>
 
@@ -20,359 +20,6 @@ namespace Fabric
 {
   namespace CG
   {
-    class Symbol : public RC::Object
-    {
-    public:
-    
-      virtual bool isValue() const { return false; }
-      virtual bool isFunction() const { return false; }
-      
-      virtual std::string desc() const = 0;
-    };
-    
-    class ValueSymbol : public Symbol
-    {
-    public:
-    
-      virtual bool isValue() const { return true; }
-      virtual bool isVariable() const { return false; }
-      virtual bool isParameter() const { return false; }
-      virtual bool isConstant() const { return false; }
-      
-      CG::ExprValue const &getExprValue() const
-      {
-        return m_exprValue;
-      }
-      
-      RC::ConstHandle<CG::Adapter> getAdapter() const
-      {
-        return m_exprValue.getAdapter();
-      }
-      
-    protected:
-    
-      ValueSymbol( CG::ExprValue const &exprValue )
-        : m_exprValue( exprValue )
-      {
-      }
-      
-    private:
-    
-      CG::ExprValue m_exprValue;
-    };
-    
-    class VariableSymbol : public ValueSymbol
-    {
-    public:
-    
-      static RC::ConstHandle<VariableSymbol> Create( CG::ExprValue const &exprValue )
-      {
-        return new VariableSymbol( exprValue );
-      }
-      
-      virtual bool isVariable() const { return true; }
-      
-      virtual std::string desc() const
-      {
-        return "Variable(" + getExprValue().desc() + ")";
-      }
-      
-    protected:
-    
-      VariableSymbol( CG::ExprValue const &exprValue )
-        : ValueSymbol( exprValue )
-      {
-      }
-    };
-    
-    class ParameterSymbol : public ValueSymbol
-    {
-    public:
-    
-      static RC::ConstHandle<ParameterSymbol> Create( CG::ExprValue const &exprValue )
-      {
-        return new ParameterSymbol( exprValue );
-      }
-      
-      virtual bool isParameter() const { return true; }
-      
-      virtual std::string desc() const
-      {
-        return "Parameter(" + getExprValue().desc() + ")";
-      }
-      
-    protected:
-    
-      ParameterSymbol( CG::ExprValue const &exprValue )
-        : ValueSymbol( exprValue )
-      {
-      }
-    };
-    
-    class ConstantSymbol : public ValueSymbol
-    {
-    public:
-    
-      static RC::ConstHandle<ConstantSymbol> Create( CG::ExprValue const &exprValue )
-      {
-        return new ConstantSymbol( exprValue );
-      }
-      
-      virtual bool isConstant() const { return true; }
-      
-      virtual std::string desc() const
-      {
-        return "Constant(" + getExprValue().desc() + ")";
-      }
-      
-    protected:
-    
-      ConstantSymbol( CG::ExprValue const &exprValue )
-        : ValueSymbol( exprValue )
-      {
-      }
-    };
-    
-    class FunctionParam
-    {
-    public:
-    
-      FunctionParam( std::string const &name, ExprType const &exprType )
-        : m_name( name )
-        , m_exprType( exprType )
-      {
-      }
-    
-      FunctionParam( std::string const &name, RC::ConstHandle<Adapter> const &adapter, Usage usage )
-        : m_name( name )
-        , m_exprType( adapter, usage )
-      {
-      }
-      
-      FunctionParam( FunctionParam const &that )
-        : m_name( that.m_name )
-        , m_exprType( that.m_exprType )
-      {
-      }
-      
-      FunctionParam &operator =( FunctionParam const &that )
-      {
-        m_name = that.m_name;
-        m_exprType = that.m_exprType;
-        return *this;
-      }
-    
-      std::string const &getName() const
-      {
-        return m_name;
-      }
-      
-      ExprType const &getExprType() const
-      {
-        return m_exprType;
-      }
-      
-      std::string const &getTypeUserName() const
-      {
-        return getExprType().getUserName();
-      }
-      
-      std::string const &getTypeCodeName() const
-      {
-        return getExprType().getCodeName();
-      }
-      
-      RC::ConstHandle<Adapter> getAdapter() const
-      {
-        return getExprType().getAdapter();
-      }
-      
-      Usage getUsage() const
-      {
-        return getExprType().getUsage();
-      }
-      
-      llvm::Type const *getLLVMType( RC::Handle<Context> const &context ) const
-      {
-        switch ( getUsage() )
-        {
-          case USAGE_RVALUE:
-            return getAdapter()->llvmRType( context );
-          case USAGE_LVALUE:
-            return getAdapter()->llvmLType( context );
-          case USAGE_UNSPECIFIED:
-            FABRIC_ASSERT( false );
-            throw Exception( "usage unspecified" );
-        }
-        return 0;
-      }
-      
-      std::string desc() const
-      {
-        return m_name + ":" + m_exprType.desc();
-      }
-
-    private:
-    
-      std::string m_name;
-      ExprType m_exprType;
-    };
-
-    class ReturnInfo
-    {
-    public:
-      ReturnInfo( ExprType const &exprType, llvm::Value *returnLValue = NULL )
-        : m_exprType( exprType )
-        , m_returnsStaticDataPtr( false )
-        , m_returnLValue( returnLValue )
-      {
-      }
-
-      ReturnInfo( ExprType const &exprType, bool returnsStaticDataPtr = false )
-        : m_exprType( exprType )
-        , m_returnsStaticDataPtr( returnsStaticDataPtr )
-        , m_returnLValue( NULL )
-      {
-      }
-
-      ReturnInfo( ReturnInfo const &that )
-        : m_exprType( that.m_exprType )
-        , m_returnsStaticDataPtr( that.m_returnsStaticDataPtr )
-        , m_returnLValue( that.m_returnLValue )
-      {
-      }
-
-      ReturnInfo &operator =( ReturnInfo const &that )
-      {
-        m_exprType = that.m_exprType;
-        m_returnsStaticDataPtr = that.m_returnsStaticDataPtr;
-        m_returnLValue = that.m_returnLValue;
-        return( *this );
-      }
-
-      operator bool() const
-      {
-        return m_exprType.isValid();
-      }
-      
-      bool operator !() const
-      {
-        return !m_exprType.isValid();
-      }
-
-      ExprType const &getExprType() const
-      {
-        return m_exprType;
-      }
-
-      RC::ConstHandle<Adapter> getAdapter() const
-      {
-        return m_exprType.getAdapter();
-      }
-
-      CG::Usage getUsage() const
-      {
-        return m_exprType.getUsage();
-      }
-
-      std::string desc() const
-      {
-        return m_exprType.desc();
-      }
-
-      bool usesReturnLValue() const
-      {
-        if ( m_exprType.isValid() && !m_returnsStaticDataPtr )
-          return m_exprType.getAdapter()->usesReturnLValue();
-        else return false;
-      }
-
-      llvm::Value *getReturnLValue( ) const
-      {
-        return( m_returnLValue );
-      }
-
-    private:
-
-      ExprType  m_exprType;
-      bool        m_returnsStaticDataPtr;
-      llvm::Value *m_returnLValue;
-    };
-
-    class FunctionSymbol : public Symbol
-    {
-    public:
-      
-      static RC::ConstHandle<FunctionSymbol> Create( llvm::Function *llvmFunction, ReturnInfo const &returnInfo, std::vector< FunctionParam > const &params )
-      {
-        return new FunctionSymbol( llvmFunction, returnInfo, params );
-      }
-      
-      virtual bool isFunction() const { return true; }
-      
-      llvm::Function *getLLVMFunction() const
-      {
-        return m_llvmFunction;
-      }
-      
-      ReturnInfo const &getReturnInfo() const
-      {
-        return m_returnInfo;
-      }
-      
-      std::vector< FunctionParam > const &getParams() const
-      {
-        return m_params;
-      }
-
-      virtual std::string desc() const
-      {
-        std::string result = "FunctionSymbol( " + m_returnInfo.desc();
-        for ( size_t i=0; i<m_params.size(); ++i )
-        {
-          if ( i == 0 )
-            result += "; ";
-          else
-            result += ", ";
-          result += m_params[i].getName();
-        }
-        result += " )";
-        return result;
-      }
-      
-      ExprValue llvmCreateCall( BasicBlockBuilder &basicBlockBuilder, std::vector< ExprValue > &args ) const;
-      
-      ExprValue llvmCreateCall( BasicBlockBuilder &basicBlockBuilder, ExprValue const &arg ) const
-      {
-        std::vector< ExprValue > args;
-        args.push_back( arg );
-        return llvmCreateCall( basicBlockBuilder, args );
-      }
-      
-      ExprValue llvmCreateCall( BasicBlockBuilder &basicBlockBuilder, ExprValue const &arg1, ExprValue const &arg2 ) const
-      {
-        std::vector< ExprValue > args;
-        args.push_back( arg1 );
-        args.push_back( arg2 );
-        return llvmCreateCall( basicBlockBuilder, args );
-      }
-      
-    protected:
-      
-      FunctionSymbol( llvm::Function *llvmFunction, ReturnInfo const &returnInfo, std::vector< FunctionParam > const &params )
-        : m_llvmFunction( llvmFunction )
-        , m_returnInfo( returnInfo )
-        , m_params( params )
-      {
-      }
-            
-    private:
-    
-      llvm::Function *m_llvmFunction;
-      ReturnInfo m_returnInfo;
-      std::vector< FunctionParam > m_params;
-    };
-    
     class Scope
     {
     public:
@@ -407,16 +54,6 @@ namespace Fabric
         else if ( m_parentScope )
           return m_parentScope->get( name );
         else return 0;
-      }
-      
-      std::string desc( std::string const &indent = "" ) const
-      {
-        std::string result = "";
-        for ( StringToSymbolMap::const_iterator it=m_namedSymbols.begin(); it!=m_namedSymbols.end(); ++it )
-          result += it->first + ": " + it->second->desc() + "\n";
-        if ( m_parentScope )
-          result += m_parentScope->desc( indent + "  " );
-        return result;
       }
       
       void llvmUnwind( BasicBlockBuilder &bbb ) const
@@ -488,23 +125,9 @@ namespace Fabric
         {
           FABRIC_ASSERT( exprValue );
           RC::ConstHandle<Adapter> returnAdapter = returnExprType.getAdapter();
-          llvm::Value *returnValue = 0;
-          switch ( returnExprType.getUsage() )
-          {
-            case USAGE_RVALUE:
-              returnValue = returnAdapter->llvmCast( bbb, exprValue );
-              break;
-            case USAGE_LVALUE:
-              if ( exprValue.getExprType() != returnExprType )
-                throw Exception( "cannot return l-value through casting" );
-              returnValue = exprValue.getValue();
-              break;
-            case USAGE_UNSPECIFIED:
-              FABRIC_ASSERT( false );
-              throw Exception( "unspecified usage" );
-          }
+          llvm::Value *returnRValue = returnAdapter->llvmCast( bbb, exprValue );
           llvm::Value *returnLValue = llvmGetReturnLValue();
-          returnAdapter->llvmAssign( bbb, returnLValue, returnValue );
+          returnAdapter->llvmAssign( bbb, returnLValue, returnRValue );
         }
         else FABRIC_ASSERT( !exprValue );
         llvmReturn( bbb );
@@ -662,12 +285,7 @@ namespace Fabric
       ReturnInfo m_returnInfo;
       llvm::Value *m_returnLValue;
     };
-  };
-  
-  inline std::string _( CG::ReturnInfo const &returnInfo )
-  {
-    return returnInfo.desc();
   }
-};
+}
 
 #endif //_FABRIC_CG_SCOPE_H

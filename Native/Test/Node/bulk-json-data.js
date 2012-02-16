@@ -7,7 +7,7 @@ node.addMember( "baz", "Scalar[]", [3.141] );
 console.log(node.getBulkDataJSON());
 node.setBulkDataJSON(JSON.stringify({foo:[42],bar:["fred"],baz:[[4.5,3.6]]}));
 console.log(node.getBulkDataJSON());
-node.setCount(2);
+node.resize(2);
 console.log(node.getBulkDataJSON());
 
 FABRIC.close();

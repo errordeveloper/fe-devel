@@ -44,6 +44,7 @@ namespace Fabric
 
       virtual bool isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const;
       virtual bool isShallow() const;
+      virtual bool isNoAliasSafe() const;
       virtual bool isExportable() const;
     
       // ComparableImpl

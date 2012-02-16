@@ -155,8 +155,16 @@ namespace Fabric
       RC::Handle<Context> context;
       if ( contextID.length() > 0 )
       {
-        context = RC::Handle<Context>::StaticCast( DG::Context::Bind( contextID ) );
-        FABRIC_DEBUG_LOG( "Bound to existing context '%s'", contextID.c_str() );
+        try
+        {
+          context = RC::Handle<Context>::StaticCast( DG::Context::Bind( contextID ) );
+          FABRIC_DEBUG_LOG( "Bound to existing context '%s'", contextID.c_str() );
+        }
+        catch ( Exception e )
+        {
+          FABRIC_LOG( "Unable to bind to context: " + e );
+          return NPERR_GENERIC_ERROR;
+        }
       }
       else
       {

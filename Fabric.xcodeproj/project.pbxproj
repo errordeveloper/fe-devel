@@ -3218,7 +3218,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# shell script goes here\nPATH=/opt/local/bin:$PATH make xcode 2>&1 | sed -l s,build/Darwin/universal/Debug/Fabric/,$(pwd)/Native/,g\n";
+			shellScript = "# shell script goes here\nPATH=/opt/local/bin:$PATH make xcode 2>&1 | sed -l \"s,build/Darwin/universal/Release/Fabric/,$(pwd)/Native/,g\" | sed -l \"s,build/Darwin/universal/Debug/Fabric/,$(pwd)/Native/,g\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

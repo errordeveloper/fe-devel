@@ -141,8 +141,9 @@ namespace Fabric
       FABRIC_ASSERT( m_code );
       FABRIC_ASSERT( !m_code->getDiagnostics().containsError() );
       FABRIC_ASSERT( m_entryFunctionName.length() > 0 );
+      FABRIC_ASSERT( m_astOperator );
       
-      m_function = Function::Create( m_code, m_entryFunctionName );
+      m_function = Function::Create( m_code, m_astOperator->getSymbolName( m_context->getCGManager() ) );
       
       markForRecompile();
     }
@@ -151,7 +152,6 @@ namespace Fabric
       std::vector<std::string> &errors,
       Prototype *prototype,
       Scope const &scope,
-      size_t *newSize,
       unsigned prefixCount,
       void * const *prefixes
       ) const
@@ -169,7 +169,7 @@ namespace Fabric
       
       RC::Handle<MT::ParallelCall> result;
       if ( m_astOperator && m_function )
-        result = prototype->bind( errors, m_astOperator, scope, m_function, newSize, prefixCount, prefixes );
+        result = prototype->bind( errors, m_astOperator, scope, m_function, prefixCount, prefixes );
       return result;
     }
     
@@ -278,18 +278,23 @@ namespace Fabric
       FABRIC_ASSERT( m_code );
 
       RC::ConstHandle<AST::GlobalList> ast = m_code->getAST();
-      std::vector< RC::ConstHandle<AST::Function> > functions;
-      ast->collectFunctions( functions );
-      for ( std::vector< RC::ConstHandle<AST::Function> >::const_iterator it=functions.begin(); it!=functions.end(); ++it )
+      std::vector< RC::ConstHandle<AST::FunctionBase> > functionBases;
+      ast->collectFunctionBases( functionBases );
+      for ( std::vector< RC::ConstHandle<AST::FunctionBase> >::const_iterator it=functionBases.begin(); it!=functionBases.end(); ++it )
       {
-        RC::ConstHandle<AST::Function> const &function = *it;
+        RC::ConstHandle<AST::FunctionBase> const &functionBase = *it;
         
-        std::string const *friendlyName = function->getFriendlyName( m_context->getCGManager() );
-        if ( friendlyName && *friendlyName == m_entryFunctionName )
+        if ( functionBase->isFunction() )
         {
-          if( !function->isOperator() )
-            throw Exception( "attempting to use a function " + _(m_entryFunctionName) + " instead of an operator" );
-          m_astOperator = RC::ConstHandle<AST::Operator>::StaticCast( function );
+          RC::ConstHandle<AST::Function> function = RC::ConstHandle<AST::Function>::StaticCast( functionBase );
+          
+          std::string const &declaredName = function->getDeclaredName();
+          if ( declaredName == m_entryFunctionName )
+          {
+            if( !function->isOperator() )
+              throw Exception( "attempting to use a function " + _(m_entryFunctionName) + " instead of an operator" );
+            m_astOperator = RC::ConstHandle<AST::Operator>::StaticCast( function );
+          }
         }
       }
 

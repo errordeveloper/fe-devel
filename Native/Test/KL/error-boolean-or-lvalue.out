@@ -1,1 +1,1 @@
-error-boolean-or-lvalue.kl:10:8: error: calling function 'foo': parameter 1: the result of a boolean 'or' operation cannot be an l-value
+error-boolean-or-lvalue.kl:10:3: error: no definition found for function foo(Integer)

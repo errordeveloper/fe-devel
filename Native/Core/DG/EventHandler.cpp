@@ -321,7 +321,7 @@ namespace Fabric
         {
           RC::Handle<Binding> binding = m_preDescendBindings->get(i);
           std::vector<std::string> errors;
-          task->m_evaluateParallelCallsPerOperator[ i ] = binding->bind( errors, selfScope, 0 );
+          task->m_evaluateParallelCallsPerOperator[ i ] = binding->bind( errors, selfScope );
         }
         taskGroup.add(task);
       }
@@ -342,7 +342,7 @@ namespace Fabric
         {
           RC::Handle<Binding> binding = m_postDescendBindings->get(i);
           std::vector<std::string> errors;
-          task->m_evaluateParallelCallsPerOperator[ i ] = binding->bind( errors, selfScope, 0 );
+          task->m_evaluateParallelCallsPerOperator[ i ] = binding->bind( errors, selfScope );
         }
         taskGroup.add(task);
       }
@@ -356,7 +356,7 @@ namespace Fabric
         EventHandlerTask* task = new EventHandlerTask( this, &EventHandler::evaluateLocal, node, selectorType );
         void *prefixes[2] = { &task->m_shouldSelect, &task->m_selectedNode.data[0] };
         std::vector<std::string> errors;
-        task->m_selectParallelCall = m_selectBinding->bind( errors, bindingsScope, 0, 2, prefixes );
+        task->m_selectParallelCall = m_selectBinding->bind( errors, bindingsScope, 2, prefixes );
         taskGroup.add(task);
       }
     }
@@ -380,7 +380,7 @@ namespace Fabric
         RC::Handle<Binding> binding = m_preDescendBindings->get(i);
         std::string const errorPrefix = "pre-descend operator " + _(i) + ": ";
         std::vector<std::string> preDescendBindingsErrors;
-        binding->bind( preDescendBindingsErrors, selfScope, 0 );
+        binding->bind( preDescendBindingsErrors, selfScope );
         for ( size_t i=0; i<preDescendBindingsErrors.size(); ++i )
           errors.push_back( errorPrefix + preDescendBindingsErrors[i] );
       }
@@ -397,7 +397,7 @@ namespace Fabric
         RC::Handle<Binding> binding = m_postDescendBindings->get(i);
         std::string const errorPrefix = "post-descend operator " + _(i) + ": ";
         std::vector<std::string> postDescendBindingsErrors;
-        binding->bind( postDescendBindingsErrors, selfScope, 0 );
+        binding->bind( postDescendBindingsErrors, selfScope );
         for ( size_t i=0; i<postDescendBindingsErrors.size(); ++i )
           errors.push_back( errorPrefix + postDescendBindingsErrors[i] );
       }
@@ -407,7 +407,7 @@ namespace Fabric
         void *prefixes[2] = { 0, 0 };
         std::string const errorPrefix = "selector: ";
         std::vector<std::string> selectBindingErrors;
-        m_selectBinding->bind( selectBindingErrors, bindingsScope, 0, 2, prefixes );
+        m_selectBinding->bind( selectBindingErrors, bindingsScope, 2, prefixes );
         for ( size_t i=0; i<selectBindingErrors.size(); ++i )
           errors.push_back( errorPrefix + selectBindingErrors[i] );
       }

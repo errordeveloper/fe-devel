@@ -33,7 +33,7 @@ namespace Fabric
     
       virtual void appendJSON( JSON::Encoder const &encoder, bool includeLocation ) const;
     
-      virtual bool isFunction() const { return false; }
+      virtual bool isFunctionBase() const { return false; }
       
       virtual void collectUses( UseNameToLocationMap &uses ) const;
       virtual void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const = 0;

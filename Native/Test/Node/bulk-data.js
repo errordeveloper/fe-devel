@@ -9,7 +9,7 @@ console.log(JSON.stringify(node.getSliceBulkData(0)));
 node.setBulkData({foo:[42],bar:["fred"],baz:[[4.5,3.6]]});
 console.log(JSON.stringify(node.getBulkData()));
 console.log(JSON.stringify(node.getSliceBulkData(0)));
-node.setCount(2);
+node.resize(2);
 console.log(JSON.stringify(node.getBulkData()));
 console.log(JSON.stringify(node.getSliceBulkData(0)));
 console.log(JSON.stringify(node.getSliceBulkData(1)));

@@ -49,15 +49,15 @@ namespace Fabric
       m_child->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> CreateConstArray::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType CreateConstArray::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> childAdapter = m_child->getType( basicBlockBuilder );
-      if ( !RT::isArray( childAdapter->getType() ) )
+      CG::ExprType childExprType = m_child->getExprType( basicBlockBuilder );
+      if ( !RT::isArray( childExprType.getAdapter()->getType() ) )
         throw CG::Error( getLocation(), "parameter must be an array" );
-      RC::ConstHandle<CG::ArrayAdapter> arrayAdapter = RC::ConstHandle<CG::ArrayAdapter>::StaticCast( childAdapter );
+      RC::ConstHandle<CG::ArrayAdapter> arrayAdapter = RC::ConstHandle<CG::ArrayAdapter>::StaticCast( childExprType.getAdapter() );
       RC::ConstHandle<CG::Adapter> elementAdapter = arrayAdapter->getMemberAdapter();
       RC::ConstHandle<CG::ArrayProducerAdapter> arrayProducerAdapter = basicBlockBuilder.getManager()->getArrayProducerOf( elementAdapter );
-      return arrayProducerAdapter;
+      return CG::ExprType( arrayProducerAdapter, CG::USAGE_RVALUE );
     }
     
     CG::ExprValue CreateConstArray::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -65,10 +65,10 @@ namespace Fabric
       if ( usage == CG::USAGE_LVALUE )
         throw Exception( "cannot be used as l-values" );
       
-      RC::ConstHandle<CG::Adapter> childAdapter = m_child->getType( basicBlockBuilder );
-      if ( !RT::isArray( childAdapter->getType() ) )
+      CG::ExprType childExprType = m_child->getExprType( basicBlockBuilder );
+      if ( !RT::isArray( childExprType.getAdapter()->getType() ) )
         throw CG::Error( getLocation(), "parameter must be an array" );
-      RC::ConstHandle<CG::ArrayAdapter> arrayAdapter = RC::ConstHandle<CG::ArrayAdapter>::StaticCast( childAdapter );
+      RC::ConstHandle<CG::ArrayAdapter> arrayAdapter = RC::ConstHandle<CG::ArrayAdapter>::StaticCast( childExprType.getAdapter() );
       RC::ConstHandle<CG::Adapter> elementAdapter = arrayAdapter->getMemberAdapter();
       RC::ConstHandle<CG::ArrayProducerAdapter> arrayProducerAdapter = basicBlockBuilder.getManager()->getArrayProducerOf( elementAdapter );
       

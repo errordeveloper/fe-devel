@@ -6,25 +6,44 @@
 #define _FABRIC_UTIL_PARSE_H
 
 #include <string>
+#include <string.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 namespace Fabric
 {
   namespace Util
   {
-    size_t parseSize( char const *data, size_t length );
-    size_t parseSize( char const *cString );
-    size_t parseSize( std::string const &string );
+    uint64_t parseUInt64( char const *data, size_t length );
+    inline uint64_t parseUInt64( char const *cString )
+    {
+      return parseUInt64( cString, strlen(cString) );
+    }
+    inline uint64_t parseUInt64( std::string const &string )
+    {
+      return parseUInt64( string.data(), string.length() );
+    }
     
-    float parseFloat( char const *data, size_t length );
-    float parseFloat( char const *cString );
-    float parseFloat( std::string const &string );
+    double parseDouble( char const *data, size_t length );
+    inline double parseDouble( char const *cString )
+    {
+      return atof( cString );
+    }
+    inline double parseDouble( std::string const &string )
+    {
+      return atof( string.c_str() );
+    }
 
     std::string parseQuotedString( char const *data, size_t length );
-    std::string parseQuotedString( char const *cString );
-    std::string parseQuotedString( std::string const &string );
-    
-    size_t parseHex( char const *data, size_t length );
-  };
-};
+    inline std::string parseQuotedString( char const *cString )
+    {
+      return parseQuotedString( cString, strlen(cString) );
+    }
+    inline std::string parseQuotedString( std::string const &string )
+    {
+      return parseQuotedString( string.data(), string.length() );
+    }
+  }
+}
 
 #endif //_FABRIC_UTIL_PARSE_H

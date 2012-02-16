@@ -28,7 +28,7 @@ operator entry() {
   vp = createValueMap(
     createConstValue( 2 ),
     multByShared,
-    createConstValue( 2.71 )
+    createConstValue( Scalar(2.71) )
     );
   report vp;
   report vp.produce();

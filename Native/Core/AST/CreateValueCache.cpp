@@ -47,9 +47,9 @@ namespace Fabric
       m_input->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> CreateValueCache::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType CreateValueCache::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return m_input->getType( basicBlockBuilder );
+      return m_input->getExprType( basicBlockBuilder );
     }
     
     CG::ExprValue CreateValueCache::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -60,10 +60,10 @@ namespace Fabric
       RC::Handle<CG::Context> context = basicBlockBuilder.getContext();
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
       
-      RC::ConstHandle<CG::Adapter> inputAdapter = m_input->getType( basicBlockBuilder );
-      if ( !RT::isValueProducer( inputAdapter->getType() ) )
+      CG::ExprType inputExprType = m_input->getExprType( basicBlockBuilder );
+      if ( !RT::isValueProducer( inputExprType.getAdapter()->getType() ) )
         throw CG::Error( getLocation(), "input must be a value producer" );
-      RC::ConstHandle<CG::ValueProducerAdapter> valueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( inputAdapter );
+      RC::ConstHandle<CG::ValueProducerAdapter> valueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( inputExprType.getAdapter() );
       RC::ConstHandle<CG::Adapter> valueAdapter = valueProducerAdapter->getValueAdapter();
      
       CG::ExprValue inputExprRValue = m_input->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, lValueErrorDesc );

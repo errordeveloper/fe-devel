@@ -92,7 +92,6 @@ namespace Fabric
         std::vector<std::string> &errors,
         Prototype *prototype,
         Scope const &scope,
-        size_t *newSize,
         unsigned prefixCount,
         void * const *prefixes
         ) const;

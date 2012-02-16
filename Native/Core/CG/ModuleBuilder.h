@@ -5,6 +5,7 @@
 #ifndef _FABRIC_CG_MODULE_BUILDER_H
 #define _FABRIC_CG_MODULE_BUILDER_H
 
+#include <Fabric/Core/CG/PencilSymbol.h>
 #include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Base/RC/Handle.h>
 
@@ -49,8 +50,42 @@ namespace Fabric
       
       bool haveCompiledToModule( std::string const &codeName );
       
-      void addFunction( std::string const &entryName, RC::ConstHandle<FunctionSymbol> const &functionSymbol, std::string const *friendlyName = 0 );
-      RC::ConstHandle<FunctionSymbol> maybeGetFunction( std::string const &entryName ) const;
+      RC::ConstHandle<PencilSymbol> addFunction(
+        std::string const &pencilKey,
+        CG::Function const &function
+        );
+        
+      CG::Function const *maybeGetPreciseFunction(
+        std::string const &pencilKey,
+        ExprTypeVector const &argTypes
+        ) const;
+        
+      CG::Function const *getPreciseFunction(
+        CG::Location const &location,
+        std::string const &pencilKey,
+        ExprTypeVector const &argTypes,
+        std::string const &desc
+        ) const;
+
+      CG::Function const *maybeGetFunction(
+        CG::Location const &location,
+        std::string const &pencilKey,
+        ExprTypeVector const &argTypes,
+        std::string const &desc
+        ) const;
+        
+      CG::Function const *getFunction(
+        CG::Location const &location,
+        std::string const &pencilKey,
+        ExprTypeVector const &argTypes,
+        std::string const &desc
+        ) const;
+      
+      CG::Function const *getUniqueFunction(
+        CG::Location const &location,
+        std::string const &pencilKey,
+        std::string const &desc
+        ) const;
 
       RC::ConstHandle<Adapter> maybeGetAdapter( std::string const &userName ) const;
       RC::ConstHandle<Adapter> getAdapter( std::string const &userName, CG::Location const &location );
@@ -68,10 +103,10 @@ namespace Fabric
       {
         return m_compileOptions;
       }
-      
+    
     private:
     
-      typedef std::map< std::string, RC::ConstHandle<FunctionSymbol> > Functions;
+      typedef std::map< std::string, RC::Handle<PencilSymbol> > Pencils;
     
       RC::Handle<Manager> m_manager;     
       RC::Handle<Context> m_context; 
@@ -79,7 +114,7 @@ namespace Fabric
       ModuleScope m_moduleScope;
       std::set<std::string> m_havePreparedModule;
       std::set<std::string> m_haveCompiledToModule;
-      Functions m_functions;
+      Pencils m_pencils;
       std::map< std::string, std::string > m_destructorNames;
       CompileOptions const *m_compileOptions;
     };

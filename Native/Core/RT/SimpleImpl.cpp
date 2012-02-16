@@ -22,6 +22,11 @@ namespace Fabric
       return true;
     }
 
+    bool SimpleImpl::isNoAliasSafe() const
+    {
+      return true;
+    }
+
     bool SimpleImpl::isExportable() const
     {
       return true;

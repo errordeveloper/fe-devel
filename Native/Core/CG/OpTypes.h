@@ -91,22 +91,22 @@ namespace Fabric
       if ( binOpCodeNames.empty() )
       {
         binOpCodeNames.resize( NUM_BIN_OPS );
-        binOpCodeNames[BIN_OP_ADD] = "ADD";
-        binOpCodeNames[BIN_OP_SUB] = "SUB";
-        binOpCodeNames[BIN_OP_MUL] = "MUL";
-        binOpCodeNames[BIN_OP_DIV] = "DIV";
-        binOpCodeNames[BIN_OP_MOD] = "MOD";
-        binOpCodeNames[BIN_OP_EQ] = "EQ";
-        binOpCodeNames[BIN_OP_NE] = "NE";
-        binOpCodeNames[BIN_OP_LT] = "LT";
-        binOpCodeNames[BIN_OP_LE] = "LE";
-        binOpCodeNames[BIN_OP_GT] = "GT";
-        binOpCodeNames[BIN_OP_GE] = "GE";
-        binOpCodeNames[BIN_OP_BIT_OR] = "BIT_OR";
-        binOpCodeNames[BIN_OP_BIT_AND] = "BIT_AND";
-        binOpCodeNames[BIN_OP_BIT_XOR] = "BIT_XOR";
-        binOpCodeNames[BIN_OP_SHL] = "SHL";
-        binOpCodeNames[BIN_OP_SHR] = "SHR";
+        binOpCodeNames[BIN_OP_ADD] = "add";
+        binOpCodeNames[BIN_OP_SUB] = "sub";
+        binOpCodeNames[BIN_OP_MUL] = "mul";
+        binOpCodeNames[BIN_OP_DIV] = "div";
+        binOpCodeNames[BIN_OP_MOD] = "mod";
+        binOpCodeNames[BIN_OP_EQ] = "eq";
+        binOpCodeNames[BIN_OP_NE] = "ne";
+        binOpCodeNames[BIN_OP_LT] = "lt";
+        binOpCodeNames[BIN_OP_LE] = "le";
+        binOpCodeNames[BIN_OP_GT] = "gt";
+        binOpCodeNames[BIN_OP_GE] = "ge";
+        binOpCodeNames[BIN_OP_BIT_OR] = "bit_or";
+        binOpCodeNames[BIN_OP_BIT_AND] = "bit_and";
+        binOpCodeNames[BIN_OP_BIT_XOR] = "bit_xor";
+        binOpCodeNames[BIN_OP_SHL] = "shl";
+        binOpCodeNames[BIN_OP_SHR] = "shr";
       }
       std::string const &result = binOpCodeNames[binOpType];
       FABRIC_ASSERT( result.length() > 0 );
@@ -183,25 +183,53 @@ namespace Fabric
       ASSIGN_OP_BIT_XOR,
       ASSIGN_OP_SHL,
       ASSIGN_OP_SHR,
+      NUM_ASSIGN_OPS
     };
     
-    inline char const *assignOpTypeDesc( AssignOpType assignOpType )
+    inline std::string const &assignOpCodeName( AssignOpType assignOpType )
     {
-      switch ( assignOpType )
+      static std::vector<std::string> assignOpCodeNames;
+      if ( assignOpCodeNames.empty() )
       {
-        case ASSIGN_OP: return "ASSIGN_OP";
-        case ASSIGN_OP_ADD: return "ASSIGN_OP_ADD";
-        case ASSIGN_OP_SUB: return "ASSIGN_OP_SUB";
-        case ASSIGN_OP_MUL: return "ASSIGN_OP_MUL";
-        case ASSIGN_OP_DIV: return "ASSIGN_OP_DIV";
-        case ASSIGN_OP_MOD: return "ASSIGN_OP_MOD";
-        case ASSIGN_OP_BIT_OR: return "ASSIGN_OP_BIT_OR";
-        case ASSIGN_OP_BIT_AND: return "ASSIGN_OP_BIT_AND";
-        case ASSIGN_OP_BIT_XOR: return "ASSIGN_OP_BIT_XOR";
-        case ASSIGN_OP_SHL: return "ASSIGN_OP_SHL";
-        case ASSIGN_OP_SHR: return "ASSIGN_OP_SHR";
+        assignOpCodeNames.resize( NUM_ASSIGN_OPS );
+        assignOpCodeNames[ASSIGN_OP] = "reg";
+        assignOpCodeNames[ASSIGN_OP_ADD] = "add";
+        assignOpCodeNames[ASSIGN_OP_SUB] = "sub";
+        assignOpCodeNames[ASSIGN_OP_MUL] = "mul";
+        assignOpCodeNames[ASSIGN_OP_DIV] = "div";
+        assignOpCodeNames[ASSIGN_OP_MOD] = "mod";
+        assignOpCodeNames[ASSIGN_OP_BIT_OR] = "bit_or";
+        assignOpCodeNames[ASSIGN_OP_BIT_AND] = "bit_and";
+        assignOpCodeNames[ASSIGN_OP_BIT_XOR] = "bit_xor";
+        assignOpCodeNames[ASSIGN_OP_SHL] = "shl";
+        assignOpCodeNames[ASSIGN_OP_SHR] = "shr";
       }
-      return "<unknown>";
+      std::string const &result = assignOpCodeNames[assignOpType];
+      FABRIC_ASSERT( result.length() > 0 );
+      return result;
+    }
+    
+    inline std::string const &assignOpUserName( AssignOpType assignOpType )
+    {
+      static std::vector<std::string> assignOpCodeNames;
+      if ( assignOpCodeNames.empty() )
+      {
+        assignOpCodeNames.resize( NUM_ASSIGN_OPS );
+        assignOpCodeNames[ASSIGN_OP] = "=";
+        assignOpCodeNames[ASSIGN_OP_ADD] = "+=";
+        assignOpCodeNames[ASSIGN_OP_SUB] = "-=";
+        assignOpCodeNames[ASSIGN_OP_MUL] = "*=";
+        assignOpCodeNames[ASSIGN_OP_DIV] = "/=";
+        assignOpCodeNames[ASSIGN_OP_MOD] = "%=";
+        assignOpCodeNames[ASSIGN_OP_BIT_OR] = "|=";
+        assignOpCodeNames[ASSIGN_OP_BIT_AND] = "&=";
+        assignOpCodeNames[ASSIGN_OP_BIT_XOR] = "^=";
+        assignOpCodeNames[ASSIGN_OP_SHL] = "<<=";
+        assignOpCodeNames[ASSIGN_OP_SHR] = ">>=";
+      }
+      std::string const &result = assignOpCodeNames[assignOpType];
+      FABRIC_ASSERT( result.length() > 0 );
+      return result;
     }
     
     inline BinOpType binOpForAssignOp( AssignOpType assignOpType )

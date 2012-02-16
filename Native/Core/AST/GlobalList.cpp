@@ -104,14 +104,14 @@ namespace Fabric
         m_after->llvmCompileToModule( moduleBuilder, diagnostics, buildFunctions );
     }
 
-    void GlobalList::collectFunctions( std::vector< RC::ConstHandle<AST::Function> > &result ) const
+    void GlobalList::collectFunctionBases( std::vector< RC::ConstHandle<AST::FunctionBase> > &result ) const
     {
       if ( m_before )
-        m_before->collectFunctions( result );
-      if ( !!m_global && m_global->isFunction() )
-        result.push_back( RC::ConstHandle<AST::Function>::StaticCast( m_global ) );
+        m_before->collectFunctionBases( result );
+      if ( m_global && m_global->isFunctionBase() )
+        result.push_back( RC::ConstHandle<AST::FunctionBase>::StaticCast( m_global ) );
       if ( m_after )
-        m_after->collectFunctions( result );
+        m_after->collectFunctionBases( result );
     }
   };
 };

@@ -5,9 +5,11 @@
 #ifndef _FABRIC_CG_EXPR_TYPE_H
 #define _FABRIC_CG_EXPR_TYPE_H
 
+#include <Fabric/Core/CG/Adapter.h>
 #include <Fabric/Base/RC/ConstHandle.h>
 
 #include <string>
+#include <vector>
 
 namespace Fabric
 {
@@ -19,8 +21,6 @@ namespace Fabric
   
   namespace CG
   {
-    class Adapter;
-    
     enum Usage
     {
       USAGE_UNSPECIFIED,
@@ -50,8 +50,6 @@ namespace Fabric
     public:
     
       ExprType();
-      ExprType( RC::ConstHandle<Adapter> const &adapter );
-      ExprType( Usage usage );
       ExprType( RC::ConstHandle<Adapter> const &adapter, Usage usage );
       ExprType( ExprType const &that );
       ~ExprType();
@@ -73,17 +71,52 @@ namespace Fabric
       std::string const &getUserName() const;
       std::string const &getCodeName() const;
       
-      std::string desc() const;
-      
       bool operator ==( ExprType const &that ) const;
       bool operator !=( ExprType const &that ) const;
     };
-  };
-  
-  inline std::string _( CG::ExprType const &exprType )
-  {
-    return exprType.desc();
+    
+    class ExprTypeVector : public std::vector<ExprType>
+    {
+    public:
+    
+      ExprTypeVector()
+      {
+      }
+      
+      ExprTypeVector( ExprType const &exprType1 )
+      {
+        push_back( exprType1 );
+      }
+      
+      ExprTypeVector( ExprType const &exprType1, ExprType const &exprType2 )
+      {
+        push_back( exprType1 );
+        push_back( exprType2 );
+      }
+      
+      ExprTypeVector(
+        ExprType const &first,
+        ExprTypeVector const &rest
+        )
+      {
+        reserve( 1 + rest.size() );
+        push_back( first );
+        for ( ExprTypeVector::const_iterator it=rest.begin(); it!=rest.end(); ++it )
+          push_back( *it );
+      }
+      
+      AdapterVector getAdapters() const
+      {
+        AdapterVector result;
+        result.reserve( size() );
+        for ( const_iterator it=begin(); it!=end(); ++it )
+          result.push_back( it->getAdapter() );
+        return result;
+      }
+      
+      std::string desc() const;
+    };
   }
-};
+}
 
 #endif //_FABRIC_CG_EXPR_TYPE_H

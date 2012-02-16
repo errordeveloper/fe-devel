@@ -63,12 +63,7 @@ namespace Fabric
       RC::Handle<Context> m_context;
       llvm::Value *m_value;
     };
-  };
-  
-  inline std::string _( CG::ExprValue const &exprValue )
-  {
-    return exprValue.desc();
   }
-};
+}
 
 #endif //_FABRIC_CG_EXPR_VALUE_H

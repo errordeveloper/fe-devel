@@ -16,11 +16,6 @@ eh = F.DG.createEventHandler("eventHandler");
 e.appendEventHandler(eh);
 console.log(JSON.stringify(mapNamedObjectsToNames(e.getEventHandlers())));
 
-console.log(e.getDidFireCallback());
-e.setDidFireCallback(function () {
-  console.log(this.getName() + " fired");
-});
-console.log(e.getDidFireCallback());
 e.fire();
 
 F.close();

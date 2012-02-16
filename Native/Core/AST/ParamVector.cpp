@@ -42,9 +42,9 @@ namespace Fabric
         (*it)->appendJSON( jsonArrayEncoder.makeElement(), includeLocation );
     }
       
-    std::vector<CG::FunctionParam> ParamVector::getFunctionParams( RC::Handle<CG::Manager> const &cgManager ) const
+    CG::ParamVector ParamVector::getFunctionParams( RC::Handle<CG::Manager> const &cgManager ) const
     {
-      std::vector<CG::FunctionParam> result;
+      CG::ParamVector result;
       for ( size_t i=0; i<size(); ++i )
         result.push_back( get(i)->getFunctionParam( cgManager ) );
       return result;
@@ -58,17 +58,17 @@ namespace Fabric
       return result;
     }
     
-    std::vector< RC::ConstHandle<CG::Adapter> > ParamVector::getAdapters( RC::Handle<CG::Manager> const &cgManager ) const
+    CG::AdapterVector ParamVector::getAdapters( RC::Handle<CG::Manager> const &cgManager ) const
     {
-      std::vector< RC::ConstHandle<CG::Adapter> > result;
+      CG::AdapterVector result;
       for ( size_t i=0; i<size(); ++i )
         result.push_back( get(i)->getAdapter( cgManager ) );
       return result;
     }
     
-    std::vector<CG::ExprType> ParamVector::getExprTypes( RC::Handle<CG::Manager> const &cgManager ) const
+    CG::ExprTypeVector ParamVector::getExprTypes( RC::Handle<CG::Manager> const &cgManager ) const
     {
-      std::vector<CG::ExprType> result;
+      CG::ExprTypeVector result;
       for ( size_t i=0; i<size(); ++i )
         result.push_back( get(i)->getExprType( cgManager ) );
       return result;

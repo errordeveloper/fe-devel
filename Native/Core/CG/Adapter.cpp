@@ -12,7 +12,7 @@
 #include "FunctionBuilder.h"
 #include "BasicBlockBuilder.h"
 #include "OpTypes.h"
-#include "OverloadNames.h"
+#include <Fabric/Core/CG/Mangling.h>
 
 #include <Fabric/Core/RT/Desc.h>
 #include <Fabric/Core/RT/Impl.h>
@@ -34,6 +34,11 @@ namespace Fabric
       , m_flags( flags )
       , m_codeName( desc->getImpl()->getCodeName() )
     {
+    }
+    
+    bool Adapter::isEquivalentTo( RC::ConstHandle<Adapter> const &that ) const
+    {
+      return getImpl() == that->getImpl();
     }
     
     RT::ImplType Adapter::getType() const
@@ -121,14 +126,17 @@ namespace Fabric
     void Adapter::llvmAssign( BasicBlockBuilder &basicBlockBuilder, llvm::Value *dstLValue, llvm::Value *srcRValue ) const
     {
       // [pzion 20110204] Start by looking for operator overload
-      std::string name = methodOverloadName( assignOpMethodName( ASSIGN_OP ), this, this );
-      RC::ConstHandle<FunctionSymbol> functionSymbol = basicBlockBuilder.maybeGetFunction( name );
-      if ( functionSymbol )
-      {
-        ExprValue dstExprValue = ExprValue( this, USAGE_LVALUE, basicBlockBuilder.getContext(), dstLValue );
-        ExprValue srcExprValue = ExprValue( this, USAGE_RVALUE, basicBlockBuilder.getContext(), srcRValue );
-        functionSymbol->llvmCreateCall( basicBlockBuilder, dstExprValue, srcExprValue );
-      }
+      ExprValue dstExprValue = ExprValue( this, USAGE_LVALUE, basicBlockBuilder.getContext(), dstLValue );
+      ExprValue srcExprValue = ExprValue( this, USAGE_RVALUE, basicBlockBuilder.getContext(), srcRValue );
+      Function const *function = basicBlockBuilder.getModuleBuilder().maybeGetPreciseFunction(
+        CG::AssignOpPencilKey( this, ASSIGN_OP ),
+        CG::ExprTypeVector(
+          dstExprValue.getExprType(),
+          srcExprValue.getExprType()
+          )
+        );
+      if ( function )
+        function->llvmCreateCall( basicBlockBuilder, dstExprValue, srcExprValue );
       else llvmDefaultAssign( basicBlockBuilder, dstLValue, srcRValue );
     }
     
@@ -161,10 +169,20 @@ namespace Fabric
       }
       else
       {
-        std::string name = constructOverloadName( this, exprValue.getAdapter() );
         exprValue.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-        RC::ConstHandle<FunctionSymbol> functionSymbol = basicBlockBuilder.maybeGetFunction( name );
-        if ( !functionSymbol )
+
+        CG::ExprType thisType( this, CG::USAGE_LVALUE );
+        CG::ExprTypeVector argTypes;
+        argTypes.push_back( CG::ExprType( exprValue.getAdapter(), CG::USAGE_RVALUE ) );
+        
+        CG::Function const *function = basicBlockBuilder.getModuleBuilder().maybeGetPreciseFunction(
+          CG::ConstructorPencilKey( this ),
+          CG::ExprTypeVector(
+            thisType,
+            argTypes
+            )
+          );
+        if ( !function )
           throw Exception( "no cast exists from " + exprValue.getTypeUserName() + " to " + getUserName() );
         
         llvm::Value *srcRValue = 0;
@@ -185,7 +203,7 @@ namespace Fabric
         llvm::Value *dstLValue = llvmAlloca( basicBlockBuilder, "castTo"+getUserName() );
         llvmInit( basicBlockBuilder, dstLValue );
         ExprValue dstExprValue( this, USAGE_LVALUE, basicBlockBuilder.getContext(), dstLValue );
-        functionSymbol->llvmCreateCall( basicBlockBuilder, dstExprValue, srcExprValue );
+        function->llvmCreateCall( basicBlockBuilder, dstExprValue, srcExprValue );
         basicBlockBuilder.getScope().put( VariableSymbol::Create( dstExprValue ) );
         llvm::Value *dstRValue = llvmLValueToRValue( basicBlockBuilder, dstLValue );
         return dstRValue;

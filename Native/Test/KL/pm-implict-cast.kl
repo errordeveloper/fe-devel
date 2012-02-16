@@ -1,0 +1,12 @@
+function testRValue( Boolean boolean ) {
+  report "testRValue: " + boolean;
+}
+
+operator entry() {
+  testRValue(42);
+  testRValue(0);
+
+  Scalar one = 1.0, zero = 0.0;
+  testRValue(one);
+  testRValue(zero);
+}

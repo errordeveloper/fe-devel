@@ -28,7 +28,7 @@ namespace Fabric
   namespace AST
   {
     class Destructor;
-    class Function;
+    class FunctionBase;
     class Global;
     class UseNameToLocationMap;
     
@@ -45,7 +45,7 @@ namespace Fabric
       void collectUses( UseNameToLocationMap &uses ) const;
       void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
       void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctions ) const;
-      void collectFunctions( std::vector< RC::ConstHandle<AST::Function> > &result ) const;
+      void collectFunctionBases( std::vector< RC::ConstHandle<AST::FunctionBase> > &result ) const;
     
     protected:
     

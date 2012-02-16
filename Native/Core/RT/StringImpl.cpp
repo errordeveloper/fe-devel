@@ -92,6 +92,11 @@ namespace Fabric
       return false;
     }
 
+    bool StringImpl::isNoAliasSafe() const
+    {
+      return true;
+    }
+
     size_t StringImpl::hash( void const *data ) const
     {
       // [pzion 20111014] This hash function is referred to as djb2.

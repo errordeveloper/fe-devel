@@ -43,28 +43,28 @@ namespace Fabric
       m_indexExpr->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> IndexOp::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType IndexOp::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> exprType = m_expr->getType( basicBlockBuilder );
-      exprType->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+      CG::ExprType exprType = m_expr->getExprType( basicBlockBuilder );
+      exprType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
       
-      if ( RT::isArray( exprType->getType() ) )
+      if ( RT::isArray( exprType.getAdapter()->getType() ) )
       {
-        RC::ConstHandle<CG::ArrayAdapter> arrayType = RC::ConstHandle<CG::ArrayAdapter>::StaticCast( exprType );
+        RC::ConstHandle<CG::ArrayAdapter> arrayType = RC::ConstHandle<CG::ArrayAdapter>::StaticCast( exprType.getAdapter() );
         
         RC::ConstHandle<CG::Adapter> memberAdapter = arrayType->getMemberAdapter();
         memberAdapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-        return memberAdapter;
+        return CG::ExprType( memberAdapter, exprType.getUsage() );
       }
-      else if ( RT::isDict( exprType->getType() ) )
+      else if ( RT::isDict( exprType.getAdapter()->getType() ) )
       {
-        RC::ConstHandle<CG::DictAdapter> dictType = RC::ConstHandle<CG::DictAdapter>::StaticCast( exprType );
+        RC::ConstHandle<CG::DictAdapter> dictType = RC::ConstHandle<CG::DictAdapter>::StaticCast( exprType.getAdapter() );
         
         RC::ConstHandle<CG::Adapter> valueAdapter = dictType->getValueAdapter();
         valueAdapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-        return valueAdapter;
+        return CG::ExprType( valueAdapter, exprType.getUsage() );
       }
-      else throw Exception( "only arrays can be indexed" );
+      else throw Exception( "only arrays and dictionaries can be indexed" );
     }
     
     CG::ExprValue IndexOp::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const

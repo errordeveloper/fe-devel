@@ -54,18 +54,19 @@ namespace Fabric
         m_shared->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> CreateValueGenerator::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType CreateValueGenerator::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
       RC::ConstHandle<CG::Symbol> operatorSymbol = basicBlockBuilder.getScope().get( m_operatorName );
       if ( !operatorSymbol )
         throw CG::Error( getLocation(), _(m_operatorName) + ": operator not found" );
-      if ( !operatorSymbol->isFunction() )
+      if ( !operatorSymbol->isPencil() )
         throw CG::Error( getLocation(), _(m_operatorName) + ": not an operator" );
-      RC::ConstHandle<CG::FunctionSymbol> operator_ = RC::ConstHandle<CG::FunctionSymbol>::StaticCast( operatorSymbol );
-      std::vector<CG::FunctionParam> const &operatorParams = operator_->getParams();
+      RC::ConstHandle<CG::PencilSymbol> pencil = RC::ConstHandle<CG::PencilSymbol>::StaticCast( operatorSymbol );
+      CG::Function const *function = pencil->getUniqueFunction( getLocation(), "operator " + _(m_operatorName) );
+      std::vector<CG::FunctionParam> const &operatorParams = function->getParams();
       RC::ConstHandle<CG::Adapter> outputAdapter = operatorParams[0].getAdapter();
       RC::ConstHandle<CG::ValueProducerAdapter> outputValueProducerAdapter = basicBlockBuilder.getManager()->getValueProducerOf( outputAdapter );
-      return outputValueProducerAdapter;
+      return CG::ExprType( outputValueProducerAdapter, CG::USAGE_RVALUE );
     }
     
     CG::ExprValue CreateValueGenerator::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -80,10 +81,11 @@ namespace Fabric
       RC::ConstHandle<CG::Symbol> operatorSymbol = basicBlockBuilder.getScope().get( m_operatorName );
       if ( !operatorSymbol )
         throw CG::Error( getLocation(), _(m_operatorName) + ": operator not found" );
-      if ( !operatorSymbol->isFunction() )
+      if ( !operatorSymbol->isPencil() )
         throw CG::Error( getLocation(), _(m_operatorName) + ": not an operator" );
-      RC::ConstHandle<CG::FunctionSymbol> operator_ = RC::ConstHandle<CG::FunctionSymbol>::StaticCast( operatorSymbol );
-      std::vector<CG::FunctionParam> const &operatorParams = operator_->getParams();
+      RC::ConstHandle<CG::PencilSymbol> pencil = RC::ConstHandle<CG::PencilSymbol>::StaticCast( operatorSymbol );
+      CG::Function const *function = pencil->getUniqueFunction( getLocation(), "operator " + _(m_operatorName) );
+      std::vector<CG::FunctionParam> const &operatorParams = function->getParams();
       if ( operatorParams.size() < 1 )
         throw MR::ValueGeneratorOperator::GetPrototypeException();
 
@@ -118,7 +120,7 @@ namespace Fabric
         basicBlockBuilder->CreateCall4(
           func,
           basicBlockBuilder->CreateBitCast(
-            operator_->getLLVMFunction(),
+            function->getLLVMFunction(),
             llvm::Type::getInt8PtrTy( llvmContext )
             ),
           sizeAdapter->llvmConst( context, operatorParams.size() ),
@@ -128,10 +130,10 @@ namespace Fabric
       }
       else
       {
-        RC::ConstHandle<CG::Adapter> sharedAdapter_ = m_shared->getType( basicBlockBuilder );
-        if ( !RT::isValueProducer( sharedAdapter_->getType() ) )
+        CG::ExprType sharedExprType = m_shared->getExprType( basicBlockBuilder );
+        if ( !RT::isValueProducer( sharedExprType.getAdapter()->getType() ) )
           throw CG::Error( getLocation(), "shared must be a value producer" );
-        RC::ConstHandle<CG::ValueProducerAdapter> sharedValueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( sharedAdapter_ );
+        RC::ConstHandle<CG::ValueProducerAdapter> sharedValueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( sharedExprType.getAdapter() );
         RC::ConstHandle<CG::Adapter> sharedAdapter = sharedValueProducerAdapter->getValueAdapter();
         CG::ExprValue sharedExprRValue = m_shared->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, lValueErrorDesc );
         
@@ -153,7 +155,7 @@ namespace Fabric
         basicBlockBuilder->CreateCall5(
           func,
           basicBlockBuilder->CreateBitCast(
-            operator_->getLLVMFunction(),
+            function->getLLVMFunction(),
             llvm::Type::getInt8PtrTy( llvmContext )
             ),
           sizeAdapter->llvmConst( context, operatorParams.size() ),

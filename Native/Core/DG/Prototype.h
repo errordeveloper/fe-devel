@@ -58,7 +58,6 @@ namespace Fabric
         RC::ConstHandle<AST::Operator> const &astOperator,
         Scope const &scope,
         RC::ConstHandle<Function> const &function,
-        size_t *newSize,
         unsigned prefixCount=0,
         void * const *prefixes=0
         );
@@ -70,8 +69,8 @@ namespace Fabric
     private:
     
       class Param;
+      class ContainerParam;
       class SizeParam;
-      class NewSizeParam;
       class IndexParam;
       class MemberParam;
       class ElementParam;
@@ -85,6 +84,8 @@ namespace Fabric
       RC::ConstHandle<RT::Impl> m_rtSizeImpl;
       RC::ConstHandle<RT::Desc> m_rtIndexDesc;
       RC::ConstHandle<RT::Impl> m_rtIndexImpl;
+      RC::ConstHandle<RT::Desc> m_rtContainerDesc;
+      RC::ConstHandle<RT::Impl> m_rtContainerImpl;
     };
   };
 };

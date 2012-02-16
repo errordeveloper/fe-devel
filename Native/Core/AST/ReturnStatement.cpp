@@ -48,7 +48,7 @@ namespace Fabric
         {
           if ( !returnInfo )
             throw CG::Error( getLocation(), "functions with no return types do not return values" );
-          returnExprValue = m_expr->buildExprValue( basicBlockBuilder, returnInfo.getUsage(), "cannot be assigned to" );
+          returnExprValue = m_expr->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, "cannot be assigned to" );
         }
         else
         {

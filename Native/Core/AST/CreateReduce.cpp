@@ -61,18 +61,20 @@ namespace Fabric
         m_shared->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> CreateReduce::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType CreateReduce::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
       RC::ConstHandle<CG::Symbol> operatorSymbol = basicBlockBuilder.getScope().get( m_operatorName );
       if ( !operatorSymbol )
-        throw CG::Error( getLocation(), _(m_operatorName) + ": operator not found" );
-      if ( !operatorSymbol->isFunction() )
-        throw CG::Error( getLocation(), _(m_operatorName) + ": not an operator" );
-      RC::ConstHandle<CG::FunctionSymbol> operator_ = RC::ConstHandle<CG::FunctionSymbol>::StaticCast( operatorSymbol );
-      std::vector<CG::FunctionParam> const &operatorParams = operator_->getParams();
+        throw CG::Error( getLocation(), _(m_operatorName) + ": function not found" );
+      if ( !operatorSymbol->isPencil() )
+        throw CG::Error( getLocation(), _(m_operatorName) + ": not a function" );
+      RC::ConstHandle<CG::PencilSymbol> operator_ = RC::ConstHandle<CG::PencilSymbol>::StaticCast( operatorSymbol );
+      CG::Function const *function = operator_->getUniqueFunction( getLocation(), "operator " + _(m_operatorName) );
+      
+      std::vector<CG::FunctionParam> const &operatorParams = function->getParams();
       RC::ConstHandle<CG::Adapter> outputAdapter = operatorParams[1].getAdapter();
       RC::ConstHandle<CG::ValueProducerAdapter> outputValueProducerAdapter = basicBlockBuilder.getManager()->getValueProducerOf( outputAdapter );
-      return outputValueProducerAdapter;
+      return CG::ExprType( outputValueProducerAdapter, CG::USAGE_RVALUE );
     }
     
     CG::ExprValue CreateReduce::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -87,17 +89,18 @@ namespace Fabric
       RC::ConstHandle<CG::Symbol> operatorSymbol = basicBlockBuilder.getScope().get( m_operatorName );
       if ( !operatorSymbol )
         throw CG::Error( getLocation(), _(m_operatorName) + ": operator not found" );
-      if ( !operatorSymbol->isFunction() )
+      if ( !operatorSymbol->isPencil() )
         throw CG::Error( getLocation(), _(m_operatorName) + ": not an operator" );
-      RC::ConstHandle<CG::FunctionSymbol> operator_ = RC::ConstHandle<CG::FunctionSymbol>::StaticCast( operatorSymbol );
-      std::vector<CG::FunctionParam> const &operatorParams = operator_->getParams();
+      RC::ConstHandle<CG::PencilSymbol> operator_ = RC::ConstHandle<CG::PencilSymbol>::StaticCast( operatorSymbol );
+      CG::Function const *function = operator_->getUniqueFunction( getLocation(), "operator " + _(m_operatorName) );
+      CG::ParamVector const &operatorParams = function->getParams();
       if ( operatorParams.size() < 2 )
         throw MR::ArrayMapOperator::GetPrototypeException();
 
-      RC::ConstHandle<CG::Adapter> inputArrayProducerAdapter_ = m_input->getType( basicBlockBuilder );
-      if ( !RT::isArrayProducer( inputArrayProducerAdapter_->getType() ) )
+      CG::ExprType inputExprType = m_input->getExprType( basicBlockBuilder );
+      if ( !RT::isArrayProducer( inputExprType.getAdapter()->getType() ) )
         throw CG::Error( getLocation(), "input must be a value producer" );
-      RC::ConstHandle<CG::ArrayProducerAdapter> inputArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( inputArrayProducerAdapter_ );
+      RC::ConstHandle<CG::ArrayProducerAdapter> inputArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( inputExprType.getAdapter() );
       RC::ConstHandle<CG::Adapter> inputAdapter = inputArrayProducerAdapter->getElementAdapter();
       if ( operatorParams[0].getAdapter() != inputAdapter )
         throw CG::Error( getLocation(), "operator input value parameter type (" + operatorParams[0].getAdapter()->getUserName() + ") does not match input array producer element type (" + inputAdapter->getUserName() + ")" );
@@ -145,10 +148,10 @@ namespace Fabric
             if ( !m_shared )
               throw CG::Error( getLocation(), "operator takes a shared value but no shared value is provided" );
               
-            RC::ConstHandle<CG::Adapter> sharedAdapter_ = m_shared->getType( basicBlockBuilder );
-            if ( !RT::isValueProducer( sharedAdapter_->getType() ) )
+            CG::ExprType sharedExprType = m_shared->getExprType( basicBlockBuilder );
+            if ( !RT::isValueProducer( sharedExprType.getAdapter()->getType() ) )
               throw CG::Error( getLocation(), "shared value must be a value producer" );
-            RC::ConstHandle<CG::ValueProducerAdapter> sharedValueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( sharedAdapter_ );
+            RC::ConstHandle<CG::ValueProducerAdapter> sharedValueProducerAdapter = RC::ConstHandle<CG::ValueProducerAdapter>::StaticCast( sharedExprType.getAdapter() );
             RC::ConstHandle<CG::Adapter> sharedAdapter = sharedValueProducerAdapter->getValueAdapter();
 
             if ( operatorParams[4].getAdapter() != sharedAdapter )
@@ -170,7 +173,7 @@ namespace Fabric
             
             std::vector<llvm::Value *> args;
             args.push_back( basicBlockBuilder->CreateBitCast(
-              operator_->getLLVMFunction(),
+              function->getLLVMFunction(),
               llvm::Type::getInt8PtrTy( llvmContext )
               ) );
             args.push_back( sizeAdapter->llvmConst( context, operatorParams.size() ) );
@@ -198,7 +201,7 @@ namespace Fabric
         
         std::vector<llvm::Value *> args;
         args.push_back( basicBlockBuilder->CreateBitCast(
-          operator_->getLLVMFunction(),
+          function->getLLVMFunction(),
           llvm::Type::getInt8PtrTy( llvmContext )
           ) );
         args.push_back( sizeAdapter->llvmConst( context, operatorParams.size() ) );

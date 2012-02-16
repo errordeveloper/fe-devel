@@ -74,6 +74,12 @@ namespace Fabric
       }
     }
 
+    static void FinishFileJob( void *userdata )
+    {
+      FileStream *fileStream = static_cast<FileStream *>( userdata );
+      delete fileStream;
+    }
+
     void FileResourceProvider::get( char const *url, bool getAsFile, void* userData )
     {
       if( strncmp( "file:///", url, 8 ) != 0 )
@@ -102,7 +108,7 @@ namespace Fabric
         fileStream->m_mimeType = extension;
         fileStream->m_fullPath = fileWithPath;
         fileStream->m_userData = userData;
-        MT::ThreadPool::Instance()->executeParallelAsync( NULL, 1, ReadFileJob, fileStream, 0, 0, 0 );
+        MT::ThreadPool::Instance()->executeParallelAsync( NULL, 1, ReadFileJob, fileStream, 0, FinishFileJob, fileStream );
       }
     }
   };

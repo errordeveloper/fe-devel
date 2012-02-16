@@ -187,7 +187,7 @@ def _normalizeForUnitTests( obj ):
     objdictlist.sort()
     return objdictlist
   elif type( obj ) is float:
-    return format( obj, '.4f' )
+    return format( obj, '.3f' )
   else:
     return obj
 
@@ -843,8 +843,8 @@ class _DG( _NAMESPACE ):
       if 'members' in diff:
         self.__members = diff[ 'members' ]
 
-      if 'count' in diff:
-        self.__count = diff[ 'count' ]
+      if 'size' in diff:
+        self.__count = diff[ 'size' ]
 
     def _handle( self, cmd, arg ):
       if cmd == 'dataChange':
@@ -859,8 +859,17 @@ class _DG( _NAMESPACE ):
         self._dg._executeQueuedCommands()
       return self.__count
 
+    def size( self ):
+      if self.__count is None:
+        self._dg._executeQueuedCommands()
+      return self.__count
+
     def setCount( self, count ):
-      self._nObjQueueCommand( 'setCount', count )
+      self._nObjQueueCommand( 'resize', count )
+      self.__count = None
+
+    def resize( self, count ):
+      self._nObjQueueCommand( 'resize', count )
       self.__count = None
 
     def getMembers( self ):
@@ -1198,7 +1207,6 @@ class _DG( _NAMESPACE ):
   class _EVENT( _CONTAINER ):
     def __init__( self, dg, name ):
       super( _DG._EVENT, self ).__init__( dg, name )
-      self.__didFireCallback = None
       self.__eventHandlers = None
       self.__typeName = None
       self.__rt = dg._client.rt
@@ -1211,13 +1219,6 @@ class _DG( _NAMESPACE ):
         self.__eventHandlers = []
         for name in diff[ 'eventHandlers' ]:
           self.__eventHandlers.append( self._dg._namedObjects[ name ] )
-
-    def _handle( self, cmd, arg ):
-      if cmd == 'didFire':
-        if self.__didFireCallback is not None:
-          self.__didFireCallback( self )
-      else:
-        super( _DG._EVENT, self )._handle( cmd, arg )
 
     def getType( self ):
       return 'Event'
@@ -1253,12 +1254,6 @@ class _DG( _NAMESPACE ):
       self._nObjQueueCommand( 'select', self.__typeName, None, __callback )
       self._dg._executeQueuedCommands()
       return data
-
-    def getDidFireCallback( self ):
-      return self.__didFireCallback
-
-    def setDidFireCallback( self, callback ):
-      self.__didFireCallback = callback
 
   class _EVENTHANDLER( _CONTAINER ):
     def __init__( self, dg, name ):

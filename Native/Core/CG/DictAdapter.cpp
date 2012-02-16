@@ -12,9 +12,10 @@
 #include "OpaqueAdapter.h"
 #include "Manager.h"
 #include "ModuleBuilder.h"
-#include "FunctionBuilder.h"
+#include "ConstructorBuilder.h"
+#include "MethodBuilder.h"
 #include "BasicBlockBuilder.h"
-#include "OverloadNames.h"
+#include <Fabric/Core/CG/Mangling.h>
 
 #include <Fabric/Core/RT/DictDesc.h>
 #include <Fabric/Core/RT/DictImpl.h>
@@ -132,10 +133,12 @@ namespace Fabric
       static const bool buildFunctions = true;
       
       {
-        std::string name = methodOverloadName( "size", this );
-        std::vector< FunctionParam > params;
-        params.push_back( FunctionParam( "rValue", this, CG::USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType( sizeAdapter, USAGE_RVALUE ), params, false );
+        MethodBuilder functionBuilder(
+          moduleBuilder,
+          sizeAdapter,
+          this, USAGE_RVALUE,
+          "size"
+          );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -153,11 +156,13 @@ namespace Fabric
       }
       
       {
-        std::string name = methodOverloadName( "has", this, m_keyAdapter );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "rValue", this, CG::USAGE_RVALUE ) );
-        params.push_back( FunctionParam( "keyRValue", m_keyAdapter, CG::USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType( booleanAdapter, USAGE_RVALUE ), params, false );
+        MethodBuilder functionBuilder(
+          moduleBuilder,
+          booleanAdapter,
+          this, USAGE_RVALUE,
+          "has",
+          "key", m_keyAdapter, CG::USAGE_RVALUE
+          );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -195,11 +200,13 @@ namespace Fabric
       }
       
       {
-        std::string name = methodOverloadName( "delete", this, m_keyAdapter );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "dictLValue", this, CG::USAGE_LVALUE ) );
-        params.push_back( FunctionParam( "keyRValue", m_keyAdapter, CG::USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params, false );
+        MethodBuilder functionBuilder(
+          moduleBuilder,
+          0,
+          this, USAGE_LVALUE,
+          "delete",
+          "key", m_keyAdapter, CG::USAGE_RVALUE
+          );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -235,10 +242,12 @@ namespace Fabric
       }
       
       {
-        std::string name = methodOverloadName( "clear", this );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "dictLValue", this, CG::USAGE_LVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params, false );
+        MethodBuilder functionBuilder(
+          moduleBuilder,
+          0,
+          this, USAGE_LVALUE,
+          "clear"
+          );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -269,11 +278,7 @@ namespace Fabric
       }
 
       {
-        std::string name = constructOverloadName( booleanAdapter, this );
-        std::vector< FunctionParam > params;
-        params.push_back( FunctionParam( "booleanLValue", booleanAdapter, USAGE_LVALUE ) );
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -288,11 +293,7 @@ namespace Fabric
       }
       
       {
-        std::string name = constructOverloadName( stringAdapter, this );
-        std::vector< FunctionParam > params;
-        params.push_back( FunctionParam( "stringLValue", stringAdapter, USAGE_LVALUE ) );
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
@@ -307,7 +308,7 @@ namespace Fabric
 
       /*
       {
-        std::vector< FunctionParam > params;
+        ParamVector params;
         params.push_back( FunctionParam( "lValue", this, CG::USAGE_LVALUE ) );
         params.push_back( FunctionParam( "keyRValue", m_keyAdapter, CG::USAGE_RVALUE ) );
         FunctionBuilder functionBuilder( moduleBuilder, "__"+getCodeName()+"__GetLValue", ExprType( m_valueAdapter, USAGE_LVALUE ), params, false, 0, true );
@@ -386,7 +387,7 @@ namespace Fabric
       
       {
         std::string name = "__" + getCodeName() + "__MinBucketCountForNodeCount";
-        std::vector< FunctionParam > params;
+        ParamVector params;
         params.push_back( FunctionParam( "nodeCountRValue", sizeAdapter, USAGE_RVALUE ) );
         FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params );
         if ( buildFunctions )
@@ -403,7 +404,7 @@ namespace Fabric
       }
 
       {
-        std::vector< FunctionParam > params;
+        ParamVector params;
         params.push_back( FunctionParam( "lValue", this, CG::USAGE_LVALUE ) );
         params.push_back( FunctionParam( "bucketLValue", this, CG::USAGE_LVALUE ) );
         params.push_back( FunctionParam( "keyRValue", m_keyAdapter, CG::USAGE_RVALUE ) );
@@ -603,10 +604,12 @@ namespace Fabric
     llvm::Value *DictAdapter::llvmCallSize( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {
       RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
-      std::vector<FunctionParam> params;
-      params.push_back( FunctionParam( "rValue", this, CG::USAGE_RVALUE ) );
-      std::string name = methodOverloadName( "size", this );
-      FunctionBuilder functionBuilder( basicBlockBuilder.getModuleBuilder(), name, ExprType( sizeAdapter, USAGE_RVALUE ), params, false );
+      MethodBuilder functionBuilder(
+        basicBlockBuilder.getModuleBuilder(),
+        sizeAdapter,
+        this, USAGE_RVALUE,
+        "size"
+        );
       return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), rValue );
     }
 

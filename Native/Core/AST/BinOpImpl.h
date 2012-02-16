@@ -36,24 +36,28 @@ namespace Fabric
     
       static RC::ConstHandle<BinOpImpl> Create(
         CG::Location const &location,
-        std::string const &returnType,
+        std::string const &returnTypeName,
         CG::BinOpType binOpType,
         RC::ConstHandle<Param> const &lhs,
         RC::ConstHandle<Param> const &rhs,
+        std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body
         );
                   
-      virtual std::string getEntryName( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getPencilKey( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getDefaultSymbolName( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getDesc( RC::Handle<CG::Manager> const &cgManager ) const;
       virtual RC::ConstHandle<ParamVector> getParams( RC::Handle<CG::Manager> const &cgManager ) const;
       
     protected:
     
       BinOpImpl(
         CG::Location const &location,
-        std::string const &returnType,
+        std::string const &returnTypeName,
         CG::BinOpType binOpType,
-        RC::ConstHandle<Param> const &lhs,
-        RC::ConstHandle<Param> const &rhs,
+        RC::ConstHandle<AST::Param> const &lhs,
+        RC::ConstHandle<AST::Param> const &rhs,
+        std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body
         );
       
@@ -62,9 +66,10 @@ namespace Fabric
     private:
     
       CG::BinOpType m_binOpType;
-      RC::ConstHandle<ParamVector> m_params;
+      RC::ConstHandle<Param> m_lhs;
+      RC::ConstHandle<Param> m_rhs;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_AST_BIN_OP_IMPL_H

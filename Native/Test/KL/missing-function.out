@@ -1,1 +1,1 @@
-missing-function.kl:2:3: error: function 'foo(String,Integer,Boolean)' not found
+missing-function.kl:2:10: error: no such function 'foo'

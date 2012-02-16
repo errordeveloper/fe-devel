@@ -40,10 +40,12 @@ resizeOp.setSourceCode('\
 use FabricOBJ;\n\
 operator resize(\n\
   io OBJDataHandle objParseHandle,\n\
-  io Size newSize\n\
+  io Container container\n\
   )\n\
 {\n\
+  Size newSize;\n\
   FabricOBJGetNbEntityPoints(objParseHandle, -1, newSize);\n\
+  container.resize(newSize);\n\
   report "rlnode: resized to " + newSize + " points";\n\
 }\n\
 ')
@@ -55,7 +57,7 @@ resizeBinding = fabricClient.DG.createBinding()
 resizeBinding.setOperator( resizeOp )
 resizeBinding.setParameterLayout([
   "rlnode.objParseHandle",
-  "self.newCount"
+  "self"
 ])
 
 setDataOp = fabricClient.DependencyGraph.createOperator("setData")

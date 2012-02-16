@@ -21,6 +21,8 @@
 #include <Fabric/Core/RT/Manager.h>
 #include <Fabric/Core/RT/SlicedArrayImpl.h>
 #include <Fabric/Core/RT/SlicedArrayDesc.h>
+#include <Fabric/Core/RT/ContainerDesc.h>
+#include <Fabric/Core/RT/ContainerImpl.h>
 #include <Fabric/Core/MT/Util.h>
 #include <Fabric/Base/JSON/Encoder.h>
 
@@ -41,8 +43,8 @@ namespace Fabric
         return m_index;
       }
       
+      virtual bool isContainerParam() const { return false; }
       virtual bool isSizeParam() const { return false; }
-      virtual bool isNewSizeParam() const { return false; }
       virtual bool isIndexParam() const { return false; }
       virtual bool isMemberParam() const { return false; }
       virtual bool isElementParam() const { return false; }
@@ -61,38 +63,21 @@ namespace Fabric
     
       unsigned m_index;
     };
-    
-    class Prototype::SizeParam : public Prototype::Param
+
+    class Prototype::ContainerParam : public Prototype::Param
     {
     public:
     
-      SizeParam( unsigned index )
+      ContainerParam( unsigned index )
         : Param( index )
       {
       }
-    
-      virtual bool isSizeParam() const { return true; }
+
+      virtual bool isContainerParam() const { return true; }
 
       virtual std::string desc() const
       {
-        return "count";
-      }
-    };
-    
-    class Prototype::NewSizeParam : public Prototype::Param
-    {
-    public:
-    
-      NewSizeParam( unsigned index )
-        : Param( index )
-      {
-      }
-    
-      virtual bool isNewSizeParam() const { return true; }
-
-      virtual std::string desc() const
-      {
-        return "newCount";
+        return "";//??
       }
     };
     
@@ -175,6 +160,8 @@ namespace Fabric
       , m_rtSizeImpl( m_rtSizeDesc->getImpl() )
       , m_rtIndexDesc( cgManager->getRTManager()->getIndexDesc() )
       , m_rtIndexImpl( m_rtIndexDesc->getImpl() )
+      , m_rtContainerDesc( cgManager->getRTManager()->getContainerDesc() )
+      , m_rtContainerImpl( m_rtContainerDesc->getImpl() )
     {
     }
     
@@ -192,29 +179,36 @@ namespace Fabric
         {
           std::string::size_type nodeNameStart = 0;
           std::string::size_type nodeNameEnd = desc.find( '.' );
-          if ( nodeNameEnd == std::string::npos || nodeNameEnd - nodeNameStart < 1 )
+          if ( nodeNameEnd == std::string::npos )
+            nodeNameEnd = desc.size();
+
+          if( nodeNameEnd - nodeNameStart < 1 )
             throw Exception( "missing node name" );
+
           std::string nodeName = desc.substr( nodeNameStart, nodeNameEnd - nodeNameStart );
-          
-          std::string::size_type memberNameStart = nodeNameEnd + 1;
-          std::string::size_type memberNameEnd = desc.find( '<' );
-          if ( memberNameEnd == std::string::npos )
-            memberNameEnd = desc.size();
-          if ( memberNameEnd - memberNameStart < 1 )
-            throw Exception( "missing member name" );
-          std::string memberName = desc.substr( memberNameStart, memberNameEnd - memberNameStart );
-          
+
           Param *param;
-          if ( memberName == "count" )
-            param = new SizeParam(i);
-          else if ( memberName == "newCount" )
-            param = new NewSizeParam(i);
-          else if ( memberName == "index" )
-            param = new IndexParam(i);
-          else if ( desc.substr( memberNameEnd ) == "<>" )
-            param = new ArrayParam( i, memberName );
+          std::string memberName;
+
+          if( nodeNameEnd == desc.size() )
+              param = new ContainerParam(i);
           else
-            param = new ElementParam( i, memberName );
+          {
+            std::string::size_type memberNameStart = nodeNameEnd + 1;
+            std::string::size_type memberNameEnd = desc.find( '<', nodeNameEnd );
+            if ( memberNameEnd == std::string::npos )
+              memberNameEnd = desc.size();
+            if ( memberNameEnd - memberNameStart < 1 )
+              throw Exception( "missing member name" );
+            memberName = desc.substr( memberNameStart, memberNameEnd - memberNameStart );
+          
+            if ( memberName == "index" )
+              param = new IndexParam(i);
+            else if ( desc.substr( memberNameEnd ) == "<>" )
+              param = new ArrayParam( i, memberName );
+            else
+              param = new ElementParam( i, memberName );
+          }
           m_params[nodeName].insert( std::multimap< std::string, Param * >::value_type( memberName, param ) );
         }
         catch ( Exception e )
@@ -248,7 +242,6 @@ namespace Fabric
       RC::ConstHandle<AST::Operator> const &astOperator,
       Scope const &scope,
       RC::ConstHandle<Function> const &function,
-      size_t *newSize,
       unsigned prefixCount,
       void * const *prefixes
       )
@@ -281,6 +274,8 @@ namespace Fabric
           
           std::set<void *> elementAccessSet;
           std::set<void *> arrayAccessSet;
+
+          bool haveLValueContainerAccess = false;
           
           for ( std::multimap< std::string, Param * >::const_iterator jt=it->second.begin(); jt!=it->second.end(); ++jt )
           {
@@ -296,35 +291,29 @@ namespace Fabric
             
             std::string const parameterErrorPrefix = nodeErrorPrefix + "parameter " + _(size_t(prefixCount+param->index()+1)) + ": ";
             {
-              if ( param->isSizeParam() )
+              if ( param->isContainerParam() )
               {
-                if ( astParamImpl != m_rtSizeImpl
-                  || astParamExprType.getUsage() != CG::USAGE_RVALUE )
-                  errors.push_back( parameterErrorPrefix + "'size' parmeters must bind to operator in parameters of type "+_(m_rtSizeDesc->getUserName()) );
-                result->setBaseAddress( prefixCount+param->index(), (void *)container->getCount() );
-              }
-              else if ( param->isNewSizeParam() )
-              {
-                if ( astParamImpl != m_rtSizeImpl
-                  || astParamExprType.getUsage() != CG::USAGE_LVALUE )
-                  errors.push_back( parameterErrorPrefix + "'newSize' parmeters must bind to operator io parameters of type "+_(m_rtSizeDesc->getUserName()) );
-                if ( !newSize )
-                  errors.push_back( parameterErrorPrefix + "can't access count" );
-                result->setBaseAddress( prefixCount+param->index(), newSize );
+                if ( astParamImpl != m_rtContainerImpl )
+                  errors.push_back( parameterErrorPrefix + "'container' parmeters must bind to operator in parameters of type "+_(m_rtContainerDesc->getUserName()) );
+                if( astParamExprType.getUsage() != CG::USAGE_RVALUE )
+                  haveLValueContainerAccess = true;
+
+                result->setBaseAddress( prefixCount+param->index(), container->getRTContainerData() );
               }
               else if ( param->isIndexParam() )
               {
-                if ( astParamImpl != m_rtIndexImpl
-                  || astParamExprType.getUsage() != CG::USAGE_RVALUE )
+                if ( astParamImpl != m_rtIndexImpl )
                   errors.push_back( parameterErrorPrefix + "'index' parmeters must bind to operator in parameters of type "+_(m_rtIndexDesc->getUserName()) );
+                else if( astParamExprType.getUsage() != CG::USAGE_RVALUE )
+                  errors.push_back( parameterErrorPrefix + "'index' cannot be an 'io' parameter" );
                 else
                 {
                   result->setBaseAddress( prefixCount+param->index(), (void *)0 );
-                  if ( container->getCount() != 1 )
+                  if ( container->size() != 1 )
                   {
                     if ( !haveAdjustmentIndex )
                     {
-                      adjustmentIndex = result->addAdjustment( container->getCount(), std::max<size_t>( 1, container->getCount()/(4*MT::getNumCores()) ) );
+                      adjustmentIndex = result->addAdjustment( container->size(), std::max<size_t>( 1, container->size()/(4*MT::getNumCores()) ) );
                       haveAdjustmentIndex = true;
                     }
                     result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), 1 );
@@ -369,11 +358,11 @@ namespace Fabric
                           baseAddress = slicedArrayImpl->getMutableMemberData( slicedArrayData, 0 );
                         else baseAddress = 0;
                         result->setBaseAddress( prefixCount+param->index(), baseAddress );
-                        if ( container->getCount() != 1 )
+                        if ( container->size() != 1 )
                         {
                           if ( !haveAdjustmentIndex )
                           {
-                            adjustmentIndex = result->addAdjustment( container->getCount(), std::max<size_t>( 1, container->getCount()/(4*MT::getNumCores()) ) );
+                            adjustmentIndex = result->addAdjustment( container->size(), std::max<size_t>( 1, container->size()/(4*MT::getNumCores()) ) );
                             haveAdjustmentIndex = true;
                           }
                           result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), memberImpl->getAllocSize() );
@@ -398,6 +387,11 @@ namespace Fabric
                 }
               }
             }
+          }
+          if( haveLValueContainerAccess )
+          {
+            if( !elementAccessSet.empty() )
+              errors.push_back( nodeErrorPrefix + "cannot have both per-slice data parameters and an 'io' Container parameter (calling Container::resize() would invalidate the data)" );
           }
         }
       }

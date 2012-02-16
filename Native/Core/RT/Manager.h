@@ -33,6 +33,7 @@ namespace Fabric
     class ByteDesc;
     class ComparableDesc;
     class ConstStringDesc;
+    class ContainerDesc;
     class DictDesc;
     class IntegerDesc;
     class SizeDesc;
@@ -74,6 +75,7 @@ namespace Fabric
       RC::ConstHandle<FloatDesc> getFP64Desc() const;
       RC::ConstHandle<StringDesc> getStringDesc() const;
       RC::ConstHandle<OpaqueDesc> getDataDesc() const;
+      RC::ConstHandle<ContainerDesc> getContainerDesc() const;
       
       RC::ConstHandle<StructDesc> registerStruct( std::string const &name, StructMemberInfoVector const &memberInfos );
       RC::ConstHandle<OpaqueDesc> registerOpaque( std::string const &name, size_t size );
@@ -132,6 +134,7 @@ namespace Fabric
       RC::ConstHandle<StringDesc> m_stringDesc;
       RC::ConstHandle<OpaqueDesc> m_dataDesc;
       RC::ConstHandle<ConstStringDesc> m_constStringDesc;
+      RC::ConstHandle<ContainerDesc> m_containerDesc;
       
       JSON::CommandChannel *m_jsonCommandChannel;
       

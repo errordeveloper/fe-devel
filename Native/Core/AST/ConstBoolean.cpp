@@ -41,11 +41,11 @@ namespace Fabric
     {
     }
     
-    RC::ConstHandle<CG::Adapter> ConstBoolean::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType ConstBoolean::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
       RC::ConstHandle<CG::Adapter> adapter = basicBlockBuilder.getManager()->getBooleanAdapter();
       adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      return adapter;
+      return CG::ExprType( adapter, CG::USAGE_RVALUE );
     }
     
     CG::ExprValue ConstBoolean::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const

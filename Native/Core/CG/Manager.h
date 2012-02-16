@@ -33,6 +33,7 @@ namespace Fabric
     class BooleanAdapter;
     class ByteAdapter;
     class ConstStringAdapter;
+    class ContainerAdapter;
     class IntegerAdapter;
     class SizeAdapter;
     class FloatAdapter;
@@ -69,6 +70,7 @@ namespace Fabric
       RC::ConstHandle<StringAdapter> getStringAdapter() const;
       RC::ConstHandle<OpaqueAdapter> getDataAdapter() const;
       RC::ConstHandle<ConstStringAdapter> getConstStringAdapter() const;
+      RC::ConstHandle<ContainerAdapter> getContainerAdapter() const;
       
       RC::ConstHandle<VariableArrayAdapter> getVariableArrayOf( RC::ConstHandle<Adapter> const &adapter ) const;
       RC::ConstHandle<SlicedArrayAdapter> getSlicedArrayOf( RC::ConstHandle<Adapter> const &adapter ) const;
@@ -105,6 +107,7 @@ namespace Fabric
       mutable RC::ConstHandle<StringAdapter> m_stringAdapter;
       mutable RC::ConstHandle<OpaqueAdapter> m_dataAdapter;
       mutable RC::ConstHandle<ConstStringAdapter> m_constStringAdapter;
+      mutable RC::ConstHandle<ContainerAdapter> m_containerAdapter;
     };
   };
 };

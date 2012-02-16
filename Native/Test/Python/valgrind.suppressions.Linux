@@ -137,3 +137,11 @@
    Memcheck:Value8
    fun:PyObject_Realloc
 }
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_PyObject_GC_Resize
+   fun:PyFrame_New
+}

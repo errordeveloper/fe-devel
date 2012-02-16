@@ -21,6 +21,7 @@ namespace Fabric
       , m_defaultData( 0 )
     {
       m_isShallow = true;
+      m_isNoAliasSafe = true;
       m_isExportable = true;
       m_memberOffsets.push_back( 0 );
       for ( size_t i=0; i<m_numMembers; ++i )
@@ -29,6 +30,7 @@ namespace Fabric
         m_memberOffsets.push_back( m_memberOffsets.back() + memberInfo.desc->getAllocSize() );
         m_nameToIndexMap.insert( NameToIndexMap::value_type( memberInfo.name, i ) );
         m_isShallow = m_isShallow && memberInfo.desc->isShallow();
+        m_isNoAliasSafe = m_isNoAliasSafe && memberInfo.desc->isNoAliasSafe();
         m_isExportable = m_isExportable && memberInfo.desc->isExportable();
       }
       
@@ -161,6 +163,11 @@ namespace Fabric
     bool StructImpl::isShallow() const
     {
       return m_isShallow;
+    }
+
+    bool StructImpl::isNoAliasSafe() const
+    {
+      return m_isNoAliasSafe;
     }
 
     bool StructImpl::isEquivalentTo( RC::ConstHandle<Impl> const &thatImpl ) const

@@ -14,7 +14,7 @@ def launchTest( fabricClient ):
 
   n = fabricClient.DG.createNode("n"+str(testIndex))
   n.addMember("a", "Scalar")
-  n.setCount(10000)
+  n.resize(10000)
   n.bindings.append(b)
 
   def complete():

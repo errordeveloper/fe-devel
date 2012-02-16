@@ -1,19 +1,24 @@
+function Float64 truncate( Float64 x ) {
+  return round( x * 100000.0 );
+}
+
 operator entry() {
   Float64 x = 0.1;
-  report sqrt64(x);
-  report abs64(x);
-  report round64(x);
-  report ceil64(x);
-  report floor64(x);
-  report pow64(x, x);
-  report sin64(x);
-  report cos64(x);
-  report tan64(x);
-  report log1064(x);
-  report log64(x);
-  report exp64(x);
-  report asin64( sin64(x) );
-  report acos64( cos64(x) );
-  report atan64( tan64(x) );
-  report atan264( tan64(x), 1.0 );
+  Float64 y = 1.0;
+  report truncate( sqrt(x) );
+  report truncate( abs(x) );
+  report truncate( round(x) );
+  report truncate( ceil(x) );
+  report truncate( floor(x) );
+  report truncate( pow(x, x) );
+  report truncate( sin(x) );
+  report truncate( cos(x) );
+  report truncate( tan(x) );
+  report truncate( log10(x) );
+  report truncate( log(x) );
+  report truncate( exp(x) );
+  report truncate( asin( sin(x) ) );
+  report truncate( acos( cos(x) ) );
+  report truncate( atan( tan(x) ) );
+  report truncate( atan2( tan(x), y ) );
 }

@@ -99,13 +99,13 @@ const Integer KINECT_QUALITY_CLIPPED_BOTTOM = 8;
 
 //===================================================================================
 // extension's functions
-function FabricKINECT_Init(io KinectCamera camera);
-function FabricKINECT_Shutdown(io KinectCamera camera);
-function FabricKINECT_Tilt(io KinectCamera camera, io Integer angle);
-function FabricKINECT_GetColorPixels(io KinectCamera camera);
-function FabricKINECT_GetDepthPixels(io KinectCamera camera);
-function FabricKINECT_GetPoints(io KinectCamera camera, io Vec3 positions<>, io Color colors<>);
-function FabricKINECT_GetSkeleton(io KinectCamera camera);
+function FabricKINECT_Init(io KinectCamera camera) = "FabricKINECT_Init";
+function FabricKINECT_Shutdown(io KinectCamera camera) = "FabricKINECT_Shutdown";
+function FabricKINECT_Tilt(io KinectCamera camera, io Integer angle) = "FabricKINECT_Tilt";
+function FabricKINECT_GetColorPixels(io KinectCamera camera) = "FabricKINECT_GetColorPixels";
+function FabricKINECT_GetDepthPixels(io KinectCamera camera) = "FabricKINECT_GetDepthPixels";
+function FabricKINECT_GetPoints(io KinectCamera camera, io Vec3 positions<>, io Color colors<>) = "FabricKINECT_GetPoints";
+function FabricKINECT_GetSkeleton(io KinectCamera camera) = "FabricKINECT_GetSkeleton";
 
 //===================================================================================
 // camera definition

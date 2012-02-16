@@ -15,32 +15,32 @@ function FabricVIDEOOpenResource(
   Data resourceData,
   Size resourceDataSize,
   io VideoHandle handle
-);
+) = "FabricVIDEOOpenResource";
 
 function FabricVIDEOOpenFileHandle(
   String fileHandle,
   io VideoHandle handle
-);
+) = "FabricVIDEOOpenFileHandle";
 
 function FabricVIDEOCreateFromFileHandle(
   String file,
   Size width,
   Size height,
   io VideoHandle handle,
-);
+) = "FabricVIDEOCreateFromFileHandle";
 
-function FabricVIDEOFreeHandle( io VideoHandle handle );
+function FabricVIDEOFreeHandle( io VideoHandle handle ) = "FabricVIDEOFreeHandle";
   
-function FabricVIDEOSeekTime( io VideoHandle handle, io Scalar time);
+function FabricVIDEOSeekTime( io VideoHandle handle, io Scalar time) = "FabricVIDEOSeekTime";
 
 function FabricVIDEOGetAllPixels(
   io VideoHandle handle,
   io RGB pixels[]
-);
+) = "FabricVIDEOGetAllPixels";
 
 function FabricVIDEOWriteAllPixels(
   io VideoHandle handle,
   io RGB pixels[]
-);
+) = "FabricVIDEOWriteAllPixels";
 
 function ~VideoHandle() = "FabricVIDEOFreeHandle";

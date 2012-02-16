@@ -135,6 +135,7 @@ FABRIC_EXT_EXPORT void FabricPNGDecode(
     }
   }
   png_destroy_read_struct( &png_ptr, &info_ptr, NULL );
+  free( rowData );
 }
 
 FABRIC_EXT_EXPORT void FabricPNGEncode(

@@ -19,7 +19,7 @@ bindingTwo.setParameterLayout( [ "self.input", "self.output" ] );
 node = FABRIC.DependencyGraph.createNode( "parent" );
 node.addMember( "input", "Scalar" );
 node.addMember( "output", "Scalar" );
-node.setCount( 2 );
+node.resize( 2 );
 node.setData( 'input', 0, 3 );
 node.setData( 'input', 1, 7 );
 node.setData( 'output', 0, 0 );

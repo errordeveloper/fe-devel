@@ -47,9 +47,9 @@ namespace Fabric
       m_child->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> CreateConstValue::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType CreateConstValue::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return basicBlockBuilder.getManager()->getValueProducerOf( m_child->getType( basicBlockBuilder ) );
+      return CG::ExprType( basicBlockBuilder.getManager()->getValueProducerOf( m_child->getExprType( basicBlockBuilder ).getAdapter() ), CG::USAGE_RVALUE );
     }
     
     CG::ExprValue CreateConstValue::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -57,8 +57,8 @@ namespace Fabric
       if ( usage == CG::USAGE_LVALUE )
         throw Exception( "cannot be used as l-values" );
       
-      RC::ConstHandle<CG::Adapter> valueAdapter = m_child->getType( basicBlockBuilder );
-      RC::ConstHandle<CG::ValueProducerAdapter> valueProducerAdapter = basicBlockBuilder.getManager()->getValueProducerOf( valueAdapter );
+      CG::ExprType childExprType = m_child->getExprType( basicBlockBuilder );
+      RC::ConstHandle<CG::ValueProducerAdapter> valueProducerAdapter = basicBlockBuilder.getManager()->getValueProducerOf( childExprType.getAdapter() );
       
       RC::Handle<CG::Context> context = basicBlockBuilder.getContext();
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
@@ -71,7 +71,7 @@ namespace Fabric
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateConstValue", funcType );
       
       CG::ExprValue childExprRValue = m_child->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, lValueErrorDesc );
-      llvm::Value *childExprLValue = valueAdapter->llvmRValueToLValue( basicBlockBuilder, childExprRValue.getValue() );
+      llvm::Value *childExprLValue = childExprType.getAdapter()->llvmRValueToLValue( basicBlockBuilder, childExprRValue.getValue() );
       llvm::Value *resultLValue = valueProducerAdapter->llvmAlloca( basicBlockBuilder, "result" );
       valueProducerAdapter->llvmInit( basicBlockBuilder, resultLValue );
       basicBlockBuilder.getScope().put(

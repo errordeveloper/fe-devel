@@ -38,12 +38,21 @@ namespace Fabric
         (*it)->appendJSON( jsonArrayEncoder.makeElement(), includeLocation );
     }
 
-    void ExprVector::appendTypes( CG::BasicBlockBuilder &basicBlockBuilder, std::vector< RC::ConstHandle<CG::Adapter> > &argTypes ) const
+    void ExprVector::appendAdapters( CG::BasicBlockBuilder &basicBlockBuilder, std::vector< RC::ConstHandle<CG::Adapter> > &adapters ) const
     {
       for ( size_t i=0; i<size(); ++i )
       {
-        RC::ConstHandle<Expr> const &arg = get(i);
-        argTypes.push_back( arg->getType( basicBlockBuilder ) );
+        RC::ConstHandle<Expr> const &expr = get(i);
+        adapters.push_back( expr->getExprType( basicBlockBuilder ).getAdapter() );
+      }
+    }
+
+    void ExprVector::appendExprTypes( CG::BasicBlockBuilder &basicBlockBuilder, std::vector<CG::ExprType> &exprTypes ) const
+    {
+      for ( size_t i=0; i<size(); ++i )
+      {
+        RC::ConstHandle<Expr> const &expr = get(i);
+        exprTypes.push_back( expr->getExprType( basicBlockBuilder ) );
       }
     }
 

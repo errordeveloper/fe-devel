@@ -7,6 +7,7 @@
 #include "BooleanAdapter.h"
 #include "ByteAdapter.h"
 #include "ConstStringAdapter.h"
+#include "ContainerAdapter.h"
 #include "DictAdapter.h"
 #include "IntegerAdapter.h"
 #include "SizeAdapter.h"
@@ -33,6 +34,7 @@
 #include <Fabric/Core/RT/ValueProducerDesc.h>
 #include <Fabric/Core/RT/VariableArrayDesc.h>
 #include <Fabric/Core/RT/SlicedArrayDesc.h>
+#include <Fabric/Core/RT/ContainerDesc.h>
 #include <Fabric/Core/RT/Manager.h>
 #include <Fabric/Core/Util/Debug.h>
 
@@ -182,7 +184,14 @@ namespace Fabric
             adapter = new ArrayProducerAdapter( this, arrayProducerDesc );
           }
           break;
-          
+
+          case RT::DT_CONTAINER:
+          {
+            RC::ConstHandle<RT::ContainerDesc> containerDesc = RC::ConstHandle<RT::ContainerDesc>::StaticCast( desc );
+            adapter = new ContainerAdapter( this, containerDesc );
+          }
+          break;
+
           default:
             FABRIC_ASSERT( false );
             break;
@@ -257,7 +266,14 @@ namespace Fabric
         m_constStringAdapter = RC::ConstHandle<ConstStringAdapter>::StaticCast( getAdapter( m_rtManager->getConstStringDesc() ) );
       return m_constStringAdapter;
     }
-      
+
+    RC::ConstHandle<ContainerAdapter> Manager::getContainerAdapter() const
+    {
+      if ( !m_containerAdapter )
+        m_containerAdapter = RC::ConstHandle<ContainerAdapter>::StaticCast( getAdapter( m_rtManager->getContainerDesc() ) );
+      return m_containerAdapter;
+    }
+
     RC::ConstHandle<VariableArrayAdapter> Manager::getVariableArrayOf( RC::ConstHandle<Adapter> const &adapter ) const
     {
       RC::ConstHandle<RT::Desc> variableArrayDesc = m_rtManager->getVariableArrayOf( adapter->getDesc() );

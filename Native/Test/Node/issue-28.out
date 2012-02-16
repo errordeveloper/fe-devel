@@ -1,0 +1,11 @@
+[ 'compile failed' ]
+[ { filename: '(unknown)',
+    line: 9,
+    column: 6,
+    level: 'error',
+    desc: 'no such method RGB[Integer][].has(io Integer)' },
+  { filename: '(unknown)',
+    line: 17,
+    column: 3,
+    level: 'error',
+    desc: 'no cast exists from RGB[] to RGB[Integer]' } ]

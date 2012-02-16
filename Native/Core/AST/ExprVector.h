@@ -43,7 +43,8 @@ namespace Fabric
       
       void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
           
-      void appendTypes( CG::BasicBlockBuilder &basicBlockBuilder, std::vector< RC::ConstHandle<CG::Adapter> > &argTypes ) const;
+      void appendAdapters( CG::BasicBlockBuilder &basicBlockBuilder, std::vector< RC::ConstHandle<CG::Adapter> > &adapters ) const;
+      void appendExprTypes( CG::BasicBlockBuilder &basicBlockBuilder, std::vector<CG::ExprType> &exprTypes ) const;
       void appendExprValues( CG::BasicBlockBuilder &basicBlockBuilder, std::vector<CG::Usage> const &usages, std::vector<CG::ExprValue> &result, std::string const &lValueErrorDesc ) const;
     
     protected:

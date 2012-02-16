@@ -7,7 +7,7 @@
 %error-verbose
 %debug
 
-%expect 3
+%expect 1
 
 %code top {
 #define YYDEBUG 1
@@ -78,8 +78,8 @@ typedef struct YYLTYPE
 #include <Fabric/Core/AST/ConstBoolean.h>
 #include <Fabric/Core/AST/ConstDecl.h>
 #include <Fabric/Core/AST/ConstDeclStatement.h>
-#include <Fabric/Core/AST/ConstSize.h>
-#include <Fabric/Core/AST/ConstScalar.h>
+#include <Fabric/Core/AST/ConstUnsignedInteger.h>
+#include <Fabric/Core/AST/ConstFloat.h>
 #include <Fabric/Core/AST/ConstString.h>
 #include <Fabric/Core/AST/ContainerLoop.h>
 #include <Fabric/Core/AST/ContinueStatement.h>
@@ -309,7 +309,7 @@ int kl_lex( YYSTYPE *yys, YYLTYPE *yyl, KL::Context &context );
 
 %token <valueStringPtr> TOKEN_IDENTIFIER "identifier"
 
-%type <valueStringPtr> function_entry_name
+%type <valueStringPtr> symbol_name
 %type <astParamPtr> parameter
 %type <astParamPtr> in_parameter
 %type <astParamPtr> io_parameter
@@ -501,76 +501,74 @@ use
 ;
 
 function
-  : TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN function_entry_name compound_statement
+  : TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::Function::Create( RTLOC, *$3, $7, *$2, $5, $8 ).take();
+    $$ = AST::Function::Create( RTLOC, *$2, *$3, $5, $7, $8 ).take();
     delete $2;
     delete $3;
     $5->release();
     delete $7;
     $8->release();
   }
-  | TOKEN_FUNCTION TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN function_entry_name compound_statement
+  | TOKEN_FUNCTION TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::Function::Create( RTLOC, *$2, $6, "", $4, $7 ).take();
+    $$ = AST::Function::Create( RTLOC, "", *$2, $4, $6, $7 ).take();
     delete $2;
     $4->release();
     delete $6;
     $7->release();
   }
-  | TOKEN_OPERATOR TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN function_entry_name compound_statement
+  | TOKEN_OPERATOR TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::Operator::Create( RTLOC, *$2, $6, $4, $7 ).take();
+    $$ = AST::Operator::Create( RTLOC, *$2, $4, $6, $7 ).take();
     delete $2;
     $4->release();
     delete $6;
     $7->release();
   }
-  | TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN compound_statement
+  | TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::MethodOpImpl::Create( RTLOC, *$2, *$3, *$5, $7, $9 ).take();
+    $$ = AST::MethodOpImpl::Create( RTLOC, *$2, *$3, *$5, $7, $9, $10 ).take();
     delete $2;
     delete $3;
     delete $5;
     $7->release();
-    $9->release();
+    delete $9;
+    $10->release();
   }
-  | TOKEN_FUNCTION compound_type TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN compound_statement
+  | TOKEN_FUNCTION compound_type TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::MethodOpImpl::Create( RTLOC, "", *$2, *$4, $6, $8 ).take();
+    $$ = AST::MethodOpImpl::Create( RTLOC, "", *$2, *$4, $6, $8, $9 ).take();
     delete $2;
     delete $4;
     $6->release();
-    $8->release();
+    delete $8;
+    $9->release();
   }
-  | TOKEN_FUNCTION compound_type binary_operator TOKEN_LPAREN in_parameter TOKEN_COMMA in_parameter TOKEN_RPAREN compound_statement
+  | TOKEN_FUNCTION compound_type binary_operator TOKEN_LPAREN in_parameter TOKEN_COMMA in_parameter TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::BinOpImpl::Create( RTLOC, *$2, $3, $5, $7, $9 ).take();
+    $$ = AST::BinOpImpl::Create( RTLOC, *$2, $3, $5, $7, $9, $10 ).take();
     delete $2;
     $5->release();
     $7->release();
-    $9->release();
+    delete $9;
+    $10->release();
   }
-  | TOKEN_FUNCTION compound_type TOKEN_DOT assignment_operator TOKEN_LPAREN in_parameter TOKEN_RPAREN compound_statement
+  | TOKEN_FUNCTION compound_type TOKEN_DOT assignment_operator TOKEN_LPAREN in_parameter TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::AssignOpImpl::Create( RTLOC, *$2, $4, $6, $8 ).take();
+    $$ = AST::AssignOpImpl::Create( RTLOC, *$2, $4, $6, $8, $9 ).take();
     delete $2;
     $6->release();
-    $8->release();
+    delete $8;
+    $9->release();
   }
   | destructor
 ;
 
 destructor
-  : TOKEN_FUNCTION TOKEN_TILDE compound_type TOKEN_LPAREN TOKEN_RPAREN compound_statement
+  : TOKEN_FUNCTION TOKEN_TILDE compound_type TOKEN_LPAREN TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::Destructor::Create( RTLOC, *$3, "", $6 ).take();
-    delete $3;
-    $6->release();
-  }
-  | TOKEN_FUNCTION TOKEN_TILDE compound_type TOKEN_LPAREN TOKEN_RPAREN function_entry_name compound_statement
-  {
-    $$ = AST::Destructor::Create( RTLOC, *$3, *$6, $7 ).take();
+    $$ = AST::Destructor::Create( RTLOC, *$3, $6, $7 ).take();
     delete $3;
     delete $6;
     $7->release();
@@ -578,17 +576,17 @@ destructor
 ;
 
 prototype
-  : TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN function_entry_name TOKEN_SEMICOLON
+  : TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name TOKEN_SEMICOLON
   {
-    $$ = AST::Function::Create( RTLOC, *$3, $7, *$2, $5, 0 ).take();
+    $$ = AST::Function::Create( RTLOC, *$2, *$3, $5, $7, 0 ).take();
     delete $2;
     delete $3;
     $5->release();
     delete $7;
   }
-  | TOKEN_FUNCTION TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN function_entry_name TOKEN_SEMICOLON
+  | TOKEN_FUNCTION TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name TOKEN_SEMICOLON
   {
-    $$ = AST::Function::Create( RTLOC, *$2, $6, "", $4, 0 ).take();
+    $$ = AST::Function::Create( RTLOC, "", *$2, $4, $6, 0 ).take();
     delete $2;
     $4->release();
     delete $6;
@@ -597,20 +595,15 @@ prototype
 ;
 
 destructor_prototype
-  : TOKEN_FUNCTION TOKEN_TILDE compound_type TOKEN_LPAREN TOKEN_RPAREN TOKEN_SEMICOLON
+  : TOKEN_FUNCTION TOKEN_TILDE compound_type TOKEN_LPAREN TOKEN_RPAREN symbol_name TOKEN_SEMICOLON
   {
-    $$ = AST::Destructor::Create( RTLOC, *$3, "", 0 ).take();
-    delete $3;
-  }
-  | TOKEN_FUNCTION TOKEN_TILDE compound_type TOKEN_LPAREN TOKEN_RPAREN function_entry_name TOKEN_SEMICOLON
-  {
-    $$ = AST::Destructor::Create( RTLOC, *$3, *$6, 0 ).take();
+    $$ = AST::Destructor::Create( RTLOC, *$3, $6, 0 ).take();
     delete $3;
     delete $6;
   }
 ;
 
-function_entry_name
+symbol_name
   : TOKEN_EQUALS TOKEN_CONST_STRING_SQUOT
   {
     $$ = new std::string( Util::parseQuotedString( *$2 ) );
@@ -737,13 +730,19 @@ array_modifier
   }
   | TOKEN_LBRACKET TOKEN_CONST_UI TOKEN_RBRACKET array_modifier
   {
-    size_t length = Util::parseSize( *$2 );
+    uint64_t length = Util::parseUInt64( *$2 );
     delete $2;
 
     if ( length == 0 )
     {
       delete $4;
       yyerror( &yyloc, context, "fixed array size must be greater than zero" );
+      YYERROR;
+    }
+    else if ( length > SIZE_MAX )
+    {
+      delete $4;
+      yyerror( &yyloc, context, "fixed array size too large" );
       YYERROR;
     }
     else
@@ -1498,12 +1497,12 @@ primary_expression
   }
   | TOKEN_CONST_UI
   {
-    $$ = AST::ConstSize::Create( RTLOC, *$1 ).take();
+    $$ = AST::ConstUnsignedInteger::Create( RTLOC, *$1 ).take();
     delete $1;
   }
   | TOKEN_CONST_FP
   {
-    $$ = AST::ConstScalar::Create( RTLOC, *$1 ).take();
+    $$ = AST::ConstFloat::Create( RTLOC, *$1 ).take();
     delete $1;
   }
   | TOKEN_CONST_STRING_SQUOT

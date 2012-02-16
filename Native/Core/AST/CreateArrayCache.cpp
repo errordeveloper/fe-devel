@@ -49,9 +49,9 @@ namespace Fabric
       m_input->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> CreateArrayCache::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType CreateArrayCache::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return m_input->getType( basicBlockBuilder );
+      return m_input->getExprType( basicBlockBuilder );
     }
     
     CG::ExprValue CreateArrayCache::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -62,11 +62,11 @@ namespace Fabric
       RC::Handle<CG::Context> context = basicBlockBuilder.getContext();
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
 
-      RC::ConstHandle<CG::Adapter> inputArrayProducerAdapter_ = m_input->getType( basicBlockBuilder );
-      if ( !RT::isArrayProducer( inputArrayProducerAdapter_->getType() ) )
+      CG::ExprType inputExprType = m_input->getExprType( basicBlockBuilder );
+      if ( !RT::isArrayProducer( inputExprType.getAdapter()->getType() ) )
         throw CG::Error( getLocation(), "input must be an array producer" );
 
-      RC::ConstHandle<CG::ArrayProducerAdapter> inputArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( inputArrayProducerAdapter_ );
+      RC::ConstHandle<CG::ArrayProducerAdapter> inputArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( inputExprType.getAdapter() );
       CG::ExprValue inputExprRValue = m_input->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, lValueErrorDesc );
       llvm::Value *resultLValue = inputArrayProducerAdapter->llvmAlloca( basicBlockBuilder, "result" );
       inputArrayProducerAdapter->llvmInit( basicBlockBuilder, resultLValue );

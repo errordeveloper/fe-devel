@@ -8,7 +8,7 @@ default:
 	scons -k
 
 xcode:
-	PYTHONUNBUFFERED=1 scons
+	PYTHONUNBUFFERED=1 scons -k
 
 test: build
 	$(MAKE) -C Test

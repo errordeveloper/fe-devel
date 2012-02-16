@@ -14,7 +14,7 @@ binding.setParameterLayout(["self.x", "self.x[]"]);
 
 node = FABRIC.DependencyGraph.createNode( "bar" );
 node.addMember( "x", "Integer" );
-node.setCount( 2 );
+node.resize( 2 );
 node.bindings.append(binding);
 /*
 var errors = node.getErrors();

@@ -24,7 +24,7 @@ operator entry()
   report "Scalar:";
   for ( Scalar n=5; n>=-5; n-=1.0 )
   {
-    report "5/"+n+"="+(5.0/n);
-    report "5%"+n+"="+(5.0%n);
+    report "5/"+n+"="+Scalar(5)/n;
+    report "5%"+n+"="+Scalar(5)%n;
   }
 }

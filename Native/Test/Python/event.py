@@ -16,14 +16,6 @@ eh = F.DG.createEventHandler("eventHandler")
 e.appendEventHandler(eh)
 print(fabric.stringify(mapNamedObjectsToNames(e.getEventHandlers())))
 
-print(e.getDidFireCallback())
-
-def fireCallback( self ):
-  print( self.getName() + " fired" )
-
-e.setDidFireCallback( fireCallback )
-
-print(type( e.getDidFireCallback() ))
 e.fire()
 
 F.close()

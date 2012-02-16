@@ -18,18 +18,6 @@ namespace Fabric
     {
     }
   
-    ExprType::ExprType( RC::ConstHandle<Adapter> const &desc )
-      : m_adapter( desc )
-      , m_usage( USAGE_UNSPECIFIED )
-    {
-    }
-  
-    ExprType::ExprType( Usage usage )
-      : m_adapter( 0 )
-      , m_usage( usage )
-    {
-    }
-  
     ExprType::ExprType( RC::ConstHandle<Adapter> const &desc, Usage usage )
       : m_adapter( desc )
       , m_usage( usage )
@@ -104,13 +92,6 @@ namespace Fabric
       return m_adapter->getDesc()->getImpl();
     }
     
-    std::string ExprType::desc() const
-    {
-      if ( m_adapter )
-        return _(m_adapter) + ":" + std::string( m_usage==USAGE_LVALUE? "l-value": "r-value" );
-      else return "void";
-    }
-    
     bool ExprType::operator ==( ExprType const &that ) const
     {
       return m_adapter == that.m_adapter
@@ -121,5 +102,19 @@ namespace Fabric
     {
       return !(this->operator==( that ));
     }
-  };
-};
+    
+    std::string ExprTypeVector::desc() const
+    {
+      std::string result;
+      for ( const_iterator it=begin(); it!=end(); ++it )
+      {
+        if ( it != begin() )
+          result += ", ";
+        if ( it->getUsage() == USAGE_LVALUE )
+          result += "io ";
+        result += it->getAdapter()->getUserName();
+      }
+      return result;
+    }
+  }
+}

@@ -16,63 +16,96 @@ namespace Fabric
 {
   namespace Util
   {
-    size_t parseSize( char const *data, size_t length )
+    uint64_t parseUInt64( char const *data, size_t length )
     {
-      size_t result = 0;
+      uint64_t result = 0;
       if ( length >= 2 && data[0] == '0' && tolower( data[1] ) == 'x' )
       {
         for ( size_t i=2; i<length; ++i )
         {
+          uint64_t oldResult = result;
           char ch = tolower( data[i] );
           if ( ch >= '0' && ch <= '9' )
             result = 16 * result + ch - '0';
           else if ( ch >= 'a' && ch <= 'f' )
             result = 16 * result + ch - 'a' + 10;
-          else throw Exception( "malformed hexadecimal size constant" );
+          else throw Exception( "malformed hexadecimal integer constant" );
+          if ( result < oldResult )
+            throw Exception( "hexadecimal integer constant out of range" );
         }
       }
       else
       {
         for ( size_t i=0; i<length; ++i )
         {
+          uint64_t oldResult = result;
           char ch = data[i];
           if ( ch >= '0' && ch <= '9' )
             result = 10 * result + ch - '0';
           else throw Exception( "malformed decimal size constant" );
+          if ( result < oldResult )
+            throw Exception( "decimal integer constant out of range" );
         }
       }
       return result;
     }
-    
-    size_t parseSize( char const *cString )
-    {
-      return parseSize( cString, strlen( cString ) );
-    }
-    
-    size_t parseSize( std::string const &string )
-    {
-      return parseSize( string.data(), string.length() );
-    }
 
-    float parseFloat( char const *data, size_t length )
+    double parseDouble( char const *data, size_t length )
     {
       char *cString = static_cast<char *>( alloca( length + 1 ) );
       memcpy( cString, data, length );
       cString[length] = '\0';
-      return parseFloat( cString );
-    }
-    
-    float parseFloat( char const *cString )
-    {
-      float result;
-      if ( sscanf( cString, "%f", &result ) != 1 )
-        throw Exception( "malformed floating-point constant" );
-      return result;
+      return parseDouble( cString );
     }
 
-    float parseFloat( std::string const &string )
+    static inline uint8_t parseHex( char const *data, size_t length )
     {
-      return parseFloat( string.c_str() );
+      uint8_t result = 0;
+      for ( size_t i=0; i<length; ++i )
+      {
+        try
+        {
+          char ch = data[i];
+          switch ( ch )
+          {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+              result = 16*result + ch - '0';
+              break;
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+              result = 16*result + 10 + ch - 'a';
+              break;
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+              result = 16*result + 10 + ch - 'A';
+              break;
+            default:
+              throw Exception("invalid hex character");
+          }
+        }
+        catch ( Exception e )
+        {
+          throw "index "+_(i)+": "+e;
+        }
+      }
+      return result;
     }
     
     std::string parseQuotedString( char const *data, size_t length )
@@ -154,65 +187,5 @@ namespace Fabric
       
       return result;
     }
-
-    std::string parseQuotedString( char const *cString )
-    {
-      return parseQuotedString( cString, strlen(cString) );
-    }
-    
-    std::string parseQuotedString( std::string const &string )
-    {
-      return parseQuotedString( string.data(), string.length() );
-    }
-
-    size_t parseHex( char const *data, size_t length )
-    {
-      size_t result = 0;
-      for ( size_t i=0; i<length; ++i )
-      {
-        try
-        {
-          char ch = data[i];
-          switch ( ch )
-          {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-              result = 16*result + ch - '0';
-              break;
-            case 'a':
-            case 'b':
-            case 'c':
-            case 'd':
-            case 'e':
-            case 'f':
-              result = 16*result + 10 + ch - 'a';
-              break;
-            case 'A':
-            case 'B':
-            case 'C':
-            case 'D':
-            case 'E':
-            case 'F':
-              result = 16*result + 10 + ch - 'A';
-              break;
-            default:
-              throw Exception("invalid hex character");
-          }
-        }
-        catch ( Exception e )
-        {
-          throw "index "+_(i)+": "+e;
-        }
-      }
-      return result;
-    }
-  };
-};
+  }
+}

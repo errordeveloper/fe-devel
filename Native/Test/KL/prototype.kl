@@ -1,4 +1,4 @@
-function Scalar externalSquare( Scalar value );
+function Scalar externalSquare( Scalar value ) = "externalSquare";
 
 operator entry()
 {

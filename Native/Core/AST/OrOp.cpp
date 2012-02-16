@@ -41,21 +41,21 @@ namespace Fabric
       m_right->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> OrOp::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType OrOp::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> lhsType = m_left->getType( basicBlockBuilder );
-      if ( lhsType )
-        lhsType->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      RC::ConstHandle<CG::Adapter> rhsType = m_right->getType( basicBlockBuilder );
-      if ( rhsType )
-        rhsType->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+      CG::ExprType lhsExprType = m_left->getExprType( basicBlockBuilder );
+      if ( lhsExprType )
+        lhsExprType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+      CG::ExprType rhsExprType = m_right->getExprType( basicBlockBuilder );
+      if ( rhsExprType )
+        rhsExprType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
   
       // The true/false value types need to be "equivalent". We'll cast into whoever wins the
       // casting competition, or fail if they can't.
-      RC::ConstHandle<RT::Desc> castType = basicBlockBuilder.getStrongerTypeOrNone( lhsType->getDesc(), rhsType->getDesc() );
+      RC::ConstHandle<RT::Desc> castType = basicBlockBuilder.getStrongerTypeOrNone( lhsExprType.getDesc(), rhsExprType.getDesc() );
       if ( !castType )
-        throw CG::Error( getLocation(), "types " + _(lhsType->getUserName()) + " and " + _(rhsType->getUserName()) + " are unrelated" );
-      return lhsType->getManager()->getAdapter( castType );
+        throw CG::Error( getLocation(), "types " + _(lhsExprType.getUserName()) + " and " + _(rhsExprType.getUserName()) + " are unrelated" );
+      return CG::ExprType( basicBlockBuilder.getManager()->getAdapter( castType ), CG::USAGE_RVALUE );
     }
     
     CG::ExprValue OrOp::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -77,7 +77,8 @@ namespace Fabric
 
       basicBlockBuilder->SetInsertPoint( lhsFalseBB );
       CG::ExprValue rhsExprValue = m_right->buildExprValue( basicBlockBuilder, usage, lValueErrorDesc );
-      RC::ConstHandle<CG::Adapter> castAdapter = getType( basicBlockBuilder );
+      CG::ExprType castExprType = getExprType( basicBlockBuilder );
+      RC::ConstHandle<CG::Adapter> castAdapter = castExprType.getAdapter();
       
       llvm::Value *rhsCastedRValue = castAdapter->llvmCast( basicBlockBuilder, rhsExprValue );
       llvm::BasicBlock *lhsFalsePredBB = basicBlockBuilder->GetInsertBlock();

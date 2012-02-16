@@ -13,6 +13,6 @@ t = client.MR.createArrayTransform(ag, to)
 count = t.getCount()
 print("t.getCount() = " + str(count))
 for i in range(0, count):
-  print("t.produce("+str(i)+") = "+str(t.produce(i)))
+  print("t.produce("+str(i)+") = "+str(round(t.produce(i),3)))
 
 client.close()

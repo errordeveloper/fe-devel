@@ -3,7 +3,7 @@ F = fabric.createClient()
 
 n = F.DG.createNode('n')
 n.addMember('foo', 'String')
-n.setCount(3)
+n.resize(3)
 for i in range( 0, 3 ):
   n.setData('foo', i, "bar-"+str(i))
 

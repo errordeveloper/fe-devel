@@ -162,29 +162,29 @@ namespace Fabric
       if ( m_diagnostics.containsError() )
         throw Exception( "KL compile failed" );
       
-      std::vector< RC::ConstHandle<AST::Function> > functions;
-      m_ast->collectFunctions( functions );
-      for ( std::vector< RC::ConstHandle<AST::Function> >::const_iterator it=functions.begin(); it!=functions.end(); ++it )
+      std::vector< RC::ConstHandle<AST::FunctionBase> > functionBases;
+      m_ast->collectFunctionBases( functionBases );
+      for ( std::vector< RC::ConstHandle<AST::FunctionBase> >::const_iterator it=functionBases.begin(); it!=functionBases.end(); ++it )
       {
-        RC::ConstHandle<AST::Function> const &function = *it;
+        RC::ConstHandle<AST::FunctionBase> const &functionBase = *it;
         
-        if ( !function->getBody() )
+        if ( !functionBase->getBody() )
         {
-          std::string const &name = function->getEntryName( cgManager );
+          std::string symbolName = functionBase->getSymbolName( cgManager );
           void *resolvedFunction = 0;
           for ( size_t i=0; i<m_orderedSOLibHandles.size(); ++i )
           {
-            resolvedFunction = SOLibResolve( m_orderedSOLibHandles[i], name );
+            resolvedFunction = SOLibResolve( m_orderedSOLibHandles[i], symbolName );
             if ( resolvedFunction )
               break;
           }
           if ( !resolvedFunction )
-            throw Exception( "error: symbol " + _(name) + ", prototyped in KL, not found in native code" );
-          m_externalFunctionMap.insert( ExternalFunctionMap::value_type( name, resolvedFunction ) );
+            throw Exception( "error: symbol " + _(symbolName) + ", prototyped in KL, not found in native code" );
+          m_externalFunctionMap.insert( ExternalFunctionMap::value_type( symbolName, resolvedFunction ) );
           
-          if ( function->isDestructor() )
+          if ( functionBase->isDestructor() )
           {
-            RC::ConstHandle<AST::Destructor> destructor = RC::ConstHandle<AST::Destructor>::StaticCast( function );
+            RC::ConstHandle<AST::Destructor> destructor = RC::ConstHandle<AST::Destructor>::StaticCast( functionBase );
             std::string thisTypeName = destructor->getThisTypeName();
             implNameToDestructorMap[thisTypeName] = (void (*)( void * )) resolvedFunction;
           }

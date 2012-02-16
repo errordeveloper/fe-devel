@@ -91,7 +91,7 @@ namespace Fabric
       if ( m_markForRefreshGeneration != generation )
       {
         {//Scope mutexLock
-          //[JCG 20111220 Container::setCount can happen in parallel and will call this function]
+          //[JCG 20111220 Container::resize can happen in parallel and will call this function]
           Util::Mutex::Lock mutexLock( s_markForRefreshMutex );
           s_compiledObjectsMarkedForRefresh.insert( this );
         }

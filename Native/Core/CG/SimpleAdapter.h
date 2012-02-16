@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ */
+
 #ifndef _FABRIC_CG_SIMPLE_ADAPTER_H
 #define _FABRIC_CG_SIMPLE_ADAPTER_H
 

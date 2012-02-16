@@ -5,10 +5,10 @@ struct Color {
   Scalar a;
 };
 
-function FabricEXRDecode( Data exrData, Size exrDataSize, io Size imageWidth, io Size imageHeight, io Color imagePixels[] );
+function FabricEXRDecode( Data exrData, Size exrDataSize, io Size imageWidth, io Size imageHeight, io Color imagePixels[] ) = "FabricEXRDecode";
 function FabricEXROpenFileHandle(
   String handle,
   io Size imageWidth,
   io Size imageHeight,
   io Color imagePixels[]
-  );
+  ) = "FabricEXROpenFileHandle";

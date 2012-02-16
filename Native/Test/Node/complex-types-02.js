@@ -39,7 +39,7 @@ if ( diagnostics.length > 0 ) {
 else {
   parentNode = FABRIC.DependencyGraph.createNode( "parentNode" );
   parentNode.addMember( "msa", "MyStruct[]" );
-  parentNode.setCount( 2 );
+  parentNode.resize( 2 );
   parentNode.setData( "msa", 0, [new MyStruct( 42, 3.141 ), new MyStruct( 64, 5.67 ) ] );
   parentNode.setData( "msa", 1, [new MyStruct( 7, 2.718 )] );
   console.log(JSON.stringify( parentNode.getData("msa", 0) ));

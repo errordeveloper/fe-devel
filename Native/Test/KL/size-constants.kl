@@ -1,5 +1,5 @@
 operator entry()
 {
-  // [pzion 20110228] I'm not sure how this ever worked on Linux64; commenting out for now.
-  //report (Size)4294967295;
+  report 4294967295;
+  report 0xFFFFFFFF;
 }

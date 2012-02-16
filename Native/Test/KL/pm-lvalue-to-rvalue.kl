@@ -1,0 +1,8 @@
+function testRValue( Boolean boolean ) {
+  report "testRValue: " + boolean;
+}
+
+operator entry() {
+  Boolean boolean = false;
+  testRValue( boolean );
+}

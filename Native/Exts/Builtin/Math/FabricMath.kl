@@ -1,2 +1,2 @@
-function Integer mathRandomInteger( in Size id, in Size offset );
-function Scalar mathRandomScalar( in Size id, in Size offset );
+function Integer mathRandomInteger( in Size id, in Size offset ) = "mathRandomInteger";
+function Scalar mathRandomScalar( in Size id, in Size offset ) = "mathRandomScalar";

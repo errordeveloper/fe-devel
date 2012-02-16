@@ -34,8 +34,8 @@ gr.compare(sm) = 1
 sm.compare(gr) = -1
 sm.compare(sm) = 0
 Float64:
-gr.hash = 4614253070451212288
-sm.hash = 13836656833235779584
+gr.hash = 4614253070214989087
+sm.hash = 13836656833149880238
 gr.compare(gr) = 0
 gr.compare(sm) = 1
 sm.compare(gr) = -1

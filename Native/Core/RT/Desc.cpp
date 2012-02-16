@@ -101,6 +101,11 @@ namespace Fabric
       return m_impl->isShallow();
     }
 
+    bool Desc::isNoAliasSafe() const
+    {
+      return m_impl->isNoAliasSafe();
+    }
+
     bool Desc::isExportable() const
     {
       return m_impl->isExportable();

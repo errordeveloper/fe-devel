@@ -1,0 +1,14 @@
+function testRValue( Boolean boolean ) {
+  report "testRValue: " + boolean;
+}
+
+function testLValue( io Boolean boolean ) {
+  report "testLValue: " + boolean;
+}
+
+operator entry() {
+  testRValue( true );
+
+  Boolean boolean = false;
+  testLValue( boolean );
+}

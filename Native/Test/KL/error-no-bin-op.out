@@ -1,1 +1,0 @@
-error-no-bin-op.kl:9:3: error: binary operator '+' not supported for types 'S' and 'Integer'

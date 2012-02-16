@@ -47,10 +47,7 @@ namespace Fabric
     
     void FunctionWrapper::toJSONImpl( JSON::ObjectEncoder &objectEncoder ) const
     {
-      {
-        JSON::Encoder entryNameEncoder = objectEncoder.makeMember( "entryName" );
-        entryNameEncoder.makeString( m_astFunction->getEntryName( m_executable->getCGManager() ) );
-      }
+      objectEncoder.makeMember( "symbolName" ).makeString( m_astFunction->getSymbolName( m_executable->getCGManager() ) );
       
       {
         JSON::Encoder astEncoder = objectEncoder.makeMember( "ast" );

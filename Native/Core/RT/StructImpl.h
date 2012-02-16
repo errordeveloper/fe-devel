@@ -35,6 +35,7 @@ namespace Fabric
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
 
       virtual bool isShallow() const;
+      virtual bool isNoAliasSafe() const;
       virtual bool isEquivalentTo( RC::ConstHandle< RT::Impl > const &desc ) const;
       virtual bool isExportable() const;
       
@@ -104,7 +105,7 @@ namespace Fabric
       MemberOffsetVector m_memberOffsets;
       NameToIndexMap m_nameToIndexMap;
       void *m_defaultData;
-      bool m_isShallow;
+      bool m_isShallow, m_isNoAliasSafe;
       bool m_isExportable;
     };
   };

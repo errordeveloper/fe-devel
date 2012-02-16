@@ -56,6 +56,7 @@ namespace Fabric
       
       virtual bool isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const = 0;
       virtual bool isShallow() const = 0;
+      virtual bool isNoAliasSafe() const = 0;
       virtual bool isExportable() const = 0;
       
       RC::ConstHandle<FixedArrayImpl> getFixedArrayImpl( size_t length ) const;

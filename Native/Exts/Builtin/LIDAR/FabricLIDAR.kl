@@ -17,11 +17,11 @@ struct LidarReader {
   Boolean compressed;
 };
 
-function FabricLIDAR_Reader_Decode( Data resourceData, Size resourceDataSize, io LidarReader lidar );
-function FabricLIDAR_Reader_OpenFileHandle( String handle, io LidarReader lidar );
-function FabricLIDAR_Reader_Free( io LidarReader lidar );
-function FabricLIDAR_Reader_GetCount( io LidarReader lidar, io Size count );
-function FabricLIDAR_Reader_GetPoints( io LidarReader lidar, io Vec3 positions<>, io Color colors<> );
+function FabricLIDAR_Reader_Decode( Data resourceData, Size resourceDataSize, io LidarReader lidar ) = "FabricLIDAR_Reader_Decode";
+function FabricLIDAR_Reader_OpenFileHandle( String handle, io LidarReader lidar ) = "FabricLIDAR_Reader_OpenFileHandle";
+function FabricLIDAR_Reader_Free( io LidarReader lidar ) = "FabricLIDAR_Reader_Free";
+function FabricLIDAR_Reader_GetCount( io LidarReader lidar, io Size count ) = "FabricLIDAR_Reader_GetCount";
+function FabricLIDAR_Reader_GetPoints( io LidarReader lidar, io Vec3 positions<>, io Color colors<> ) = "FabricLIDAR_Reader_GetPoints";
 
 function ~LidarReader() = "FabricLIDAR_Reader_Free";
 

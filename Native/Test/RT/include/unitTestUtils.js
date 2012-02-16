@@ -4,6 +4,11 @@ var fs = require('fs');
 var onCreateContextCallbacks = [];
 var KLAppendMap = {};
 
+FABRIC.define = function()
+{
+  if( arguments.length > 0 )
+    arguments[arguments.length-1]();
+};
 FABRIC.UnitTests = {};
 FABRIC.UnitTestUtils = {};
 FABRIC.appendOnCreateContextCallback = function(callback) {
@@ -229,7 +234,7 @@ function generateAppendResult(type)
 }
 
 FABRIC.UnitTestUtils.loadType = function(type){
- require("../../../../Web/SceneGraph/RT/" + type + ".js");
+ require("../../../../Web/RT/" + type + ".js");
  generateAppendResult(type);
  onPostLoad();
 }

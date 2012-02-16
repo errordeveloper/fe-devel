@@ -30,6 +30,7 @@ namespace Fabric
 
       virtual bool isEquivalentTo( RC::ConstHandle< RT::Impl > const &desc ) const;
       virtual bool isShallow() const;
+      virtual bool isNoAliasSafe() const;
       virtual bool isExportable() const;
 
       // ArrayImpl
@@ -65,7 +66,6 @@ namespace Fabric
     
       RC::ConstHandle<Impl> m_memberImpl;
       size_t m_memberSize;
-      bool m_memberIsShallow;
       size_t m_length;
       void *m_defaultData;
    };

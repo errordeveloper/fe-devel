@@ -109,7 +109,6 @@ namespace Fabric
     RC::Handle<MT::ParallelCall> Binding::bind(
       std::vector<std::string> &errors,
       Scope const &scope,
-      size_t *newSize,
       unsigned prefixCount,
       void * const *prefixes
       ) const
@@ -123,7 +122,7 @@ namespace Fabric
       if ( m_prototype && m_operator )
       {
         std::string const operatorErrorPrefix = "operator " + _(m_operator->getName()) + ": ";
-        result = m_operator->bind( errors, m_prototype, scope, newSize, prefixCount, prefixes );
+        result = m_operator->bind( errors, m_prototype, scope, prefixCount, prefixes );
         for ( size_t i=0; i<errors.size(); ++i )
           errors[i] = operatorErrorPrefix + errors[i];
       }

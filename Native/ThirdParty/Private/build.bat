@@ -566,15 +566,15 @@ echo D | xcopy "libjpeg.lib" %LIB_ARCH_DEBUG_DIR%\jpeg\ /Y > NUL:
 echo D | xcopy "libjpeg.lib" %LIB_ARCH_RELEASE_DIR%\jpeg\ /Y > NUL:
 robocopy . %INCLUDE_ARCH_DEBUG_DIR%\jpeg\jpeg *.h /s > NUL:
 robocopy . %INCLUDE_ARCH_RELEASE_DIR%\jpeg\jpeg *.h /s > NUL:
-touch %CHECKPOINT_DIR%\tiff_install
-:tiff_install_done
+touch %CHECKPOINT_DIR%\jpeg_install
+:jpeg_install_done
 
 rem ============= OPENCV ===============
 if EXIST %CHECKPOINT_DIR%\opencv_unpack goto opencv_unpack_done
 echo OPENCV - Unpacking
 cd %BUILD_DIR%
 type "%TOP%\SourcePackages\%OPENCV_SOURCE%.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
-rem type "%TOP%\Patches\Windows\%OPENCV_SOURCE%-patch.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
+type "%TOP%\Patches\Windows\%OPENCV_SOURCE%-patch.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
 touch %CHECKPOINT_DIR%\opencv_unpack
 :opencv_unpack_done
 
@@ -582,7 +582,7 @@ if EXIST %CHECKPOINT_DIR%\opencv_cmake goto opencv_cmake_done
 echo OPENCV - CMake - generating projects
 cd %BUILD_DIR%\%OPENCV_NAME%
 echo %BUILD_DIR%\%OPENCV_NAME%
-cmake -G "Visual Studio 10" -DWITH_CUDA=OFF -DBUILD_WITH_STATIC_CRT=ON -DCMAKE_CXX_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0" -DCMAKE_C_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0"
+cmake -G "Visual Studio 10" -DWITH_CUDA=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_WITH_STATIC_CRT=ON -DCMAKE_CXX_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0" -DCMAKE_C_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0"
 touch %CHECKPOINT_DIR%\opencv_cmake
 :opencv_cmake_done
 

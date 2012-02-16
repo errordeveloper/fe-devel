@@ -89,6 +89,11 @@ namespace Fabric
       return false;
     }
 
+    bool ArrayProducerImpl::isNoAliasSafe() const
+    {
+      return true;
+    }
+
     size_t ArrayProducerImpl::getIndirectMemoryUsage( void const *data ) const
     {
       return 0;

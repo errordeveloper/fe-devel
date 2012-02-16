@@ -14,7 +14,7 @@ b.setParameterLayout(["self.foo"])
 
 n = F.DG.createNode("foo")
 n.addMember("foo", "Integer")
-n.setCount(64)
+n.resize(64)
 n.bindings.append(b)
 n.evaluate()
 

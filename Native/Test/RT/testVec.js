@@ -1,7 +1,7 @@
 
 FABRIC = require('Fabric').createClient();
 require( "./include/unitTestUtils.js" );
-require( "../../../Web/SceneGraph/RT/Math.js" );
+require( "../../../Web/RT/Math.js" );
 Math.verboseLogFunction = console.log;
 
 var testCode = FABRIC.UnitTestUtils.loadTestFile( 'Vec' );

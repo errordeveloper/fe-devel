@@ -47,11 +47,11 @@ namespace Fabric
       }
     }
     
-    RC::ConstHandle<CG::Adapter> Var::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType Var::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
       RC::ConstHandle<CG::Adapter> adapter = getValueSymbol( basicBlockBuilder )->getAdapter();
       adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      return adapter;
+      return CG::ExprType( adapter, CG::USAGE_LVALUE );
     }
     
     CG::ExprValue Var::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const

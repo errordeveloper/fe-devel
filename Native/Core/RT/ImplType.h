@@ -29,6 +29,7 @@ namespace Fabric
     static const ImplType DT_CONST_STRING = size_t(1) << 10;
     static const ImplType DT_VALUE_PRODUCER = size_t(1) << 11;
     static const ImplType DT_ARRAY_PRODUCER = size_t(1) << 12;
+    static const ImplType DT_CONTAINER = size_t(1) << 13;
     
     // Struct type
     static const ImplType DT_STRUCT = size_t(1) << 16;
@@ -51,6 +52,7 @@ namespace Fabric
     inline bool isConstString( ImplType implType ) { return implType & DT_CONST_STRING; }
     inline bool isValueProducer( ImplType implType ) { return implType & DT_VALUE_PRODUCER; }
     inline bool isArrayProducer( ImplType implType ) { return implType & DT_ARRAY_PRODUCER; }
+    inline bool isContainer( ImplType implType ) { return implType & DT_CONTAINER; }
     inline bool isStruct( ImplType implType ) { return implType & DT_STRUCT; }
     inline bool isFixedArray( ImplType implType ) { return implType & DT_FIXED_ARRAY; }
     inline bool isVariableArray( ImplType implType ) { return implType & DT_VARIABLE_ARRAY; }

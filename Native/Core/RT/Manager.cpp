@@ -9,6 +9,8 @@
 #include "BooleanImpl.h"
 #include "ConstStringDesc.h"
 #include "ConstStringImpl.h"
+#include "ContainerDesc.h"
+#include "ContainerImpl.h"
 #include "DictDesc.h"
 #include "DictImpl.h"
 #include "FixedArrayDesc.h"
@@ -62,6 +64,7 @@ namespace Fabric
       registerDesc( m_stringDesc = new StringDesc( "String", new StringImpl( "String" ) ) );
       registerDesc( m_dataDesc = new OpaqueDesc( "Data", new OpaqueImpl( "Data", sizeof(size_t) ) ) );
       registerDesc( m_constStringDesc = new ConstStringDesc( "ConstString", new ConstStringImpl( "ConstString" ) ) );
+      registerDesc( m_containerDesc = new ContainerDesc( "Container", new ContainerImpl( "Container" ) ) );
     }
     
     void Manager::setJSONCommandChannel( JSON::CommandChannel *jsonCommandChannel )
@@ -449,7 +452,12 @@ namespace Fabric
     {
       return m_constStringDesc;
     }
-      
+
+    RC::ConstHandle<ContainerDesc> Manager::getContainerDesc() const
+    {
+      return m_containerDesc;
+    }
+
     void Manager::jsonDesc( JSON::Encoder &resultEncoder ) const
     {
       JSON::ObjectEncoder resultObjectEncoder = resultEncoder.makeObject();

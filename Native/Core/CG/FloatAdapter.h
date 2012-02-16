@@ -27,7 +27,6 @@ namespace Fabric
       virtual llvm::Constant *llvmDefaultValue( BasicBlockBuilder &basicBlockBuilder ) const;
 
       llvm::Constant *llvmConst( RC::Handle<Context> const &context, double value ) const;
-      llvm::Constant *llvmConst( RC::Handle<Context> const &context, std::string const &valueString ) const;
       
       virtual void llvmCompileToModule( ModuleBuilder &moduleBuilder ) const;
       

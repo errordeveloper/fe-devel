@@ -20,42 +20,35 @@ namespace Fabric
 
       static RC::ConstHandle<Function> Create(
         CG::Location const &location,
-        std::string const &friendlyName,
-        std::string const &entryName,
         std::string const &returnTypeName,
+        std::string const &functionName,
         RC::ConstHandle<ParamVector> const &params,
-        RC::ConstHandle<CompoundStatement> const &body
-        );
-
-      static RC::ConstHandle<Function> Create(
-        CG::Location const &location,
-        std::string const &friendlyName,
-        std::string const *entryName,
-        std::string const &returnTypeName,
-        RC::ConstHandle<ParamVector> const &params,
+        std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body
         );
           
       virtual bool isFunction() const { return true; }
       virtual bool isOperator() const { return false; }
-      virtual bool isDestructor() const { return false; }
       
       std::string const &getDeclaredName() const
       {
-        return m_friendlyName;
+        return m_functionName;
       }
-      virtual std::string const *getFriendlyName( RC::Handle<CG::Manager> const &cgManager ) const;
-      virtual std::string getEntryName( RC::Handle<CG::Manager> const &cgManager ) const;
+      
+      virtual std::string const *getScopeName( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getPencilKey( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getDefaultSymbolName( RC::Handle<CG::Manager> const &cgManager ) const;
+      virtual std::string getDesc( RC::Handle<CG::Manager> const &cgManager ) const;
       virtual RC::ConstHandle<ParamVector> getParams( RC::Handle<CG::Manager> const &cgManager ) const;
       
     protected:
     
       Function(
         CG::Location const &location,
-        std::string const &friendlyName,
-        std::string const &entryName,
         std::string const &returnTypeName,
+        std::string const &functionName,
         RC::ConstHandle<ParamVector> const &params,
+        std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body,
         bool exportSymbol
         );
@@ -64,11 +57,10 @@ namespace Fabric
     
     private:
     
-      std::string m_friendlyName;
-      std::string m_entryName;
+      std::string m_functionName;
       RC::ConstHandle<ParamVector> m_params;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_AST_FUNCTION_H

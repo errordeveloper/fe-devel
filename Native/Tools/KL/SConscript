@@ -19,6 +19,8 @@ if buildOS == 'Windows':
     klEnv.Append( LIBS = [ 'advapi32' ] )
 elif buildOS == 'Linux':
 	klEnv.Append( LIBS = [ 'dl' ] )
+  # [andrew 20120215] resolve circular linking dependencies in Core
+	klEnv[ '_LIBFLAGS' ] = '-Wl,--start-group ' + klEnv['_LIBFLAGS'] + ' -Wl,--end-group'
 
 klBin = klEnv.Program( 'kl', [ Glob('*.cpp'), extraObjects ] )
   

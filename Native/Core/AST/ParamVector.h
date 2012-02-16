@@ -5,6 +5,7 @@
 #ifndef _FABRIC_AST_PARAM_VECTOR_H
 #define _FABRIC_AST_PARAM_VECTOR_H
 
+#include <Fabric/Core/CG/FunctionParam.h>
 #include <Fabric/Base/RC/Vector.h>
 #include <Fabric/Base/RC/Handle.h>
 #include <Fabric/Base/RC/ConstHandle.h>
@@ -26,7 +27,6 @@ namespace Fabric
     class Adapter;
     class Diagnostics;
     class ExprType;
-    class FunctionParam;
     class Manager;
     class ModuleBuilder;
   };
@@ -44,10 +44,10 @@ namespace Fabric
 
       void appendJSON( JSON::Encoder const &encoder, bool includeLocation ) const;
     
-      std::vector<CG::FunctionParam> getFunctionParams( RC::Handle<CG::Manager> const &cgManager ) const;
+      CG::ParamVector getFunctionParams( RC::Handle<CG::Manager> const &cgManager ) const;
       std::vector<std::string> getTypes() const;
-      std::vector< RC::ConstHandle<CG::Adapter> > getAdapters( RC::Handle<CG::Manager> const &cgManager ) const;
-      std::vector<CG::ExprType> getExprTypes( RC::Handle<CG::Manager> const &cgManager ) const;
+      CG::AdapterVector getAdapters( RC::Handle<CG::Manager> const &cgManager ) const;
+      CG::ExprTypeVector getExprTypes( RC::Handle<CG::Manager> const &cgManager ) const;
       
       void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
       void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctionBodies ) const;

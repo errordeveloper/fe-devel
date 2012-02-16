@@ -51,11 +51,11 @@ namespace Fabric
       cgManager->getStringAdapter();
     }
     
-    RC::ConstHandle<CG::Adapter> ConstString::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType ConstString::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
       RC::ConstHandle<CG::Adapter> adapter = basicBlockBuilder.getManager()->getStringAdapter();
       adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      return adapter;
+      return CG::ExprType( adapter, CG::USAGE_RVALUE );
     }
     
     CG::ExprValue ConstString::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const

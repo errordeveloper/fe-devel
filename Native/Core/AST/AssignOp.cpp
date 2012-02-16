@@ -9,9 +9,11 @@
 
 #include <Fabric/Core/AST/AssignOp.h>
 #include <Fabric/Core/CG/Adapter.h>
-#include <Fabric/Core/CG/OverloadNames.h>
-#include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Core/CG/Error.h>
+#include <Fabric/Core/CG/ModuleBuilder.h>
+#include <Fabric/Core/CG/Mangling.h>
+#include <Fabric/Core/CG/PencilSymbol.h>
+#include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Base/Util/SimpleString.h>
 
 namespace Fabric
@@ -36,7 +38,7 @@ namespace Fabric
     void AssignOp::appendJSONMembers( JSON::ObjectEncoder const &jsonObjectEncoder, bool includeLocation ) const
     {
       Expr::appendJSONMembers( jsonObjectEncoder, includeLocation );
-      jsonObjectEncoder.makeMember( "initialValue" ).makeString( assignOpTypeDesc( m_assignOpType ) );
+      jsonObjectEncoder.makeMember( "type" ).makeString( assignOpCodeName( m_assignOpType ) );
       m_left->appendJSON( jsonObjectEncoder.makeMember( "lhs" ), includeLocation );
       m_right->appendJSON( jsonObjectEncoder.makeMember( "rhs" ), includeLocation );
     }
@@ -47,11 +49,13 @@ namespace Fabric
       m_right->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> AssignOp::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType AssignOp::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> adapter = m_left->getType( basicBlockBuilder );
-      adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      return adapter;
+      CG::ExprType lhsExprType = m_left->getExprType( basicBlockBuilder );
+      if ( lhsExprType.getUsage() != CG::USAGE_LVALUE )
+        throw CG::Error( getLocation(), "cannot be assigned to" );
+      lhsExprType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+      return lhsExprType;
     }
     
     CG::ExprValue AssignOp::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -70,26 +74,38 @@ namespace Fabric
           return lhsExprValue;
         }
 
-        std::string name = methodOverloadName( assignOpMethodName( m_assignOpType ), lhsExprValue.getAdapter(), rhsExprValue.getAdapter() );
-        RC::ConstHandle<CG::FunctionSymbol> functionSymbol = basicBlockBuilder.maybeGetFunction( name );
-        if ( functionSymbol )
+        CG::Function const *function = basicBlockBuilder.getModuleBuilder().maybeGetPreciseFunction(
+          CG::AssignOpPencilKey( adapter, m_assignOpType ),
+          CG::ExprTypeVector(
+            lhsExprValue.getExprType(),
+            rhsExprValue.getExprType()
+            )
+          );
+        if ( function )
         {
-          functionSymbol->llvmCreateCall( basicBlockBuilder, lhsExprValue, rhsExprValue );
+          function->llvmCreateCall( basicBlockBuilder, lhsExprValue, rhsExprValue );
           return lhsExprValue;
         }
         
-        // [pzion 20110202] Fall back on binOp + simple assignOp composition              
-        std::string binOpName = binOpOverloadName( CG::binOpForAssignOp( m_assignOpType ), lhsExprValue.getAdapter(), lhsExprValue.getAdapter() );
-        RC::ConstHandle<CG::FunctionSymbol> binOpFunctionSymbol = basicBlockBuilder.maybeGetFunction( binOpName );
-        if ( binOpFunctionSymbol )
-        {
-          CG::ExprValue binOpResultExprValue = binOpFunctionSymbol->llvmCreateCall( basicBlockBuilder, lhsExprValue, rhsExprValue );
-          llvm::Value *rhsCastedRValue = adapter->llvmCast( basicBlockBuilder, binOpResultExprValue );
-          adapter->llvmAssign( basicBlockBuilder, lhsExprValue.getValue(), rhsCastedRValue );
-          return lhsExprValue;
-        }
-        
-        throw CG::Error( getLocation(), "assignment operator " + std::string( CG::assignOpTypeDesc( m_assignOpType ) ) + " not supported for expressions of type " + lhsExprValue.getTypeUserName() );
+        // [pzion 20110202] Fall back on binOp + simple assignOp composition
+        CG::BinOpType binOpType = CG::binOpForAssignOp( m_assignOpType );   
+        function = basicBlockBuilder.getModuleBuilder().getFunction(
+          getLocation(),
+          CG::BinOpPencilKey( binOpType ),
+          CG::ExprTypeVector(
+            lhsExprValue.getExprType(),
+            rhsExprValue.getExprType()
+            ),
+          CG::BinOpQueryDesc(
+            binOpType,
+            lhsExprValue.getAdapter(),
+            rhsExprValue.getAdapter()
+            )
+          );
+        CG::ExprValue binOpResultExprValue = function->llvmCreateCall( basicBlockBuilder, lhsExprValue, rhsExprValue );
+        llvm::Value *rhsCastedRValue = adapter->llvmCast( basicBlockBuilder, binOpResultExprValue );
+        adapter->llvmAssign( basicBlockBuilder, lhsExprValue.getValue(), rhsCastedRValue );
+        return lhsExprValue;
       }
       catch ( CG::Error e )
       {

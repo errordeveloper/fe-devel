@@ -67,7 +67,12 @@ namespace Fabric
     {
       return true;
     }
-    
+
+    bool ConstStringImpl::isNoAliasSafe() const
+    {
+      return true;
+    }
+
     std::string ConstStringImpl::descData( void const *data ) const
     {
       bits_t const *bits = static_cast<bits_t const *>( data );

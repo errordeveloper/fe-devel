@@ -82,13 +82,31 @@ namespace Fabric
       
       CG::ExprValue exprValue( moduleBuilder.getContext() );
       if ( adapter == byteAdapter )
-        exprValue = CG::ExprValue( byteAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), byteAdapter->llvmConst( moduleBuilder.getContext(), Util::parseSize( m_value ) ) );
+      {
+        uint64_t uint64Value = Util::parseUInt64( m_value );
+        if ( uint64Value > UINT8_MAX )
+          throw CG::Error( getLocation(), "byte constant out-of-range" );
+        uint8_t value = uint8_t(uint64Value);
+        exprValue = CG::ExprValue( byteAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), byteAdapter->llvmConst( moduleBuilder.getContext(), value ) );
+      }
       else if ( adapter == integerAdapter )
-        exprValue = CG::ExprValue( integerAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), integerAdapter->llvmConst( moduleBuilder.getContext(), Util::parseSize( m_value ) ) );
+      {
+        uint64_t uint64Value = Util::parseUInt64( m_value );
+        if ( uint64Value > INT32_MAX )
+          throw CG::Error( getLocation(), "integer constant out-of-range" );
+        int32_t value = int32_t(uint64Value);
+        exprValue = CG::ExprValue( integerAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), integerAdapter->llvmConst( moduleBuilder.getContext(), value ) );
+      }
       else if ( adapter == sizeAdapter )
-        exprValue = CG::ExprValue( sizeAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), sizeAdapter->llvmConst( moduleBuilder.getContext(), Util::parseSize( m_value ) ) );
+      {
+        uint64_t uint64Value = Util::parseUInt64( m_value );
+        if ( uint64Value > SIZE_MAX )
+          throw CG::Error( getLocation(), "size constant out-of-range" );
+        size_t value = size_t(uint64Value);
+        exprValue = CG::ExprValue( sizeAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), sizeAdapter->llvmConst( moduleBuilder.getContext(), value ) );
+      }
       else if ( adapter == scalarAdapter )
-        exprValue = CG::ExprValue( scalarAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), scalarAdapter->llvmConst( moduleBuilder.getContext(), Util::parseFloat( m_value ) ) );
+        exprValue = CG::ExprValue( scalarAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), scalarAdapter->llvmConst( moduleBuilder.getContext(), Util::parseDouble( m_value ) ) );
       else throw CG::Error( getLocation(), "constant declaration type must be Byte, Integer, Size or Scalar" );
         
       if ( scope.has( m_name ) )

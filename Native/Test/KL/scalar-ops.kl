@@ -22,14 +22,4 @@ operator entry()
   x *= 4.5; report x;
   x /= -1.2; report x;
   x %= 3.4; report x;
-
-  // Intrinsics and build-ins
-  report abs( -1.45 );
-  report abs( 1.45 );
-  report abs( -0.0 );
-  report abs( 0.0 );
-  report sin( 5.72283 );
-  report cos( 5.72283 );
-  report sqrt( 5.72283 );
-  report pow( 5.72283, 3.1452 );
 }

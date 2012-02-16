@@ -60,7 +60,12 @@ namespace Fabric
     {
       return true;
     }
-    
+
+    bool OpaqueImpl::isNoAliasSafe() const
+    {
+      return true;
+    }
+
     bool OpaqueImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
     {
       if ( !isOpaque( impl->getType() ) )

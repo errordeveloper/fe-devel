@@ -52,21 +52,21 @@ namespace Fabric
       m_right->registerTypes( cgManager, diagnostics );
     }
     
-    RC::ConstHandle<CG::Adapter> TernaryOp::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType TernaryOp::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> trueType = m_middle->getType( basicBlockBuilder );
-      trueType->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      RC::ConstHandle<CG::Adapter> falseType = m_right->getType( basicBlockBuilder );
-      falseType->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+      CG::ExprType trueExprType = m_middle->getExprType( basicBlockBuilder );
+      trueExprType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+      CG::ExprType falseExprType = m_right->getExprType( basicBlockBuilder );
+      falseExprType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
       
       // The true/false value types need to be "equivalent". We'll cast into whoever wins the
       // casting competition, or fail if they can't.
-      RC::ConstHandle<RT::Desc> castDesc = basicBlockBuilder.getStrongerTypeOrNone( trueType->getDesc(), falseType->getDesc() );
+      RC::ConstHandle<RT::Desc> castDesc = basicBlockBuilder.getStrongerTypeOrNone( trueExprType.getDesc(), falseExprType.getDesc() );
       if ( !castDesc )
-        throw CG::Error( getLocation(), "types " + _(trueType->getUserName()) + " and " + _(falseType->getUserName()) + " are unrelated" );
-      RC::ConstHandle<CG::Adapter> adapter = trueType->getManager()->getAdapter( castDesc );
+        throw CG::Error( getLocation(), "types " + _(trueExprType.getUserName()) + " and " + _(falseExprType.getUserName()) + " are unrelated" );
+      RC::ConstHandle<CG::Adapter> adapter = basicBlockBuilder.getManager()->getAdapter( castDesc );
       adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      return adapter;
+      return CG::ExprType( adapter, CG::USAGE_RVALUE );
     }
     
     CG::ExprValue TernaryOp::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const
@@ -82,7 +82,8 @@ namespace Fabric
           case CG::TERNARY_OP_COND:
           {
             RC::ConstHandle<CG::BooleanAdapter> booleanAdapter = basicBlockBuilder.getManager()->getBooleanAdapter();
-            RC::ConstHandle<CG::Adapter> resultAdapter = getType( basicBlockBuilder );
+            CG::ExprType resultExprType = getExprType( basicBlockBuilder );
+            RC::ConstHandle<CG::Adapter> resultAdapter = resultExprType.getAdapter();
 
             llvm::BasicBlock *trueBasicBlock = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "ternaryTrue" );
             llvm::BasicBlock *falseBasicBlock = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "ternaryFalse" );

@@ -3,30 +3,30 @@ operator entry()
   var Size x;
 
   // Binary ops
-  x = 1 + 2; report x;
-  x = 4 - 3; report x;
-  x = 3 * 4; report x;
-  x = 6 / 2; report x;
-  x = 11 % 5; report x;
+  x = Size(1) + Size(2); report x;
+  x = Size(4) - Size(3); report x;
+  x = Size(3) * Size(4); report x;
+  x = Size(6) / Size(2); report x;
+  x = Size(11) % Size(5); report x;
   x = Size(11) << Size(2); report x;
   x = Size(11) >> Size(3); report x;
   
   // Bit ops
-  x =  7 & 11; report x;
-  x =  7 | 11; report x;
-  x =  7 ^ 11; report x;
+  x = Size(7) & Size(11); report x;
+  x = Size(7) | Size(11); report x;
+  x = Size(7) ^ Size(11); report x;
 
   // Assignment ops
-  x = 5; report x;
-  x += 2; report x;
-  x -= 3; report x;
-  x *= 12; report x;
-  x /= 2; report x;
-  x %= 5; report x;
-  x |= 11; report x;
-  x &= 11; report x;
-  x ^= 11; report x;
+  x = Size(5); report x;
+  x += Size(2); report x;
+  x -= Size(3); report x;
+  x *= Size(12); report x;
+  x /= Size(2); report x;
+  x %= Size(5); report x;
+  x |= Size(11); report x;
+  x &= Size(11); report x;
+  x ^= Size(11); report x;
   x = Size(5421); report x;
-  x <<= 1; report x;
-  x >>= 1; report x;
+  x <<= Size(1); report x;
+  x >>= Size(1); report x;
 }

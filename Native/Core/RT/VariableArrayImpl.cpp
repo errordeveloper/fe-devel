@@ -89,8 +89,7 @@ namespace Fabric
       bits_t const *src = reinterpret_cast<bits_t const *>(_src);
       bits_t *dst = reinterpret_cast<bits_t *>(_dst);
       
-      if ( dst->numMembers > src->numMembers )
-        m_memberImpl->disposeDatas( dst->memberDatas + src->numMembers * m_memberSize, dst->numMembers - src->numMembers, m_memberSize );
+      m_memberImpl->disposeDatas( dst->memberDatas, dst->numMembers, m_memberSize );
       dst->numMembers = src->numMembers;
 
       dst->allocNumMembers = src->numMembers;
@@ -222,7 +221,12 @@ namespace Fabric
     {
       return false;
     }
-    
+
+    bool VariableArrayImpl::isNoAliasSafe() const
+    {
+      return isMemberNoAliasSafe();
+    }
+
     bool VariableArrayImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const
     {
       if ( !isVariableArray( that->getType() ) )

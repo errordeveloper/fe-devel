@@ -32,19 +32,19 @@ struct AlembicHandle {
   Vec2 timeRange;
 };
 
-function FabricALEMBICOpenFileHandle( String fileHandle, io AlembicHandle handle );
-function FabricALEMBICFreeAlembicHandle( io AlembicHandle handle );
-function FabricALEMBICGetIdentifiers( io AlembicHandle handle, io String identifiers[] );
-function FabricALEMBICParseXform( io AlembicHandle handle, io String identifier, io Scalar time, io Xfo transform );
-function FabricALEMBICParseCamera( io AlembicHandle handle, io String identifier, io Scalar time, io Scalar near, io Scalar far, io Scalar fovY );
-function FabricALEMBICParsePolyMeshCount( io AlembicHandle handle, io String identifier, io Size count );
-function FabricALEMBICParsePolyMeshUniforms( io AlembicHandle handle, io String identifier, io Integer indices[] );
-function FabricALEMBICParsePolyMeshAttributes( io AlembicHandle handle, io String identifier, io Scalar time, io Vec3 vertices<>, io Vec3 normals<>, io Boolean uvsLoaded, io Vec2 uvs<> );
-function FabricALEMBICParsePointsCount( io AlembicHandle handle, io String identifier, io Scalar time, io Size count );
-function FabricALEMBICParsePointsAttributes( io AlembicHandle handle, io String identifier, io Scalar time, io Vec3 positions<>, io Quat orientations<>, io Scalar sizes<>, io Vec3 scales<>, io Color colors<>);
-function FabricALEMBICParseCurvesCount( io AlembicHandle handle, io String identifier, io Size count );
-function FabricALEMBICParseCurvesUniforms( io AlembicHandle handle, io String identifier, io Integer indices[] );
-function FabricALEMBICParseCurvesAttributes( io AlembicHandle handle, io String identifier, io Scalar time, io Vec3 vertices<>, io Scalar sizes<>, io Boolean uvsLoaded, io Vec2 uvs<>, io Color colors<>);
+function FabricALEMBICOpenFileHandle( String fileHandle, io AlembicHandle handle ) = "FabricALEMBICOpenFileHandle";
+function FabricALEMBICFreeAlembicHandle( io AlembicHandle handle ) = "FabricALEMBICFreeAlembicHandle";
+function FabricALEMBICGetIdentifiers( io AlembicHandle handle, io String identifiers[] ) = "FabricALEMBICGetIdentifiers";
+function FabricALEMBICParseXform( io AlembicHandle handle, io String identifier, io Scalar time, io Xfo transform ) = "FabricALEMBICParseXform";
+function FabricALEMBICParseCamera( io AlembicHandle handle, io String identifier, io Scalar time, io Scalar near, io Scalar far, io Scalar fovY ) = "FabricALEMBICParseCamera";
+function FabricALEMBICParsePolyMeshCount( io AlembicHandle handle, io String identifier, io Size count ) = "FabricALEMBICParsePolyMeshCount";
+function FabricALEMBICParsePolyMeshUniforms( io AlembicHandle handle, io String identifier, io Integer indices[] ) = "FabricALEMBICParsePolyMeshUniforms";
+function FabricALEMBICParsePolyMeshAttributes( io AlembicHandle handle, io String identifier, io Scalar time, io Vec3 vertices<>, io Vec3 normals<>, io Boolean uvsLoaded, io Vec2 uvs<> ) = "FabricALEMBICParsePolyMeshAttributes";
+function FabricALEMBICParsePointsCount( io AlembicHandle handle, io String identifier, io Scalar time, io Size count ) = "FabricALEMBICParsePointsCount";
+function FabricALEMBICParsePointsAttributes( io AlembicHandle handle, io String identifier, io Scalar time, io Vec3 positions<>, io Quat orientations<>, io Scalar sizes<>, io Vec3 scales<>, io Color colors<>) = "FabricALEMBICParsePointsAttributes";
+function FabricALEMBICParseCurvesCount( io AlembicHandle handle, io String identifier, io Size count ) = "FabricALEMBICParseCurvesCount";
+function FabricALEMBICParseCurvesUniforms( io AlembicHandle handle, io String identifier, io Integer indices[] ) = "FabricALEMBICParseCurvesUniforms";
+function FabricALEMBICParseCurvesAttributes( io AlembicHandle handle, io String identifier, io Scalar time, io Vec3 vertices<>, io Scalar sizes<>, io Boolean uvsLoaded, io Vec2 uvs<>, io Color colors<>) = "FabricALEMBICParseCurvesAttributes";
 
 function ~AlembicHandle() = "FabricALEMBICFreeAlembicHandle";
 

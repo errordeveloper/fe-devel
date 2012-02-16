@@ -12,5 +12,21 @@ struct Mat44 {
   Vec4 row3;
 };
 
-function FabricTeemNRRDLoadUShort( Data data, Size dataSize, io Size imageWidth, io Size imageHeight, io Size imageDepth, io Byte imageUShortVoxels[], io Mat44 xfoMat );
-function FabricTeemNRRDLoadUShortFromFileHandle( String handle, io Size imageWidth, io Size imageHeight, io Size imageDepth, io Byte imageUShortVoxels[], io Mat44 xfoMat );
+function FabricTeemNRRDLoadUShort(
+  Data data,
+  Size dataSize,
+  io Size imageWidth,
+  io Size imageHeight,
+  io Size imageDepth,
+  io Byte imageUShortVoxels[],
+  io Mat44 xfoMat
+  ) = "FabricTeemNRRDLoadUShort";
+  
+function FabricTeemNRRDLoadUShortFromFileHandle(
+  String handle,
+  io Size imageWidth,
+  io Size imageHeight,
+  io Size imageDepth,
+  io Byte imageUShortVoxels[],
+  io Mat44 xfoMat
+  ) = "FabricTeemNRRDLoadUShortFromFileHandle";

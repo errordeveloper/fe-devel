@@ -1,0 +1,3 @@
+operator entry() {
+  report Integer(Scalar(Byte(42) * Scalar(2.14)));
+}

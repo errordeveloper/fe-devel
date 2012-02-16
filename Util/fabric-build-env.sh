@@ -17,6 +17,7 @@ unix_to_windows_path()
 
 create_link()
 {
+  echo "Linking $2 -> $1"
   if [ "$FABRIC_BUILD_OS" = "Windows" ]; then
     if [ -d $2 ]; then
       rmdir "$2"
@@ -74,6 +75,7 @@ else
 Usage: souce fabric-build-env.sh [-n] (Debug|Release)
 EOF
   else
+    FABRIC_BUILD_PATH="$FABRIC_CORE_PATH/Native/build/$FABRIC_BUILD_OS/$FABRIC_BUILD_ARCH/$FABRIC_BUILD_TYPE"
     FABRIC_DIST_PATH="$FABRIC_CORE_PATH/Native/dist/$FABRIC_BUILD_OS/$FABRIC_BUILD_ARCH/$FABRIC_BUILD_TYPE"
 
     echo "Exporting FABRIC_BUILD_OS=$FABRIC_BUILD_OS"
@@ -101,22 +103,24 @@ EOF
     FABRIC_EXTS_SRC="$FABRIC_DIST_PATH/Exts"
     mkdir -p "$FABRIC_EXTS_SRC"
     FABRIC_EXTS_DST="$FABRIC_LIBRARY_DST_DIR/Exts"
-    echo "Setting up $FABRIC_EXTS_DST -> $FABRIC_EXTS_SRC"
+    create_link "$FABRIC_EXTS_SRC" "$FABRIC_EXTS_DST"
 
-    create_link $FABRIC_EXTS_SRC $FABRIC_EXTS_DST
+    FABRIC_KL_SRC="$FABRIC_BUILD_PATH/Fabric/Tools/KL/kl"
+    FABRIC_KL_DST="$HOME/bin/kl"
+    create_link "$FABRIC_KL_SRC" "$FABRIC_KL_DST"
 
     if [ "$FABRIC_BUILD_OS" != "Windows" ]; then
       FABRIC_NODE_MODULE_SRC="$FABRIC_DIST_PATH/NodeModule"
-      FABRIC_NODE_MODULE_DST="$HOME/node_modules/Fabric"
-      echo "Linking $FABRIC_NODE_MODULE_DST -> $FABRIC_NODE_MODULE_SRC"
-      create_link $FABRIC_NODE_MODULE_SRC $FABRIC_NODE_MODULE_DST
+      FABRIC_NODE_MODULE_DIR="$HOME/node_modules"
+      FABRIC_NODE_MODULE_DST="$FABRIC_NODE_MODULE_DIR/Fabric"
+      mkdir -p "$FABRIC_NODE_MODULE_DIR"
+      create_link "$FABRIC_NODE_MODULE_SRC" "$FABRIC_NODE_MODULE_DST"
 
       FABRIC_PYTHON_MODULE_SRC="$FABRIC_DIST_PATH/PythonModule"
       FABRIC_PYTHON_MODULE_DIR="$HOME/python_modules"
       FABRIC_PYTHON_MODULE_DST="$FABRIC_PYTHON_MODULE_DIR/fabric"
-      echo "Linking $FABRIC_PYTHON_MODULE_DST -> $FABRIC_PYTHON_MODULE_SRC"
       mkdir -p "$FABRIC_PYTHON_MODULE_DIR"
-  		create_link $FABRIC_PYTHON_MODULE_SRC $FABRIC_PYTHON_MODULE_DST
+      create_link "$FABRIC_PYTHON_MODULE_SRC" "$FABRIC_PYTHON_MODULE_DST"
     fi
 
     case "$FABRIC_BUILD_OS" in
@@ -142,10 +146,8 @@ EOF
           popd
         fi
       else
-        echo "Creating directory $FABRIC_NPAPI_DST_DIR"
         mkdir -p "$FABRIC_NPAPI_DST_DIR"
-        echo "Linking $FABRIC_NPAPI_DST -> $FABRIC_NPAPI_SRC"
-        create_link $FABRIC_NPAPI_SRC $FABRIC_NPAPI_DST
+        create_link "$FABRIC_NPAPI_SRC" "$FABRIC_NPAPI_DST"
       fi
     else
       if [ "$FABRIC_BUILD_OS" = "Windows" ]; then

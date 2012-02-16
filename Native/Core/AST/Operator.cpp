@@ -12,23 +12,23 @@ namespace Fabric
     
     RC::ConstHandle<Function> Operator::Create(
       CG::Location const &location,
-      std::string const &friendlyName,
-      std::string const &entryName,
+      std::string const &functionName,
       RC::ConstHandle<ParamVector> const &params,
+      std::string const *symbolName,
       RC::ConstHandle<CompoundStatement> const &body
       )
     {
-      return new Operator( location, friendlyName, entryName, params, body );
+      return new Operator( location, functionName, params, symbolName, body );
     }
   
     Operator::Operator( 
       CG::Location const &location,
-      std::string const &friendlyName,
-      std::string const &entryName,
+      std::string const &functionName,
       RC::ConstHandle<ParamVector> const &params,
+      std::string const *symbolName,
       RC::ConstHandle<CompoundStatement> const &body
       )
-      : Function( location, friendlyName, entryName, "", params, body, true )
+      : Function( location, "", functionName, params, symbolName, body, true )
     {
     }
   }

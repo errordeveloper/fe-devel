@@ -11,7 +11,7 @@ parentBinding.setParameterLayout( [ "self.input", "self.output" ] );
 parentNode = FABRIC.DependencyGraph.createNode( "parent" );
 parentNode.addMember( "input", "Scalar" );
 parentNode.addMember( "output", "Scalar" );
-parentNode.setCount( 2 );
+parentNode.resize( 2 );
 parentNode.setData( 'input', 0, 3 );
 parentNode.setData( 'input', 1, 7 );
 parentNode.bindings.append( parentBinding );
@@ -27,7 +27,7 @@ childBinding.setParameterLayout( [ "parent.output<>", "self.index", "self.output
 childNode = FABRIC.DependencyGraph.createNode( "child" );
 childNode.setDependency( parentNode, "parent" );
 childNode.addMember( "output", "Scalar" );
-childNode.setCount( 2 );
+childNode.resize( 2 );
 childNode.bindings.append( childBinding );
 if (childNode.getErrors().length)
   console.log(childNode.getErrors());

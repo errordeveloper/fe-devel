@@ -309,9 +309,32 @@ void handleFile( std::string const &filename, FILE *fp, unsigned int runFlags )
       {
         if ( runFlags & RF_Verbose )
           printf( "-- Run --\n" );
-        llvm::Function *llvmEntry = module->getFunction( "entry" );
-        if ( !llvmEntry )
+          
+        std::string symbolName;
+        std::vector< RC::ConstHandle<AST::FunctionBase> > functionBases;
+        globalList->collectFunctionBases( functionBases );
+        for ( std::vector< RC::ConstHandle<AST::FunctionBase> >::const_iterator it=functionBases.begin(); it!=functionBases.end(); ++it )
+        {
+          RC::ConstHandle<AST::FunctionBase> const &functionBase = *it;
+          
+          if ( functionBase->isFunction() )
+          {
+            RC::ConstHandle<AST::Function> function = RC::ConstHandle<AST::Function>::StaticCast( functionBase );
+            
+            std::string const &declaredName = function->getDeclaredName();
+            if ( declaredName == "entry" )
+            {
+              if ( !function->isOperator() )
+                throw Exception( "entry: must be an operator" );
+              symbolName = function->getSymbolName( cgManager );
+            }
+          }
+        }
+        if ( symbolName.empty() )
           throw Exception("missing function 'entry'");
+        llvm::Function *llvmEntry = module->getFunction( symbolName );
+        FABRIC_ASSERT( llvmEntry );
+
         void (*entryPtr)() = (void (*)())executionEngine->getPointerToFunction( llvmEntry );
         if ( !entryPtr )
           throw Exception("unable to get pointer to entry");

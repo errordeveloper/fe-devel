@@ -18,7 +18,6 @@ namespace Fabric
       : ArrayImpl( codeName, DT_SLICED_ARRAY, memberImpl )
       , m_memberImpl( memberImpl )
       , m_memberSize( memberImpl->getAllocSize() )
-      , m_memberIsShallow( memberImpl->isShallow() )
       , m_variableArrayImpl( memberImpl->getVariableArrayImpl() )
     {
       setSize( sizeof(bits_t) );
@@ -128,7 +127,12 @@ namespace Fabric
     {
       return false;
     }
-    
+
+    bool SlicedArrayImpl::isNoAliasSafe() const
+    {
+      return isMemberNoAliasSafe();
+    }
+
     bool SlicedArrayImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const
     {
       if ( !isSlicedArray( that->getType() ) )

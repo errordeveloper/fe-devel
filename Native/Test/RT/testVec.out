@@ -34,9 +34,9 @@ Math.Warning: Vec2.inverse this.y: bad divisor: 0
 'linearInterpolate': [ 1.250, 3.250 ]
 'cross': [ -7 ]
 ****** Vec3 Tests ******
-Math.Warning: Vec3.inverse this.x: bad divisor: 0
-Math.Warning: Vec3.inverse this.y: bad divisor: 0
-Math.Warning: Vec3.inverse this.z: bad divisor: 0
+Math.Warning: FABRIC.RT.Vec3.inverse this.x: bad divisor: 0
+Math.Warning: FABRIC.RT.Vec3.inverse this.y: bad divisor: 0
+Math.Warning: FABRIC.RT.Vec3.inverse this.z: bad divisor: 0
 [FABRIC] [MT] Math.Warning: Vec3.inverse: this.x: bad divisor: 0
 [FABRIC] [MT] Math.Warning: Vec3.inverse: this.y: bad divisor: 0
 [FABRIC] [MT] Math.Warning: Vec3.inverse: this.z: bad divisor: 0

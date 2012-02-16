@@ -1,0 +1,12 @@
+struct S {
+  Integer a;
+};
+
+function S foo() {
+  S s;
+  return s;
+}
+
+operator entry() {
+  report foo();
+}

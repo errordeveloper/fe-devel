@@ -1,10 +1,1 @@
-Traceback (most recent call last):
-  File "issue-73.py", line 7, in <module>
-    node.evaluate()
-  File "/home/andrew/src/python_modules/fabric/__init__.py", line 1076, in evaluate
-    self._dg._executeQueuedCommands()
-  File "/home/andrew/src/python_modules/fabric/__init__.py", line 414, in _executeQueuedCommands
-    self.__client.executeQueuedCommands()
-  File "/home/andrew/src/python_modules/fabric/__init__.py", line 260, in executeQueuedCommands
-    raise Exception( 'Fabric core exception: ' + result[ 'exception' ] )
-Exception: Fabric core exception: DG.foo.setCount(): must be a JSON integer
+Caught exception: Fabric core exception: DG.foo.resize(): must be a JSON integer

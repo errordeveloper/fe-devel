@@ -2,4 +2,4 @@
 node.js:201
         throw e; // process.nextTick error, or 'error' event on first tick
               ^
-Fabric core exception: DG.foo.setCount(): must be a JSON integer
+Fabric core exception: DG.foo.resize(): must be a JSON integer

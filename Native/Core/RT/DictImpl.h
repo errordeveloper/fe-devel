@@ -63,6 +63,7 @@ namespace Fabric
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
       
       virtual bool isShallow() const;
+      virtual bool isNoAliasSafe() const;
       virtual bool isEquivalentTo( RC::ConstHandle<RT::Impl> const &desc ) const;
       virtual bool isExportable() const;
 
@@ -127,10 +128,10 @@ namespace Fabric
 
       RC::ConstHandle<ComparableImpl> m_keyImpl;
       size_t m_keySize;
-      bool m_keyIsShallow;
+      bool m_keyIsShallow, m_keyIsNoAliasSafe;
       RC::ConstHandle<Impl> m_valueImpl;
       size_t m_valueSize;
-      bool m_valueIsShallow;
+      bool m_valueIsShallow, m_valueIsNoAliasSafe;
       size_t m_nodeSize;
    };
   };

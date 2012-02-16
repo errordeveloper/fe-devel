@@ -119,37 +119,37 @@ const Integer BULLET_SOFTBODY_SHAPE = 32;
 
 //===================================================================================
 // extension's functions
-function FabricBULLET_World_Create(io BulletWorld world);
-function FabricBULLET_World_Delete(io BulletWorld world);
-function FabricBULLET_World_SetGravity(io BulletWorld world);
-function FabricBULLET_World_Step(io BulletWorld world, io Scalar timeStep);
-function FabricBULLET_World_Reset(io BulletWorld world);
-function FabricBULLET_World_Raycast(io BulletWorld world, io Vec3 from, io Vec3 to, io Boolean filterPassiveObjects, io BulletContact contacts[]);
-function FabricBULLET_World_ApplyForce(io BulletWorld world, io BulletForce force);
-function FabricBULLET_World_AddRigidBody(io BulletWorld world, io BulletRigidBody body);
-function FabricBULLET_World_RemoveRigidBody(io BulletWorld world, io BulletRigidBody body);
-function FabricBULLET_World_AddSoftBody(io BulletWorld world, io BulletSoftBody body);
-function FabricBULLET_World_RemoveSoftBody(io BulletWorld world, io BulletSoftBody body);
-function FabricBULLET_World_AddConstraint(io BulletWorld world, io BulletConstraint constraint);
-function FabricBULLET_World_RemoveConstraint(io BulletWorld world, io BulletConstraint constraint);
-function FabricBULLET_Shape_Create(io BulletShape shape);
-function FabricBULLET_Shape_Delete(io BulletShape shape);
-function FabricBULLET_RigidBody_Create(io BulletRigidBody body, io BulletShape shape);
-function FabricBULLET_RigidBody_Delete(io BulletRigidBody body);
-function FabricBULLET_RigidBody_SetMass(io BulletRigidBody body, in Scalar mass);
-function FabricBULLET_RigidBody_GetTransform(in BulletRigidBody body, io Xfo result);
-function FabricBULLET_RigidBody_SetTransform(in BulletRigidBody body, in Xfo transform);
-function Vec3 FabricBULLET_RigidBody_GetLinearVelocity(in BulletRigidBody body);
-function FabricBULLET_RigidBody_SetLinearVelocity(io BulletRigidBody body, in Vec3 bodyVelocity);
-function Vec3 FabricBULLET_RigidBody_GetAngularVelocity(in BulletRigidBody body);
-function FabricBULLET_RigidBody_SetAngularVelocity(io BulletRigidBody body, in Vec3 bodyVelocity);
-function FabricBULLET_SoftBody_Create(io BulletSoftBody body, io BulletWorld world, io Vec3 positions<>, io Vec3 normals<>, io Integer indices[]);
-function FabricBULLET_SoftBody_Delete(io BulletSoftBody body);
-function FabricBULLET_SoftBody_GetPosition(in Size index, io BulletSoftBody body, io Vec3 position, io Vec3 normal);
-function FabricBULLET_Constraint_Create(io BulletConstraint constraint);
-function FabricBULLET_Constraint_Delete(io BulletConstraint constraint);
-function FabricBULLET_Anchor_Create(io BulletAnchor anchor);
-function FabricBULLET_Anchor_Delete(io BulletAnchor anchor);
+function FabricBULLET_World_Create(io BulletWorld world) = "FabricBULLET_World_Create";
+function FabricBULLET_World_Delete(io BulletWorld world) = "FabricBULLET_World_Delete";
+function FabricBULLET_World_SetGravity(io BulletWorld world) = "FabricBULLET_World_SetGravity";
+function FabricBULLET_World_Step(io BulletWorld world, io Scalar timeStep) = "FabricBULLET_World_Step";
+function FabricBULLET_World_Reset(io BulletWorld world) = "FabricBULLET_World_Reset";
+function FabricBULLET_World_Raycast(io BulletWorld world, io Vec3 from, io Vec3 to, io Boolean filterPassiveObjects, io BulletContact contacts[]) = "FabricBULLET_World_Raycast";
+function FabricBULLET_World_ApplyForce(io BulletWorld world, io BulletForce force) = "FabricBULLET_World_ApplyForce";
+function FabricBULLET_World_AddRigidBody(io BulletWorld world, io BulletRigidBody body) = "FabricBULLET_World_AddRigidBody";
+function FabricBULLET_World_RemoveRigidBody(io BulletWorld world, io BulletRigidBody body) = "FabricBULLET_World_RemoveRigidBody";
+function FabricBULLET_World_AddSoftBody(io BulletWorld world, io BulletSoftBody body) = "FabricBULLET_World_AddSoftBody";
+function FabricBULLET_World_RemoveSoftBody(io BulletWorld world, io BulletSoftBody body) = "FabricBULLET_World_RemoveSoftBody";
+function FabricBULLET_World_AddConstraint(io BulletWorld world, io BulletConstraint constraint) = "FabricBULLET_World_AddConstraint";
+function FabricBULLET_World_RemoveConstraint(io BulletWorld world, io BulletConstraint constraint) = "FabricBULLET_World_RemoveConstraint";
+function FabricBULLET_Shape_Create(io BulletShape shape) = "FabricBULLET_Shape_Create";
+function FabricBULLET_Shape_Delete(io BulletShape shape) = "FabricBULLET_Shape_Delete";
+function FabricBULLET_RigidBody_Create(io BulletRigidBody body, io BulletShape shape) = "FabricBULLET_RigidBody_Create";
+function FabricBULLET_RigidBody_Delete(io BulletRigidBody body) = "FabricBULLET_RigidBody_Delete";
+function FabricBULLET_RigidBody_SetMass(io BulletRigidBody body, in Scalar mass) = "FabricBULLET_RigidBody_SetMass";
+function FabricBULLET_RigidBody_GetTransform(in BulletRigidBody body, io Xfo result) = "FabricBULLET_RigidBody_GetTransform";
+function FabricBULLET_RigidBody_SetTransform(in BulletRigidBody body, in Xfo transform) = "FabricBULLET_RigidBody_SetTransform";
+function Vec3 FabricBULLET_RigidBody_GetLinearVelocity(in BulletRigidBody body) = "FabricBULLET_RigidBody_GetLinearVelocity";
+function FabricBULLET_RigidBody_SetLinearVelocity(io BulletRigidBody body, in Vec3 bodyVelocity) = "FabricBULLET_RigidBody_SetLinearVelocity";
+function Vec3 FabricBULLET_RigidBody_GetAngularVelocity(in BulletRigidBody body) = "FabricBULLET_RigidBody_GetAngularVelocity";
+function FabricBULLET_RigidBody_SetAngularVelocity(io BulletRigidBody body, in Vec3 bodyVelocity) = "FabricBULLET_RigidBody_SetAngularVelocity";
+function FabricBULLET_SoftBody_Create(io BulletSoftBody body, io BulletWorld world, io Vec3 positions<>, io Vec3 normals<>, io Integer indices[]) = "FabricBULLET_SoftBody_Create";
+function FabricBULLET_SoftBody_Delete(io BulletSoftBody body) = "FabricBULLET_SoftBody_Delete";
+function FabricBULLET_SoftBody_GetPosition(in Size index, io BulletSoftBody body, io Vec3 position, io Vec3 normal) = "FabricBULLET_SoftBody_GetPosition";
+function FabricBULLET_Constraint_Create(io BulletConstraint constraint) = "FabricBULLET_Constraint_Create";
+function FabricBULLET_Constraint_Delete(io BulletConstraint constraint) = "FabricBULLET_Constraint_Delete";
+function FabricBULLET_Anchor_Create(io BulletAnchor anchor) = "FabricBULLET_Anchor_Create";
+function FabricBULLET_Anchor_Delete(io BulletAnchor anchor) = "FabricBULLET_Anchor_Delete";
 
 //===================================================================================
 // world definition

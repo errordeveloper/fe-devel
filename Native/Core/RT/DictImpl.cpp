@@ -28,9 +28,11 @@ namespace Fabric
       , m_keyImpl( keyImpl )
       , m_keySize( keyImpl->getAllocSize() )
       , m_keyIsShallow( keyImpl->isShallow() )
+      , m_keyIsNoAliasSafe( keyImpl->isNoAliasSafe() )
       , m_valueImpl( valueImpl )
       , m_valueSize( valueImpl->getAllocSize() )
       , m_valueIsShallow( valueImpl->isShallow() )
+      , m_valueIsNoAliasSafe( valueImpl->isNoAliasSafe() )
       , m_nodeSize( sizeof(node_t) + m_keySize + m_valueSize )
     {
       setSize( sizeof(bits_t) );
@@ -485,6 +487,11 @@ namespace Fabric
     bool DictImpl::isShallow() const
     {
       return false;
+    }
+    
+    bool DictImpl::isNoAliasSafe() const
+    {
+      return m_keyIsNoAliasSafe && m_valueIsNoAliasSafe;
     }
     
     bool DictImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const

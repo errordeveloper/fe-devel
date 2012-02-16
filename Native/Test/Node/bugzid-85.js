@@ -2,7 +2,7 @@ F = require('Fabric').createClient();
 
   var dgnode1 = F.DG.createNode("myNode1");
   dgnode1.addMember('a','Size[]');
-  dgnode1.setCount(32);
+  dgnode1.resize(32);
   
   var operatorInit = F.DG.createOperator("initiate");
   operatorInit.setSourceCode(
@@ -26,8 +26,8 @@ F = require('Fabric').createClient();
 
   var operatorInit2 = F.DG.createOperator("initiate2");
   operatorInit2.setSourceCode(
-    'operator initiate2(in Size count, io Size a<>[]) {\n'+
-    '  for (Size i=0; i<count; ++i)\n'+
+    'operator initiate2(in Container container, io Size a<>[]) {\n'+
+    '  for (Size i=0; i<container.size; ++i)\n'+
     '    a[i].push(Size(2*i));\n'+
     '}\n');
   operatorInit2.setEntryFunctionName('initiate2');
@@ -40,7 +40,7 @@ F = require('Fabric').createClient();
   var bindingInit2 = F.DG.createBinding();
   bindingInit2.setOperator(operatorInit2);
   bindingInit2.setParameterLayout([
-    'self.count',
+    'self',
     'self.a<>'
   ]);
 

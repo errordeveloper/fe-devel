@@ -2,25 +2,25 @@ struct FabricFileStream {
   Data m_data;
 };
 
-function FabricFileStream_Free( io FabricFileStream stream );
-function FabricFileStream_Open( io FabricFileStream stream, in String handle, in String mode );
-function FabricFileStream_CloseOnFullyRead( io FabricFileStream stream, in Boolean close );
-function Boolean FabricFileStream_IsValid( in FabricFileStream stream );
-function Boolean FabricFileStream_IsWritable( in FabricFileStream stream );
-function Size FabricFileStream_GetSize( in FabricFileStream stream );
-function Size FabricFileStream_GetSizeRead( in FabricFileStream stream );
-function Size FabricFileStream_GetSeek( in FabricFileStream stream );
-function FabricFileStream_SetSeek( in FabricFileStream stream, in Size seek );
-function FabricFileStream_WriteData( io FabricFileStream stream, in Data data, in Size size );
-function FabricFileStream_ReadData( io FabricFileStream stream, in Data data, in Size size );
-function FabricFileStream_WriteDataCompressed( io FabricFileStream stream, in Data data, in Size size );
-function FabricFileStream_ReadDataCompressed( io FabricFileStream stream, in Data data, in Size size );
-function FabricFileStream_WriteString( io FabricFileStream stream, in String string );
-function FabricFileStream_ReadString( io FabricFileStream stream, io String string );
-function FabricFileStream_WriteStringArray( io FabricFileStream stream, io String strings[] );
-function FabricFileStream_ReadStringArray( io FabricFileStream stream, io String strings[] );
-function FabricFileStream_WriteSize( io FabricFileStream stream, in Size size );
-function FabricFileStream_ReadSize( io FabricFileStream stream, io Size size );
+function FabricFileStream_Free( io FabricFileStream stream ) = "FabricFileStream_Free";
+function FabricFileStream_Open( io FabricFileStream stream, in String handle, in String mode ) = "FabricFileStream_Open";
+function FabricFileStream_CloseOnFullyRead( io FabricFileStream stream, in Boolean close ) = "FabricFileStream_CloseOnFullyRead";
+function Boolean FabricFileStream_IsValid( in FabricFileStream stream ) = "FabricFileStream_IsValid";
+function Boolean FabricFileStream_IsWritable( in FabricFileStream stream ) = "FabricFileStream_IsWritable";
+function Size FabricFileStream_GetSize( in FabricFileStream stream ) = "FabricFileStream_GetSize";
+function Size FabricFileStream_GetSizeRead( in FabricFileStream stream ) = "FabricFileStream_GetSizeRead";
+function Size FabricFileStream_GetSeek( in FabricFileStream stream ) = "FabricFileStream_GetSeek";
+function FabricFileStream_SetSeek( in FabricFileStream stream, in Size seek ) = "FabricFileStream_SetSeek";
+function FabricFileStream_WriteData( io FabricFileStream stream, in Data data, in Size size ) = "FabricFileStream_WriteData";
+function FabricFileStream_ReadData( io FabricFileStream stream, in Data data, in Size size ) = "FabricFileStream_ReadData";
+function FabricFileStream_WriteDataCompressed( io FabricFileStream stream, in Data data, in Size size ) = "FabricFileStream_WriteDataCompressed";
+function FabricFileStream_ReadDataCompressed( io FabricFileStream stream, in Data data, in Size size ) = "FabricFileStream_ReadDataCompressed";
+function FabricFileStream_WriteString( io FabricFileStream stream, in String string ) = "FabricFileStream_WriteString";
+function FabricFileStream_ReadString( io FabricFileStream stream, io String string ) = "FabricFileStream_ReadString";
+function FabricFileStream_WriteStringArray( io FabricFileStream stream, io String strings[] ) = "FabricFileStream_WriteStringArray";
+function FabricFileStream_ReadStringArray( io FabricFileStream stream, io String strings[] ) = "FabricFileStream_ReadStringArray";
+function FabricFileStream_WriteSize( io FabricFileStream stream, in Size size ) = "FabricFileStream_WriteSize";
+function FabricFileStream_ReadSize( io FabricFileStream stream, io Size size ) = "FabricFileStream_ReadSize";
 
 function ~FabricFileStream() = "FabricFileStream_Free";
 

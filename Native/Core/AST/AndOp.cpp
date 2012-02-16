@@ -37,26 +37,25 @@ namespace Fabric
       m_right->appendJSON( jsonObjectEncoder.makeMember( "rhs" ), includeLocation );
     }
     
-    RC::ConstHandle<CG::Adapter> AndOp::getType( CG::BasicBlockBuilder &basicBlockBuilder ) const
+    CG::ExprType AndOp::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> lhsType = m_left->getType( basicBlockBuilder );
+      CG::ExprType lhsType = m_left->getExprType( basicBlockBuilder );
       if ( lhsType )
-        lhsType->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
-      RC::ConstHandle<CG::Adapter> rhsType = m_right->getType( basicBlockBuilder );
+        lhsType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+      CG::ExprType rhsType = m_right->getExprType( basicBlockBuilder );
       if ( rhsType )
-        rhsType->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
+        rhsType.getAdapter()->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
   
-      RC::ConstHandle<CG::Adapter> adapter;
       if ( lhsType && rhsType )
       {
         // The true/false value types need to be "equivalent". We'll cast into whoever wins the
         // casting competition, or fail if they can't.
-        RC::ConstHandle<RT::Desc> castType = basicBlockBuilder.getStrongerTypeOrNone( lhsType->getDesc(), rhsType->getDesc() );
+        RC::ConstHandle<RT::Desc> castType = basicBlockBuilder.getStrongerTypeOrNone( lhsType.getDesc(), rhsType.getDesc() );
         if ( !castType )
-          throw CG::Error( getLocation(), "types " + _(lhsType->getUserName()) + " and " + _(rhsType->getUserName()) + " are unrelated" );
-        adapter = lhsType->getManager()->getAdapter( castType );
+          throw CG::Error( getLocation(), "types " + _(lhsType.getUserName()) + " and " + _(rhsType.getUserName()) + " are unrelated" );
+        return CG::ExprType( basicBlockBuilder.getManager()->getAdapter( castType ), CG::USAGE_RVALUE );
       }
-      return adapter;
+      else return CG::ExprType();
     }
     
     void AndOp::registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const
@@ -72,7 +71,7 @@ namespace Fabric
       else usage = CG::USAGE_RVALUE;
       
       RC::ConstHandle<CG::BooleanAdapter> booleanAdapter = basicBlockBuilder.getManager()->getBooleanAdapter();
-      RC::ConstHandle<CG::Adapter> castAdapter = getType( basicBlockBuilder );
+      CG::ExprType castExprType = getExprType( basicBlockBuilder );
       
       llvm::BasicBlock *lhsTrueBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "andLHSTrue" );
       llvm::BasicBlock *lhsFalseBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "andLHSFalse" );
@@ -86,25 +85,25 @@ namespace Fabric
       CG::ExprValue rhsExprValue = m_right->buildExprValue( basicBlockBuilder, usage, lValueErrorDesc );
       
       llvm::Value *rhsCastedRValue = 0;
-      if ( castAdapter )
-        rhsCastedRValue = castAdapter->llvmCast( basicBlockBuilder, rhsExprValue );
+      if ( castExprType )
+        rhsCastedRValue = castExprType.getAdapter()->llvmCast( basicBlockBuilder, rhsExprValue );
       llvm::BasicBlock *lhsTruePredBB = basicBlockBuilder->GetInsertBlock();
       basicBlockBuilder->CreateBr( mergeBB );
       
       basicBlockBuilder->SetInsertPoint( lhsFalseBB );
       llvm::Value *lhsCastedRValue = 0;
-      if ( castAdapter )
-        lhsCastedRValue = castAdapter->llvmCast( basicBlockBuilder, lhsExprValue );
+      if ( castExprType )
+        lhsCastedRValue = castExprType.getAdapter()->llvmCast( basicBlockBuilder, lhsExprValue );
       llvm::BasicBlock *lhsFalsePredBB = basicBlockBuilder->GetInsertBlock();
       basicBlockBuilder->CreateBr( mergeBB );
 
       basicBlockBuilder->SetInsertPoint( mergeBB );
-      if ( castAdapter )
+      if ( castExprType )
       {
-        llvm::PHINode *phi = basicBlockBuilder->CreatePHI( castAdapter->llvmRType( basicBlockBuilder.getContext() ) );
+        llvm::PHINode *phi = basicBlockBuilder->CreatePHI( castExprType.getAdapter()->llvmRType( basicBlockBuilder.getContext() ) );
         phi->addIncoming( rhsCastedRValue, lhsTruePredBB );
         phi->addIncoming( lhsCastedRValue, lhsFalsePredBB );
-        return CG::ExprValue( castAdapter, usage, basicBlockBuilder.getContext(), phi );
+        return CG::ExprValue( castExprType.getAdapter(), usage, basicBlockBuilder.getContext(), phi );
       }
       else return CG::ExprValue( basicBlockBuilder.getContext() );
     }

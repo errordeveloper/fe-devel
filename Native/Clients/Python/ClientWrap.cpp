@@ -116,8 +116,8 @@ namespace Fabric
     {
       PassedStringMap::iterator i = m_passedStrings.find( str );
       FABRIC_ASSERT( i != m_passedStrings.end() );
-      m_passedStrings.erase( i );
       delete i->second;
+      m_passedStrings.erase( i );
     }
 
     void ClientWrap::ScheduleAsyncUserCallback(

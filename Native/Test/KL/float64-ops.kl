@@ -9,27 +9,17 @@ operator entry()
   report !x;
 
   // Binary ops
-  x = 1.2 + 5.6; report x;
-  x = -5.2 - 9.0; report x;
-  x = 9.4 * 1.2; report x;
-  x = -9.3 / 5.4; report x;
-  x = 8.9 % 2.1; report x;
+  x = Float64(1.2) + Float64(5.6); report x;
+  x = Float64(-5.2) - Float64(9.0); report x;
+  x = Float64(9.4) * Float64(1.2); report x;
+  x = Float64(-9.3) / Float64(5.4); report x;
+  x = Float64(8.9) % Float64(2.1); report x;
 
   // Assignment ops
-  x = 7.1; report x;
-  x += 2.1; report x;
-  x -= -4.7; report x;
-  x *= 4.5; report x;
-  x /= -1.2; report x;
-  x %= 3.4; report x;
-
-  // Intrinsics and build-ins
-  report abs64( -1.45 );
-  report abs64( 1.45 );
-  report abs64( -0.0 );
-  report abs64( 0.0 );
-  report sin64( 5.72283 );
-  report cos64( 5.72283 );
-  report sqrt64( 5.72283 );
-  report pow64( 5.72283, 3.1452 );
+  x = Float64(7.1); report x;
+  x += Float64(2.1); report x;
+  x -= Float64(-4.7); report x;
+  x *= Float64(4.5); report x;
+  x /= Float64(-1.2); report x;
+  x %= Float64(3.4); report x;
 }

@@ -55,7 +55,6 @@ namespace Fabric
       RC::Handle<MT::ParallelCall> bind(
         std::vector<std::string> &errors,
         Scope const &scope,
-        size_t *newSize,
         unsigned prefixCount = 0,
         void * const *prefixes = 0
         ) const;      

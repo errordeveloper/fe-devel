@@ -14,9 +14,10 @@
 #include "VariableArrayAdapter.h"
 #include "Manager.h"
 #include "ModuleBuilder.h"
-#include "FunctionBuilder.h"
+#include "ConstructorBuilder.h"
+#include "MethodBuilder.h"
 #include "BasicBlockBuilder.h"
-#include "OverloadNames.h"
+#include <Fabric/Core/CG/Mangling.h>
 
 #include <Fabric/Core/RT/ArrayProducerDesc.h>
 #include <Fabric/Core/RT/StringImpl.h>
@@ -72,11 +73,7 @@ namespace Fabric
       static const bool buildFunctions = true;
       
       {
-        std::string name = constructOverloadName( stringAdapter, this );
-        std::vector< FunctionParam > params;
-        params.push_back( FunctionParam( "stringLValue", stringAdapter, USAGE_LVALUE ) );
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
@@ -93,11 +90,7 @@ namespace Fabric
       }
    
       {
-        std::string name = constructOverloadName( booleanAdapter, this );
-        std::vector< FunctionParam > params;
-        params.push_back( FunctionParam( "booleanLValue", booleanAdapter, USAGE_LVALUE ) );
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -114,10 +107,7 @@ namespace Fabric
       }
 
       {
-        std::string name = methodOverloadName( "getCount", this );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType( sizeAdapter, USAGE_RVALUE ), params );
+        MethodBuilder functionBuilder( moduleBuilder, sizeAdapter, this, USAGE_RVALUE, "getCount" );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -134,10 +124,12 @@ namespace Fabric
       }
 
       {
-        std::string name = methodOverloadName( "produce", this );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType( m_elementVariableArrayAdapter, USAGE_RVALUE ), params );
+        MethodBuilder functionBuilder(
+          moduleBuilder,
+          m_elementVariableArrayAdapter,
+          this, USAGE_RVALUE,
+          "produce"
+          );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -153,11 +145,12 @@ namespace Fabric
       }
 
       {
-        std::string name = methodOverloadName( "produce", this, sizeAdapter );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        params.push_back( FunctionParam( "indexRValue", sizeAdapter, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType( m_elementAdapter, USAGE_RVALUE ), params );
+        MethodBuilder functionBuilder(
+          moduleBuilder, m_elementAdapter,
+          this, USAGE_RVALUE,
+          "produce",
+          "index", sizeAdapter, USAGE_RVALUE
+          );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -179,12 +172,13 @@ namespace Fabric
       }
 
       {
-        std::string name = methodOverloadName( "produce", this, sizeAdapter, sizeAdapter );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        params.push_back( FunctionParam( "indexRValue", sizeAdapter, USAGE_RVALUE ) );
-        params.push_back( FunctionParam( "countRValue", sizeAdapter, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType( m_elementVariableArrayAdapter, USAGE_RVALUE ), params );
+        MethodBuilder functionBuilder(
+          moduleBuilder, m_elementVariableArrayAdapter,
+          this, USAGE_RVALUE,
+          "produce",
+          "index", sizeAdapter, USAGE_RVALUE,
+          "count", sizeAdapter, USAGE_RVALUE
+          );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -202,10 +196,7 @@ namespace Fabric
       }
       
       {
-        std::string name = methodOverloadName( "flush", this );
-        std::vector<FunctionParam> params;
-        params.push_back( FunctionParam( "rValue", this, USAGE_RVALUE ) );
-        FunctionBuilder functionBuilder( moduleBuilder, name, ExprType(), params );
+        MethodBuilder functionBuilder( moduleBuilder, 0, this, USAGE_RVALUE, "flush" );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );

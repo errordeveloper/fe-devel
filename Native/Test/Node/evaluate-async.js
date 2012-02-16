@@ -14,7 +14,7 @@ for (var testIndex=0; testIndex<testCount;) {
 
     var n = fabricClient.DG.createNode("n"+testIndex);
     n.addMember("a", "Scalar");
-    n.setCount(10000);
+    n.resize(10000);
     n.bindings.append(b);
     n.evaluateAsync(function () {
       console.error("completed " + (++completedTestCount));

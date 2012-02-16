@@ -12,6 +12,7 @@
 #include <Fabric/Base/Util/Assert.h>
 
 #include <stdint.h>
+#include <vector>
 
 namespace llvm
 {
@@ -49,6 +50,8 @@ namespace Fabric
       typedef size_t Flags;
       
       static const Flags FL_PASS_BY_REFERENCE = Flags(1) << 0;
+      
+      bool isEquivalentTo( RC::ConstHandle<Adapter> const &that ) const;
     
       std::string const &getUserName() const;
       std::string const &getCodeName() const { FABRIC_ASSERT( m_codeName.length() ); return m_codeName; }
@@ -119,12 +122,69 @@ namespace Fabric
       Flags m_flags;
       std::string m_codeName;
     };
-  };
-  
-  inline std::string const &_( RC::ConstHandle<CG::Adapter> const &adapter )
-  {
-    return adapter->desc();
+    
+    class AdapterVector : public std::vector< RC::ConstHandle<Adapter> >
+    {
+    public:
+    
+      AdapterVector()
+      {
+      }
+      
+      AdapterVector( RC::ConstHandle<Adapter> const &adapter1 )
+      {
+        push_back( adapter1 );
+      }
+      
+      AdapterVector(
+        RC::ConstHandle<Adapter> const &adapter1,
+        RC::ConstHandle<Adapter> const &adapter2
+        )
+      {
+        push_back( adapter1 );
+        push_back( adapter2 );
+      }
+      
+      AdapterVector(
+        RC::ConstHandle<Adapter> const &adapter1,
+        RC::ConstHandle<Adapter> const &adapter2,
+        RC::ConstHandle<Adapter> const &adapter3
+        )
+      {
+        push_back( adapter1 );
+        push_back( adapter2 );
+        push_back( adapter3 );
+      }
+      
+      AdapterVector(
+        RC::ConstHandle<Adapter> const &adapter1,
+        RC::ConstHandle<Adapter> const &adapter2,
+        RC::ConstHandle<Adapter> const &adapter3,
+        RC::ConstHandle<Adapter> const &adapter4
+        )
+      {
+        push_back( adapter1 );
+        push_back( adapter2 );
+        push_back( adapter3 );
+        push_back( adapter4 );
+      }
+      
+      AdapterVector( AdapterVector const &that )
+      {
+        reserve( that.size() );
+        for ( const_iterator it=that.begin(); it!=that.end(); ++it )
+          push_back( *it );
+      }
+      
+      AdapterVector &operator =( AdapterVector const &that )
+      {
+        reserve( that.size() );
+        for ( const_iterator it=that.begin(); it!=that.end(); ++it )
+          push_back( *it );
+        return *this;
+      }
+    };
   }
-};
+}
 
 #endif // _FABRIC_CG_ADAPTER_H

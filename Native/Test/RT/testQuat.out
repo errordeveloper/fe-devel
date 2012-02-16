@@ -1,5 +1,5 @@
-Math.Warning: Quat.setFrom2Vectors: bad divisor (ambiguous answer)
-Math.Warning: Vec3.divideScalar: bad divisor: 0
+Math.Warning: FABRIC.RT.Quat.setFrom2Vectors: bad divisor (ambiguous answer)
+Math.Warning: FABRIC.RT.Vec3.divideScalar: bad divisor: 0
 [FABRIC] [MT] Math.Warning: Quat.setFromMat33: ambiguous answer: bad divisor: 0
 [FABRIC] [MT] Math.Warning: Vec3.divide: bad divisor: 0
 'set': [ 1, 2, 3, 4 ]

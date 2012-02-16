@@ -15,7 +15,7 @@ namespace Fabric
 {
   namespace CG
   {
-    class FunctionSymbol;
+    class Function;
   };
   
   namespace AST
@@ -30,7 +30,7 @@ namespace Fabric
       
       virtual void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
       
-      virtual RC::ConstHandle<CG::Adapter> getType( CG::BasicBlockBuilder &basicBlockBuilder ) const;
+      virtual CG::ExprType getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const;
       virtual CG::ExprValue buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const;
       
     protected:
@@ -39,7 +39,7 @@ namespace Fabric
       
       virtual void appendJSONMembers( JSON::ObjectEncoder const &jsonObjectEncoder, bool includeLocation ) const;
       
-      RC::ConstHandle<CG::FunctionSymbol> getFunctionSymbol( CG::BasicBlockBuilder &basicBlockBuilder ) const;
+      CG::Function const *getFunction( CG::BasicBlockBuilder &basicBlockBuilder ) const;
 
     private:
     

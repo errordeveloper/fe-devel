@@ -11,11 +11,11 @@ function FabricTGADecode(
   io Size imageWidth,
   io Size imageHeight,
   io RGBA imagePixels[]
-  );
+  ) = "FabricTGADecode";
   
 function FabricTGAOpenFileHandle(
   String handle,
   io Size imageWidth,
   io Size imageHeight,
   io RGBA imagePixels[]
-  );
+  ) = "FabricTGAOpenFileHandle";

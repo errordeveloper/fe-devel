@@ -144,10 +144,10 @@ def main():
   for name in registeredConstants:
     value = registeredConstants[name]
     if value.startswith('0x'):
-      jsonConstants.append('const Integer '+name+' = '+value+';')
+      jsonConstants.append('const Size '+name+' = '+value+';')
       sceneGraphConstants.append('\\"'+name+'\\":'+str(int(value,0)))
     elif value.isdigit():
-      jsonConstants.append('const Integer '+name+' = '+value+';')
+      jsonConstants.append('const Size '+name+' = '+value+';')
       sceneGraphConstants.append('\\"'+name+'\\":'+value)
     
   # DEFINE A MAPPING FOR THE DATATYPE
@@ -192,9 +192,9 @@ def main():
   klFunctionsCode = []
   knownFunctions = {}
   
-  klFunctionsCode.append('function fglSetDebuggingEnabled( Boolean enable );')
-  klFunctionsCode.append('function glGetVersion(io String version) = \'glGetVersion_wrapper\';')
-  klFunctionsCode.append('function glewIsSupported(io String token, io Boolean supported) = \'glewIsSupported_wrapper\';')
+  klFunctionsCode.append('function fglSetDebuggingEnabled( Boolean enable )= "fglSetDebuggingEnabled";')
+  klFunctionsCode.append('function glGetVersion(io String version) = "glGetVersion_wrapper";')
+  klFunctionsCode.append('function glewIsSupported(io String token, io Boolean supported) = "glewIsSupported_wrapper";')
   
   for i in range(len(functions)):
 

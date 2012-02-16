@@ -11,6 +11,7 @@
 #include <Fabric/Base/Exception.h>
 
 #include <llvm/Value.h>
+#include <llvm/Type.h>
 
 namespace Fabric
 {
@@ -27,6 +28,17 @@ namespace Fabric
       , m_context( context )
       , m_value( value )
     {
+    /*
+      if (!( !m_exprType
+        || m_exprType.getUsage() == USAGE_RVALUE && m_value->getType() == m_exprType.getAdapter()->llvmRType( m_context )
+        || m_exprType.getUsage() == USAGE_LVALUE && m_value->getType() == m_exprType.getAdapter()->llvmLType( m_context )
+        ))
+      {
+        m_value->getType()->dump(); 
+        m_exprType.getAdapter()->llvmRType( m_context )->dump(); 
+        m_exprType.getAdapter()->llvmLType( m_context )->dump(); 
+      }
+    */
       FABRIC_ASSERT( !m_exprType
         || m_exprType.getUsage() == USAGE_RVALUE && m_value->getType() == m_exprType.getAdapter()->llvmRType( m_context )
         || m_exprType.getUsage() == USAGE_LVALUE && m_value->getType() == m_exprType.getAdapter()->llvmLType( m_context )
@@ -120,13 +132,6 @@ namespace Fabric
     RC::ConstHandle<RT::Impl> ExprValue::getImpl() const
     {
       return getDesc()->getImpl();
-    }
-    
-    std::string ExprValue::desc() const
-    {
-      if ( m_exprType && m_value )
-        return m_exprType.desc() + ":" + _(m_value);
-      else return "nil";
     }
 
     ExprValue &ExprValue::castTo( BasicBlockBuilder &basicBlockBuilder, ExprType const &dstExprType )

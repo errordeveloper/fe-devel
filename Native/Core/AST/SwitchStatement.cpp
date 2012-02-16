@@ -12,10 +12,13 @@
 #include <Fabric/Core/AST/StatementVector.h>
 #include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Core/CG/Error.h>
+#include <Fabric/Core/CG/Function.h>
 #include <Fabric/Core/CG/FunctionBuilder.h>
 #include <Fabric/Core/CG/BooleanAdapter.h>
 #include <Fabric/Core/CG/Manager.h>
-#include <Fabric/Core/CG/OverloadNames.h>
+#include <Fabric/Core/CG/Mangling.h>
+#include <Fabric/Core/CG/ModuleBuilder.h>
+#include <Fabric/Core/CG/PencilSymbol.h>
 #include <Fabric/Base/Util/SimpleString.h>
 
 namespace Fabric
@@ -116,20 +119,20 @@ namespace Fabric
           
           CG::ExprValue caseExprValue = case_->getExpr()->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, "cannot be an l-value" );
 
-          std::string eqFunctionName = CG::binOpOverloadName( CG::BIN_OP_EQ, exprValue.getAdapter(), caseExprValue.getAdapter() );
-          RC::ConstHandle<CG::FunctionSymbol> functionSymbol;
-          functionSymbol = basicBlockBuilder.maybeGetFunction( eqFunctionName );
-          if ( !functionSymbol )
-          {
-            eqFunctionName = CG::binOpOverloadName( CG::BIN_OP_EQ, exprValue.getAdapter(), exprValue.getAdapter() );
-            functionSymbol = basicBlockBuilder.maybeGetFunction( eqFunctionName );
-            if ( !functionSymbol )
-              throw Exception( "binary operator " + _(CG::binOpUserName(CG::BIN_OP_EQ)) + " not supported for types " + _(exprValue.getTypeUserName()) + " and " + _(caseExprValue.getTypeUserName()) );
-            CG::ExprValue newCaseExprValue( exprValue.getAdapter(), CG::USAGE_RVALUE, basicBlockBuilder.getContext(), exprValue.getAdapter()->llvmCast( basicBlockBuilder, caseExprValue ) );
-            caseExprValue = newCaseExprValue;
-          }
-          
-          CG::ExprValue cmpExprValue = functionSymbol->llvmCreateCall( basicBlockBuilder, exprValue, caseExprValue );
+          CG::Function const *function = basicBlockBuilder.getModuleBuilder().getFunction(
+            getLocation(),
+            CG::BinOpPencilKey( CG::BIN_OP_EQ ),
+            CG::ExprTypeVector(
+              exprValue.getExprType(),
+              caseExprValue.getExprType()
+              ),
+            CG::BinOpQueryDesc(
+              CG::BIN_OP_EQ,
+              exprValue.getAdapter(),
+              caseExprValue.getAdapter()
+              )
+            );
+          CG::ExprValue cmpExprValue = function->llvmCreateCall( basicBlockBuilder, exprValue, caseExprValue );
           llvm::Value *cmpBooleanRValue = booleanAdapter->llvmCast( basicBlockBuilder, cmpExprValue );
           
           basicBlockBuilder->CreateCondBr( cmpBooleanRValue, caseBodyBBs[caseIndex], caseTestBBs[i] );
