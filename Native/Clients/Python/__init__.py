@@ -21,6 +21,7 @@ class _FABRIC:
     self.__oldExceptHook = sys.excepthook
     def __excepthook( type, value, traceback):
       self._handleUncaughtException( type, value, traceback )
+      self.actionQueue.put( None )
     sys.excepthook = __excepthook
 
     self.__gcId = 0
@@ -44,8 +45,6 @@ class _FABRIC:
   def _handleUncaughtException( self, type, value, traceback ):    
     self.__uncaughtException = True
     self.__oldExceptHook( type, value, traceback )
-    # in case this is in main thread, wake the async thread
-    self.actionQueue.put( None )
 
   def _signalAllClients( self ):
     for client in self.clients:
@@ -68,6 +67,14 @@ class _FABRIC:
     return self.__gcId
 
 class _ACTIONITEM:
+  EXECUTE = 'execute'
+  NOTIFY = 'notify'
+  SET_JSON_NOTIFY_CALLBACK = 'setJsonNotifyCallback'
+  RUN_SCHEDULED_CALLBACKS = 'runScheduledCallbacks'
+  SIGNAL = 'signal'
+  CREATE_CLIENT = 'createClient'
+  FREE_CLIENT = 'freeClient'
+
   def __init__( self, client, action, data = None ):
     self.client = client
     self.action = action
@@ -104,25 +111,25 @@ class _ASYNCTHREAD( threading.Thread ):
 
     while ( not self.__fabric.createdOneClient or self.__clientsRunning() or not self.__fabric.actionQueue.empty() ) and not self.__fabric._shouldExit():
       q = self.__fabric.actionQueue.get()
-      #if q is not None:
-      #  print 'PROCESSING ACTION: '+q.action
+      if q is not None:
+        print 'PROCESSING ACTION: '+q.action
 
       if q is None:
         pass # only to re-check loop conditions
-      elif q.action == 'execute':
+      elif q.action == _ACTIONITEM.EXECUTE:
         self.__executeCommands( q.client, q.data )
-      elif q.action == 'notify':
+      elif q.action == _ACTIONITEM.NOTIFY:
         #print 'PROCESSING DATA: '+json.dumps(_typeToDict((q.data)))
         self.__processNotification( q.client, q.data )
-      elif q.action == 'setJSONNotifyCallback':
+      elif q.action == _ACTIONITEM.SET_JSON_NOTIFY_CALLBACK:
         self.__setJSONNotifyCallback( q.client, q.data )
-      elif q.action == 'runScheduledCallbacks':
+      elif q.action == _ACTIONITEM.RUN_SCHEDULED_CALLBACKS:
         self.__runScheduledCallbacks( q.client )
-      elif q.action == 'signal':
+      elif q.action == _ACTIONITEM.SIGNAL:
         self.__signalClient( q.client )
-      elif q.action == 'createClient':
+      elif q.action == _ACTIONITEM.CREATE_CLIENT:
         self.__createClient( q.client )
-      elif q.action == 'freeClient':
+      elif q.action == _ACTIONITEM.FREE_CLIENT:
         self.__freeClient( q.client )
       else:
         raise Exception( 'unrecognized action: "' + q.action + '"' )
@@ -261,7 +268,7 @@ class _CLIENT( object ):
     self.__fabric.actionQueue.put( action )
 
   def __runScheduledCallbacks( self ):
-    self.__queueAction( 'runScheduledCallbacks' )
+    self.__queueAction( _ACTIONITEM.RUN_SCHEDULED_CALLBACKS )
 
   # FIXME not needed but need this logic elsewhere
   def __waitForClose( self ):
@@ -277,12 +284,12 @@ class _CLIENT( object ):
     return self.__cClientPtr
 
   def __createFabricClient( self ):
-    self.__queueAction( 'createClient' )
+    self.__queueAction( _ACTIONITEM.CREATE_CLIENT )
     return self.waitForAsyncData()
 
   def close( self ):
     self.__closed = True
-    self.__queueAction( 'freeClient' )
+    self.__queueAction( _ACTIONITEM.FREE_CLIENT )
     # FIXME unlink the fabric client from the FABRIC instance
 
   def getLicenses( self ):
@@ -294,7 +301,7 @@ class _CLIENT( object ):
   def waitForAsyncData( self ):
     self.asyncData = None
     self.dataEvent.clear()
-    self.__queueAction( 'signal' )
+    self.__queueAction( _ACTIONITEM.SIGNAL )
     self.dataEvent.wait()
     return self.asyncData
 
@@ -323,7 +330,7 @@ class _CLIENT( object ):
       'unwinds': unwinds,
       'callbacks': callbacks
     }
-    self.__queueAction( 'execute', data )
+    self.__queueAction( _ACTIONITEM.EXECUTE, data )
     self.waitForAsyncData()
 
   def _handleStateNotification( self, newState ):
@@ -385,7 +392,7 @@ class _CLIENT( object ):
       raise Exception( 'unable to parse JSON notifications' )
 
     for i in range( 0, len( notifications ) ):
-      self.__queueAction( 'notify', notifications[ i ] )
+      self.__queueAction( _ACTIONITEM.NOTIFY, notifications[ i ] )
 
   def __getNotifyCallback( self ):
     # use a closure here so that 'self' is maintained without us
@@ -400,7 +407,7 @@ class _CLIENT( object ):
     return self.__CFUNCTYPE_notifyCallback
 
   def __registerNotifyCallback( self ):
-    self.__queueAction( 'setJSONNotifyCallback', self.__getNotifyCallback() )
+    self.__queueAction( _ACTIONITEM.SET_JSON_NOTIFY_CALLBACK, self.__getNotifyCallback() )
 
 class _GCOBJECT( object ):
   def __init__( self, nsobj ):
