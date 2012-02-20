@@ -110,7 +110,7 @@ namespace Fabric
         callback( userdata, 0 );
       else
       {
-        Task task( logCollector, count, callback, userdata );
+        Task task( false, logCollector, count, callback, userdata );
         
         m_stateMutex.acquire();
         
@@ -144,7 +144,7 @@ namespace Fabric
         finishedCallback( finishedUserdata );
       else
       {
-        Task *task = new Task( logCollector, count, callback, userdata, finishedCallback, finishedUserdata );
+        Task *task = new Task( true, logCollector, count, callback, userdata, finishedCallback, finishedUserdata );
         
         m_stateMutex.acquire();
         
@@ -208,10 +208,9 @@ namespace Fabric
         {
           void (*finishedCallback)( void * ) = task->getFinishedCallback();
           if ( finishedCallback )
-          {
             finishedCallback( task->getFinishedUserdata() );
-            delete task;
-          }
+
+          task->dispose();
           
           // [pzion 20101108] Must wake waiter because they might be
           // waiting on the task completion

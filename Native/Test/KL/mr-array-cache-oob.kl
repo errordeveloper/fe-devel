@@ -1,0 +1,28 @@
+operator produceAndFlush(
+  ArrayProducer<Integer> ap,
+  String method
+  )
+{
+  report ap;
+  report "  ap.getCount() = " + ap.getCount();
+  report "  ap.produce() = " + ap.produce(10);
+  report " ";
+}
+
+operator generator(
+  io Integer value
+  )
+{
+  report " running generator";
+  value = 42;
+}
+
+operator entry()
+{
+  report "--- Testing Generator Cache";
+  ValueProducer<Size> cvg = createConstValue(Size(10));
+  ArrayProducer<Integer> gen = createArrayCache(
+    createArrayGenerator(cvg, generator)
+    );
+  produceAndFlush(gen, "generator");
+}

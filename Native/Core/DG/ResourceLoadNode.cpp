@@ -113,6 +113,11 @@ namespace Fabric
         m_inProgress = true;
         getContext()->getIOManager()->getResourceManager()->get( url.c_str(), this, m_asFile, (void*)m_streamGeneration );
       }
+      else
+      {
+        if(m_filePinning.is_open())
+          m_filePinning.close();
+      }
     }
 
     void ResourceLoadNode::onData( size_t offset, size_t size, void const *data, void *userData )
@@ -138,6 +143,16 @@ namespace Fabric
       FABRIC_ASSERT( m_asFile );
       std::string handle = getContext()->getIOManager()->getFileHandleManager()->createHandle( fileName, false, true );
       m_fabricResourceStreamData.setDataExternalLocation( handle );
+      if(m_filePinning.is_open())
+        m_filePinning.close();
+      try
+      {
+        m_filePinning.open( fileName, std::fstream::in | std::fstream::binary );
+      }
+      catch(...)
+      {
+        throw Exception( "Unable to open tempory file containing data for " + m_fabricResourceStreamData.getURL() );
+      }
     }
 
     void ResourceLoadNode::onFailure( char const *errorDesc, void *userData )

@@ -1,0 +1,5 @@
+ArrayProducer<Integer>
+10
+generator: value=0
+42
+Caught exception: produce index out of range

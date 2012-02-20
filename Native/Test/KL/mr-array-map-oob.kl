@@ -1,0 +1,22 @@
+operator map(
+  Integer input,
+  io Scalar output
+  )
+{
+  report "map: input=" + input;
+  output = 1.0 / (Scalar(input + 1) * Scalar(input + 1));
+}
+
+operator entry() {
+  Integer va[];
+  for (Integer i=0; i<10; ++i)
+    va.push(i);
+
+  ArrayProducer<Integer> cap = createConstArray(va);
+  report "cap.getCount() = " + cap.getCount();
+
+  ArrayProducer<Scalar> am = createArrayMap(cap, map);
+  report am;
+  report am.getCount();
+  report am.produce(10);
+}

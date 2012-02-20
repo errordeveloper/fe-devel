@@ -1,0 +1,4 @@
+cap.getCount() = 10
+ArrayProducer<Integer>
+10
+Caught exception: index out of range

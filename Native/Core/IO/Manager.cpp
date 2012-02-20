@@ -76,7 +76,8 @@ namespace Fabric
       bool *existingFile,
       const char *defaultExtension,
       std::string& fullPath,
-      bool& writeAccess
+      bool& writeAccess,
+      bool queryFolder
       ) const
     {
       std::string defaultFilename;
@@ -177,12 +178,27 @@ namespace Fabric
         if( existing )
         {
           if( writeAccess )
-            title = "Open File with read & write access to folder: " + title;
+          {
+            if( queryFolder )
+              title = "Open File with read & write access to folder: " + title;
+            else
+              title = "Open File with write access: " + title;
+          }
           else
-            title = "Open File: " + title;
+          {
+            if( queryFolder )
+              title = "Open File with read access to folder: " + title;
+            else
+              title = "Open File: " + title;
+          }
         }
         else
-          title = "Save File: " + title;
+        {
+          if( queryFolder )
+              title = "Save File with access to folder: " + title;
+          else
+            title = "Save File: " + title;
+        }
       }
 
       if( !defaultFilename.empty() && !extension.empty() )
@@ -252,7 +268,7 @@ namespace Fabric
     {
       std::string fullPath;
       bool writeAccess;
-      jsonQueryUserFile( arg, NULL, NULL, fullPath, writeAccess );
+      jsonQueryUserFile( arg, NULL, NULL, fullPath, writeAccess, true );
 
       std::string dir, filename;
       IO::SplitPath( fullPath, dir, filename );
@@ -279,7 +295,7 @@ namespace Fabric
       std::string fullPath;
       bool writeAccess;
 
-      jsonQueryUserFile( arg, NULL, NULL, fullPath, writeAccess );
+      jsonQueryUserFile( arg, NULL, NULL, fullPath, writeAccess, false );
 
       std::string handle = m_fileHandleManager->createHandle( fullPath, false, !writeAccess );
 

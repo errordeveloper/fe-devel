@@ -1,0 +1,8 @@
+operator entry() {
+  Integer va[];
+  for (Integer i=0; i<10; ++i)
+    va.push(i);
+  ArrayProducer<Integer> ap = createConstArray(va);
+  // should cause exception
+  report ap.produce(11);
+}

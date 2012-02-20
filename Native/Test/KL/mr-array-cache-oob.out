@@ -1,0 +1,4 @@
+--- Testing Generator Cache
+ArrayProducer<Integer>
+  ap.getCount() = 10
+Caught exception: produce index out of range

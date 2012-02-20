@@ -54,7 +54,7 @@ namespace Fabric
         ) const = 0;
 
     private:
-      void jsonQueryUserFile( JSON::Entity const &arg, bool *existingFile, const char *defaultExtension, std::string& fullPath, bool& writeAccess ) const;
+      void jsonQueryUserFile( JSON::Entity const &arg, bool *existingFile, const char *defaultExtension, std::string& fullPath, bool& writeAccess, bool queryFolder ) const;
 
       void jsonExecGetFileInfo( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder ) const;
       void jsonExecQueryUserFileAndFolder( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder ) const;

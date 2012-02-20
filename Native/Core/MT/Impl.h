@@ -29,13 +29,13 @@ namespace Fabric
         typedef void (*FinishedCallback)( void * );
       
         Task(
+          bool needDelete,
           RC::Handle<LogCollector> const &logCollector,
           size_t count,
           void (*callback)( void *, size_t ),
           void *userdata,
           FinishedCallback finishedCallback = 0,
           void *finishedUserdata = 0
-          
           )
           : m_logCollector( logCollector )
           , m_count( count )
@@ -45,6 +45,7 @@ namespace Fabric
           , m_finishedUserdata( finishedUserdata )
           , m_nextIndex( 0 )
           , m_completedCount( 0 )
+          , m_needDelete( needDelete )
         {
         }
         
@@ -52,6 +53,12 @@ namespace Fabric
         {
           FABRIC_ASSERT( m_nextIndex == m_count );
           FABRIC_ASSERT( m_completedCount == m_count );
+        }
+        
+        void dispose()
+        {
+          if ( m_needDelete )
+            delete this;
         }
         
         void preExecute_CRITICAL_SECTION( size_t &index, bool &keep )
@@ -104,6 +111,8 @@ namespace Fabric
 
         size_t m_nextIndex;
         size_t m_completedCount;
+        
+        bool m_needDelete;
       };
       
     public:

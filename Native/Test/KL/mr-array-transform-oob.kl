@@ -1,0 +1,21 @@
+operator transform(
+  io Integer value
+  )
+{
+  report "transform1: value=" + value;
+  value *= 2;
+}
+
+operator entry() {
+  Integer va[];
+  for (Integer i=0; i<10; ++i)
+    va.push(i);
+
+  ArrayProducer<Integer> cap = createConstArray(va);
+  report "cap.getCount() = " + cap.getCount();
+
+  ArrayProducer<Integer> am = createArrayTransform(cap, transform);
+  report am;
+  report am.getCount();
+  report am.produce(10);
+}

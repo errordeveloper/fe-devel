@@ -8,6 +8,7 @@
 #include <Fabric/Core/DG/Node.h>
 #include <Fabric/Core/DG/FabricResource.h>
 #include <Fabric/Core/IO/ResourceManager.h>
+#include <fstream>
 
 namespace Fabric
 {
@@ -59,6 +60,7 @@ namespace Fabric
       bool m_firstEvalAfterLoad;
       bool m_keepMemoryCache;
       bool m_asFile;
+      std::ifstream m_filePinning;
       bool m_inProgress;
       size_t m_streamGeneration;
     };

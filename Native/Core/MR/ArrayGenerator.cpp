@@ -103,6 +103,9 @@ namespace Fabric
     
     void ArrayGenerator::ComputeState::produce( size_t index, void *data ) const
     {
+      if ( index >= getCount() )
+        throw Exception( "produce index out of range" );
+
       RC::ConstHandle<ArrayOutputOperator> operator_ = m_arrayGenerator->m_operator;
       if ( operator_->takesIndex() )
       {

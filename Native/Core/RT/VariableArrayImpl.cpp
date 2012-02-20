@@ -88,8 +88,10 @@ namespace Fabric
     {
       bits_t const *src = reinterpret_cast<bits_t const *>(_src);
       bits_t *dst = reinterpret_cast<bits_t *>(_dst);
-      
-      m_memberImpl->disposeDatas( dst->memberDatas, dst->numMembers, m_memberSize );
+    
+      size_t oldNumMembers = dst->numMembers;
+      if ( dst->numMembers > src->numMembers )
+        m_memberImpl->disposeDatas( dst->memberDatas + src->numMembers * m_memberSize, dst->numMembers - src->numMembers, m_memberSize );
       dst->numMembers = src->numMembers;
 
       dst->allocNumMembers = src->numMembers;
@@ -108,7 +110,13 @@ namespace Fabric
       uint8_t const *srcMemberData = src->memberDatas;
       uint8_t const * const srcMemberDataEnd = srcMemberData + totalSize;
       uint8_t *dstMemberData = dst->memberDatas;
-      memset( dstMemberData, 0, totalSize );
+
+      if ( oldNumMembers < src->numMembers )
+      {
+        size_t oldMemberSize = oldNumMembers * m_memberSize;
+        memset( dstMemberData + oldMemberSize, 0, totalSize - oldMemberSize );
+      }
+
       while ( srcMemberData != srcMemberDataEnd )
       {
         m_memberImpl->setData( srcMemberData, dstMemberData );
