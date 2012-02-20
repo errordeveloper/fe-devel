@@ -20,7 +20,7 @@ class _FABRIC:
     self.__uncaughtException = False
     self.__oldExceptHook = sys.excepthook
     def __excepthook( type, value, traceback):
-      self.__excepthook( type, value, traceback )
+      self._handleUncaughtException( type, value, traceback )
     sys.excepthook = __excepthook
 
     self.__gcId = 0
@@ -34,25 +34,34 @@ class _FABRIC:
     self.__asyncThread.start()
 
     # FIXME join thread
-    #atexit.register()
+    atexit.register( self.__joinThread )
 
   def __handleSIGINT( self, signum, frame ):
     self.__caughtSIGINT = True
+    print 'got sigint'
     self.actionQueue.put( None )
 
-  def __excepthook( self, type, value, traceback ):    
+  def _handleUncaughtException( self, type, value, traceback ):    
     self.__uncaughtException = True
     self.__oldExceptHook( type, value, traceback )
+    # in case this is in main thread, wake the async thread
     self.actionQueue.put( None )
+
+  def _signalAllClients( self ):
+    for client in self.clients:
+      client.dataEvent.set()
+
+  def __joinThread( self ):
+    self.__asyncThread.join()
 
   def _shouldExit( self ):
     return self.__uncaughtException or self.__caughtSIGINT
 
   def createClient( self ):
-    client = _INTERFACE( self )
-    self.clients.append( client )
+    interface = _INTERFACE( self )
+    self.clients.append( interface._client )
     self.createdOneClient = True
-    return client
+    return interface
 
   def getNextGCId():
     self.__gcId = self.__gcId + 1
@@ -69,7 +78,7 @@ class _ASYNCTHREAD( threading.Thread ):
     super( _ASYNCTHREAD, self ).__init__()
 
     self.__fabric = fabric
-    
+
   def __clientsRunning( self ):
     for client in self.__fabric.clients:
       if client.running():
@@ -77,6 +86,14 @@ class _ASYNCTHREAD( threading.Thread ):
     return False
 
   def run( self ):
+    try:
+      self.__threadMain()
+    except Exception:
+      type, value, traceback = sys.exc_info()
+      self.__fabric._handleUncaughtException( type, value, traceback )
+      self.__fabric._signalAllClients()
+
+  def __threadMain( self ):
     if os.name == 'posix':
       self.__clib = ctypes.CDLL( os.path.dirname( __file__ ) + '/libFabricPython.so' )
     else:
@@ -95,7 +112,7 @@ class _ASYNCTHREAD( threading.Thread ):
       elif q.action == 'execute':
         self.__executeCommands( q.client, q.data )
       elif q.action == 'notify':
-        #print 'PROCESSING DATA: '+stringify(q.data)
+        #print 'PROCESSING DATA: '+json.dumps(_typeToDict((q.data)))
         self.__processNotification( q.client, q.data )
       elif q.action == 'setJSONNotifyCallback':
         self.__setJSONNotifyCallback( q.client, q.data )
@@ -172,26 +189,26 @@ class _ASYNCTHREAD( threading.Thread ):
 # this is the interface object that gets returned to the user
 class _INTERFACE( object ):
   def __init__( self, fabric ):
-    self.__client = _CLIENT( fabric )
-    self.KLC = self.__client.klc
-    self.MR = self.__client.mr
-    self.RT = self.__client.rt
+    self._client = _CLIENT( fabric )
+    self.KLC = self._client.klc
+    self.MR = self._client.mr
+    self.RT = self._client.rt
     self.RegisteredTypesManager = self.RT
-    self.DG = self.__client.dg
+    self.DG = self._client.dg
     self.DependencyGraph = self.DG
-    self.VP = self.__client.vp
-    self.EX = self.__client.ex
-    self.IO = self.__client.io
-    self.build = self.__client.build
+    self.VP = self._client.vp
+    self.EX = self._client.ex
+    self.IO = self._client.io
+    self.build = self._client.build
 
   def flush( self ):
-    self.__client.executeQueuedCommands()
+    self._client.executeQueuedCommands()
 
   def close( self ):
-    self.__client.close()
+    self._client.close()
 
   def running( self ):
-    return self.__client.running()
+    return self._client.running()
 
   def getMemoryUsage( self ):
     # dictionary hack to simulate Python 3.x nonlocal
@@ -199,7 +216,7 @@ class _INTERFACE( object ):
     def __getMemoryUsage( result ):
       memoryUsage[ '_' ] = result
 
-    self.__client.queueCommand( [], 'getMemoryUsage', None, None, __getMemoryUsage )
+    self._client.queueCommand( [], 'getMemoryUsage', None, None, __getMemoryUsage )
     self.flush()
 
     return memoryUsage[ '_' ]
