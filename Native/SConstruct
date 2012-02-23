@@ -22,10 +22,10 @@ thirdPartyDir = os.path.join(os.getcwd(), 'ThirdParty' )
 SetOption('num_jobs', int(os.environ.get('FABRIC_BUILD_JOBS', 1)))
 print "Running with -j" + str(GetOption('num_jobs'))
 
-# [pzion 20110726] !!!!!!!!!!!!!!!!!!!!
+# [pzion 20120223] !!!!!!!!!!!!!!!!!!!!
 # When you change the version number,
-# don't forget to consider the expiry
-# and cache generation!!
+# don't forget to consider the
+# cache generation!!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 FABRIC_NAME='Fabric Engine'
 FABRIC_COMPANY_NAME='Fabric Engine Inc.'
@@ -33,9 +33,9 @@ FABRIC_DESC='High Performance Computing for the Web'
 FABRIC_COPYRIGHT='Copyright 2010-2011 ' + FABRIC_COMPANY_NAME + '  All rights reserved.'
 FABRIC_URL="http://fabric-engine.com"
 FABRIC_VERSION_MAJ='1'
-FABRIC_VERSION_MIN='0'
-FABRIC_VERSION_REV='21'
-FABRIC_VERSION_SUFFIX='-beta'
+FABRIC_VERSION_MIN='1'
+FABRIC_VERSION_REV='0'
+FABRIC_VERSION_SUFFIX='-alpha'
 FABRIC_CACHE_GENERATION='18'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
