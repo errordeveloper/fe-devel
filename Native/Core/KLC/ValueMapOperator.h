@@ -21,6 +21,7 @@ namespace Fabric
     class ValueMapOperator : public ValueIOOperator
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueMapOperator> Create(
         RC::ConstHandle<Executable> const &executable,

@@ -14,6 +14,7 @@ namespace Fabric
     class ReduceOperator : public ArrayIOOperator
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ReduceOperator> Create(
         void (*functionPtr)(...),

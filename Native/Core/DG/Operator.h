@@ -55,6 +55,7 @@ namespace Fabric
       friend class BindingList;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Operator> Create( std::string const &name, RC::Handle<Context> const &context );
       

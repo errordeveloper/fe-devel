@@ -21,6 +21,7 @@ namespace Fabric
       typedef Util::UnorderedMap< MT::ThreadID, std::string > ThreadPrefixMap;
       
     public:
+      REPORT_RC_LEAKS
     
       void add( char const *data, size_t length );
       void add( char const *cString )

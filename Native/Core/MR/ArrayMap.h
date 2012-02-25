@@ -20,6 +20,7 @@ namespace Fabric
     class ArrayMap : public ArrayProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayMap> Create(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer,

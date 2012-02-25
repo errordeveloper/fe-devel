@@ -24,12 +24,12 @@ namespace Fabric
       RC::ConstHandle<Adapter> const &returnAdapter, 
       ParamVector const &params,
       size_t flags,
-      size_t cost
+      PolymorphismParameters const &polymorphismParameters
       )
       : m_moduleBuilder( moduleBuilder )
       , m_functionScope( NULL )
     {
-      build( pencilKey, symbolName, desc, returnAdapter, params, flags, cost );
+      build( pencilKey, symbolName, desc, returnAdapter, params, flags, polymorphismParameters );
     }
     
     FunctionBuilder::FunctionBuilder( 
@@ -109,7 +109,7 @@ namespace Fabric
       RC::ConstHandle<Adapter> const &returnAdapter, 
       ParamVector const &params, 
       size_t flags,
-      size_t cost
+      PolymorphismParameters const &polymorphismParameters
       )
     {
       RC::Handle<Context> context = getContext();
@@ -222,7 +222,7 @@ namespace Fabric
             m_llvmFunction,
             returnInfo,
             params,
-            cost
+            polymorphismParameters
             )
           );
     }

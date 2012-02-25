@@ -16,4 +16,6 @@ zip -qr js-scene-graph-resources-$DATE.zip \
   Apps/Sample/UseCases/BulletPlayGround/Resources \
   Apps/Sample/UseCases/MedicalImaging/Resources \
   Apps/Sample/UseCases/CharacterAnimationTool/Resources\
-  Apps/Sample/UseCases/CharacterAnimationTool/Textures
+  Apps/Sample/UseCases/CharacterAnimationTool/Textures\
+  Apps/Sample/UseCases/PortScene/Models\
+  Apps/Sample/UseCases/PortScene/Textures

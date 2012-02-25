@@ -16,6 +16,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( CreateValueGenerator );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<CreateValueGenerator> Create(
         CG::Location const &location,

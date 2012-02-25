@@ -23,6 +23,7 @@ namespace Fabric
       friend class SlicedArrayAdapter;
     
     public:
+      REPORT_RC_LEAKS
 
       // Adapter
     

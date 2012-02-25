@@ -27,6 +27,7 @@ namespace Fabric
     class UseVector : public RC::Vector< RC::ConstHandle<Use> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<UseVector> Create( RC::ConstHandle<Use> const &first = 0, RC::ConstHandle<UseVector> const &remaining = 0 );
 

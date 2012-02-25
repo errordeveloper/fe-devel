@@ -29,6 +29,7 @@ namespace Fabric
     class FunctionBase : public Global
     {
     public:
+      REPORT_RC_LEAKS
           
       virtual bool isFunctionBase() const { return true; }
       virtual bool isFunction() const { return false; }

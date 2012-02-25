@@ -25,6 +25,7 @@ namespace Fabric
     class ArrayAdapter : public Adapter
     {
     public:
+      REPORT_RC_LEAKS
       
       // Adapter
       

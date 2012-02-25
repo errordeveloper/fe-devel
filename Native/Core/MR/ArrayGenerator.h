@@ -20,6 +20,7 @@ namespace Fabric
     class ArrayGenerator : public ArrayProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayGenerator> Create(
         RC::ConstHandle<ValueProducer> const &countValueProducer,

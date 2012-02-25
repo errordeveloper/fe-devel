@@ -50,6 +50,7 @@ namespace Fabric
       typedef std::multiset<Function *> RegisteredFunctionSet;
       
     public:
+      REPORT_RC_LEAKS
     
       typedef void (*FunctionPtr)( ... );
     

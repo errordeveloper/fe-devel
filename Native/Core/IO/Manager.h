@@ -36,6 +36,7 @@ namespace Fabric
     {
 
     public:
+      REPORT_RC_LEAKS
     
       RC::Handle<ResourceManager> getResourceManager() const;
       RC::Handle<FileHandleManager> getFileHandleManager() const;

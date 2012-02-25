@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       RC::ConstHandle<RT::SlicedArrayImpl> getImpl() const;
 

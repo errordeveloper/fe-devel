@@ -80,7 +80,7 @@ namespace Fabric
     class NamedScope : public Scope
     {
     public:
-    
+   
       NamedScope( std::string const &name, RC::Handle<Container> const &container, Scope const *parentScope = 0 )
         : Scope( parentScope )
         , m_name( name )

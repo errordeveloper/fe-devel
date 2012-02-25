@@ -36,6 +36,7 @@ namespace Fabric
       friend class AST::ContainerLoop;
     
     public:
+      REPORT_RC_LEAKS
 
       // Adapter
     

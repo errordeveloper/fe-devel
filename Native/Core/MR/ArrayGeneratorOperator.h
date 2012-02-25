@@ -14,6 +14,7 @@ namespace Fabric
     class ArrayGeneratorOperator : public ArrayOutputOperator
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayGeneratorOperator> Create(
         void (*functionPtr)(...),

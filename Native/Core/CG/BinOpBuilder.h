@@ -44,7 +44,8 @@ namespace Fabric
             FriendlyFunctionParam( "lhs", lhsAdapter, USAGE_RVALUE ),
             FriendlyFunctionParam( "rhs", rhsAdapter, USAGE_RVALUE )
             ),
-          0
+          0,
+          PolymorphismParameters( PolymorphismParameters::PT_MIN_EXACT_TYPE_MATCH, 1 )
           )
       {
       }

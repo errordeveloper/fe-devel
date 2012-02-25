@@ -18,6 +18,7 @@ namespace Fabric
     class Function : public MT::Function
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<Function> Create( RC::ConstHandle<Code> const &code, std::string const &functionName );
     

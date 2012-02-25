@@ -18,6 +18,7 @@ namespace Fabric
     class StringSource : public Source
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<StringSource> Create( std::string const &filename, std::string const &source )
       {

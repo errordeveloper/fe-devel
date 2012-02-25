@@ -24,6 +24,7 @@ namespace Fabric
       FABRIC_GC_OBJECT_CLASS_DECL()
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayCacheWrapper> Create(
         RC::ConstHandle<ArrayProducerWrapper> const &inputArrayProducer

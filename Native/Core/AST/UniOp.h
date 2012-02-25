@@ -27,6 +27,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( UniOp );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<UniOp> Create( CG::Location const &location, CG::UniOpType uniOpType, RC::ConstHandle<Expr> const &child );
 

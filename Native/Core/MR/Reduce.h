@@ -24,6 +24,7 @@ namespace Fabric
       class Execution;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Reduce> Create(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer,

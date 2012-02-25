@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       char const *getValueData( void const *src ) const;
       size_t getValueLength( void const *src ) const;

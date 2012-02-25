@@ -23,6 +23,7 @@ namespace Fabric
     class Expr: public Node
     {
     public:
+      REPORT_RC_LEAKS
     
       Expr( CG::Location const &location );
       

@@ -38,6 +38,7 @@ namespace Fabric
       typedef std::map< std::string, ViewPort * > ViewPorts;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Context> Create( RC::Handle<IOManager> const &ioManager, std::vector<std::string> const &pluginDirs );
       

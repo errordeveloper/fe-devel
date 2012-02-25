@@ -25,6 +25,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( Case );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<Case> Create(
         CG::Location const &location,

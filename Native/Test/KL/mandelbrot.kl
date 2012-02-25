@@ -2,41 +2,73 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
-function Byte computeDwell( Scalar x, Scalar y )
-{
-  var Scalar z_re = x;
-  var Scalar z_im = y;
-  
-  var Byte count = 0;
-  for ( count = 0; count < 255; ++count )
-  {
-    if ( z_re * z_re + z_im * z_im >= 4.0 )
+/*
+** Defined a custom type Complex32 with overloads for + and * as well
+** as a normSq method
+*/
+
+struct Complex32 {
+  Float32 re;
+  Float32 im;
+};
+
+function Complex32(Float32 re, Float32 im) {
+  this.re = re;
+  this.im = im;
+}
+
+function Complex32 +(Complex32 lhs, Complex32 rhs) {
+  return Complex32(lhs.re + rhs.re, lhs.im + rhs.im);
+}
+
+function Complex32 *(Complex32 lhs, Complex32 rhs) {
+  return Complex32(lhs.re*rhs.re-lhs.im*rhs.im, lhs.re*rhs.im + lhs.im*rhs.re);
+}
+
+function Float32 Complex32.normSq() {
+  return this.re*this.re + this.im*this.im;
+}
+
+/*
+** Compute the number of steps for a point in complex space to
+** leave the circle centered at the origin with radius 2.
+** Don't go past 255 steps since we could go on for a long time...
+*/
+
+function Byte computeDwell(Complex32 c) {
+  Complex32 z = c;
+  Size count;
+  for (count = 0; count < 255; ++count) {
+    if (z.normSq > 4)
       break;
-    
-    var Scalar new_z_re = z_re*z_re - z_im*z_im + x;
-    z_im = 2.0*z_re*z_im + y;
-    z_re = new_z_re;
+    z = z*z + c;
   }
   return count;
 }
 
+/*
+** Generate ASCII art output
+*/
 operator entry()
 {
-  var Integer row;
-  for ( row=0; row<=40; ++row )
-  {
-    var Scalar y = 4.0 * row / 40.0 - 2.0;
-    var String rowString;
-    var Integer col;
-    for ( col=0; col<=78; ++col )
-    {
-      var Scalar x = 4.0 * col / 78.0 - 2.0;
-      var Byte dwell = computeDwell( x, y );
-      if ( dwell & 192 )
+  Complex32 z;
+  for (Size row=9; row<=31; ++row) {
+    z.im = 4.0 * row / 40.0 - 2.0;
+    String rowString;
+    for (Size col=0; col<=78; ++col) {
+      z.re = 4.0 * col / 78.0 - 2.0;
+      Byte dwell = computeDwell(z);
+      
+      // The output character is based
+      // on the log of the number of steps;
+      // we're sneaky about this by just
+      // looking for the highest bits set
+      
+      if (dwell & 192)
         rowString += "#";
-      else if ( dwell & 48 )
+      else if (dwell & 48)
         rowString += "*";
-      else if ( dwell & 12 )
+      else if (dwell & 12)
         rowString += ".";
       else
         rowString += " ";

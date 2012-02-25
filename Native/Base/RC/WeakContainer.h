@@ -14,6 +14,7 @@ namespace Fabric
     class WeakContainer : public Object
     {
     public:
+      REPORT_RC_LEAKS
     
       WeakContainer( Object *object )
         : m_object( object )

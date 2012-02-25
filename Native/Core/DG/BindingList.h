@@ -31,6 +31,7 @@ namespace Fabric
       typedef std::list< RC::Handle<Binding> > Bindings;
       
     public:
+      REPORT_RC_LEAKS
       
       static RC::Handle<BindingList> Create( RC::Handle<Context> const &context );
       

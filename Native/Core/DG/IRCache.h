@@ -33,8 +33,10 @@ namespace Fabric
     class IRCache : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<IRCache> Instance( CG::CompileOptions const *compileOptions );
+      static void Terminate();
       
       std::string keyForAST( RC::ConstHandle<AST::GlobalList> const &ast ) const;
       

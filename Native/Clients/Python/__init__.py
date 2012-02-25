@@ -1678,6 +1678,13 @@ class _RT( _NAMESPACE ):
     return self.__registeredTypes
 
   def registerType( self, name, desc ):
+    if type( desc ) is not dict:
+      raise Exception( 'RT.registerType: second parameter: must be an object' )
+    if 'members' not in desc:
+      raise Exception( 'RT.registerType: second parameter: missing members element' )
+    if type( desc[ 'members' ] ) is not list:
+      raise Exception( 'RT.registerType: second parameter: invalid members element' )
+
     members = []
     for i in range( 0, len( desc[ 'members' ] ) ):
       member = desc[ 'members' ][ i ]
@@ -1690,8 +1697,16 @@ class _RT( _NAMESPACE ):
       }
       members.append( member )
 
-    defaultValue = desc[ 'constructor' ]()
-    self.__prototypes[ name ] = desc[ 'constructor' ]
+    constructor = None
+    if 'constructor' in desc:
+      constructor = desc[ 'constructor' ]
+    else:
+      class _Empty:
+        pass
+      constructor = _Empty
+
+    defaultValue = constructor()
+    self.__prototypes[ name ] = constructor
 
     arg = {
       'name': name,

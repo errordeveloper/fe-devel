@@ -16,6 +16,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( ConstUnsignedInteger );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<ConstUnsignedInteger> Create( CG::Location const &location, std::string const &valueString );
       

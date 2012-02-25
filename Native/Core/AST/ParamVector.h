@@ -38,6 +38,7 @@ namespace Fabric
     class ParamVector : public RC::Vector< RC::ConstHandle<Param> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<ParamVector> Create( RC::ConstHandle<Param> const &firstParam = 0, RC::ConstHandle<ParamVector> const &remainingParams = 0 );
       static RC::ConstHandle<ParamVector> Create( RC::ConstHandle<Param> const &firstParam, RC::ConstHandle<Param> const &secondParam );

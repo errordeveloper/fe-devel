@@ -38,6 +38,7 @@ namespace Fabric
       typedef std::multiset<BindingList *> BindingLists; 
     
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Binding> Create( RC::Handle<Context> const &context );
       

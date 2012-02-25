@@ -14,6 +14,7 @@ namespace Fabric
     class NumericImpl : public SimpleImpl
     {
     public:
+      REPORT_RC_LEAKS
     
       // NumericImpl
 

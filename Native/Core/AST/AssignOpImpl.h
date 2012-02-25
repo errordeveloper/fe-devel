@@ -20,6 +20,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( AssignOpImpl );
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<AssignOpImpl> Create(
         CG::Location const &location,

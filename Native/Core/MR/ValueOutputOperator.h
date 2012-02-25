@@ -39,6 +39,7 @@ namespace Fabric
     class ValueOutputOperator : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
 
       RC::ConstHandle<RT::Desc> getValueDesc() const;
       RC::ConstHandle<RT::Desc> getSharedDesc() const;

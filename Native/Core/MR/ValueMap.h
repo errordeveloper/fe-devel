@@ -19,6 +19,7 @@ namespace Fabric
     class ValueMap : public ValueProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueMap> Create(
         RC::ConstHandle<ValueProducer> const &input,

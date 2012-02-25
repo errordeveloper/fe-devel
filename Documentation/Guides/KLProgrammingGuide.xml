@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!DOCTYPE book [
+<!ENTITY % allent SYSTEM "w3centities-f.ent">
+%allent;
+]>
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
   <info>
     <title>KL Programming Guide</title>
@@ -21,7 +25,11 @@
 
       <itemizedlist>
         <listitem><para>
-          KL should be easy to learn for someone who is already familiar with programming in Javascript.
+          KL is designed to run <glossterm>performance-critical</glossterm> sections of <glossterm>dynamic-language</glossterm> programs.  As such, KL is designed so that KL programs run as quickly as possible on modern hardware.
+        </para></listitem>
+        
+        <listitem><para>
+          KL should be easy to learn for someone who is already familiar with programming in JavaScript.
         </para></listitem>
 
         <listitem><para>
@@ -29,18 +37,63 @@
         </para></listitem>
       </itemizedlist>
 
-      As such, KL is a language with a syntax very similar to Javascript but which is <emphasis>procedural</emphasis>, <emphasis>strongly-typed</emphasis> and with <emphasis>low-level data layouts</emphasis>.  Being <emphasis>procedural</emphasis> means that, unlike Javascript, functions (or, rather, closures) are not first-class objets that can be passed around in the language; instead, functions are always globally declared.  Being <emphasis>strongly-typed</emphasis> means that, in a KL program, the types of all variables and function parameters is known at compile type, unlike Javascript where types are only known at runtime.  Having <emphasis>low-level data layouts</emphasis> means that the size of data and the way that it is laid out in memory is guaranteed and controllable by the programmer.
+      As such, KL is a language with a syntax very similar to JavaScript but which is <emphasis>procedural</emphasis>, <emphasis>strongly-typed</emphasis> and with <emphasis>low-level data layouts</emphasis>.  Being <emphasis>procedural</emphasis> means that, unlike JavaScript, functions (or, rather, closures) are not first-class objets that can be passed around in the language; instead, functions are always globally declared.  Being <emphasis>strongly-typed</emphasis> means that, in a KL program, the types of all variables and function parameters is known at compile type, unlike JavaScript where types are only known at runtime.  Having <emphasis>low-level data layouts</emphasis> means that the size of data and the way that it is laid out in memory is guaranteed and controllable by the programmer.
     </para>
-
+    
     <para>
-      Before diving in to the details of the language, here is a simple example of a KL program that outputs the first few elements of the Fibonacci sequence:
+      Before diving in to the details of the language, we will present some simple examples.  We don't expect you to understand all the details of the examples, but hopefully they will give you a basic idea of what KL programs look like as well as some of what is possible with KL.  All of these examples can be run by downloading and installing the <filename>FabricEngine-KLTool-...</filename> file that is appropriate for your operating system from <link xlink:href="http://dist.fabric-engine.com/latest/">http://dist.fabric-engine.com/latest/</link>.  Once installed, you can copy the source code to a text file and run <command>kl <replaceable>filename.kl</replaceable></command>.
+    </para>
+    
+    <section>
+      <title>Hello World in KL</title>
+      
+      <para>
+        Traditionally, the first program you see in a language is one that says hello.  In KL, the "Hello, world!" program is simple:
+        
+        <example xml:id="ex.helloworld.code">
+          <title>Hello world</title>
+          <programlisting language="KL"><![CDATA[
+operator entry() {
+  report "Hello, world!";
+}
+          ]]></programlisting>
+        </example>
+        
+        Running this program through the <command>kl</command> tool, the output is:
+      
+        <informalfigure>
+          <screen><![CDATA[
+operator entry() {
+  report "Hello, world!";
+}
+          ]]></screen>
+        </informalfigure>
+        
+        There's not much to learn from this program, but it does introduce a few concepts:
+        
+        <itemizedlist>
+          <listitem><para>The <code>entry</code> operator is what is run by the <command>kl</command> tool.  KL distinguishes places in the program that can be called from the outside world&mdash;in this case, the outside world is the <command>kl</command> tool itself.  We discuss more about operators <xref linkend="operators" /></para></listitem>
+          <listitem><para>The <code>report</code> keyword reports something to wherever messages go.  In the case of the <command>kl</command> tool, messages go to standard output; when running within a web browser, messages appear on the JavaScript console.</para></listitem>
+          <listitem><para>The text <code>"Hello, world!"</code> is a <glossterm>string constant</glossterm>.  String constants in KL follow almost exactly the same syntax as JavaScript.</para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+      
+    <section>
+      <title>Fibonacci Sequence in KL</title>
 
-      <example xml:id="ex.fibonacci">
-        <title>KL Fibonacci sequence generator</title>
-        <programlisting language="KL"><![CDATA[
+      <para>
+        Next, we present a somewhat more sophisticated example that computes the first few terms of the Fibonacci sequence.  The Fibonacci sequence is the number sequence whose first few terms are 1 and 1, and whose further terms are the sum of the previous two in the sequence, ie. 2, 3, 5, 8, and so on.  There are several ways of computing the Fibonacci sequence in a programming language but we choose the naive, recursive way in order to illustrate some more language features of KL.
+
+        <example xml:id="ex.fibonacci.code">
+          <title>Fibonacci sequence generator</title>
+          <programlisting language="KL"><![CDATA[
+/* Recursively compute the Fibonacci sequence.
+** The first term is returned with n = 0
+*/
 function Integer fibonacci(Integer n) {
   if (n <= 1)
-    return 1;
+    return 1; // The first two terms (n=0 or n=1) are 1
   else 
     return fibonacci(n - 2) + fibonacci(n - 1);
 }
@@ -49,12 +102,13 @@ operator entry() {
   for (Integer i = 0; i < 10; ++i)
     report fibonacci(i);
 }
-        ]]></programlisting>
-      </example>
-
-      The output of calling the function <function>entry</function> is:
-
-      <screen><![CDATA[
+          ]]></programlisting>
+        </example>
+        
+        Running this program through the <command>kl</command> tool, the output is:
+      
+        <informalfigure xml:id="fig.fibonacci.out">
+          <screen><![CDATA[
 1
 1
 2
@@ -65,23 +119,470 @@ operator entry() {
 21
 34
 55
-      ]]></screen>
+          ]]></screen>
+        </informalfigure>
+      
+        The Fibonacci example highlights a few simple features of KL, including:
 
-      This example highlights a few simple features of KL, including:
+        <itemizedlist>
+          <listitem><para>Function and parameter declaration</para></listitem>
+          <listitem><para>Recursion</para></listitem>
+          <listitem><para>Conditional statements</para></listitem>
+          <listitem><para>Loops</para></listitem>
+          <listitem><para>Comments</para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Mandelbrot Set in KL</title>
+      
+      <para>
+        Finally, we present an example of a KL program that generates the Mandelbrot set and outputs it visually as ASCII art.  The Mandelbrot set is a mathematical set defined by complex recursive functions, but that it best known because the patterns it contains are visually stunning.  Refer to the Wikipedia entry on the Mandelbrot set at <link xlink:href="http://en.wikipedia.org/wiki/Mandelbrot_set">http://en.wikipedia.org/wiki/Mandelbrot_set</link> for more information.
+      </para>
+      
+      <para>
+        KL includes very powerful features for extending the language for computational problems such as that of computing the values of the Mandelbrot set, as seen in the source code below:
+        
+        <example xml:id="ex.mandelbrot.code">
+          <title>Mandelbrot set generator</title>
+          <programlisting language="KL"><![CDATA[
+struct Complex32 {
+  Float32 re;
+  Float32 im;
+};
 
+function Complex32(Float32 re, Float32 im) {
+  this.re = re;
+  this.im = im;
+}
+
+function Complex32 +(Complex32 lhs, Complex32 rhs) {
+  return Complex32(lhs.re + rhs.re, lhs.im + rhs.im);
+}
+
+function Complex32 *(Complex32 lhs, Complex32 rhs) {
+  return Complex32(lhs.re*rhs.re-lhs.im*rhs.im, lhs.re*rhs.im + lhs.im*rhs.re);
+}
+
+function Float32 Complex32.normSq() {
+  return this.re*this.re + this.im*this.im;
+}
+
+function Byte computeDwell(Complex32 c) {
+  Complex32 z = c;
+  Size count;
+  for (count = 0; count < 255; ++count) {
+    if (z.normSq > 4)
+      break;
+    z = z*z + c;
+  }
+  return count;
+}
+
+operator entry()
+{
+  Complex32 z;
+  for (Size row=9; row<=31; ++row) {
+    z.im = 4.0 * row / 40.0 - 2.0;
+    String rowString;
+    for (Size col=0; col<=78; ++col) {
+      z.re = 4.0 * col / 78.0 - 2.0;
+      Byte dwell = computeDwell(z);
+      
+      if (dwell & 192)
+        rowString += "#";
+      else if (dwell & 48)
+        rowString += "*";
+      else if (dwell & 12)
+        rowString += ".";
+      else
+        rowString += " ";
+    }
+    report rowString;
+  }
+}
+          ]]></programlisting>
+        </example>
+        
+        Running this program through the <command>kl</command> tool, the output is:
+      
+        <informalfigure xml:id="fig.mandelbrot.out">
+          <screen><![CDATA[
+                                  .....                                        
+                                .......#.                                      
+                              ......**.....                                    
+                            .......####*.....                                  
+                         ..........####.........                               
+                    ........*#**##########*...*..                              
+               .............*#################....                             
+            ...............###################....                             
+          ......*..*.*...*#####################...                             
+        ........*######*.######################*..                             
+      ......*..################################...                             
+############################################*.....                             
+      ......*..################################...                             
+        ........*######*.######################*..                             
+          ......*..*.*...*#####################...                             
+            ...............###################....                             
+               .............*#################....                             
+                    ........*#**##########*...*..                              
+                         ..........####.........                               
+                            .......####*.....                                  
+                              ......**.....                                    
+                                .......#.                                      
+                                  .....                                        
+          ]]></screen>
+        </informalfigure>
+      
+        The Mandelbrot set example highlights a few of the more sophisticated features of KL, including:
+
+        <itemizedlist>
+          <listitem><para>User-defined types</para></listitem>
+          <listitem><para>Constructors</para></listitem>
+          <listitem><para>Operator overloads</para></listitem>
+          <listitem><para>Methods</para></listitem>
+          <listitem><para>Bitwise operators</para></listitem>
+          <listitem><para>Variable-length arrays</para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>How This Guide is Organized</title>
+      
+      <para>
+        Unlike other languages, KL is a language designed to add performance-critical sections to programs written in dynamic languages.  As such, this guide assumes that you are already familiar with the basic concepts of modern programming languages, including types, expressions, statements (eg. conditional statements, loop statements, return statements) and functions.
+      </para>
+      
+      <para>
+        Since it's difficult to provide meaningful examples in a computer language without using many concepts of the language, we will often use or even refer to concepts that aren't discussed until later in the guide.  We leave it up to you to decide whether to jump ahead or to just keep reading and see where things go.
+      </para>
+        
+      <para>
+        The remainder of the guide is laid out as follows:
+        
+        <itemizedlist>
+          <listitem><para>
+            <xref linkend="ch.syntax" /> describes the syntax of KL.  KL has a syntax very similar to JavaScript (like JavaScript, it is a <quote>C-like</quote> language) so this syntax will be familiar to many programmers.
+          </para></listitem>
+          
+          <listitem><para>
+            <xref linkend="ch.types" /> introduces the type system of KL.  KL comes with a rich set of base types that includes integers, floating-point numbers, strings and booleans, as well as derived types including structures, arrays and dictionaries.
+          </para></listitem>
+          
+          <listitem><para>
+            <xref linkend="ch.functions" /> describes how functions are declared and called in KL.  KL includes support for basic functions (also referred to as procedures in other languages), but also support more complex function concepts such as prototypes, methods and overloaded operators.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </chapter>
+  
+  <chapter xml:id="ch.syntax">
+    <title>KL Syntax</title>
+    
+    <para>
+      When KL was developed it was designed to have a syntax as close as possible to JavaScript, which itself is what is referred to as a <quote>C-like language</quote> (as far as syntax is concerned).  Some of the key characteristics of C-like languages are:
+      
       <itemizedlist>
-        <listitem><para>Function and parameter declaration</para></listitem>
-        <listitem><para>Recursion</para></listitem>
-        <listitem><para>Conditional statements</para></listitem>
-        <listitem><para>Loops</para></listitem>
-        <listitem><para>The <function>report</function> statement</para></listitem>
+        <listitem><para>
+          Programs are plain, human-readable text files.
+        </para></listitem>
+        
+        <listitem><para>
+          A program is a sequence of <glossterm>tokens</glossterm>.  There are four major types of tokens: keywords, identifiers, symbols and constants.
+        </para></listitem>
+        
+        <listitem><para>
+          Tokens may be separated by arbitrary whitespace and <emphasis>must</emphasis> be separated by whitespace in the case that it would make two adjacent tokens appear to be a single, different token.  By whitespace, we mean spaces (ASCII 32), newlines (ASCII 10), tabs (ASCII 9), carriage returns (ASCII 13) and vertical tabs (ASCII 11).
+        </para></listitem>
+        
+        <listitem><para>
+          Programs can contain comments anywhere and comments are treated like whitespace when the program is processed by the computer.  There are two types of comments: block comments, which begin with <code>/*</code> and end with <code>*/</code>, and line comments, which begin with <code>//</code> and continue to the next newline (ASCII 10).
+        </para></listitem>
+        
+        <listitem><para>
+          Blocks are delimited by <code>{</code> and <code>}</code>
+        </para></listitem>
+        
+        <listitem><para>
+          Statements are terminated with <code>;</code>
+        </para></listitem>
       </itemizedlist>
-
-      All of these will be discussed in more detail below.
+      
+      We delve into some more details of the KL syntax below.
     </para>
+    
+    <section>
+      <title>Encoding</title>
+      
+      <para>
+        Although KL programs are plain, human-readable text files, KL does specify an encoding for the text files: UTF-8.  The KL compiler assumes that all KL source code is encoded as UTF-8 without any encoding marks.  KL programs which contain invalid UTF-8 sequences cannot be compiled and will result in syntax errors.
+      </para>
+      
+      <para>
+        If you don't understand exactly what this means, don't worry: plain 7-bit ASCII text files, such as used for C source code (and often for JavaScript source code) are by default UTF-8 encoded.  The only thing to keep in mind is that text files saved on Windows in <quote>Unicode format</quote> (which technically means they are encoded as UCS-2) cannot be read by the KL compiler.  If you want to insert foreign language characters into a KL source file you must use an editor that can write UTF-8 files.
+      </para>
+    </section>
+    
+    <section>
+      <title>Comments</title>
+      
+      <para>
+        As mentioned previously, KL supports the same two types of comments as C and JavaScript: block comments and line comments.
+      </para>
+        
+      <section>
+        <title>Block Comments</title>
+        
+        <para>
+          A block comment in KL is an arbitrary sequence of characters that begins with the characters <code>/*</code> and ends with the characters <code>*/</code>.  Like C, KL ends a block comment as soon as it encounters the first sequence <code>*/</code>.  Also like C, KL does not recognize nested comments.  The following examples illustrate acceptable and erroneous bad block comments in KL.
+        </para>
+        
+        <example>
+          <title>Acceptable block comments</title>
+          <programlisting language="KL"><![CDATA[
+/* A simple, one-line block comment */
+
+/* This is
+   a multi-line
+   block comment
+   */
+   
+/*
+** And so is this
+*/
+
+operator entry() {
+  /* comment can appear in source code
+  report "Hello!"; /* pretty much anywhere */
+  foo( 32 /*, 53*/ ); /* block comments are a simple way to temporarily remove code */
+}
+          ]]></programlisting>
+        </example>
+        
+        <example>
+          <title>Erroneous block comments</title>
+          <programlisting><![CDATA[
+/* KL ends the comment
+ * as soon as the first */
+ * is seen, so this is
+ * a bad block comment that 
+ * results in a syntax error
+ */
+
+/* Like C, block comments
+ * cannot nest in KL,
+   /* so this is also
+    * a bad comment that
+    * will result in a
+    * syntax error
+    */
+ */
+          ]]></programlisting>
+        </example>
+        
+        <para>
+          Be careful with block comments; if either of the errors of the type given above occur in your program it can be very difficult to figure out what has gone wrong; the syntax errors you are given will seem to have nothing to do with your program.  For this reason, we recommend that you use line comments, which are described next.
+        </para>
+      </section>
+      
+      <section>
+        <title>Line Comments</title>
+        
+        <para>
+          A line comment in KL begins with the character sequence <code>//</code> and continues until the end of the line (ASCII character 10).  Unlike block comments, there are no <quote>gotchas</quote> with line comments: they work exactly as expected.  However, they can't be used to comment out sections of code in the middle of a line
+        </para>
+        
+        <example>
+          <title>Line comments</title>
+          <programlisting language="KL"><![CDATA[
+// A simple, one-line line comment
+
+// This is
+// a multi-line
+// line comment
+
+operator entry() {
+  // comment can appear in source code
+  report "Hello!"; // pretty much anywhere
+  foo( 32 //, 53 ); // can't comment out code in the middle of the line
+          ); // but you can continue it on the next line.
+}
+          ]]></programlisting>
+        </example>
+      </section>
+    </section>
+    
+    <section>
+      <title>Tokens</title>
+      
+      <para>
+        A KL program is <glossterm>parsed</glossterm> as a sequence of tokens.  A token is a sequence of characters that begins with something other than whitespace and is not a comment.  There are four categories of tokens in KL: keywords, identifiers, symbols, and constants.
+      </para>
+      
+      <section>
+        <title>Keywords</title>
+        
+        <para>
+          The following is the list of all the keywords in KL:
+          
+          <simplelist type="vert" columns="3">
+            <member><code>alias</code></member>
+            <member><code>ArrayProducer</code></member>
+            <member><code>break</code></member>
+            <member><code>case</code></member>
+            <member><code>const</code></member>
+            <member><code>continue</code></member>
+            <member><code>createArrayCache</code></member>
+            <member><code>createArrayGenerator</code></member>
+            <member><code>createArrayMap</code></member>
+            <member><code>createArrayTransform</code></member>
+            <member><code>createConstArray</code></member>
+            <member><code>createConstValue</code></member>
+            <member><code>createReduce</code></member>
+            <member><code>createValueCache</code></member>
+            <member><code>createValueGenerator</code></member>
+            <member><code>createValueMap</code></member>
+            <member><code>createValueTransform</code></member>
+            <member><code>default</code></member>
+            <member><code>do</code></member>
+            <member><code>else</code></member>
+            <member><code>false</code></member>
+            <member><code>for</code></member>
+            <member><code>function</code></member>
+            <member><code>if</code></member>
+            <member><code>in</code></member>
+            <member><code>io</code></member>
+            <member><code>operator</code></member>
+            <member><code>report</code></member>
+            <member><code>return</code></member>
+            <member><code>struct</code></member>
+            <member><code>switch</code></member>
+            <member><code>true</code></member>
+            <member><code>use</code></member>
+            <member><code>ValueProducer</code></member>
+            <member><code>var</code></member>
+            <member><code>while</code></member>
+          </simplelist>
+        </para>
+        
+        <para>
+          Keywords cannot be used as identifiers, ie. cannot be used for variable, parameter, function, constant or type names.
+        </para>
+      </section>
+    
+      <section>
+        <title>Identifiers</title>
+        
+        <para>
+          Identifiers are a sequence of one or more characters that:
+          
+          <itemizedlist>
+            <listitem><para>begin with any of the characters <code>a</code>...<code>z</code>, <code>A</code>...<code>Z</code> or <code>_</code>; and</para></listitem>
+            <listitem><para>are followed by zero or more of the characters <code>a</code>...<code>z</code>, <code>A</code>...<code>Z</code>, <code>0</code>...<code>9</code> or <code>_</code>; and</para></listitem>
+          </itemizedlist>
+        </para>
+        
+        <para>
+          Identifiers are used in KL for variable names, parameter names, function names, constant names, method names and type names.
+          
+          <note><para>Note that the built-in base types in KL (eg. <code>Boolean</code>, <code>String</code>, <code>Float32</code>) are not  keywords but rather identifiers.  This is a technical detail which is important in the design of the language grammar but doesn't make much difference in practice; it simply changes certain syntax errors into semantic errors.</para></note>
+        </para>
+        
+        <para>
+          Some examples of valid identifiers in KL:
+          
+          <itemizedlist>
+            <listitem><para><code>foo</code></para></listitem>
+            <listitem><para><code>someVariable</code></para></listitem>
+            <listitem><para><code>MyType</code></para></listitem>
+            <listitem><para><code>MyTypeVersion2</code></para></listitem>
+            <listitem><para><code>variable_with_underscores</code></para></listitem>
+            <listitem><para><code>piBy2</code></para></listitem>
+            <listitem><para><code>_</code></para></listitem>
+          </itemizedlist>
+          
+          Some examples of invalid identifiers:
+          
+          <itemizedlist>
+            <listitem><para><code>2by4</code></para></listitem>
+            <listitem><para><code>my%Share</code></para></listitem>
+            <listitem><para><code>peter.zion@fabric-engine.com</code></para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      
+      <section>
+        <title>Symbols</title>
+        
+        <para>
+          A small set of non-alphanumeric, non-underscore characters or short sequences of such characters are the symbols in KL.  They are specifically:
+
+          <simplelist type="vert" columns="8">
+            <member><code>=</code></member>
+            <member><code>==</code></member>
+            <member><code>+</code></member>
+            <member><code>+=</code></member>
+            <member><code>++</code></member>
+            <member><code>-</code></member>
+            <member><code>-=</code></member>
+            <member><code>--</code></member>
+            <member><code>*</code></member>
+            <member><code>*=</code></member>
+            <member><code>/</code></member>
+            <member><code>/=</code></member>
+            <member><code>%</code></member>
+            <member><code>%=</code></member>
+            <member><code>^</code></member>
+            <member><code>^=</code></member>
+            <member><code>^^</code></member>
+            <member><code>&amp;</code></member>
+            <member><code>&amp;=</code></member>
+            <member><code>&amp;&amp;</code></member>
+            <member><code>|</code></member>
+            <member><code>|=</code></member>
+            <member><code>||</code></member>
+            <member><code>[</code></member>
+            <member><code>]</code></member>
+            <member><code>(</code></member>
+            <member><code>)</code></member>
+            <member><code>{</code></member>
+            <member><code>}</code></member>
+            <member><code>;</code></member>
+            <member><code>.</code></member>
+            <member><code>&lt;</code></member>
+            <member><code>&lt;=</code></member>
+            <member><code>&lt;&lt;</code></member>
+            <member><code>&lt;&lt;=</code></member>
+            <member><code>&gt;</code></member>
+            <member><code>&gt;=</code></member>
+            <member><code>&gt;&gt;</code></member>
+            <member><code>&gt;&gt;=</code></member>
+            <member><code>~</code></member>
+            <member><code>!</code></member>
+            <member><code>!=</code></member>
+            <member><code>,</code></member>
+            <member><code>?</code></member>
+            <member><code>;</code></member>
+          </simplelist>
+        </para>
+        
+        <para>  
+          The KL compiler is <quote>greedy</quote> when looking for symbols: it looks for the longest sequence of characters that are a valid symbol.  This is why <code>==(</code> is treated as the two symbols <code>==</code> and <code>(</code>: there is no symbol starting with <code>==(</code> but <code>==</code> is a symbol.
+        </para>
+      </section>
+    </section>
+    
+    <section>
+      <title>Line Continuations</title>
+      
+      <para>TBD</para>
+    </section>
   </chapter>
 
-  <chapter>
+  <chapter xml:id="ch.types">
     <title>The KL Type System</title>
 
     <para>
@@ -89,14 +590,14 @@ operator entry() {
     </para>
 
     <para>
-      Like most programming languages, KL has support for both a fixed set of atomic types from which other types are derived as well as different kinds of derived types.
+      Like most programming languages, KL has support for both a fixed set of base types from which other types are derived as well as different kinds of derived types.
     </para>
 
     <section>
-      <title>Atomic Types</title>
+      <title>Base Types</title>
 
       <para>
-        The KL atomic types are the following:
+        The base types in KL are the following:
 
         <variablelist>
           <varlistentry>
@@ -125,8 +626,13 @@ operator entry() {
           </varlistentry>
 
           <varlistentry>
-            <term><code>Scalar</code></term>
+            <term><code>Float32</code></term>
             <listitem><para>a 32-bit IEEE floating point value</para></listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><code>Scalar</code></term>
+            <listitem><para>an alias for <code>Float32</code></para></listitem>
           </varlistentry>
 
           <varlistentry>
@@ -153,11 +659,11 @@ operator entry() {
             </para></listitem>
 
             <listitem><para>
-              All other atomic types cast to Boolean as follows:
+              All other base types cast to Boolean as follows:
               
               <itemizedlist>
                 <listitem><para><code>Byte</code>, <code>Integer</code> and <code>Size</code> values cast to true if and only if the value is non-zero</para></listitem>
-                <listitem><para><code>Scalar</code> and <code>Float64</code> values cast true if and only if the value is not equal to <code>0.0</code> or <code>-0.0</code></para></listitem>
+                <listitem><para><code>Float32</code> and <code>Float64</code> values cast true if and only if the value is not equal to <code>0.0</code> or <code>-0.0</code></para></listitem>
                 <listitem><para><code>String</code> values cast to true if and only if their length is greater than zero</para></listitem>
                 <listitem><para>arrays and dictionaries cast to true if and only if they are non-empty</para></listitem>
                 <listitem><para>by default, structures do not cast to <code>Boolean</code>, but you can implement the cast if desired</para></listitem>
@@ -187,13 +693,17 @@ operator entry() {
   report a != b;
 }
           ]]></programlisting>
-          <simpara>Output:</simpara>
+        </example>
+
+        <simpara>Output:</simpara>
+        
+        <informalfigure>
           <screen><![CDATA[
 true
 false
 true              
           ]]></screen>
-        </example>
+        </informalfigure>
       </section>
 
       <section>
@@ -217,13 +727,16 @@ true
               <term><code>Size</code></term>
               <listitem><simpara>unsigned integer that is 32-bit on 32-bit systems and 64-bit on 64-bit systems</simpara></listitem>
             </varlistentry>
+            
+            <varlistentry>
+              <term><code>Index</code></term>
+              <listitem><simpara>an alias for <code>Size</code></simpara></listitem>
+            </varlistentry>
           </variablelist>
         </para>
         
-        <note><simpara><code>Index</code> is an alias for <code>Size</code></simpara></note>
-
         <para>
-          <glossterm>Integer types</glossterm> behave as follows:
+          Integer types behave as follows:
           
           <itemizedlist>
             <listitem><simpara>
@@ -261,27 +774,42 @@ operator entry() {
         <title>Floating-Point Types</title>
         
         <para>
-          The <code>Scalar</code>, and <code>Float64</code> types (collectively known as <glossterm>floating-point types</glossterm>) represent <acronym>IEEE</acronym> floating-point numbers.  These types differ only in their bit width, as follows:
+          The <code>Float32</code>, <code>Float64</code> and <code>Scalar</code> types (collectively known as <glossterm>floating-point types</glossterm>) represent <acronym>IEEE</acronym> floating-point numbers.  These types differ only in their bit width, as follows:
           
           <variablelist>
             <varlistentry>
-              <term><code>Scalar</code></term>
+              <term><code>Float32</code></term>
               <listitem><simpara>32-bit <acronym>IEEE</acronym> floating-point number</simpara></listitem>
             </varlistentry>
             
             <varlistentry>
-              <term><code>Integer</code></term>
+              <term><code>Float64</code></term>
               <listitem><simpara>64-bit <acronym>IEEE</acronym> floating-point number</simpara></listitem>
+            </varlistentry>
+            
+            <varlistentry>
+              <term><code>Scalar</code></term>
+              <listitem><para>
+                an alias for <code>Float32</code>
+                <note><para>The <code>Scalar</code> alias will probably be removed in a future version of KL.  We recommend that you not use it in any new code.</para></note>
+              </para></listitem>
             </varlistentry>
           </variablelist>
         </para>
         
         <para>
-          <glossterm>Floating-point types</glossterm> behave as follows:
+          Floating-point types behave as follows:
           
           <itemizedlist>
             <listitem><para>
-              Floating-point constants have the same syntax as in Javascript and C, and are of type <code>Float64</code>.  The following are examples of Scalar constants: <code>0.0</code>, <code>1.0</code>, <code>3.14159265358979</code>, <code>8.9e-6</code>, <code>4356.123E42</code>
+              Floating-point constants have the same syntax as in JavaScript and C, and are of type <code>Float64</code>.  The following are examples of floating-point constants:
+              <itemizedlist>
+                <listitem><simpara><code>0.0</code></simpara></listitem>
+                <listitem><simpara><code>1.4142</code></simpara></listitem>
+                <listitem><simpara><code>3.14159265358979</code></simpara></listitem>
+                <listitem><simpara><code>8.9e-6</code></simpara></listitem>
+                <listitem><simpara><code>4356.123E42</code></simpara></listitem>
+              </itemizedlist>
             </para></listitem>
             
             <listitem><para>
@@ -294,11 +822,11 @@ operator entry() {
           <title>Floating-point types</title>
           <programlisting language="KL"><![CDATA[
 operator entry() {
-  Scalar x = 3.141;
+  Float32 x = 3.141;
   report x;
   Float64 y = 2.718;
   report y;
-  Scalar z = x*x + y*y;
+  Float32 z = x*x + y*y;
   report z;
 }
           ]]></programlisting>
@@ -324,7 +852,15 @@ operator entry() {
           <itemizedlist>
             <listitem><simpara>A string is a sequence of zero or more characters.</simpara></listitem>
             <listitem><simpara>The length of a string is value of type <code>Size</code>, and the maximum length of a string is the maximum value of type <code>Size</code>.</simpara></listitem>
-            <listitem><simpara>String constants can be specified inline in KL source files using single- or double-quotation marks, just as JavaScript.  Examples of string constants: <code>"Hello, world!"</code>, <code>'A string\nwith a newline'</code>, <code>"A string containing \"double quotes\""</code></simpara></listitem>
+            <listitem><para>
+              String constants can be specified inline in KL source files using single- or double-quotation marks, just as JavaScript.  Examples of string constants:
+              
+              <itemizedlist>
+                <listitem><simpara><code>"Hello, world!"</code></simpara></listitem>
+                <listitem><simpara><code>'A string\nwith a newline'</code></simpara></listitem>
+                <listitem><simpara><code>"A string containing \"double quotes\""</code></simpara></listitem>
+              </itemizedlist>
+            </para></listitem>
             <listitem><simpara>Strings are <emphasis>reference-counted</emphasis> and <emphasis>copy-on-write</emphasis>.  This means that if you assign a string value to multiple variables, there is only one copy of the actual string until someone changes one of the strings.</simpara></listitem>
             <listitem><para>
               Strings support the following operations and properties, which are all exactly the same as JavaScript:
@@ -372,7 +908,7 @@ Another string now includes A string
       <title>Derived Types</title>
       
       <para>
-        In addition to the atomic types, KL supports three classes of derived types: structures, arrays and dictionaries.
+        In addition to the base types, KL supports three classes of derived types: structures, arrays and dictionaries.
       </para>
       
       <section>
@@ -389,7 +925,7 @@ Another string now includes A string
             <title>Structure definition in KL</title>
             <programlisting language="KL"><![CDATA[
 struct NewType {
-  Scalar firstMember;
+  Float32 firstMember;
   String secondMember;
   Integer thirdMemberVarArray[];
 };
@@ -559,12 +1095,12 @@ The array NOW has size 4 and value [42,84,0,0]
           <example>
             <title>Fixed-size arrays</title>
             <programlisting><![CDATA[
-function Scalar det(Scalar mat[2][2]) {
+function Float32 det(Float32 mat[2][2]) {
   return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
 }
 
 operator entry() {
-  Scalar mat[2][2];
+  Float32 mat[2][2];
   mat[0][0] = 3.5;
   mat[0][1] = -9.2;
   mat[1][0] = -2.1;
@@ -655,10 +1191,10 @@ strings = ["string 1","string 2","string 3","string 4","string 5","replaced stri
         <title>Dictionaries</title>
       
         <para>
-          KL supports key-value pair dictionaries.  The type of the key of a dictionary can be any of the KL atomic types (e.g. <code>Boolean</code>, <code>String</code>, or any integer or floating-point type) and the type of the value can be any type.  Dictionaries are declared by appending <code>[<replaceable>KeyType</replaceable>]</code> to the variable, parameter or member name.  For example:
+          KL supports key-value pair dictionaries.  The type of the key of a dictionary can be any of the KL base types (e.g. <code>Boolean</code>, <code>String</code>, or any integer or floating-point type) and the type of the value can be any type.  Dictionaries are declared by appending <code>[<replaceable>KeyType</replaceable>]</code> to the variable, parameter or member name.  For example:
         
           <informalexample><programlisting language="KL"><![CDATA[
-String scalarToString[Scalar];      // A Scalar-to-String dictionary
+String scalarToString[Float32];     // A Float32-to-String dictionary
 Boolean integerToBoolean[Integer];  // An Integer-to-Boolean dictionary
           ]]></programlisting></informalexample>
         </para>
@@ -726,7 +1262,7 @@ operator entry() {
           <title>Dictionaries</title>
           <programlisting><![CDATA[
 operator entry() {
-  Scalar a[String];
+  Float32 a[String];
   a['pi'] = 3.14;
   a['e'] = 2.71;
   report "a is:";
@@ -760,7 +1296,7 @@ a['e'] = 2.71
         
         <programlisting language="KL"><![CDATA[
 alias Integer Int32;        // Int32 is now an alias for Integer
-alias Scalar Float32;       // Float32 is now an alias for Scalar
+alias Float32 float;        // float is now an alias for Float32
 alias Float32 Mat22[2][2];  // Mat22 is now an alias for Float32[2][2], ie. a size-2-array-of-size-2-arrays-of-Float32
         ]]></programlisting>
         
@@ -770,7 +1306,7 @@ alias Float32 Mat22[2][2];  // Mat22 is now an alias for Float32[2][2], ie. a si
       <example>
         <title>Type aliases</title>
         <programlisting><![CDATA[
-alias Scalar Mat22[2][2];
+alias Float32 Mat22[2][2];
 
 operator entry() {
   Mat22 mat22;
@@ -841,7 +1377,7 @@ s.dataSize = 6
     </section>
   </chapter>
   
-  <chapter>
+  <chapter xml:id="ch.functions">
     <title>KL Functions</title>
 
     <section>
@@ -859,7 +1395,7 @@ s.dataSize = 6
       <example>
         <title>Function returning a value and using only input parameters</title>
         <programlisting language="KL"><![CDATA[
-function Scalar add(Scalar lhs, Scalar rhs) {
+function Float32 add(Float32 lhs, Float32 rhs) {
   return lhs + rhs;
 }
         ]]></programlisting>
@@ -868,7 +1404,7 @@ function Scalar add(Scalar lhs, Scalar rhs) {
       <example>
         <title>Function not returning a value and using both input and input-output parameters</title>
         <programlisting language="KL"><![CDATA[
-function add(in Scalar lhs, in Scalar rhs, io Scalar result) {
+function add(in Float32 lhs, in Float32 rhs, io Float32 result) {
   result = lhs + rhs;
 }
         ]]></programlisting>
@@ -970,16 +1506,22 @@ operator entry() {
     </section>
     
     <section>
+      <title>Built-in Functions</title>
+      
+      <para>TBD</para>
+    </section>
+
+    <section>
       <title>Function Polymorphism</title>
       
       <para>
         KL support <glossterm>compile-type function polymorphism</glossterm>.  This means that you can have multiple functions with the same name so long as they have a different number of parameters or those parameters differ by type and/or their input versus input-output qualification.
 
-        <note><para>You cannot have two functions that take exactly the same parameter types but return different types</para></note>
+        <note><para>It is an error to have two functions with the same name that take exactly the same parameter types but return different types</para></note>
       </para>
 
       <para>
-        When a function call is made in KL source, if their are multiple functions with the same name then the KL compiler uses a best-match system to determine which function to call.  Exact parameter type matches are always prioritized over type casts.  If the compiler is unable to choose a unique best match then an error will be reported showing the ambiguity.
+        When a function call is made in KL source, if there are multiple functions with the same name then the KL compiler uses a best-match system to determine which function to call.  Exact parameter type matches are always prioritized over type casts.  If the compiler is unable to choose a unique best match then an error will be reported showing the ambiguity.
       </para>
 
       <example>
@@ -1013,7 +1555,7 @@ integer value is 64
       </example>
     </section>
 
-    <section>
+    <section xml:id="operators">
       <title>Operators</title>
       
       <para>
@@ -1023,7 +1565,7 @@ integer value is 64
       <example>
         <title>Operator definition</title>
         <programlisting language="KL"><![CDATA[
-operator addElements(io Scalar lhs, io Scalar rhs, io Scalar result) {
+operator addElements(io Float32 lhs, io Float32 rhs, io Float32 result) {
   result = lhs + rhs;
 }
         ]]></programlisting>
@@ -1051,29 +1593,45 @@ operator addElements(io Scalar lhs, io Scalar rhs, io Scalar result) {
         <example>
           <title>Constructor declarations</title>
           <programlisting language="KL"><![CDATA[
-struct Complex {
-  Scalar re;
-  Scalar im;
+struct Complex32 {
+  Float32 re;
+  Float32 im;
 };
 
 // The empty constructor; 
-function Complex() {
+function Complex32() {
   this.re = this.im = 0.0;
 }
 
-// Construct a Complex from a Scalar
-function Complex(Scalar x) {
+// Construct a Complex from a Float32
+function Complex32(Float32 x) {
   this.re = x;
   this.im = 0.0;
 }
 
-// Construct a Complex from two Scalars
-function Complex(Scalar x, Scalar y) {
+// Construct a Complex from two Float32s
+function Complex32(Float32 x, Float32 y) {
   this.re = x;
   this.im = y;
 }
+
+operator entry() {
+  report Complex32();
+  report Complex32(3.141);
+  report Complex32(3.141, 2.718);
+}
           ]]></programlisting>
         </example>
+        
+        <simpara>Output:</simpara>
+        
+        <informalfigure>
+          <screen><![CDATA[
+{re:0,im:0}
+{re:3.141,im:0}
+{re:3.141,im:2.718}
+          ]]></screen>
+        </informalfigure>
       </section>
       
       <section>
@@ -1091,7 +1649,7 @@ function Complex(Scalar x, Scalar y) {
                 <programlisting language="KL"><![CDATA[
 struct MyType {
   Integer n;
-  Scalar x;
+  Float32 x;
 };
 
 // The empty constructor
@@ -1128,8 +1686,8 @@ function MyType(String string) {
 }
 
 // Construct from a scalar
-function MyType(Scalar scalar) {
-  this.string = "The scalar was " + scalar;
+function MyType(Float64 float64) {
+  this.string = "The float64 was " + float64;
 }
 
 operator entry() {
@@ -1138,8 +1696,8 @@ operator entry() {
   report myTypeFromString;
   
   // Construct MyType from Float64 value
-  MyType myTypeFromScalar = 2.718;
-  report myTypeFromScalar;
+  MyType myTypeFromFloat64 = 2.718;
+  report myTypeFromFloat64;
   
   // There is no constructor that takes a Boolean but
   // there is a cast from Boolean to String
@@ -1150,7 +1708,7 @@ operator entry() {
                 <simpara>Output:</simpara>
                 <screen><![CDATA[
 {string:"The string was 'foo'"}
-{string:"The scalar was 2.718"}
+{string:"The float64 was 2.718"}
 {string:"The string was 'true'"}
                 ]]></screen>
               </example>
@@ -1262,26 +1820,51 @@ Destroying MyType: this.s = foo
       </example>
     </section>
 
-<!--
-### Type Methods
+    <section>
+      <title>Methods</title>
 
-If `Type` is a structure or alias, then a *method* can be added to the type using the following syntax:
+      <para>
+        If <code><replaceable>Type</replaceable></code> is a structure or alias, then a <glossterm>method</glossterm> can be added to the type using the following syntax:
+        
+        <programlisting language="KL">
+// A method that returns a value
+function <replaceable>ReturnType</replaceable> <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<replaceable>parameter list</replaceable>) {
+  <replaceable>method body</replaceable>
+}
 
-```javascript
+// A method that does not return a value
+function <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<replaceable>parameter list</replaceable>) {
+  <replaceable>method body</replaceable>
+}
+        </programlisting>
+        
+        Within the method body, <code>this</code> refers to the value on which the method is called.  <code>this</code> is read-only if the method returns a value and is read-write if the method does not return a value.
+        
+        <note><para>A future version of Fabric will allow the read-only versus read-write status of <code>this</code> to be explicitly specified.</para></note>
+      </para>
+      
+      <para>
+        If <code><replaceable>value</replaceable></code> is a value of type <code><replaceable>Type</replaceable></code> then the method <code><replaceable>methodName</replaceable></code> can be invoked on <code><replaceable>value</replaceable></code> using the expression <code><replaceable>value</replaceable>.<replaceable>methodName</replaceable>(<replaceable>argument list</replaceable>)</code>.  If a method takes no parameters, then it is optional to use parentheses when calling it.
+      </para>
+      
+      <para>
+        Just as their can be multiple functions with the same name, a given type can have multiple methods with the same name.  When deciding which method to invoke, the usual best-match rules apply.
+      </para>
+
+      <example>
+        <title>Method definition and invocation</title>
+        <programlisting language="KL"><![CDATA[
 struct Type {
   Integer a;
-  Scalar b;
+  Float32 b;
 };
 
+// Add method desc to Type
 function String Type.desc() {
   return "a:" + this.a + "; b:" + this.b;
 }
-```
 
-If a method takes no parameters, then it is optional to use parentheses when calling it:
-
-```javascript
-function entry() {
+operator entry() {
   Type t;
   t.a = 1;
   t.b = 3.14;
@@ -1289,16 +1872,34 @@ function entry() {
   report t.desc();
   report t.desc;
 }
-```
+        ]]></programlisting>
+        <simpara>Output:</simpara>
+        <screen><![CDATA[
+a:1; b:3.14
+a:1; b:3.14
+        ]]></screen>
+      </example>
+    </section>
 
-### Overloaded Operators
-
-Binary operators can be overloaded using the following syntax:
-
-```javascript
+    <section>
+      <title>Overloaded Operators</title>
+      
+      <para>
+        KL allows overloading of binary and assignment operators for custom types (ie. specified through <code>struct</code>).
+      </para>
+        
+      <section>
+        <title>Binary Operator Overloads</title>
+      
+        <para>
+          Binary operators can be overloaded using the following syntax:
+      
+          <example>
+            <title>Binary operator overload</title>
+            <programlisting language="KL"><![CDATA[
 struct Type {
   Integer a;
-  Scalar b;
+  Float32 b;
 };
 
 function Type +(Type lhs, Type rhs) {
@@ -1307,21 +1908,81 @@ function Type +(Type lhs, Type rhs) {
   result.b = lhs.b + rhs.b;
   return result;
 }
-```
 
-Compound assignments are methods which return no value (in fact, as an expression they are always equal to the variable being assigned to) and so they have the syntax:
+operator entry() {
+  Type t1; t1.a = 42; t1.b = 3.14; report t1;
+  Type t2; t2.a = 7; t2.b = 2.72; report t2;
+  Type t3 = t1 + t2; report t3;
+}
+            ]]></programlisting>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+{a:42,b:3.14}
+{a:7,b:2.72}
+{a:49,b:5.86}
+            ]]></screen>
+          </example>
 
-```javascript
+          Any of the binary arithmetic (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> and <code>%</code>), bitwise (<code>|</code>, <code>&amp;</code>, <code>^</code>, <code>&lt;&lt;</code> and <code>&gt;&gt;</code>) and comparison (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code> and <code>&gt;=</code>) operators can be overloaded.
+        </para>
+      
+        <para>
+          Binary operator overloads are subject to the following restrictions:
+        
+          <itemizedlist>
+            <listitem><simpara>They must take exactly two parameters.  The two parameters may be of any type and the two types may be different but they must both be input-only parameters.</simpara></listitem>
+            <listitem><simpara>They must return a value.  However, the return type can be any type.</simpara></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    
+      <section>
+        <title>Compound Assignment Overloads</title>
+      
+        <para>
+          KL provides a default plain assignment for custom types which simply assigns each of the members.  It also provides a default <glossterm>compound assignment</glossterm> operator (ie. <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code>, <code>|=</code>, <code>&amp;=</code>, <code>^=</code>, <code>&lt;&lt;=</code> and <code>&gt;&gt;=</code>) by composing the associated binary operator, if available, with an assignment.
+        </para>
+      
+        <para>
+          However, it is also possible to provide an overload for any of the compound assignment operators using the following syntax:
+
+          <example>
+            <title>Compound assignment overload</title>
+            <programlisting language="KL"><![CDATA[
 struct Type {
   Integer a;
-  Scalar b;
+  Float32 b;
 };
 
-function Type.+=(Type rhs) {
-  this.a += rhs.a;
-  this.b += rhs.b;
+function Type.+=(Type that) {
+  this.a += that.a;
+  this.b += that.b;
 }
-```
--->    
+
+operator entry() {
+  Type t1; t1.a = 42; t1.b = 3.14; report "t1 is " + t1;
+  Type t2; t2.a = 7; t2.b = 2.72; report "t2 is " + t2;
+  t1 += t2; report "t1 is now " + t1;
+}
+            ]]></programlisting>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+t1 is {a:42,b:3.14}
+t2 is {a:7,b:2.72}
+t1 is now {a:49,b:5.86}
+            ]]></screen>
+          </example>
+        </para>
+      
+        <para>
+          Compound assignment overloads are subject to the following restrictions:
+        
+          <itemizedlist>
+            <listitem><simpara>They must take exactly one parameter.  The parameter may be of any type but it must be an input-only parameter.</simpara></listitem>
+            <listitem><simpara>They must not return a value.</simpara></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    </section>
   </chapter>
 </book>

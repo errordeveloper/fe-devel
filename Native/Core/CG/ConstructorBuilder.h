@@ -6,6 +6,7 @@
 #define _FABRIC_CG_CONSTRUCTOR_BUILDER_H
 
 #include <Fabric/Core/CG/FunctionBuilder.h>
+#include <Fabric/Core/CG/Function.h>
 #include <Fabric/Core/CG/Mangling.h>
 
 namespace Fabric
@@ -51,7 +52,7 @@ namespace Fabric
             FunctionParam( "thatRValue", thatAdapter, USAGE_RVALUE )
             ),
           0,
-          size_t( cost )
+          PolymorphismParameters( PolymorphismParameters::PT_COST, cost )
           )
       {
       }

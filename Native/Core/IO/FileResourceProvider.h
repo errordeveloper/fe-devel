@@ -15,6 +15,8 @@ namespace Fabric
     class FileResourceProvider : public IO::ResourceProvider
     {
     public:
+      REPORT_RC_LEAKS
+
       static RC::Handle<FileResourceProvider> Create();
 
       virtual char const * getUrlScheme() const;

@@ -25,6 +25,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( ConstDecl );
 
     public:
+      REPORT_RC_LEAKS
 
       static RC::ConstHandle<ConstDecl> Create(
         CG::Location const &location,

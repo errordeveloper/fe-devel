@@ -20,6 +20,9 @@ namespace Fabric
     {
       FABRIC_GC_OBJECT_CLASS_DECL()
       
+    public:
+      REPORT_RC_LEAKS
+
     protected:
     
       OperatorWrapper(

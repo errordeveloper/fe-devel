@@ -16,6 +16,7 @@ namespace Fabric
     class WindowedInvalidatingCAViewPort : public WindowedCAViewPort
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ViewPort> Create( RC::ConstHandle<Interface> const &interface );
 

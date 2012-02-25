@@ -57,10 +57,12 @@ namespace Fabric
     class Manager : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       typedef std::map< std::string, RC::Handle<Inst> > NameToInstMap;
     
       static RC::Handle<Manager> Instance();
+      static void Terminate();
       
       void loadBuiltInPlugins( std::vector<std::string> const &pluginDirs, RC::Handle<CG::Manager> const &cgManager, EDK::Callbacks const &callbacks );
       

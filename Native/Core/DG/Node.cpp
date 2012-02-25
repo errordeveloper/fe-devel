@@ -203,7 +203,7 @@ namespace Fabric
 
     void Node::evaluate()
     {
-      PrepareForExecution();
+      PrepareForExecution( m_context );
       ensureRunState();
       if ( !m_runState->canEvaluate )
         throw Exception( "cannot execute because of errors" );
@@ -220,7 +220,7 @@ namespace Fabric
       void *finishedUserdata
       )
     {
-      PrepareForExecution();
+      PrepareForExecution( m_context );
       ensureRunState();
       if ( !m_runState->canEvaluate )
         throw Exception( "cannot execute because of errors" );

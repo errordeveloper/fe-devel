@@ -19,6 +19,7 @@ namespace Fabric
     class IntegerImpl : public NumericImpl
     {
     public:
+      REPORT_RC_LEAKS
     
       // NumericImpl
 
@@ -39,6 +40,7 @@ namespace Fabric
     template<typename T> class IntegerImplT : public IntegerImpl
     {
     public:
+      REPORT_RC_LEAKS
 
       // Impl
       

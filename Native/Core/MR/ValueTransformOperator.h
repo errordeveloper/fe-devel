@@ -14,6 +14,7 @@ namespace Fabric
     class ValueTransformOperator : public ValueOutputOperator
     {
     public:
+      REPORT_RC_LEAKS
 
       static RC::Handle<ValueTransformOperator> Create(
         void (*functionPtr)(...),

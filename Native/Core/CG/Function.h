@@ -11,6 +11,7 @@
 #include <Fabric/Core/CG/Error.h>
 #include <Fabric/Core/CG/Location.h>
 #include <Fabric/Core/CG/FunctionParam.h>
+#include <Fabric/Core/CG/PolymorphismParams.h>
 #include <Fabric/Core/CG/ReturnInfo.h>
 #include <Fabric/Core/Util/UnorderedMap.h>
 #include <Fabric/Base/Exception.h>
@@ -24,18 +25,18 @@ namespace Fabric
     class Function
     {
     public:
-      
+    
       Function(
         std::string const &desc,
         llvm::Function *llvmFunction,
         ReturnInfo const &returnInfo,
         ParamVector const &params,
-        size_t cost
+        PolymorphismParameters const &polymorphismParameters
         )
         : m_llvmFunction( llvmFunction )
         , m_returnInfo( returnInfo )
         , m_params( params )
-        , m_cost( cost )
+        , m_polymorphismParameters( polymorphismParameters )
       {
       }
       
@@ -44,7 +45,7 @@ namespace Fabric
         , m_llvmFunction( that.m_llvmFunction )
         , m_returnInfo( that.m_returnInfo )
         , m_params( that.m_params )
-        , m_cost( that.m_cost )
+        , m_polymorphismParameters( that.m_polymorphismParameters )
       {
       }
       
@@ -54,7 +55,7 @@ namespace Fabric
         m_llvmFunction = that.m_llvmFunction;
         m_returnInfo = that.m_returnInfo;
         m_params = that.m_params;
-        m_cost = that.m_cost;
+        m_polymorphismParameters = that.m_polymorphismParameters;
         return *this;
       }
       
@@ -78,9 +79,9 @@ namespace Fabric
         return m_params;
       }
       
-      size_t getCost() const
+      PolymorphismParameters const *getPolymorphismParameters() const
       {
-        return m_cost;
+        return &m_polymorphismParameters;
       }
       
       void appendParamTypes( ExprTypeVector &paramTypes ) const
@@ -122,7 +123,7 @@ namespace Fabric
       llvm::Function *m_llvmFunction;
       ReturnInfo m_returnInfo;
       ParamVector m_params;
-      size_t m_cost;
+      PolymorphismParameters m_polymorphismParameters;
     };
     
     typedef std::vector<Function> FunctionVector;

@@ -27,6 +27,7 @@ namespace Fabric
     class ConstValue : public ValueProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ConstValue> Create(
         RC::ConstHandle<RT::Manager> const &rtManager,

@@ -20,6 +20,7 @@ namespace Fabric
     class ArrayTransform : public ArrayProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayTransform> Create(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer,
@@ -40,6 +41,7 @@ namespace Fabric
       class ComputeState : public ArrayProducer::ComputeState
       {
       public:
+        REPORT_RC_LEAKS
       
         static RC::Handle<ComputeState> Create( RC::ConstHandle<ArrayTransform> const &arrayTransform );
       

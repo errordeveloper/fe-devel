@@ -24,6 +24,7 @@ namespace Fabric
       // Virtual functions: GC::Object
     
     public:
+      REPORT_RC_LEAKS
     
       virtual void jsonExec(
         JSON::Entity const &cmd,

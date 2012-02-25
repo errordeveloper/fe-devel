@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       bool getValue( void const *data ) const;
       void setValue( bool value, void *data ) const;

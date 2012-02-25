@@ -29,7 +29,7 @@
 
 
 <!-- xref -->
-<xsl:param name="insert.xref.page.number">yes</xsl:param>
+<xsl:param name="insert.xref.page.number">no</xsl:param>
 
 <!-- Generated Text changes -->
  <xsl:param name="collect.xref.targets">no</xsl:param>

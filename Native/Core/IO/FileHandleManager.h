@@ -17,6 +17,8 @@ namespace Fabric
     class FileHandleManager : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
+
       static RC::Handle<FileHandleManager> Create();
       char const * getUrlScheme() const;
 

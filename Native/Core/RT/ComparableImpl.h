@@ -14,6 +14,7 @@ namespace Fabric
     class ComparableImpl : public Impl
     {
     public:
+      REPORT_RC_LEAKS
     
       // Impl
       

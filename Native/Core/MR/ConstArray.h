@@ -29,6 +29,7 @@ namespace Fabric
     class ConstArray : public ArrayProducer
     {
     public:
+      REPORT_RC_LEAKS
 
       static RC::Handle<ConstArray> Create(
         RC::ConstHandle<RT::Manager> const &rtManager,

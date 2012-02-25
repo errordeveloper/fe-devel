@@ -30,6 +30,7 @@ namespace Fabric
       FABRIC_GC_OBJECT_CLASS_DECL()
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ConstArrayWrapper> Create(
         RC::ConstHandle<RT::Manager> const &rtManager,

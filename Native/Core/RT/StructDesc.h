@@ -19,6 +19,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
           
       size_t getNumMembers() const;
       StructMemberInfo const &getMemberInfo( size_t index ) const;

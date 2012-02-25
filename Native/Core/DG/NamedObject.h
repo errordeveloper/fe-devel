@@ -22,6 +22,7 @@ namespace Fabric
     class NamedObject : public CompiledObject
     {
     public:
+      REPORT_RC_LEAKS
 
       std::string const &getName() const;
       

@@ -12,10 +12,18 @@ namespace Fabric
     void Object::retain() const
     {
       m_refCount.increment();
+#if defined( FABRIC_RC_LEAK_REPORT )
+      if(m_leakClassID == 0)
+        _LeakReportClassRetain( 0 );
+#endif
     }
     
     void Object::release() const
     {
+#if defined( FABRIC_RC_LEAK_REPORT )
+      if(m_leakClassID == 0)
+        _LeakReportClassRelease( 0 );
+#endif
       if ( m_refCount.decrementAndGetValue() == 0 )
         delete this;
     }
@@ -23,6 +31,9 @@ namespace Fabric
     Object::Object()
       : m_refCount( 0 )
       , m_weakContainer( 0 )
+#if defined( FABRIC_RC_LEAK_REPORT )
+      , m_leakClassID( 0 )
+#endif
     {
     }
 
@@ -34,6 +45,24 @@ namespace Fabric
         m_weakContainer->release();
       }
     }
+
+#if defined( FABRIC_RC_LEAK_REPORT )
+    void Object::_setLeakClassID( int ID ) const
+    {
+      //[JeromeCG 20120222] This is required because a "retain" might happen in a parent class constructor, so it would be assigned to a different class ID...
+      int prevID = m_leakClassID;
+      size_t prevRefCount = m_refCount.getValue();
+      m_leakClassID = ID;//Ideally it would be an atomic swap..
+      if(prevID != ID)
+      {
+        while(prevRefCount--)
+        {
+          _LeakReportClassRelease( prevID );
+          _LeakReportClassRetain( ID );
+        }
+      }
+    }
+#endif
 
     WeakContainer *Object::weakContainer() const
     {

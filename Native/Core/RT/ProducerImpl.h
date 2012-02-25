@@ -14,6 +14,7 @@ namespace Fabric
     class ProducerImpl : public Impl
     {
     public:
+      REPORT_RC_LEAKS
     
       // Impl
       

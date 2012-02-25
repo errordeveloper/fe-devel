@@ -24,6 +24,7 @@ namespace Fabric
     class Client : public DG::Client
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Client> Create( RC::Handle<DG::Context> const &context, ClientWrap *clientWrap );
       

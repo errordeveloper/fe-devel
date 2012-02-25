@@ -36,6 +36,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<Desc> Create( std::string const &userName, RC::ConstHandle<Impl> const &impl )
       {

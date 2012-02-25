@@ -14,6 +14,7 @@ namespace Fabric
     class Compiler : public RT::Manager::KLCompiler
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<Compiler> Create();
       

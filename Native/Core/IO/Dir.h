@@ -18,6 +18,7 @@ namespace Fabric
     class Dir : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<Dir> Root();
       static RC::ConstHandle<Dir> User();

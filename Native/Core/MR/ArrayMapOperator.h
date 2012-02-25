@@ -14,6 +14,7 @@ namespace Fabric
     class ArrayMapOperator : public ArrayIOOperator
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayMapOperator> Create(
         void (*functionPtr)(...),

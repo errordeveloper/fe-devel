@@ -36,6 +36,7 @@ namespace Fabric
     class MemberDeclVector : public RC::Vector< RC::ConstHandle<MemberDecl> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<MemberDeclVector> Create( RC::ConstHandle<MemberDecl> const &first = 0, RC::ConstHandle<MemberDeclVector> const &remaining = 0 );
 

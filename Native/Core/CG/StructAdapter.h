@@ -28,6 +28,7 @@ namespace Fabric
       typedef std::vector< RC::ConstHandle<Adapter> > MemberAdaptorVector;
       
     public:
+      REPORT_RC_LEAKS
     
       // Adapter
 

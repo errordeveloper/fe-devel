@@ -7,6 +7,8 @@
 #include <Fabric/Core/Util/Debug.h>
 #include <Fabric/Core/Build.h>
 #include <Fabric/Core/MT/Impl.h>
+#include <Fabric/Core/Plug/Manager.h>
+#include <Fabric/Core/DG/IRCache.h>
 
 #include <npapi/npapi.h>
 #include <npapi/npfunctions.h>
@@ -85,8 +87,14 @@ FABRIC_NPAPI_EXPORT NPError OSCALL NP_Initialize(NPNetscapeFuncs* browser_functi
 FABRIC_NPAPI_EXPORT NPError OSCALL NP_Shutdown()
 {
   Fabric::MT::ThreadPool::Instance()->terminate();
-
   llvm::llvm_stop_multithreaded();
+
+  Fabric::Plug::Manager::Terminate();
+  Fabric::DG::IRCache::Terminate();
+
+#if defined( FABRIC_RC_LEAK_REPORT )
+  Fabric::RC::_ReportLeaks();
+#endif
   
   return NPERR_NO_ERROR;
 }

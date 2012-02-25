@@ -15,6 +15,9 @@ namespace Fabric
     class FloatDesc : public NumericDesc
     {
       friend class Manager;
+
+    public:
+      REPORT_RC_LEAKS
       
     protected:
     
@@ -65,18 +68,30 @@ namespace Fabric
       RC::ConstHandle< FloatImplT<T> > m_floatImpl;
     };
     
-    class FP32Desc : public FloatDescT<float>
+    class Float32Desc : public FloatDescT<float>
     {
       friend class Manager;
       
     protected:
     
-      FP32Desc( std::string const &name, RC::ConstHandle<FP32Impl> fp32Impl )
-        : FloatDescT<float>( name, fp32Impl )
+      Float32Desc( std::string const &name, RC::ConstHandle<Float32Impl> const &float32Impl )
+        : FloatDescT<float>( name, float32Impl )
       {
       }
     };
-  };
-};
+    
+    class Float64Desc : public FloatDescT<double>
+    {
+      friend class Manager;
+      
+    protected:
+    
+      Float64Desc( std::string const &name, RC::ConstHandle<Float64Impl> const &float64Impl )
+        : FloatDescT<double>( name, float64Impl )
+      {
+      }
+    };
+  }
+}
 
 #endif //_FABRIC_RT_FLOAT_DESC_H

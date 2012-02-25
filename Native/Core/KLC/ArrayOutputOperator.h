@@ -20,6 +20,9 @@ namespace Fabric
 
     class ArrayOutputOperator : public MR::ArrayOutputOperator
     {
+    public:
+      REPORT_RC_LEAKS
+
     protected:
     
       ArrayOutputOperator(

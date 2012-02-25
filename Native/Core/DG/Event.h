@@ -41,6 +41,7 @@ namespace Fabric
       friend class EventHandler;
       
     public:
+      REPORT_RC_LEAKS
     
       virtual bool isEvent() const { return true; }
 

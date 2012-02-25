@@ -59,8 +59,9 @@ namespace Fabric
       registerDesc( m_integerDesc = new SI32Desc( "Integer", new SI32Impl( "Integer" ) ) );
       registerDesc( m_sizeDesc = new SizeDesc( "Size", new SizeImpl( "Size" ) ) );
       m_indexDesc = registerAlias( "Index", m_sizeDesc );
-      registerDesc( m_scalarDesc = new FP32Desc( "Scalar", new FP32Impl( "Scalar" ) ) );
-      registerDesc( m_fp64Desc = new FloatDescT<double>( "Float64", new FloatImplT<double>( "Float64" ) ) );
+      registerDesc( m_fp32Desc = new Float32Desc( "Float32", new Float32Impl( "Float32" ) ) );
+      registerAlias( "Scalar", m_fp32Desc );
+      registerDesc( m_fp64Desc = new Float64Desc( "Float64", new Float64Impl( "Float64" ) ) );
       registerDesc( m_stringDesc = new StringDesc( "String", new StringImpl( "String" ) ) );
       registerDesc( m_dataDesc = new OpaqueDesc( "Data", new OpaqueImpl( "Data", sizeof(size_t) ) ) );
       registerDesc( m_constStringDesc = new ConstStringDesc( "ConstString", new ConstStringImpl( "ConstString" ) ) );
@@ -428,12 +429,12 @@ namespace Fabric
       return m_indexDesc;
     }
     
-    RC::ConstHandle<FloatDesc> Manager::getScalarDesc() const
+    RC::ConstHandle<FloatDesc> Manager::getFloat32Desc() const
     {
-      return m_scalarDesc;
+      return m_fp32Desc;
     }
     
-    RC::ConstHandle<FloatDesc> Manager::getFP64Desc() const
+    RC::ConstHandle<FloatDesc> Manager::getFloat64Desc() const
     {
       return m_fp64Desc;
     }

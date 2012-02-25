@@ -31,6 +31,7 @@ namespace Fabric
     class Node : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       Node( CG::Location const &location );
 

@@ -46,6 +46,7 @@ namespace Fabric
     class Adapter : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       typedef size_t Flags;
       

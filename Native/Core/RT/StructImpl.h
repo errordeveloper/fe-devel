@@ -21,6 +21,7 @@ namespace Fabric
       typedef Util::UnorderedMap< std::string, size_t > NameToIndexMap;
       
     public:
+      REPORT_RC_LEAKS
       
       // Impl
       

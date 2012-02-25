@@ -20,6 +20,7 @@ namespace Fabric
     class Function : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       typedef void (*FunctionPtr)( ... );
     

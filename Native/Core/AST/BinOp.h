@@ -22,6 +22,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( BinOp );
       
     public:
+      REPORT_RC_LEAKS
         
       static RC::ConstHandle<BinOp> Create( CG::Location const &location, CG::BinOpType binOpType, RC::ConstHandle<Expr> const &left, RC::ConstHandle<Expr> const &right );
       

@@ -19,6 +19,7 @@ namespace Fabric
     class IOManager : public IO::Manager
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<IOManager> Create( NPP npp );
     

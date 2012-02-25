@@ -17,6 +17,7 @@ namespace Fabric
       friend class Impl;
       
     public:
+      REPORT_RC_LEAKS
           
       // Impl
     

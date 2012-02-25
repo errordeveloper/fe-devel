@@ -18,14 +18,20 @@ namespace Fabric
 {
   namespace Plug
   {
+    RC::Handle<Manager> g_instance;
+
     RC::Handle<Manager> Manager::Instance()
     {
-      static RC::Handle<Manager> instance;
-      if ( !instance )
-        instance = new Manager();
-      return instance;
+      if ( !g_instance )
+        g_instance = new Manager();
+      return g_instance;
     }
-    
+
+    void Manager::Terminate()
+    {
+      g_instance = 0;
+    }
+
     Manager::Manager()
       : m_loaded( false )
       //, m_fabricSDKSOLibHandle( invalidSOLibHandle )

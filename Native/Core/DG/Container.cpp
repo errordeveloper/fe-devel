@@ -29,6 +29,7 @@ namespace Fabric
     class Container::Member : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Member> Create( RC::Handle<RT::Manager> const &rtManager, RC::ConstHandle<RT::Desc> memberDesc, size_t size, void const *defaultMemberData )
       {

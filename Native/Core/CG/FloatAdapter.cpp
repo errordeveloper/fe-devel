@@ -136,7 +136,7 @@ namespace Fabric
       
       if ( m_floatDesc->getAllocSize() != 4 )
       {
-        RC::ConstHandle<FloatAdapter> fp32Adapter = getManager()->getFP32Adapter();
+        RC::ConstHandle<FloatAdapter> fp32Adapter = getManager()->getFloat32Adapter();
         ConstructorBuilder functionBuilder( moduleBuilder, fp32Adapter, this, ConstructorBuilder::MedHighCost );
         if ( buildFunctions )
         {
@@ -152,7 +152,7 @@ namespace Fabric
       
       if ( m_floatDesc->getAllocSize() != 8 )
       {
-        RC::ConstHandle<FloatAdapter> fp64Adapter = getManager()->getFP64Adapter();
+        RC::ConstHandle<FloatAdapter> fp64Adapter = getManager()->getFloat64Adapter();
         ConstructorBuilder functionBuilder( moduleBuilder, fp64Adapter, this, ConstructorBuilder::LowCost );
         if ( buildFunctions )
         {
@@ -600,14 +600,14 @@ namespace Fabric
       {
         case 4:
         {
-          RC::ConstHandle<RT::FP32Impl> fp32Impl = RC::ConstHandle<RT::FP32Impl>::StaticCast( m_floatDesc->getImpl() );
+          RC::ConstHandle<RT::Float32Impl> fp32Impl = RC::ConstHandle<RT::Float32Impl>::StaticCast( m_floatDesc->getImpl() );
           return llvmConst( basicBlockBuilder.getContext(), fp32Impl->getValue( fp32Impl->getDefaultData() ) );
         }
         break;
         
         case 8:
         {
-          RC::ConstHandle<RT::FP64Impl> fp64Impl = RC::ConstHandle<RT::FP64Impl>::StaticCast( m_floatDesc->getImpl() );
+          RC::ConstHandle<RT::Float64Impl> fp64Impl = RC::ConstHandle<RT::Float64Impl>::StaticCast( m_floatDesc->getImpl() );
           return llvmConst( basicBlockBuilder.getContext(), fp64Impl->getValue( fp64Impl->getDefaultData() ) );
         }
         break;

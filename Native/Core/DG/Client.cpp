@@ -150,7 +150,7 @@ namespace Fabric
       if ( decoder.getNext( entity ) )
         throw "extra JSON entity";
       
-      CompiledObject::PrepareForExecution();
+      CompiledObject::PrepareForExecution( m_context );
     }
     
     void Client::notifyInitialState() const

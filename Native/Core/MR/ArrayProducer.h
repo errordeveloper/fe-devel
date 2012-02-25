@@ -32,10 +32,12 @@ namespace Fabric
       class Execution;
     
     public:
+      REPORT_RC_LEAKS
     
       class ComputeState : public RC::Object
       {
       public:
+        REPORT_RC_LEAKS
       
         size_t getCount() const
         {

@@ -40,6 +40,7 @@ namespace Fabric
       typedef std::map< std::string, Source > SourceMap;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Compilation> Create(
         GC::Container *gcContainer,

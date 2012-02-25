@@ -662,10 +662,26 @@ namespace Fabric
   };
 };
 
-#define IMPLEMENT_FABRIC_EDK_ENTRIES \
+#define IMPLEMENT_FABRIC_EDK_ENTRIES_BASE \
   FABRIC_EXT_EXPORT void FabricEDKInit( const Fabric::EDK::Callbacks& callbacks ) \
   { \
     Fabric::EDK::s_callbacks = callbacks; \
   }
+
+#if defined( FABRIC_RC_LEAK_REPORT ) 
+# define IMPLEMENT_FABRIC_EDK_ENTRIES IMPLEMENT_FABRIC_EDK_ENTRIES_BASE \
+  namespace Fabric \
+  { \
+    namespace RC \
+    { \
+      int _LeakReportRegisterClass(const char* file, int line){return 0;} \
+      void _LeakReportClassRetain( int ID ){} \
+      void _LeakReportClassRelease( int ID ){} \
+      void _ReportLeaks(){} \
+    } \
+  }
+#else
+# define IMPLEMENT_FABRIC_EDK_ENTRIES IMPLEMENT_FABRIC_EDK_ENTRIES_BASE
+#endif
 
 #endif //_FABRIC_EDK_H

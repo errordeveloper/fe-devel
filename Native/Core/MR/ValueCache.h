@@ -23,6 +23,7 @@ namespace Fabric
     class ValueCache : public ValueProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueCache> Create(
         RC::ConstHandle<ValueProducer> const &input

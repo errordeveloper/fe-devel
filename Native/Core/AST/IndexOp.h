@@ -16,6 +16,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( IndexOp );
 
     public:
+      REPORT_RC_LEAKS
         
       static RC::ConstHandle<IndexOp> Create(
         CG::Location const &location,

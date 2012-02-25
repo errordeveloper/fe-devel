@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
       
       virtual void jsonDesc( JSON::ObjectEncoder &resultObjectEncoder ) const;
             

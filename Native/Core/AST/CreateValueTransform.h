@@ -16,6 +16,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( CreateValueTransform );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<CreateValueTransform> Create(
         CG::Location const &location,

@@ -17,18 +17,12 @@ namespace Fabric
   namespace JSON
   {
     class Encoder;
-    class ArrayEncoder;
-  };
+  }
   
   namespace MT
   {
     class TaskGroupStream;
-  };
-  
-  namespace JSON
-  {
-    class Value;
-  };
+  }
   
   namespace DG
   {
@@ -37,6 +31,26 @@ namespace Fabric
     class CompiledObject : public RC::Object
     {
     public:
+    
+      struct GlobalData
+      {
+        std::set< RC::Handle<CompiledObject> > compiledObjectsMarkedForRecompile;
+        unsigned markForRecompileGlobalGeneration;
+        std::set< RC::Handle<CompiledObject> > compiledObjectsMarkedForRefresh;
+        Util::Mutex markForRefreshMutex;
+        unsigned markForRefreshGlobalGeneration;
+        unsigned collectTasksGlobalGeneration;
+        
+        GlobalData()
+          : markForRecompileGlobalGeneration( 0 )
+          , markForRefreshMutex( "DG::CompiledObject::MarkForRefresh" )
+          , markForRefreshGlobalGeneration( 0 )
+          , collectTasksGlobalGeneration( 0 )
+        {
+        }
+      };
+    
+      REPORT_RC_LEAKS
 
       typedef std::vector<std::string> Errors;
     
@@ -49,7 +63,7 @@ namespace Fabric
       void markForRecompile( unsigned generation );
       void markForRefresh( unsigned generation );
       
-      static void PrepareForExecution();
+      static void PrepareForExecution( RC::Handle<Context> const &context );
       
       virtual void jsonNotifyErrorDelta() const;
       void jsonDescErrors( JSON::Encoder &resultEncoder ) const;
@@ -79,22 +93,16 @@ namespace Fabric
 
     private:
     
-      static std::set< RC::Handle<CompiledObject> > s_compiledObjectsMarkedForRecompile;
-      static unsigned s_markForRecompileGlobalGeneration;
+      Context *m_context;
+    
       mutable unsigned m_markForRecompileGeneration;
-      
-      static std::set< RC::Handle<CompiledObject> > s_compiledObjectsMarkedForRefresh;
-      static Util::Mutex s_markForRefreshMutex;
-      static unsigned s_markForRefreshGlobalGeneration;
       mutable unsigned m_markForRefreshGeneration;
-      
-      static unsigned s_collectTasksGlobalGeneration;
       mutable unsigned m_collectTasksGeneration;
       
       Errors m_errors;
       bool m_canExecute;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_DG_COMPILED_OBJECT_H

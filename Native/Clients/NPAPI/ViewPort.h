@@ -73,6 +73,7 @@ namespace Fabric
       friend class Interface;
 
     public:
+      REPORT_RC_LEAKS
       
       virtual void getWindowSize( size_t &width, size_t &height ) const = 0;
     

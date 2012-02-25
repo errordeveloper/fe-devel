@@ -30,6 +30,7 @@ namespace Fabric
       };
     
     public:
+      REPORT_RC_LEAKS
     
       // Impl
       

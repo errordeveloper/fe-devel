@@ -24,6 +24,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( CStyleLoop );
 
     public:
+      REPORT_RC_LEAKS
 
       static RC::ConstHandle<CStyleLoop> Create(
         CG::Location const &location,

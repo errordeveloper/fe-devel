@@ -37,6 +37,7 @@ namespace Fabric
     class Impl : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
       
       std::string const &getCodeName() const { return m_codeName; }
       size_t getAllocSize() const { return m_size; }

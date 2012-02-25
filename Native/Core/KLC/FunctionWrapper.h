@@ -37,6 +37,7 @@ namespace Fabric
       FABRIC_GC_OBJECT_CLASS_DECL()
       
     public:
+      REPORT_RC_LEAKS
     
       RC::ConstHandle<AST::GlobalList> getAST() const;
       CG::Diagnostics const &getDiagnostics() const;

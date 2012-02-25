@@ -30,6 +30,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( MemberDecl );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<MemberDecl> Create( CG::Location const &location, std::string const &name, std::string const &typeName )
       {

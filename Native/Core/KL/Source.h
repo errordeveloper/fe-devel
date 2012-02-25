@@ -20,6 +20,7 @@ namespace Fabric
     class Source : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       virtual RC::ConstHandle<RC::String> filename() const = 0;
       virtual char const *data() const = 0;

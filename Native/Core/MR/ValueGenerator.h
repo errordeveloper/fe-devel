@@ -19,6 +19,7 @@ namespace Fabric
     class ValueGenerator : public ValueProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueGenerator> Create(
         RC::ConstHandle<ValueOutputOperator> const &operator_,

@@ -336,6 +336,9 @@ namespace Fabric
         m_callbackNPObject = 0;
       }
 
+      if ( m_context )
+        m_context->getIOManager()->getResourceManager()->releaseAllFiles();
+
       if ( m_viewPort )
         return m_viewPort->nppDestroy( save );
       else 

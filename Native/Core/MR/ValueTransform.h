@@ -19,6 +19,7 @@ namespace Fabric
     class ValueTransform : public ValueProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueTransform> Create(
         RC::ConstHandle<ValueProducer> const &input,

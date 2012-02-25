@@ -22,6 +22,7 @@ namespace Fabric
     class VarDecl : public Node
     {
     public:
+      REPORT_RC_LEAKS
 
       virtual void registerTypes( std::string const &baseType, RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
 

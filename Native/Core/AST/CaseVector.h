@@ -31,6 +31,7 @@ namespace Fabric
     class CaseVector : public RC::Vector< RC::ConstHandle<Case> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<CaseVector> Create( RC::ConstHandle<Case> const &first = 0, RC::ConstHandle<CaseVector> const &remaining = 0 );
 

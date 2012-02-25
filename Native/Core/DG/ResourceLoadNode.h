@@ -15,6 +15,7 @@ namespace Fabric
   namespace IO
   {
     class Stream;
+    class ResourceManager;
   };
 
   namespace Util
@@ -32,12 +33,16 @@ namespace Fabric
       static RC::Handle<ResourceLoadNode> Create( std::string const &name, RC::Handle<Context> const &context );
       static void jsonExecCreate( JSON::Entity const &arg, RC::Handle<Context> const &context, JSON::ArrayEncoder &resultArrayEncoder );
 
-      virtual void retain() const;
-      virtual void release() const;
-
+#if defined( FABRIC_RC_LEAK_REPORT )
+      REPORT_RC_LEAKS
+#else
+      virtual void retain() const{ return Node::retain(); }
+      virtual void release() const{ return Node::release(); }
+#endif
     protected:
     
       ResourceLoadNode( std::string const &name, RC::Handle<Context> const &context );
+      ~ResourceLoadNode();
 
       virtual void evaluateLocal( void *userdata );
 
@@ -54,15 +59,18 @@ namespace Fabric
       virtual void onFile( char const *fileName, void *userData );
       virtual void onFailure( char const *errorDesc, void *userData );
 
+      void releaseFile();
+
     private:
 
       FabricResourceWrapper m_fabricResourceStreamData;
       bool m_firstEvalAfterLoad;
       bool m_keepMemoryCache;
       bool m_asFile;
-      std::ifstream m_filePinning;
+      std::string m_file;
       bool m_inProgress;
       size_t m_streamGeneration;
+      RC::WeakHandle<IO::ResourceManager> m_resourceManagerWeak;
     };
   };
 };

@@ -24,6 +24,7 @@ namespace Fabric
     class X11ViewPort : public ViewPort
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ViewPort> Create( RC::ConstHandle<Interface> const &interface );
       

@@ -14,6 +14,7 @@ namespace Fabric
     class ArrayTransformOperator : public ArrayOutputOperator
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayTransformOperator> Create(
         void (*functionPtr)(...),

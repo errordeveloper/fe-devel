@@ -22,6 +22,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( TernaryOp );
 
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<TernaryOp> Create( CG::Location const &location, CG::TernaryOpType opType, RC::ConstHandle<Expr> const &left, RC::ConstHandle<Expr> const &middle, RC::ConstHandle<Expr> const &right )
       {

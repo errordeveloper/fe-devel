@@ -56,7 +56,7 @@ namespace Fabric
       integerAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<SizeAdapter> sizeAdapter = getManager()->getSizeAdapter();
       sizeAdapter->llvmCompileToModule( moduleBuilder );
-      RC::ConstHandle<FloatAdapter> scalarAdapter = getManager()->getFP32Adapter();
+      RC::ConstHandle<FloatAdapter> scalarAdapter = getManager()->getFloat32Adapter();
       scalarAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<StringAdapter> stringAdapter = getManager()->getStringAdapter();
       stringAdapter->llvmCompileToModule( moduleBuilder );

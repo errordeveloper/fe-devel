@@ -45,7 +45,8 @@ namespace Fabric
       FABRIC_GC_OBJECT_CLASS_DECL()
       
     public:
-    
+      REPORT_RC_LEAKS
+
       static RC::Handle<Executable> Create(
         GC::Container *gcContainer,
         RC::Handle<CG::Manager> const &cgManager,

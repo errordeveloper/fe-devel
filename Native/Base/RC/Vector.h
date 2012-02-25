@@ -17,6 +17,7 @@ namespace Fabric
     template<class T> class Vector : public Object, public std::vector<T>
     {
     public:
+      REPORT_RC_LEAKS
     
       static Handle<Vector> Create()
       {

@@ -24,6 +24,7 @@ namespace Fabric
     class ComparableAdapter : public Adapter
     {
     public:
+      REPORT_RC_LEAKS
       
       // ComparableAdapter
       

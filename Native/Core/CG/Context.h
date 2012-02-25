@@ -26,6 +26,7 @@ namespace Fabric
       typedef std::map< std::string, llvm::Type const * > LLVMTypeMap;
     
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Context> Create();
       

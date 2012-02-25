@@ -17,6 +17,7 @@ namespace Fabric
     class PencilSymbol : public Symbol
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::Handle<PencilSymbol> Create();
       

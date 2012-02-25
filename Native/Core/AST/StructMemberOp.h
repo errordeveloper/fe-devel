@@ -21,6 +21,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( StructMemberOp );
 
     public:
+      REPORT_RC_LEAKS
         
       static RC::ConstHandle<StructMemberOp> Create( CG::Location const &location, RC::ConstHandle<Expr> const &structExpr, std::string const &memberName )
       {

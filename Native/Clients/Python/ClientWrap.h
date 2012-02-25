@@ -22,6 +22,7 @@ namespace Fabric
     class ClientWrap : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       ClientWrap();
       virtual ~ClientWrap();

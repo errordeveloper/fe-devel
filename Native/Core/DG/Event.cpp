@@ -108,7 +108,7 @@ namespace Fabric
       
     void Event::fire() const
     {
-      PrepareForExecution();
+      PrepareForExecution( m_context );
       fire( 0, 0 );
     }
     
@@ -123,7 +123,7 @@ namespace Fabric
       if(!m_selectorType){
         throw Exception( "select type not defined" );
       }
-      PrepareForExecution();
+      PrepareForExecution( m_context );
       fire( 0, &selectedNodes );
     }
     

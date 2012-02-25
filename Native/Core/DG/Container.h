@@ -52,6 +52,7 @@ namespace Fabric
       friend class Prototype;
       
     public:
+      REPORT_RC_LEAKS
     
       virtual bool isContainer() const { return true; }
       virtual bool isNode() const { return false; }

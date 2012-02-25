@@ -20,6 +20,7 @@ namespace Fabric
     class FloatImpl : public NumericImpl
     {
     public:
+      REPORT_RC_LEAKS
     
       // NumericImpl
 
@@ -38,6 +39,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
 
       // Impl
       
@@ -150,25 +152,25 @@ namespace Fabric
 #endif
     }
 
-    class FP32Impl : public FloatImplT<float>
+    class Float32Impl : public FloatImplT<float>
     {
       friend class Manager;
     
     protected:
     
-      FP32Impl( std::string const &codeName )
+      Float32Impl( std::string const &codeName )
         : FloatImplT<float>( codeName )
       {
       }
     };
     
-    class FP64Impl : public FloatImplT<double>
+    class Float64Impl : public FloatImplT<double>
     {
       friend class Manager;
     
     protected:
     
-      FP64Impl( std::string const &codeName )
+      Float64Impl( std::string const &codeName )
         : FloatImplT<double>( codeName )
       {
       }

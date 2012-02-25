@@ -31,6 +31,7 @@ namespace Fabric
     class StatementVector : public RC::Vector< RC::ConstHandle<Statement> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<StatementVector> Create( RC::ConstHandle<Statement> const &first = 0, RC::ConstHandle<StatementVector> const &remaining = 0 );
 

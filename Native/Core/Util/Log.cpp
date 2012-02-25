@@ -7,7 +7,7 @@
 #if defined(FABRIC_OS_WINDOWS)
 
 #include <stdint.h>
-# include <fstream>
+#include <fstream>
 
 namespace Fabric
 {

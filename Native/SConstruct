@@ -30,13 +30,13 @@ print "Running with -j" + str(GetOption('num_jobs'))
 FABRIC_NAME='Fabric Engine'
 FABRIC_COMPANY_NAME='Fabric Engine Inc.'
 FABRIC_DESC='High Performance Computing for the Web'
-FABRIC_COPYRIGHT='Copyright 2010-2011 ' + FABRIC_COMPANY_NAME + '  All rights reserved.'
+FABRIC_COPYRIGHT='Copyright 2010-2012 ' + FABRIC_COMPANY_NAME + '  All rights reserved.'
 FABRIC_URL="http://fabric-engine.com"
 FABRIC_VERSION_MAJ='1'
 FABRIC_VERSION_MIN='1'
 FABRIC_VERSION_REV='0'
 FABRIC_VERSION_SUFFIX='-alpha'
-FABRIC_CACHE_GENERATION='18'
+FABRIC_CACHE_GENERATION='19'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 FABRIC_BASE_VERSION = FABRIC_VERSION_MAJ + '.' + FABRIC_VERSION_MIN + '.' + FABRIC_VERSION_REV
@@ -94,6 +94,9 @@ env.Append( BUILDERS = { 'Template': template } )
 
 if buildType == 'Release':
   env.Append( CPPDEFINES = ['NDEBUG'] )
+
+# Uncomment the following to have RC leaks logged
+# env.Append( CPPDEFINES = ['FABRIC_RC_LEAK_REPORT'] )
 
 if buildOS == 'Windows' and buildType == 'Debug':
   env.Append( PDB='${TARGET.base}.pdb' )

@@ -25,6 +25,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( UseGlobal );
       
     public:
+      REPORT_RC_LEAKS
 
       static RC::ConstHandle<UseGlobal> Create(
         CG::Location const &location,

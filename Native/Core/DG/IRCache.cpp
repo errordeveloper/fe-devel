@@ -21,14 +21,21 @@ namespace Fabric
 {
   namespace DG
   {
+    std::map< std::string, RC::Handle<IRCache> > g_instances;
+
     RC::Handle<IRCache> IRCache::Instance( CG::CompileOptions const *compileOptions )
     {
       std::string compileOptionsString = compileOptions->getString();
-      static std::map< std::string, RC::Handle<IRCache> > instances;
-      RC::Handle<IRCache> &instance = instances[compileOptionsString];
+      RC::Handle<IRCache> &instance = g_instances[compileOptionsString];
       if ( !instance )
         instance = new IRCache( compileOptionsString );
+
       return instance;
+    }
+
+    void IRCache::Terminate()
+    {
+      g_instances.clear();
     }
       
     IRCache::IRCache( std::string const &compileOptionsString )

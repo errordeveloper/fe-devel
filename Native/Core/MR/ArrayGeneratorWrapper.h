@@ -41,6 +41,7 @@ namespace Fabric
       FABRIC_GC_OBJECT_CLASS_DECL()
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayGeneratorWrapper> Create(
         RC::ConstHandle<ValueProducerWrapper> const &countValueProducer,

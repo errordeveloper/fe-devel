@@ -55,6 +55,7 @@ namespace Fabric
     class ArrayIOOperator : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       RC::ConstHandle<RT::Desc> getInputDesc() const;
       RC::ConstHandle<RT::Desc> getOutputDesc() const;

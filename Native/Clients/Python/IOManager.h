@@ -20,6 +20,7 @@ namespace Fabric
     class TestSynchronousFileResourceProvider : public IO::ResourceProvider
     {
     public:
+      REPORT_RC_LEAKS
 
       static RC::Handle<TestSynchronousFileResourceProvider> Create();
       virtual char const * getUrlScheme() const;
@@ -32,6 +33,7 @@ namespace Fabric
     class IOManager : public IO::Manager
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<IOManager> Create(
         IO::ScheduleAsyncCallbackFunc scheduleFunc,

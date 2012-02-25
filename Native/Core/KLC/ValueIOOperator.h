@@ -21,6 +21,9 @@ namespace Fabric
 
     class ValueIOOperator : public MR::ValueIOOperator
     {
+    public:
+      REPORT_RC_LEAKS
+
     protected:
     
       ValueIOOperator(

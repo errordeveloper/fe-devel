@@ -21,6 +21,7 @@ namespace Fabric
     class ArrayCache : public ArrayProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayCache> Create(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer

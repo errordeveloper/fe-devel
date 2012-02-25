@@ -15,6 +15,7 @@ namespace Fabric
     class Scanner : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Scanner> Create( RC::ConstHandle<Source> const &source )
       {

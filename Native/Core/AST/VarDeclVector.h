@@ -31,6 +31,7 @@ namespace Fabric
     class VarDeclVector : public RC::Vector< RC::ConstHandle<VarDecl> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<VarDeclVector> Create( RC::ConstHandle<VarDecl> const &first = 0, RC::ConstHandle<VarDeclVector> const &remaining = 0 );
 

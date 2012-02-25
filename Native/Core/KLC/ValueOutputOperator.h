@@ -24,6 +24,7 @@ namespace Fabric
     class ValueOutputOperator : public MR::ValueOutputOperator
     {
     protected:
+      REPORT_RC_LEAKS
     
       ValueOutputOperator(
         RC::ConstHandle<Executable> const &executable,

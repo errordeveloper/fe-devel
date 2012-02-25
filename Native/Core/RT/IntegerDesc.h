@@ -17,6 +17,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       bool isSigned() const
       {
@@ -39,6 +40,7 @@ namespace Fabric
     template<typename T> class IntegerDescT : public IntegerDesc
     {
     public:
+      REPORT_RC_LEAKS
     
       T getValue( void const *data ) const
       {

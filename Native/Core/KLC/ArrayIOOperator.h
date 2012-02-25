@@ -21,6 +21,7 @@ namespace Fabric
     class ArrayIOOperator : public MR::ArrayIOOperator
     {
     protected:
+      REPORT_RC_LEAKS
     
       ArrayIOOperator(
         RC::ConstHandle<Executable> const &executable,

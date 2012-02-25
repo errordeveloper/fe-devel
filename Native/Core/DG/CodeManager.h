@@ -33,6 +33,7 @@ namespace Fabric
       typedef Util::UnorderedMap< std::string, RC::WeakConstHandle<Code> > SourceCodeToCodeMap;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<CodeManager> Create(
         CG::CompileOptions const *compileOptions,

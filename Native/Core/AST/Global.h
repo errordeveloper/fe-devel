@@ -30,6 +30,7 @@ namespace Fabric
     class Global : public Node
     {
     public:
+      REPORT_RC_LEAKS
     
       virtual void appendJSON( JSON::Encoder const &encoder, bool includeLocation ) const;
     

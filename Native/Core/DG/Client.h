@@ -31,6 +31,7 @@ namespace Fabric
     class Client : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       RC::Handle<Context> getContext() const;
       

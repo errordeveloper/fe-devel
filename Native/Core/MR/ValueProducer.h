@@ -29,6 +29,7 @@ namespace Fabric
     class ValueProducer : public Producer
     {
     public:
+      REPORT_RC_LEAKS
     
       class ComputeState : public RC::Object
       {

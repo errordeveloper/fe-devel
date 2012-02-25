@@ -25,6 +25,7 @@ namespace Fabric
     class CommandChannel : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       virtual void jsonNotify(
         std::vector<std::string> const &src,

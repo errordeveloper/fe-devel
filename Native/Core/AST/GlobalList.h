@@ -35,6 +35,7 @@ namespace Fabric
     class GlobalList : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<GlobalList> Create( RC::ConstHandle<Global> const &first = 0, RC::ConstHandle<GlobalList> const &remaining = 0 );
       static RC::ConstHandle<GlobalList> Create( RC::ConstHandle<GlobalList> const &lhs, RC::ConstHandle<GlobalList> const &rhs );

@@ -65,6 +65,7 @@ namespace Fabric
       typedef std::map< std::string, void * > ExternalFunctionMap;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Inst> Create(
         RC::ConstHandle<IO::Dir> const &extensionDir,

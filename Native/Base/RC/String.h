@@ -18,6 +18,7 @@ namespace Fabric
     class String : public Object
     {
     public:
+      REPORT_RC_LEAKS
     
       static Handle<String> Create()
       {

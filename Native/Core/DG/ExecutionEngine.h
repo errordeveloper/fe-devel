@@ -34,6 +34,7 @@ namespace Fabric
     class ExecutionEngine : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       typedef void (*GenericFunctionPtr)( ... );
     

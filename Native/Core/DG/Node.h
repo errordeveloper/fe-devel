@@ -49,6 +49,7 @@ namespace Fabric
       friend class Prototype;
       
     public:
+      REPORT_RC_LEAKS
     
       typedef Util::UnorderedMap< std::string, RC::Handle<Node> > Dependencies;
       typedef std::multiset<Node *> Dependents;

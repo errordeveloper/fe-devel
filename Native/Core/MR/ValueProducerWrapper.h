@@ -20,6 +20,7 @@ namespace Fabric
       // Virtual functions: GC::Object
       
     public:
+      REPORT_RC_LEAKS
       
       virtual RC::ConstHandle<ValueProducer> getUnwrapped() const = 0;
 

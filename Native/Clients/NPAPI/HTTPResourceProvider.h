@@ -15,6 +15,7 @@ namespace Fabric
     class HTTPResourceProvider : public IO::ResourceProvider
     {
     public:
+      REPORT_RC_LEAKS
 
       static RC::Handle<HTTPResourceProvider> Create( NPP npp );
 

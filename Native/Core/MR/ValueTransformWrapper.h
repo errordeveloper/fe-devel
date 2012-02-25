@@ -41,6 +41,7 @@ namespace Fabric
       FABRIC_GC_OBJECT_CLASS_DECL()
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueTransformWrapper> Create(
         RC::ConstHandle<ValueProducerWrapper> const &inputValueProducer,

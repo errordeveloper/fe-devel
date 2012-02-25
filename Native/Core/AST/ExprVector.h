@@ -36,6 +36,7 @@ namespace Fabric
     class ExprVector : public RC::Vector< RC::ConstHandle<Expr> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<ExprVector> Create( RC::ConstHandle<Expr> const &first = 0, RC::ConstHandle<ExprVector> const &remaining = 0 );
 

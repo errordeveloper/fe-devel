@@ -17,6 +17,7 @@ namespace Fabric
     class LogCollector : public MT::LogCollector
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<LogCollector> Create( Context *context );
     

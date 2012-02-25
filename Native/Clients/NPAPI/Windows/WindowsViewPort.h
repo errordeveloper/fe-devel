@@ -16,7 +16,7 @@ namespace Fabric
     class WindowsViewPort : public ViewPort
     {
     public:
-  
+      REPORT_RC_LEAKS
       
       static RC::Handle<ViewPort> Create( RC::ConstHandle<Interface> const &interface );
 

@@ -21,6 +21,7 @@ namespace Fabric
     class ValueGeneratorOperator : public ValueOutputOperator
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueGeneratorOperator> Create(
         RC::ConstHandle<Executable> const &executable,

@@ -149,6 +149,11 @@ function (fabricClient, logCallback, debugLogCallback) {
       },
 
       registerType: function(name, desc) {
+        if (typeof desc != 'object')
+          throw "RT.registerType: second parameter: must be an object";
+        if (typeof desc.members != 'object')
+          throw "RT.registerType: second parameter: missing members element";
+          
         var members = [];
         for (var descMemberName in desc.members) {
           var member = {
@@ -158,7 +163,8 @@ function (fabricClient, logCallback, debugLogCallback) {
           members.push(member);
         }
 
-        var defaultValue = new desc.constructor();
+        var constructor = desc.constructor || Object;
+        var defaultValue = new constructor();
         RT.prototypes[name] = defaultValue.__proto__;
 
         var arg = {
