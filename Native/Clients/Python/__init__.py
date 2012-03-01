@@ -231,7 +231,7 @@ class _ASYNCTHREAD( threading.Thread ):
     try:
       results = json.loads( jsonEncodedResults.value )
     except Exception:
-      raise Exception( 'unable to parse JSON results: ' + jsonEncodedResults )
+      client.asyncData = Exception( 'unable to parse JSON results: ' + jsonEncodedResults )
     self.__clib.freeString( client.getClientPtr(), jsonEncodedResults )
 
     # FIXME must process notifications before callbacks
@@ -246,7 +246,7 @@ class _ASYNCTHREAD( threading.Thread ):
           if ( unwind is not None ):
             unwind()
         # FIXME must process notifications before exception
-        raise Exception( 'Fabric core exception: ' + result[ 'exception' ] )
+        client.asyncData = Exception( 'Fabric core exception: ' + result[ 'exception' ] )
       elif ( callback is not None ):
         callback( result[ 'result' ] )
 
@@ -378,6 +378,8 @@ class _CLIENT( object ):
     self.dataEvent.clear()
     self.__queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
     self.dataEvent.wait()
+    if type( self.asyncData ) is Exception:
+      raise self.asyncData
     return self.asyncData
 
   def queueCommand( self, dst, cmd, arg = None, unwind = None, callback = None ):
