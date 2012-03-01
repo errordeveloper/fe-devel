@@ -333,23 +333,33 @@ namespace Fabric
       
     void WindowsViewPort::pushOGLContext()
     {
-      WGLDCAndContext prevContext( ::wglGetCurrentDC(), ::wglGetCurrentContext() );
+      //WGLDCAndContext prevContext( ::wglGetCurrentDC(), ::wglGetCurrentContext() );
       if ( m_hDC && m_hGLRC )
       {
         if( ::wglMakeCurrent( m_hDC, m_hGLRC ) == FALSE )
           throw Exception( "Viewport error: unable to set OGL context" );
       }
-      m_wglStack.push_back( prevContext );
+      //m_wglStack.push_back( prevContext );
     }
     
     void WindowsViewPort::popOGLContext()
     {
-      FABRIC_ASSERT( !m_wglStack.empty() );
-      WGLDCAndContext prevContext( m_wglStack.back() );
-      m_wglStack.pop_back();
+      //[JeromeCG 20120229] Don't restore previous context (workaround what I think is a Windows OGL threading bug).
+      //                    Anyway, each viewport context is set current before anything happens.
+      //                    For some reason, in samples with heavy rendering (eg Medical Imaging), setting the previous
+      //                    context right after the redraw, even if glFinish() is called, might cause a crash. I suspect
+      //                    this might be a OGL thread synchronization issue (on Windows, OGL has a worker thread).
+      //                    Note1: I validated that all operators were executed while a valid context was active,
+      //                    and we still had that crash for that sample.
+      //                    Note2: the crash happens too when prevContext.second != NULL 
+      //
+      //FABRIC_ASSERT( !m_wglStack.empty() );
+      //WGLDCAndContext prevContext( m_wglStack.back() );
+      //m_wglStack.pop_back();
+      //glFinish();
 
-      if( ::wglMakeCurrent( prevContext.first, prevContext.second ) == FALSE )
-        throw Exception( "Viewport error: unable to restore previous OGL context" );
+      //if( ::wglMakeCurrent( prevContext.first, prevContext.second ) == FALSE )
+      //  throw Exception( "Viewport error: unable to restore previous OGL context" );
     }
 
     std::string WindowsViewPort::queryUserFilePath( bool existingFile, std::string const &title, std::string const &defaultFilename, std::string const &extension )

@@ -271,6 +271,10 @@ operator entry()
           <listitem><para>
             <xref linkend="globals" /> describes how functions and other global declarations are made in KL.  KL includes support for basic functions (also referred to as procedures in other languages), but also support more complex function concepts such as prototypes, methods and overloaded operators.  It also support global constants, as well as a facility to import functionality from external modules.
           </para></listitem>
+          
+          <listitem><para>
+            <xref linkend="ops-exprs" /> describes the set of operators supported by KL and the different kinds of expressions that can be formed using these operators.  It also discusses the rules that govern scoping for variables and other symbols.
+          </para></listitem>
         </itemizedlist>
       </para>
     </section>
@@ -456,24 +460,12 @@ operator entry() {
         <para>
           The following is the list of all the keywords in KL:
           
-          <simplelist type="vert" columns="3">
+          <simplelist type="vert" columns="4">
             <member><code>alias</code></member>
-            <member><code>ArrayProducer</code></member>
             <member><code>break</code></member>
             <member><code>case</code></member>
             <member><code>const</code></member>
             <member><code>continue</code></member>
-            <member><code>createArrayCache</code></member>
-            <member><code>createArrayGenerator</code></member>
-            <member><code>createArrayMap</code></member>
-            <member><code>createArrayTransform</code></member>
-            <member><code>createConstArray</code></member>
-            <member><code>createConstValue</code></member>
-            <member><code>createReduce</code></member>
-            <member><code>createValueCache</code></member>
-            <member><code>createValueGenerator</code></member>
-            <member><code>createValueMap</code></member>
-            <member><code>createValueTransform</code></member>
             <member><code>default</code></member>
             <member><code>do</code></member>
             <member><code>else</code></member>
@@ -485,12 +477,11 @@ operator entry() {
             <member><code>io</code></member>
             <member><code>operator</code></member>
             <member><code>report</code></member>
+            <member><code>require</code></member>
             <member><code>return</code></member>
             <member><code>struct</code></member>
             <member><code>switch</code></member>
             <member><code>true</code></member>
-            <member><code>require</code></member>
-            <member><code>ValueProducer</code></member>
             <member><code>var</code></member>
             <member><code>while</code></member>
           </simplelist>
@@ -599,7 +590,7 @@ operator entry() {
           The KL compiler is <quote>greedy</quote> when looking for symbols: it looks for the longest sequence of characters that are a valid symbol.  This is why <code>==(</code> is treated as the two symbols <code>==</code> and <code>(</code>: there is no symbol starting with <code>==(</code> but <code>==</code> is a symbol.
         </para>
       </section>
-      <section xml:id="syntax.tokens.constants">
+      <section xml:id="constants">
         <title>Constants</title>
         
         <para>
@@ -820,7 +811,7 @@ double-quoted containing "double quotes"
             A declaration of a function, a function prototype, an operator, a method or an operator overload; see <xref linkend="functions" />.
           </para></listitem>
           <listitem><para>
-            A declaration of structure; see <xref linkend="types.derived.struct" />.
+            A declaration of structure; see <xref linkend="structs" />.
           </para></listitem>
           <listitem><para>
             A declaration of global constant; see <xref linkend="global-constants" />.
@@ -961,7 +952,7 @@ true
           ]]></screen>
         </informalfigure>
       </section>
-      <section xml:id="types.base.integer">
+      <section xml:id="integers">
         <title>Integer Types</title>
         
         <para>
@@ -998,9 +989,13 @@ true
               Integer constants (eg. <code>43562</code>) are of type <code>Integer</code> if their value is less than <inlineequation><mathphrase>2<superscript >31</superscript>-1</mathphrase></inlineequation>, otherwise they are of type <code>Size</code>.  For more details, see <xref linkend="syntax.tokens.constants.integer" />.
             </simpara></listitem>
 
-            <listitem><simpara>
-              All of the arithmetic, comparison and bitwise operators work as expected for <glossterm>integer types</glossterm>, with the exception of unary <code>-</code> which does not work for values of type <code>Size</code> and <code>Byte</code>.
-            </simpara></listitem>
+            <listitem><para>
+              All of the <link linkend="arithmetic-ops">arithmetic</link>, <link linkend="logical-ops">logical</link> and <link linkend="bitwise-ops">bitwise</link> operators work as expected for all integer types.
+              
+              <note><para>
+                The result of applying the unary <code>-</code> (minus) operator to a <code>Byte</code> or a <code>Size</code> is still a positive number; it is the resulting unsigned integer that, when added to the original, results in 0 because of the type <quote>wrapping around</quote>.
+              </para></note>
+            </para></listitem>
           </itemizedlist>
         </para>
         
@@ -1089,7 +1084,7 @@ operator entry() {
           ]]></screen>
         </informalfigure>
       </section>
-      <section xml:id="types.base.string">
+      <section xml:id="string-type">
         <title>The <code>String</code> Type</title>
         
         <para>
@@ -1156,7 +1151,7 @@ Another string now includes A string
         In addition to the base types, KL supports three classes of derived types: structures, arrays and dictionaries.
       </para>
       
-      <section xml:id="types.derived.struct">
+      <section xml:id="structs">
         <title>Structures</title>
         
         <para>
@@ -1185,9 +1180,9 @@ struct NewType {
           More details about structures:
           
           <itemizedlist>
-            <listitem><simpara>Access to structure members is through the <code>.</code> operator, as in JavaScript.</simpara></listitem>
+            <listitem><simpara>Access to structure members is through the <code>.</code> (dot) operator, as in JavaScript.</simpara></listitem>
             <listitem><simpara>Currently, the structure members are <glossterm>packed</glossterm>, meaning that there is no space in member between the structure members.  In a future version of Fabric it will be possible to explicitly specify structure member alignment and packing.</simpara></listitem>
-            <listitem><simpara>It is possible to overload operators and add <glossterm>methods</glossterm> to structures; this will be described below.</simpara></listitem>
+            <listitem><simpara>It is possible to overload operators and add <glossterm>methods</glossterm> to structures; see <xref linkend="methods" />.</simpara></listitem>
           </itemizedlist>
         </para>
 
@@ -1214,14 +1209,14 @@ function entry() {
           ]]></screen>
         </informalexample>
       </section>
-      <section xml:id="types.derived.arrays">
+      <section xml:id="arrays">
         <title>Arrays</title>
       
         <para>
           An <glossterm>array</glossterm> is a sequence of values of the same type (referred to as the array's <glossterm>element type</glossterm>) that are indexed by integers and placed sequentially in memory.  KL supports three types of arrays: variable-size arrays, fixed-length arrays, and sliced arrays.  The details of each array type are discussed below.
         </para>
       
-        <para xml:id="types.derived.arrays.properties">
+        <para xml:id="array-properties">
           Regardless of specific type, arrays in KL have several common behaviours:
       
           <itemizedlist>
@@ -1270,7 +1265,7 @@ String c<>[];   // A sliced array of variable-size
           </para>
           
           <para>
-            Variable-size arrays have all the <link linkend="types.derived.arrays.properties">properties of arrays</link> as well as the following additional properties:
+            Variable-size arrays have all the <link linkend="array-properties">properties of arrays</link> as well as the following additional properties:
           
             <itemizedlist>
               <listitem><para>
@@ -1325,7 +1320,7 @@ The array NOW has size 4 and value [42,84,0,0]
           </para>
         
           <para>
-            Fixed-size arrays have all the <link linkend="types.derived.arrays.properties">properties of arrays</link> as well as the following additional properties:
+            Fixed-size arrays have all the <link linkend="array-properties">properties of arrays</link> as well as the following additional properties:
           
             <itemizedlist>
               <listitem><para>
@@ -1373,7 +1368,7 @@ The determinant of [[3.5,-9.2],[-2.1,8.6]] is 10.78
           </para>
           
           <para>
-            Sliced arrays have all the <link linkend="types.derived.arrays.properties">properties of arrays</link> as well as the following additional properties:
+            Sliced arrays have all the <link linkend="array-properties">properties of arrays</link> as well as the following additional properties:
           
             <itemizedlist>
               <listitem><para>
@@ -1438,7 +1433,7 @@ strings = ["string 1","string 2","string 3","string 4","string 5","replaced stri
           </informalfigure>
         </section>
       </section>
-      <section xml:id="types.derived.dicts">
+      <section xml:id="dicts">
         <title>Dictionaries</title>
       
         <para>
@@ -1469,7 +1464,7 @@ Boolean a[][Integer]; // A variable array of Integer-to-Boolean dictionaries
             </para></listitem>
           
             <listitem><para>There is no limit to the size of dictionaries other than available memory</para></listitem>
-            <listitem><para>
+            <listitem xml:id="dict-indexing"><para>
               Dictionaries support indexing using the <code>[<replaceable>key</replaceable>]</code> indexing operator to both return the element at the give key or assign to the element at the given key.  When retrieving a value from a dictionary, if there is no value for the given key then an exception is thrown.</para></listitem>
             <listitem><para>Dictionaries support the <code>has(<replaceable>key</replaceable>)</code> method that returns a <code>Boolean</code> value indicating whether there is a value in the dictionary for the given key.</para></listitem>
             <listitem><para>Dictionaries support the <code>delete(<replaceable>key</replaceable>)</code> method that deletes the value for the given key.  If there is no value for the given key, nothing happens.</para></listitem>
@@ -1538,6 +1533,20 @@ a is now:
 a['e'] = 2.71
         ]]></screen>
         </informalfigure>
+      </section>
+      <section xml:id="map-reduce-types">
+        <title>Map-Reduce Types</title>
+        
+        <para>
+          There are two additional derived types used exclusively for work within Fabric's map-reduce framework, namely:
+          
+          <itemizedlist>
+            <listitem><para><code>ValueProducer&lt;<replaceable>Type</replaceable>&gt;</code></para></listitem>
+            <listitem><para><code>ArrayProducer&lt;<replaceable>Type</replaceable>&gt;</code></para></listitem>
+          </itemizedlist>
+          
+          For more information, see <xref linkend="map-reduce" />.
+        </para>
       </section>
     </section>
     <section xml:id="types.aliases">
@@ -1666,10 +1675,10 @@ function add(in Float32 lhs, in Float32 rhs, io Float32 result) {
       </example>
     </section>
     <section xml:id="function-calls">
-      <title>Function Calls</title>
+      <title>Function Invocations</title>
       
       <para>
-        Function calls are made using the same syntax as JavaScript, namely by appending a comma-delimited list of arguments, surrounded by parentheses, to the function name.
+        Function invocations (<quote>calls</quote>) are made using the same syntax as JavaScript, namely by appending a comma-delimited list of arguments, surrounded by parentheses, to the function name.
       </para>
       
       <example xml:id="functions.call.ex">
@@ -2199,9 +2208,16 @@ Destroying MyType: this.s = foo
       <title>Methods</title>
 
       <para>
-        If <code><replaceable>Type</replaceable></code> is a structure or alias, then a <glossterm>method</glossterm> can be added to the type using the following syntax:
+        A <glossterm>method</glossterm> is a function that operates on a user-defined structure.  It uses a slightly different (and more suggestive) syntax than plain function calls for the case that the function call is strongly tied to a value whose type is a user-defined structure.
+      </para>
+      
+      <section xml:id="method-defs">
+        <title>Method Definitions</title>
         
-        <programlisting language="KL">
+        <para>
+          If <code><replaceable>Type</replaceable></code> is a structure or alias, then a method named <code><replaceable>methodName</replaceable></code> can be added to the type using the following syntax:
+        
+          <programlisting language="KL">
 // A method that returns a value
 function <replaceable>ReturnType</replaceable> <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<replaceable>parameter list</replaceable>) {
   <replaceable>method body</replaceable>
@@ -2211,13 +2227,17 @@ function <replaceable>ReturnType</replaceable> <replaceable>Type</replaceable>.<
 function <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<replaceable>parameter list</replaceable>) {
   <replaceable>method body</replaceable>
 }
-        </programlisting>
+          </programlisting>
         
-        Within the method body, <code>this</code> refers to the value on which the method is called.  <code>this</code> is read-only if the method returns a value and is read-write if the method does not return a value.
+          Within the method body, <code>this</code> refers to the value on which the method is called.  <code>this</code> is read-only if the method returns a value and is read-write if the method does not return a value.
         
-        <note><para>A future version of Fabric will allow the read-only versus read-write status of <code>this</code> to be explicitly specified.</para></note>
-      </para>
+          <note><para>A future version of Fabric will allow the read-only versus read-write status of <code>this</code> to be explicitly specified.</para></note>
+        </para>
+      </section>
       
+      <section xml:id="method-calls">
+        <title>Method Invocation</title>
+
       <para>
         If <code><replaceable>value</replaceable></code> is a value of type <code><replaceable>Type</replaceable></code> then the method <code><replaceable>methodName</replaceable></code> can be invoked on <code><replaceable>value</replaceable></code> using the expression <code><replaceable>value</replaceable>.<replaceable>methodName</replaceable>(<replaceable>argument list</replaceable>)</code>.  If a method takes no parameters, then it is optional to use parentheses when calling it.
       </para>
@@ -2256,6 +2276,7 @@ a:1; b:3.14
 a:1; b:3.14
         ]]></screen>
       </informalfigure>
+      </section>
     </section>
     <section xml:id="op-overloads">
       <title>Overloaded Operators</title>
@@ -2423,68 +2444,233 @@ require Math, RegType;
       </para>
     </section>
   </chapter>
-  <chapter xml:id="scope">
-    <title>Scopes</title>
+  <chapter xml:id="ops-exprs">
+    <title>Operators and Expressions</title>
     
     <para>
-      The term <glossterm>scope</glossterm> in programming languages refers to the parts of a program in which variables, constants and functions are visible.  Scoping rules are also responsible for managing the <quote>lifecycle</quote> of variables; in the case of KL, this refers to when destructors are called for structure values.
+      This chapter explains the possible operators and resulting expressions in KL.  Generally, KL has the same operator and expression syntax as JavaScript in C, and in particular follows exactly the same precedence and associativity rules.
     </para>
     
-    <section xml:id="scope.types">
-      <title>Types of Scopes</title>
+    <section xml:id="ops">
+      <title>Operators</title>
       
       <para>
-        In KL, there are four kinds scopes: the global scope, function scopes, compound statement scopes and temporary scopes.  Scopes <glossterm>nest</glossterm> inside each other; when a KL program refers to a variable by name, the compiler determines which variable is being referred to by searching from the current innermost scope outwards through the nested scopes to the outermost scope (which is always the global scope).  Like C, KL is a statically-scoped language, meaning that the exactly variable that is being referred to is resolved at compile time (and not at run time).
+        KL supports the same basic set of operators as JavaScript and C.  This operations are broadly categorized as <link linkend="arithmetic-ops">arithmetic operators</link>, <link linkend="logical-ops">logical operators</link> and <link linkend="bitwise-ops">bitwise operators</link>.
       </para>
-  
-      <section xml:id="scope.global">
-        <title>The Global Scope</title>
+      
+      <section xml:id="arithmetic-ops">
+        <title>Arithmetic Operators</title>
+      
+        <section xml:id="unary-plus-minus-ops">
+          <title>Unary Plus and Minus</title>
+          
+          <para>
+            When <code>+</code> or <code>-</code> appears in front of an integer or floating-point expression without an expression to the left they are referred to as as the <glossterm>unary plus</glossterm> and <glossterm>unary minus</glossterm> operators.  The unary plus operator doesn't do anything to the value it operates on, but the unary minus operator returns the value that, when added to the original, produces zero (for unsigned integer expressions); for signed integer and floating-point expressions, this is value of the expression with its sign reversed.
+          </para>
+          
+          <note><para>
+            It is currently not possible to overload the unary plus and minus operators; this will be fixed in a future version of Fabric.
+          </para></note>
+        </section>
+        <section xml:id="inc-dec-ops">
+          <title>Increment and Decrement Operators</title>
+
+          <para>
+            The <code>++</code> (increment) and <code>--</code> (decrement) operators can be used to add one to or subtract one from a variable.  These operators have the following properties:
+        
+            <itemizedlist>
+              <listitem><para>
+                The operators only work on variables or input-output parameters; then cannot operate on constants or input parameters.  This is because they change the value of the expression.
+              </para></listitem>
+              <listitem><para>
+                They only operate on integer values.
+              </para></listitem>
+              <listitem><para>
+                Each operator can appear either <emphasis>precede</emphasis> or <emphasis>follow</emphasis> the variable it operates on.  When it precedes the variable, the value of the expression is the value of the variable <emphasis>after</emphasis> incrementing; this is referred to as a <emphasis>prefix</emphasis> increment (or decrement).  When it follows the variable, the result is the value of the variable <emphasis>before</emphasis> incrementing; this is referred to as a <emphasis>postfix</emphasis> increment (or decrement).
+              </para></listitem>
+              <listitem><para>
+                They cannot be overloaded.
+              </para></listitem>
+            </itemizedlist>
+          </para>
+        </section>
+      </section>
+      <section xml:id="logical-ops">
+        <title>Logical Operators</title>
     
+        <section xml:id="logical-not">
+          <title>Logical Not</title>
+          
+          <para>
+            When <code>!</code> (exclamation mark) appears in front of an expression it inverts the logical value of expression; more specifically, it constructs a new <code>Boolean</code> value from the expression and then inverts its logical value.  Therefore, logical not can be applied to any expression that has a <code>Boolean</code> constructor that takes a single parameter whose types is the type of the expression.
+          </para>
+          
+          <note><para>
+            It is not possible to overload the logical not operator.  However, you can <quote>enable</quote> it for custom types (structures) by creating a <code>Boolean</code> constructor with a single parameter whose type is the structure.
+          </para></note>
+        </section>
+      </section>
+      <section xml:id="bitwise-ops">
+        <title>Bitwise Operators</title>
+    
+        <section xml:id="bitwise-not">
+          <title>Bitwise Not</title>
+          
+          <para>
+            When <code>~</code> (tilde) appears in front of an expression of integer type, the result is the integer value with its bits inverted.  It can also be applied to an expression of type <code>Boolean</code>, in which case the logical value is inverted.
+          </para>
+          
+          <note><para>
+            The bitwise not operator cannot be applied to floating-point expressions.
+          </para></note>
+        </section>
+      </section>
+    </section>
+    <section xml:id="exprs">
+      <title>Expressions</title>
+      
+      <para>
+        This section categorizes all of the expression types available in KL.  The expression types are organized into groups; each operation within a group has the same precedence as the other operations in the group, and the groups are listed in order of highest to lowest precedence.
+      </para>
+      
+      <section xml:id="primary-exprs">
+        <title>Primary Expressions</title>
+        
         <para>
-          The global scope is the top-level scope of a KL program.  The symbols that are visible in the global scope are global constants as well as functions and operators.  The global scope is always the outermost scope at any point in a KL program.
+          Primary expressions are the expressions from which more complex expressions are derived.  The primary expressions are:
+          
+          <itemizedlist>
+            <listitem><para>Symbols that refer to variables, function arguments or global constants.  The type of the expression is the type of the entity referred to.  Examples: <code>foo</code>, <code>myParam</code>, <code>mathPI</code>.  See FIXME as well as <xref linkend="scope" /> for how symbol names are resolved.</para></listitem>
+            <listitem><para>Boolean, integer, floating-point and string constants.  The type of the expression is the type of the constant.  Examples: <code>true</code>, <code>42</code>, <code>3.14159</code>.  See <xref linkend="constants" />.</para></listitem>
+          </itemizedlist>
         </para>
       </section>
-      <section xml:id="scope.function">
-        <title>Function Scope</title>
-    
+      <section xml:id="postfix-exprs">
+        <title>Postfix Expressions</title>
+        
         <para>
-          Whenever a function or operator is defined, a function scope is created that is nested inside the global scope.  The arguments to the function are provided within the function scope.  Within the function scope, a function definition also creates a compound statement scope corresponding to the compound statement that constitutes the body of the function.
+          Postfix expressions operate on the expression to the left, and associate left-to-right.  The postfix expressions are:
+          
+          <itemizedlist>
+            <listitem><para>Function invocations: <code><replaceable>function</replaceable>(<replaceable>args</replaceable>)</code>.  See <xref linkend="function-calls" />.</para></listitem>
+            <listitem><para>Array and dictionary indexing operations: <code><replaceable>expr</replaceable>[<replaceable>expr</replaceable>]</code>.  See <xref linkend="arrays" /> and <xref linkend="dicts" />.</para></listitem>
+            <listitem><para>Structure member access: <code><replaceable>expr</replaceable>.<replaceable>member</replaceable></code>.  See <xref linkend="structs" />.</para></listitem>
+            <listitem><para>
+              Method invocations: <code><replaceable>expr</replaceable>.<replaceable>method</replaceable>(<replaceable>args</replaceable>)</code>.  See <xref linkend="method-calls" />.
+            </para></listitem>
+            <listitem><para>Postfix increment and decrement: <code><replaceable>expr</replaceable>++</code>, <code><replaceable>expr</replaceable>--</code>.  See <xref linkend="inc-dec-ops" />.</para></listitem>
+          </itemizedlist>
         </para>
       </section>
-      <section xml:id="scope.compound-statement">
-        <title>Compound Statement Scope</title>
-    
+      <section xml:id="prefix-exprs">
+        <title>Prefix Expressions</title>
+        
         <para>
-          Any time that a <code>{</code> followed by zero or more statements followed by <code>}</code> is used to introduce a compound statement, a new <glossterm>compound statement scope</glossterm> is introduced.  Compound statement scopes are nested inside function scopes (when they correspond to the compound statement that constitutes the body of a function) or inside other compound statement scopes.
-        </para>
-    
-        <para>
-          When control reaches the end of a compound statement (by executing the last statement or via the <code>return</code>, <code>break</code> or <code>continue</code> statements), any structure values that have corresponding destructors will have those destructors executed.
-        </para>
-    
-        <para>
-          Note that declaring a loop index variable inside a loop statement is a special case of a compound statement scope.  In the case that the loop body is a compound statement, the corresponding compound statement scope is nested inside the loop's compound statement scope.
-        </para>
-      </section>
-      <section xml:id="scope.temporary">
-        <title>Temporary Scope</title>
-    
-        <para>
-          Any time that a constructor is directly invoked to create a temporary value (see <xref linkend="constructors.invocation.call" />), a scope is created to contain the temporary value.  The scope encloses the surrounding expression of the temporary value; this means that when the surrounding expression is finished execution, the temporary value's destructor, if it exists, is executed.
+          Prefix expressions operator on the expression to the right, and associated right-to-left.  The prefix expressions are:
+          
+          <itemizedlist>
+            <listitem><para>
+              The unary plus and minus operators: <code>+<replaceable>expr</replaceable></code> and <code>-<replaceable>expr</replaceable></code>.  See <xref linkend="unary-plus-minus-ops" />.
+            </para></listitem>
+            <listitem><para>
+              The prefix increment and decrement operators: <code>++<replaceable>expr</replaceable></code> and <code>--<replaceable>expr</replaceable></code>.  See <xref linkend="inc-dec-ops" />.
+            </para></listitem>
+            <listitem><para>
+              The logical not operator: <code>!<replaceable>expr</replaceable></code>.  See <xref linkend="logical-not" />.
+            </para></listitem>
+            <listitem><para>
+              The bitwise not operator: <code><replaceable>expr</replaceable></code>.  See <xref linkend="bitwise-not" />.
+            </para></listitem>
+          </itemizedlist>
         </para>
       </section>
     </section>
-
-    <section xml:id="scope.example">
-      <title>Nested Scopes Example</title>
+    <section xml:id="order-of-ops">
+      <title>Controlling Order of Operations</title>
       
       <para>
-        For a precise understanding of the nesting of KL scopes, study the following example carefully!
+        The order of operations can be explicitly controlled by putting <code>(</code> and <code>)</code> (parentheses) around expressions.
       </para>
-  
-      <example xml:id="scope.ex">
-        <title>Nested scopes</title>
+      
+      <example>
+        <title>Controlling Order of Operations</title>
         <programlisting language="KL"><![CDATA[
+operator entry() {
+  report( (2 * 3) + 5 );
+  report( 2 * (3 + 5) );
+}
+        ]]></programlisting>
+      </example>
+      <informalfigure>
+        <simpara>Output:</simpara>
+        <screen><![CDATA[
+11
+16
+        ]]></screen>
+      </informalfigure>
+    </section>
+    <section xml:id="scope">
+      <title>Scoping Rules</title>
+    
+      <para>
+        The term <glossterm>scope</glossterm> in programming languages refers to the parts of a program in which variables, constants and functions are visible; the rules that govern how scopes work are referred to as <glossterm>scoping rules</glossterm>.  Scopes are also responsible for managing the <quote>lifecycle</quote> of variables; in the case of KL, this refers to when destructors are called for structure values.
+      </para>
+    
+      <section xml:id="scope.types">
+        <title>Types of Scopes</title>
+      
+        <para>
+          In KL, there are four kinds scopes: the global scope, function scopes, compound statement scopes and temporary scopes.  Scopes <glossterm>nest</glossterm> inside each other; when a KL program refers to a variable by name, the compiler determines which variable is being referred to by searching from the current innermost scope outwards through the nested scopes to the outermost scope (which is always the global scope).  Like C, KL is a statically-scoped language, meaning that the exactly variable that is being referred to is resolved at compile time (and not at run time).
+        </para>
+  
+        <section xml:id="scope.global">
+          <title>The Global Scope</title>
+    
+          <para>
+            The global scope is the top-level scope of a KL program.  The symbols that are visible in the global scope are global constants as well as functions and operators.  The global scope is always the outermost scope at any point in a KL program.
+          </para>
+        </section>
+        <section xml:id="scope.function">
+          <title>Function Scope</title>
+    
+          <para>
+            Whenever a function or operator is defined, a function scope is created that is nested inside the global scope.  The arguments to the function are provided within the function scope.  Within the function scope, a function definition also creates a compound statement scope corresponding to the compound statement that constitutes the body of the function.
+          </para>
+        </section>
+        <section xml:id="scope.compound-statement">
+          <title>Compound Statement Scope</title>
+    
+          <para>
+            Any time that a <code>{</code> followed by zero or more statements followed by <code>}</code> is used to introduce a compound statement, a new <glossterm>compound statement scope</glossterm> is introduced.  Compound statement scopes are nested inside function scopes (when they correspond to the compound statement that constitutes the body of a function) or inside other compound statement scopes.
+          </para>
+    
+          <para>
+            When control reaches the end of a compound statement (by executing the last statement or via the <code>return</code>, <code>break</code> or <code>continue</code> statements), any structure values that have corresponding destructors will have those destructors executed.
+          </para>
+    
+          <para>
+            Note that declaring a loop index variable inside a loop statement is a special case of a compound statement scope.  In the case that the loop body is a compound statement, the corresponding compound statement scope is nested inside the loop's compound statement scope.
+          </para>
+        </section>
+        <section xml:id="scope.temporary">
+          <title>Temporary Scope</title>
+    
+          <para>
+            Any time that a constructor is directly invoked to create a temporary value (see <xref linkend="constructors.invocation.call" />), a scope is created to contain the temporary value.  The scope encloses the surrounding expression of the temporary value; this means that when the surrounding expression is finished execution, the temporary value's destructor, if it exists, is executed.
+          </para>
+        </section>
+      </section>
+
+      <section xml:id="scope.example">
+        <title>Nested Scopes Example</title>
+      
+        <para>
+          For a precise understanding of the nesting of KL scopes, study the following example carefully!
+        </para>
+  
+        <example xml:id="scope.ex">
+          <title>Nested scopes</title>
+          <programlisting language="KL"><![CDATA[
 struct T {
   String s;
 };
@@ -2519,11 +2705,11 @@ operator entry() {
   foo(t);
   report("came back from foo; t is now " + t);
 }
-        ]]></programlisting>
-      </example>
-      <informalfigure>
-        <simpara>Output:</simpara>
-        <screen><![CDATA[
+          ]]></programlisting>
+        </example>
+        <informalfigure>
+          <simpara>Output:</simpara>
+          <screen><![CDATA[
 top of entry; t is now 2.75
 created T; s = entryT
 declared t in entry; t is now {s:"entryT"}
@@ -2546,18 +2732,21 @@ after loop; t is now {s:"fooT"}
 destroying T; s = fooT
 came back from foo; t is now {s:"entryT"}
 destroying T; s = entryT
-        ]]></screen>
-      </informalfigure>
+          ]]></screen>
+        </informalfigure>
+      </section>
     </section>
-  </chapter>
-  <chapter xml:id="expressions">
-    <title>Expressions</title>
-    
-    <para>TBD</para>
   </chapter>
   <chapter xml:id="statements">
     <title>Statements</title>
     
     <para>TBD</para>
+  </chapter>
+  <chapter xml:id="map-reduce">
+    <title>Map-Reduce</title>
+    
+    <para>
+      TBD
+    </para>
   </chapter>
 </book>

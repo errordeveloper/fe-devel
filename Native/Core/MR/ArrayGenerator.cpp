@@ -59,7 +59,16 @@ namespace Fabric
     
     RC::ConstHandle<RT::Desc> ArrayGenerator::getElementDesc() const
     {
-      return m_operator->getValueDesc();
+      RC::ConstHandle<RT::Desc> result;
+      try
+      {
+        result = m_operator->getValueDesc();
+      }
+      catch ( Exception e )
+      {
+        throw "ArrayGenerator: " + e;
+      }
+      return result;
     }
       
     const RC::Handle<ArrayProducer::ComputeState> ArrayGenerator::createComputeState() const

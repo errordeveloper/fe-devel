@@ -6,6 +6,10 @@ operator entry()
 {
   var Size x;
 
+  // Unary ops
+  report(+Size(42));
+  report((-Size(42))&0xFFFFFFFF);
+
   // Binary ops
   x = Size(1) + Size(2); report x;
   x = Size(4) - Size(3); report x;

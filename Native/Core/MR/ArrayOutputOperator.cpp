@@ -116,6 +116,8 @@ namespace Fabric
         
     RC::ConstHandle<RT::Desc> ArrayOutputOperator::getValueDesc() const
     {
+      if ( !m_valueDesc )
+        throw Exception( "error in operator" );
       return m_valueDesc;
     }
     

@@ -1464,78 +1464,6 @@ postfix_expression
   {
     $$ = $1;
   }
-	| postfix_expression TOKEN_LBRACKET expression TOKEN_RBRACKET
-  {
-    $$ = AST::IndexOp::Create( RTLOC, $1, $3 ).take();
-    $1->release();
-    $3->release();
-  }
-	| postfix_expression TOKEN_DOT TOKEN_IDENTIFIER
-  {
-    $$ = AST::StructMemberOp::Create( RTLOC, $1, *$3 ).take();
-    $1->release();
-    delete $3;
-  }
-  | postfix_expression TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN argument_expression_list TOKEN_RPAREN
-  {
-    $$ = AST::MethodOp::Create( RTLOC, *$3, $1, $5 ).take();
-    $1->release();
-    delete $3;
-    $5->release();
-  }
-  /*
-	| postfix_expression PTR_OP IDENTIFIER
-  */
-	| postfix_expression postfix_unary_operator
-  {
-    $$ = AST::UniOp::Create( RTLOC, $2, $1 ).take();
-    $1->release();
-  }
-;
-
-primary_expression
-  : TOKEN_TRUE
-  {
-    $$ = AST::ConstBoolean::Create( RTLOC, true ).take();
-  }
-  | TOKEN_FALSE
-  {
-    $$ = AST::ConstBoolean::Create( RTLOC, false ).take();
-  }
-  | TOKEN_CONST_UI
-  {
-    $$ = AST::ConstUnsignedInteger::Create( RTLOC, *$1 ).take();
-    delete $1;
-  }
-  | TOKEN_CONST_FP
-  {
-    $$ = AST::ConstFloat::Create( RTLOC, *$1 ).take();
-    delete $1;
-  }
-  | TOKEN_CONST_STRING_SQUOT
-  {
-    try
-    {
-      $$ = AST::ConstString::Create( RTLOC, *$1 ).take();
-    }
-    catch ( Exception e )
-    {
-      context.m_diagnostics.addError( RTLOC, e.getDesc() );
-    }
-    delete $1;
-  }
-  | TOKEN_CONST_STRING_DQUOT
-  {
-    try
-    {
-      $$ = AST::ConstString::Create( RTLOC, *$1 ).take();
-    }
-    catch ( Exception e )
-    {
-      context.m_diagnostics.addError( RTLOC, e.getDesc() );
-    }
-    delete $1;
-  }
   | TOKEN_IDENTIFIER TOKEN_LPAREN argument_expression_list TOKEN_RPAREN
   {
     $$ = AST::Call::Create( RTLOC, *$1, $3 ).take();
@@ -1650,6 +1578,78 @@ primary_expression
     $3->release();
     delete $5;
     $7->release();
+  }
+	| postfix_expression TOKEN_LBRACKET expression TOKEN_RBRACKET
+  {
+    $$ = AST::IndexOp::Create( RTLOC, $1, $3 ).take();
+    $1->release();
+    $3->release();
+  }
+	| postfix_expression TOKEN_DOT TOKEN_IDENTIFIER
+  {
+    $$ = AST::StructMemberOp::Create( RTLOC, $1, *$3 ).take();
+    $1->release();
+    delete $3;
+  }
+  | postfix_expression TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN argument_expression_list TOKEN_RPAREN
+  {
+    $$ = AST::MethodOp::Create( RTLOC, *$3, $1, $5 ).take();
+    $1->release();
+    delete $3;
+    $5->release();
+  }
+  /*
+	| postfix_expression PTR_OP IDENTIFIER
+  */
+	| postfix_expression postfix_unary_operator
+  {
+    $$ = AST::UniOp::Create( RTLOC, $2, $1 ).take();
+    $1->release();
+  }
+;
+
+primary_expression
+  : TOKEN_TRUE
+  {
+    $$ = AST::ConstBoolean::Create( RTLOC, true ).take();
+  }
+  | TOKEN_FALSE
+  {
+    $$ = AST::ConstBoolean::Create( RTLOC, false ).take();
+  }
+  | TOKEN_CONST_UI
+  {
+    $$ = AST::ConstUnsignedInteger::Create( RTLOC, *$1 ).take();
+    delete $1;
+  }
+  | TOKEN_CONST_FP
+  {
+    $$ = AST::ConstFloat::Create( RTLOC, *$1 ).take();
+    delete $1;
+  }
+  | TOKEN_CONST_STRING_SQUOT
+  {
+    try
+    {
+      $$ = AST::ConstString::Create( RTLOC, *$1 ).take();
+    }
+    catch ( Exception e )
+    {
+      context.m_diagnostics.addError( RTLOC, e.getDesc() );
+    }
+    delete $1;
+  }
+  | TOKEN_CONST_STRING_DQUOT
+  {
+    try
+    {
+      $$ = AST::ConstString::Create( RTLOC, *$1 ).take();
+    }
+    catch ( Exception e )
+    {
+      context.m_diagnostics.addError( RTLOC, e.getDesc() );
+    }
+    delete $1;
   }
   | TOKEN_IDENTIFIER
   {
