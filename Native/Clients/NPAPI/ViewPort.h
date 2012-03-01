@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_NPAPI_VIEW_PORT_H
@@ -73,6 +73,7 @@ namespace Fabric
       friend class Interface;
 
     public:
+      REPORT_RC_LEAKS
       
       virtual void getWindowSize( size_t &width, size_t &height ) const = 0;
     

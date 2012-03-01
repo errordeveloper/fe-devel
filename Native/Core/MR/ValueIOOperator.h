@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_VALUE_IO_OPERATOR_H
 #define _FABRIC_MR_VALUE_IO_OPERATOR_H
 
@@ -53,6 +53,7 @@ namespace Fabric
     class ValueIOOperator : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       RC::ConstHandle<RT::Desc> getInputDesc() const;
       RC::ConstHandle<RT::Desc> getOutputDesc() const;

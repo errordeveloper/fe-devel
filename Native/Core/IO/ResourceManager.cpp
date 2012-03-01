@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2012 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <vector>
@@ -39,6 +39,7 @@ namespace Fabric
 
     ResourceManager::~ResourceManager()
     {
+      releaseAllFiles();
       while( !m_pendingRequests.empty() )
       {
         PendingRequestInfo* requestInfo = (PendingRequestInfo*)m_pendingRequests.front();
@@ -185,17 +186,26 @@ namespace Fabric
       if( !requestInfo->m_manager )
         return;//Manager might have been destroyed, in which case we should ignore this call
 
-      RC::Handle<ResourceManager> keepAlive( requestInfo->m_manager.makeStrong() );
+      RC::Handle<ResourceManager> manager( requestInfo->m_manager.makeStrong() );
+      FilesInUseMap::iterator it = manager->m_filesInUse.insert( std::make_pair( fileName, fopen( fileName, "rb" ) ) );
+      if( it->second == NULL )
+      {
+        manager->m_filesInUse.erase( it );
+        throw Exception( "Unable to open tempory file containing data for " + requestInfo->m_url );
+      }
+
       try
       {
         requestInfo->m_client->onFile( fileName, requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
+        manager->releaseFile( fileName );//[JeromeCG 20120223] Note: client might have called releaseFile, but it can be safely called multiple times
         FABRIC_LOG( "ResourceManager: error while calling client's onFile for \"" + requestInfo->m_url + "\": " + e.getDesc() );
       }
       catch ( ... )
       {
+        manager->releaseFile( fileName );
         FABRIC_LOG( "ResourceManager: error while calling client's onFile for \"" + requestInfo->m_url + "\"." );
       }
     }
@@ -315,5 +325,23 @@ namespace Fabric
       (*( manager->m_scheduleFunc ) )( manager->m_scheduleFuncUserData, OnFailureSyncCallback, callStruct);
     }
 
+
+    void ResourceManager::releaseFile( char const *fileName )
+    {
+      FilesInUseMap::iterator it = m_filesInUse.find( fileName );
+      if( it != m_filesInUse.end() )
+      {
+        fclose( it->second );
+        m_filesInUse.erase( it );
+      }
+    }
+
+    void ResourceManager::releaseAllFiles()
+    {
+      for( FilesInUseMap::iterator it = m_filesInUse.begin(); it != m_filesInUse.end(); ++it )
+        fclose( it->second );
+
+      m_filesInUse.clear();
+    }
   };
 };

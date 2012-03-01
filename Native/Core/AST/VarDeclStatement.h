@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_VAR_DECL_STATEMENT_H
 #define _FABRIC_AST_VAR_DECL_STATEMENT_H
 
@@ -23,6 +23,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( VarDecl );
       
     public:
+      REPORT_RC_LEAKS
 
       static RC::ConstHandle<VarDeclStatement> Create(
         CG::Location const &location,

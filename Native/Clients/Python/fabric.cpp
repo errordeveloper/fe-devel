@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Base/Util/SimpleString.h>
@@ -41,10 +41,6 @@ namespace Fabric
     extern "C" FABRIC_CLI_EXPORT void identify()
     {
       FABRIC_LOG( "%s version %s", Fabric::buildName, Fabric::buildFullVersion );
-      struct tm const *lt = localtime( &Fabric::buildExpiry );
-      char buf[1024];
-      strftime( buf, 1024, "This build of Fabric will expire on %Y-%m-%d at %H:%M:%S", lt );
-      FABRIC_LOG( "%s", buf );
     }
 
     extern "C" FABRIC_CLI_EXPORT void createClient( void **ptr )

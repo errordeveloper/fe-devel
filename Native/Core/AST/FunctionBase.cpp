@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "FunctionBase.h"
 #include <Fabric/Core/AST/ParamVector.h>
 #include <Fabric/Core/CG/ModuleBuilder.h>
@@ -91,7 +91,11 @@ namespace Fabric
       
       std::string const *scopeName = getScopeName( cgManager );
       if ( !buildFunctionBodies && scopeName && moduleBuilder.getScope().has( *scopeName ) )
-        throw CG::Error( getLocation(), "symbol " + _(*scopeName) + " already exists" );
+      {
+        RC::ConstHandle<CG::Symbol> symbol = moduleBuilder.getScope().get( *scopeName );
+        if ( !symbol->isPencil() )
+          throw CG::Error( getLocation(), "non-function symbol " + _(*scopeName) + " already exists" );
+      }
         
       RC::ConstHandle<CG::Adapter> returnAdapter = getReturnAdapter( cgManager );
       if ( returnAdapter )

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_ARRAY_PRODUCER_WRAPPER_H
 #define _FABRIC_MR_ARRAY_PRODUCER_WRAPPER_H
 
@@ -24,6 +24,7 @@ namespace Fabric
       FABRIC_GC_OBJECT_CLASS_DECL()
       
     public:
+      REPORT_RC_LEAKS
       
       virtual RC::ConstHandle<ArrayProducer> getUnwrapped() const = 0;
 

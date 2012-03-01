@@ -1,2 +1,2 @@
 7
-Caught exception: sa-sub-array-out-of-range.kl:7:10: index (8) out of range (8)
+Caught exception: sa-sub-array-out-of-range.kl:11:10: index (8) out of range (8)

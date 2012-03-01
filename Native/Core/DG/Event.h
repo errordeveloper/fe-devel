@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-09-16.
- *  Copyright 2010 Fabric 3D Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_DG_EVENT_H
@@ -44,6 +41,7 @@ namespace Fabric
       friend class EventHandler;
       
     public:
+      REPORT_RC_LEAKS
     
       virtual bool isEvent() const { return true; }
 

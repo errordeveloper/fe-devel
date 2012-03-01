@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-12-02.
- *  Copyright 2010 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_AND_OP_H
@@ -25,6 +22,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( AndOp );
       
     public:
+      REPORT_RC_LEAKS
         
       static RC::ConstHandle<AndOp> Create( CG::Location const &location, RC::ConstHandle<Expr> const &left, RC::ConstHandle<Expr> const &right );
       

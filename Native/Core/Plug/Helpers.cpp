@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/Plug/Helpers.h>
 #include <Fabric/Core/IO/Helpers.h>
 #include <Fabric/Base/Util/Format.h>

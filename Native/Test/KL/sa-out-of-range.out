@@ -1,2 +1,2 @@
 7
-Caught exception: sa-out-of-range.kl:6:10: index (16) out of range (16)
+Caught exception: sa-out-of-range.kl:10:10: index (16) out of range (16)

@@ -1,10 +1,7 @@
 /*
- *
- *  Created by Peter Zion on 10-09-27.
- *  Copyright 2010 Fabric 3D Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MT_TASK_H
 #define _FABRIC_MT_TASK_H
 

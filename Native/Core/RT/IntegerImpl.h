@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_INTEGER_IMPL_H
 #define _FABRIC_RT_INTEGER_IMPL_H
 
@@ -19,6 +19,7 @@ namespace Fabric
     class IntegerImpl : public NumericImpl
     {
     public:
+      REPORT_RC_LEAKS
     
       // NumericImpl
 
@@ -39,6 +40,7 @@ namespace Fabric
     template<typename T> class IntegerImplT : public IntegerImpl
     {
     public:
+      REPORT_RC_LEAKS
 
       // Impl
       

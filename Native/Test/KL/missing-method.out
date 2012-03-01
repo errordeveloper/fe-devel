@@ -1,1 +1,1 @@
-missing-method.kl:7:10: error: no such method Foo.baz(String, Integer, Boolean)
+missing-method.kl:11:10: error: no such method Foo.baz(String, Integer, Boolean)

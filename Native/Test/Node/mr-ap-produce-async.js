@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 var fabricClient = require('Fabric').createClient();
 
 var ap = fabricClient.MR.createArrayGenerator(

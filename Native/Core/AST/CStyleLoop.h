@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-12-02.
- *  Copyright 2010 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_C_STYLE_LOOP_H
@@ -27,6 +24,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( CStyleLoop );
 
     public:
+      REPORT_RC_LEAKS
 
       static RC::ConstHandle<CStyleLoop> Create(
         CG::Location const &location,

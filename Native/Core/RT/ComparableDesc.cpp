@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "ComparableDesc.h"
 #include "ComparableImpl.h"
 
@@ -10,10 +10,15 @@ namespace Fabric
   namespace RT
   {
     ComparableDesc::ComparableDesc(
-      std::string const &name,
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
       RC::ConstHandle<ComparableImpl> const &comparableImpl
       )
-      : Desc( name, comparableImpl )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        comparableImpl
+        )
       , m_comparableImpl( comparableImpl )
     {
     }
@@ -22,5 +27,5 @@ namespace Fabric
     {
       return m_comparableImpl;
     }
-  };
-};
+  }
+}

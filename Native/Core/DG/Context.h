@@ -1,11 +1,12 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_DG_CONTEXT_H
 #define _FABRIC_DG_CONTEXT_H
 
 #include <Fabric/Core/JSON/CommandChannel.h>
+#include <Fabric/Core/DG/CompiledObject.h>
 #include <Fabric/Core/MR/Interface.h>
 #include <Fabric/Core/KLC/Interface.h>
 #include <Fabric/Core/CG/CompileOptions.h>
@@ -64,6 +65,8 @@ namespace Fabric
     
     class Context : public JSON::CommandChannel
     {
+      friend class CompiledObject; // [pzion 20120223] For access to getCompiledObjectGlobalData()
+      
       typedef std::set<Client *> Clients;
       typedef Util::UnorderedMap< std::string, Context * > ContextMap;
       
@@ -72,6 +75,7 @@ namespace Fabric
       void registerCoreTypes();
     
     public:
+      REPORT_RC_LEAKS
     
       class NotificationBracket
       {
@@ -99,8 +103,7 @@ namespace Fabric
         RC::Handle<IO::Manager> const &ioManager,
         std::vector<std::string> const &pluginDirs,
         CG::CompileOptions const &compileOptions,
-        bool optimizeSynchronously,
-        bool checkExpiry
+        bool optimizeSynchronously
         );
       static RC::Handle<Context> Bind( std::string const &contextID );
       
@@ -161,14 +164,18 @@ namespace Fabric
         RC::Handle<IO::Manager> const &ioManager,
         std::vector<std::string> const &pluginDirs,
         CG::CompileOptions const &compileOptions,
-        bool optimizeSynchronously,
-        bool checkExpiry
+        bool optimizeSynchronously
         );
       ~Context();
 
       void jsonDesc( JSON::ObjectEncoder &resultObjectEncoder ) const;
       void jsonExecGetMemoryUsage( JSON::ArrayEncoder &resultArrayEncoder ) const;
       void jsonDGGetMemoryUsage( JSON::Encoder &jg ) const;
+      
+      CompiledObject::GlobalData *getCompiledObjectGlobalData()
+      {
+        return &m_compiledObjectGlobalData;
+      }
 
     private:
     
@@ -200,8 +207,10 @@ namespace Fabric
       GC::Container m_gcContainer;
       MR::Interface m_mrInterface;
       KLC::Interface m_klcInterface;
+      
+      CompiledObject::GlobalData m_compiledObjectGlobalData;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_DG_CONTEXT_H

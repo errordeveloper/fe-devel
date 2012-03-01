@@ -1,1 +1,1 @@
-assign-to-rvalue-arg.kl:3:3: error: expression is not an l-value
+assign-to-rvalue-arg.kl:7:3: error: expression is not an l-value

@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-08-09.
- *  Copyright 2010 Fabric 3D Inc.. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_NPAPI_INTERFACE_H
@@ -27,6 +24,7 @@ namespace Fabric
     class Interface : public DG::Client
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::Handle<Interface> Create( NPP npp, RC::Handle<Context> const &context );
       

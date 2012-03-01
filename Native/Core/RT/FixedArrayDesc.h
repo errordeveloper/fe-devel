@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_FIXED_ARRAY_DESC_H
 #define _FABRIC_RT_FIXED_ARRAY_DESC_H
 
@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       size_t getNumMembers() const;
       
@@ -25,13 +26,18 @@ namespace Fabric
             
     protected:
     
-      FixedArrayDesc( std::string const &name, RC::ConstHandle<FixedArrayImpl> const &fixedArrayImpl, RC::ConstHandle<Desc> const &memberDesc );
+      FixedArrayDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<FixedArrayImpl> const &fixedArrayImpl,
+        RC::ConstHandle<Desc> const &memberDesc
+        );
       
     private:
     
       RC::ConstHandle<FixedArrayImpl> m_fixedArrayImpl;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_FIXED_ARRAY_DESC_H

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_NPAPI_HTTP_RESOURCE_PROVIDER_H
@@ -15,6 +15,7 @@ namespace Fabric
     class HTTPResourceProvider : public IO::ResourceProvider
     {
     public:
+      REPORT_RC_LEAKS
 
       static RC::Handle<HTTPResourceProvider> Create( NPP npp );
 

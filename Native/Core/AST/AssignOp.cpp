@@ -1,10 +1,5 @@
 /*
- *  AssignOp.cpp
- *  Fabric
- *
- *  Created by Halfdan Ingvarsson on 11-01-10.
- *  Copyright 2011 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Core/AST/AssignOp.h>

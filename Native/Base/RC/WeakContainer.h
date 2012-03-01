@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_RC_WEAK_CONTAINER_H
@@ -14,6 +14,7 @@ namespace Fabric
     class WeakContainer : public Object
     {
     public:
+      REPORT_RC_LEAKS
     
       WeakContainer( Object *object )
         : m_object( object )

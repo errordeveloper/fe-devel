@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "FunctionBuilder.h"
 #include "ModuleBuilder.h"
 #include "Manager.h"
@@ -24,12 +24,12 @@ namespace Fabric
       RC::ConstHandle<Adapter> const &returnAdapter, 
       ParamVector const &params,
       size_t flags,
-      size_t cost
+      PolymorphismParameters const &polymorphismParameters
       )
       : m_moduleBuilder( moduleBuilder )
       , m_functionScope( NULL )
     {
-      build( pencilKey, symbolName, desc, returnAdapter, params, flags, cost );
+      build( pencilKey, symbolName, desc, returnAdapter, params, flags, polymorphismParameters );
     }
     
     FunctionBuilder::FunctionBuilder( 
@@ -109,7 +109,7 @@ namespace Fabric
       RC::ConstHandle<Adapter> const &returnAdapter, 
       ParamVector const &params, 
       size_t flags,
-      size_t cost
+      PolymorphismParameters const &polymorphismParameters
       )
     {
       RC::Handle<Context> context = getContext();
@@ -222,7 +222,7 @@ namespace Fabric
             m_llvmFunction,
             returnInfo,
             params,
-            cost
+            polymorphismParameters
             )
           );
     }

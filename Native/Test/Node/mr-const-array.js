@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 FC = require("Fabric").createClient();
 
 ca = FC.MR.createConstArray("String", ["one","two","three","four","five"]);

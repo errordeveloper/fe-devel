@@ -107,12 +107,16 @@ typedef struct YYLTYPE
 #include <Fabric/Core/AST/MemberDeclVector.h>
 #include <Fabric/Core/AST/MethodOp.h>
 #include <Fabric/Core/AST/MethodOpImpl.h>
+#include <Fabric/Core/AST/NakedVarDecl.h>
 #include <Fabric/Core/AST/NotOp.h>
 #include <Fabric/Core/AST/Operator.h>
 #include <Fabric/Core/AST/OrOp.h>
 #include <Fabric/Core/AST/Param.h>
 #include <Fabric/Core/AST/ParamVector.h>
 #include <Fabric/Core/AST/Report.h>
+#include <Fabric/Core/AST/Require.h>
+#include <Fabric/Core/AST/RequireGlobal.h>
+#include <Fabric/Core/AST/RequireVector.h>
 #include <Fabric/Core/AST/ReturnStatement.h>
 #include <Fabric/Core/AST/StatementVector.h>
 #include <Fabric/Core/AST/StructDecl.h>
@@ -124,9 +128,6 @@ typedef struct YYLTYPE
 #include <Fabric/Core/AST/VarDeclStatement.h>
 #include <Fabric/Core/AST/VarDeclVector.h>
 #include <Fabric/Core/AST/UniOp.h>
-#include <Fabric/Core/AST/Use.h>
-#include <Fabric/Core/AST/UseGlobal.h>
-#include <Fabric/Core/AST/UseVector.h>
 #include <Fabric/Core/CG/Manager.h>
 #include <Fabric/Core/Util/Parse.h>
 using namespace Fabric;
@@ -187,8 +188,8 @@ int kl_lex( YYSTYPE *yys, YYLTYPE *yyl, KL::Context &context );
 %union { Fabric::AST::Param const *astParamPtr; }
 %union { Fabric::AST::ParamVector const *astParamListPtr; }
 %union { Fabric::AST::Global const *astGlobalPtr; }
-%union { Fabric::AST::UseVector const *astUseVectorPtr; }
-%union { Fabric::AST::Use const *astUsePtr; }
+%union { Fabric::AST::RequireVector const *astRequireVectorPtr; }
+%union { Fabric::AST::Require const *astRequirePtr; }
 %union { Fabric::AST::GlobalList const *astGlobalListPtr; }
 %union { Fabric::AST::StructDecl const *astStructDecl; }
 %union { Fabric::AST::MemberDecl const *astStructDeclMember; }
@@ -230,6 +231,7 @@ int kl_lex( YYSTYPE *yys, YYLTYPE *yyl, KL::Context &context );
 %token TOKEN_STRUCT "struct"
 %token TOKEN_SWITCH "switch"
 %token TOKEN_DEFAULT "default"
+%token TOKEN_REQUIRE "require"
 %token TOKEN_CONTINUE "continue"
 %token TOKEN_FUNCTION "function"
 %token TOKEN_OPERATOR "operator"
@@ -324,9 +326,9 @@ int kl_lex( YYSTYPE *yys, YYLTYPE *yyl, KL::Context &context );
 %type <astGlobalPtr> alias
 %type <astGlobalPtr> struct
 %type <astGlobalPtr> global_const_decl
-%type <astGlobalPtr> use_global
-%type <astUseVectorPtr> use_list
-%type <astUsePtr> use
+%type <astGlobalPtr> require_global
+%type <astRequireVectorPtr> require_list
+%type <astRequirePtr> require
 %type <astGlobalListPtr> global_list
 %type <astStructDeclMember> struct_member
 %type <astStructDeclMemberList> struct_member_list
@@ -460,42 +462,47 @@ global
   {
     $$ = $1;
   }
-  | use_global
+  | require_global
   {
     $$ = $1;
   }
 ;
 
-use_global
-  : TOKEN_USE use_list TOKEN_SEMICOLON
+require_global
+  : TOKEN_REQUIRE require_list TOKEN_SEMICOLON
   {
-    $$ = AST::UseGlobal::Create( RTLOC, $2 ).take();
+    $$ = AST::RequireGlobal::Create( RTLOC, $2 ).take();
+    $2->release();
+  }
+  | TOKEN_USE require_list TOKEN_SEMICOLON
+  {
+    $$ = AST::RequireGlobal::Create( RTLOC, $2 ).take();
     $2->release();
   }
 ;
 
-use_list
+require_list
   : /* empty */
   {
-    $$ = AST::UseVector::Create().take();
+    $$ = AST::RequireVector::Create().take();
   }
-  | use
+  | require
   {
-    $$ = AST::UseVector::Create( $1 ).take();
+    $$ = AST::RequireVector::Create( $1 ).take();
     $1->release();
   }
-  | use TOKEN_COMMA use_list
+  | require TOKEN_COMMA require_list
   {
-    $$ = AST::UseVector::Create( $1, $3 ).take();
+    $$ = AST::RequireVector::Create( $1, $3 ).take();
     $1->release();
     $3->release();
   }
 ;
 
-use
+require
   : TOKEN_IDENTIFIER
   {
-    $$ = AST::Use::Create( RTLOC, *$1 ).take();
+    $$ = AST::Require::Create( RTLOC, *$1 ).take();
     delete $1;
   }
 ;
@@ -785,7 +792,7 @@ var_decl
   }
   | TOKEN_IDENTIFIER array_modifier 
   {
-    $$ = AST::VarDecl::Create( RTLOC, *$1, *$2 ).take();
+    $$ = AST::NakedVarDecl::Create( RTLOC, *$1, *$2 ).take();
     delete $1;
     delete $2;
   }

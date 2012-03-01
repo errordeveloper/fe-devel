@@ -1,9 +1,13 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 FABRIC = require('Fabric').createClient();
 
 op = FABRIC.DependencyGraph.createOperator("op");
 op.setEntryFunctionName("load");
 op.setSourceCode('\
-use FabricHDR;\n\
+require FabricHDR;\n\
 \n\
 struct Color\n\
 {\n\

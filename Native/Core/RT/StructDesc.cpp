@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "StructDesc.h"
 #include "StructImpl.h"
 #include <Fabric/Base/JSON/Encoder.h>
@@ -10,8 +10,16 @@ namespace Fabric
 {
   namespace RT
   {
-    StructDesc::StructDesc( std::string const &name, RC::ConstHandle<StructImpl> const &structImpl )
-      : Desc( name, structImpl )
+    StructDesc::StructDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<StructImpl> const &structImpl
+      )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        structImpl
+        )
       , m_structImpl( structImpl )
     {
     }

@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 FABRIC = require('Fabric').createClient();
 
 var Vec2 = function( x, y ) {
@@ -44,7 +48,7 @@ console.log( JSON.stringify(data) );
 console.log(data.sum());
 
 var op = FABRIC.DG.createOperator("op");
-op.setSourceCode("(inline)", "use Vec2; operator entry( io Vec2 vec2 ) { vec2 = Vec2(8.9, 2.3); }");
+op.setSourceCode("(inline)", "require Vec2; operator entry( io Vec2 vec2 ) { vec2 = Vec2(8.9, 2.3); }");
 op.setEntryFunctionName("entry");
 if (op.getErrors().length > 0) {
   console.log(op.getErrors());
@@ -61,6 +65,14 @@ node.evaluate();
 var data = node.getData("vec2", 0);
 console.log( JSON.stringify(data) );
 console.log(data.sum());
+
+// test new registerType 'members' layout
+var desc2 = {
+  members: [ { x:'Scalar' }, { y:'Scalar' } ],
+  constructor: Vec2
+};
+FABRIC.RegisteredTypesManager.registerType( 'Vec2a', desc2 );
+console.log(JSON.stringify(FABRIC.RT.getRegisteredTypes()['Vec2a']));
 
 var ComplexType = function() {
   var vec2 = new Vec2(3.14, 2.71);

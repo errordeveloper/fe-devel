@@ -1,0 +1,9 @@
+struct MyType {
+  Integer foo;
+};
+
+operator entry() {
+  MyType foo;
+  if (foo < 3 )
+    report "foo < 3";
+}

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_ARRAY_PRODUCER_DESC_H
 #define _FABRIC_RT_ARRAY_PRODUCER_DESC_H
 
@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       virtual void jsonDesc( JSON::ObjectEncoder &resultObjectEncoder ) const;
       
@@ -25,14 +26,19 @@ namespace Fabric
       
     protected:
     
-      ArrayProducerDesc( std::string const &name, RC::ConstHandle<ArrayProducerImpl> const &arrayProducerImpl, RC::ConstHandle<RT::Desc> const &elementDesc );
+      ArrayProducerDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ArrayProducerImpl> const &arrayProducerImpl,
+        RC::ConstHandle<RT::Desc> const &elementDesc
+        );
     
     private:
     
       RC::ConstHandle<ArrayProducerImpl> m_arrayProducerImpl;
       RC::ConstHandle<Desc> m_elementDesc;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_ARRAY_PRODUCER_DESC_H

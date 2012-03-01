@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 #ifndef __FABRIC_FILESTREAM_EXTENSION__
 #define __FABRIC_FILESTREAM_EXTENSION__
 

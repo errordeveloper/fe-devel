@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/DG/Client.h>
 #include <Fabric/Core/DG/Context.h>
 #include <Fabric/Core/DG/CompiledObject.h>
@@ -150,7 +150,7 @@ namespace Fabric
       if ( decoder.getNext( entity ) )
         throw "extra JSON entity";
       
-      CompiledObject::PrepareForExecution();
+      CompiledObject::PrepareForExecution( m_context );
     }
     
     void Client::notifyInitialState() const

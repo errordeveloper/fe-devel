@@ -1,8 +1,14 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 #include <Fabric/Base/Config.h>
 #include <Fabric/Base/Util/Log.h>
 #include <Fabric/Core/Util/Debug.h>
 #include <Fabric/Core/Build.h>
 #include <Fabric/Core/MT/Impl.h>
+#include <Fabric/Core/Plug/Manager.h>
+#include <Fabric/Core/DG/IRCache.h>
 
 #include <npapi/npapi.h>
 #include <npapi/npfunctions.h>
@@ -40,10 +46,6 @@ static void llvmInitialize()
 static void displayHeader()
 {
   FABRIC_LOG( "%s version %s", Fabric::buildName, Fabric::buildFullVersion );
-  struct tm const *lt = localtime( &Fabric::buildExpiry );
-  char buf[1024];
-  strftime( buf, 1024, "This build of Fabric will expire on %Y-%m-%d at %H:%M:%S", lt );
-  FABRIC_LOG( "%s", buf );
   FABRIC_LOG( "Plugin loaded." );
 }
 
@@ -85,8 +87,14 @@ FABRIC_NPAPI_EXPORT NPError OSCALL NP_Initialize(NPNetscapeFuncs* browser_functi
 FABRIC_NPAPI_EXPORT NPError OSCALL NP_Shutdown()
 {
   Fabric::MT::ThreadPool::Instance()->terminate();
-
   llvm::llvm_stop_multithreaded();
+
+  Fabric::Plug::Manager::Terminate();
+  Fabric::DG::IRCache::Terminate();
+
+#if defined( FABRIC_RC_LEAK_REPORT )
+  Fabric::RC::_ReportLeaks();
+#endif
   
   return NPERR_NO_ERROR;
 }

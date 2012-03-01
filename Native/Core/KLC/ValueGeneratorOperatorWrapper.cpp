@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/KLC/ValueGeneratorOperatorWrapper.h>
 #include <Fabric/Core/KLC/ValueGeneratorOperator.h>
 #include <Fabric/Core/KLC/Executable.h>

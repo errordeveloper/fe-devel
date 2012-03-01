@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Clients/NPAPI/Darwin/WindowlessCGViewPort.h>
@@ -190,8 +190,7 @@ namespace Fabric
             RC::Handle<DG::Event> dgRedrawEvent = getRedrawEvent();
             if ( dgRedrawEvent )
             {
-              AGLContext oldAGLContext = aglGetCurrentContext();
-              aglSetCurrentContext( m_windowAGLContext );
+              pushOGLContext();
               
               // [pzion 2011022] Fill the viewport with 18% gray adjusted to a
               // gamma of 2.2.  0.46 ~= 0.18^(1/2.2)
@@ -217,8 +216,9 @@ namespace Fabric
               glFinish();
               glReadBuffer( GL_FRONT );
               glReadPixels( 0, 0, m_windowWidth, m_windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, m_offscreenData );
-              aglSetCurrentContext( oldAGLContext );
-              
+
+              popOGLContext();
+
               CGContextSaveGState( m_cgContext );
               CGRect cgRect = CGRectMake( 0, 0, m_windowWidth, m_windowHeight );
               CGContextDrawImage( m_cgContext, cgRect, m_offscreenCGImage );
@@ -234,18 +234,22 @@ namespace Fabric
           return false;
       }
     }
-      
+
     void WindowlessCGViewPort::pushOGLContext()
     {
-      m_aglContextStack.push_back( aglGetCurrentContext() );
-      aglSetCurrentContext( m_windowAGLContext );
+      AGLContext prevContext = aglGetCurrentContext();
+      if( aglSetCurrentContext( m_windowAGLContext ) == GL_FALSE )
+        throw Exception( "Viewport error: unable to set OGL context" );
+      m_aglContextStack.push_back( prevContext );
     }
     
     void WindowlessCGViewPort::popOGLContext()
     {
       FABRIC_ASSERT( !m_aglContextStack.empty() );
-      aglSetCurrentContext( m_aglContextStack.back() );
+      AGLContext prevContext = m_aglContextStack.back();
       m_aglContextStack.pop_back();
+      if( aglSetCurrentContext( prevContext ) == GL_FALSE )
+        throw Exception( "Viewport error: unable to restore previous OGL context" );
     }
 
     std::string WindowlessCGViewPort::queryUserFilePath( bool existingFile, std::string const &title, std::string const &defaultFilename, std::string const &extension )

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_VALUE_GENERATOR_H
 #define _FABRIC_MR_VALUE_GENERATOR_H
 
@@ -19,6 +19,7 @@ namespace Fabric
     class ValueGenerator : public ValueProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ValueGenerator> Create(
         RC::ConstHandle<ValueOutputOperator> const &operator_,

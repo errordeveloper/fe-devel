@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 operator entry() {
   Integer x = 4;
   for (Index i=0; i<x; ++i)

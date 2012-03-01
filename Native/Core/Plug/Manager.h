@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_PLUG_MANAGER_H
@@ -57,10 +57,12 @@ namespace Fabric
     class Manager : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       typedef std::map< std::string, RC::Handle<Inst> > NameToInstMap;
     
       static RC::Handle<Manager> Instance();
+      static void Terminate();
       
       void loadBuiltInPlugins( std::vector<std::string> const &pluginDirs, RC::Handle<CG::Manager> const &cgManager, EDK::Callbacks const &callbacks );
       

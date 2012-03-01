@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-12-02.
- *  Copyright 2010 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_STATEMENT_H
@@ -35,6 +32,7 @@ namespace Fabric
     class Statement : public Node
     {
     public:
+      REPORT_RC_LEAKS
       
       Statement( CG::Location const &location );
       

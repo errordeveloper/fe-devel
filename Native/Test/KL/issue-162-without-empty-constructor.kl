@@ -1,0 +1,9 @@
+struct MyType {
+  Integer n;
+  Scalar x;
+};
+
+operator entry() {
+  MyType myType;
+  report myType;
+}

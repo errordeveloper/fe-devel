@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_DG_BINDING_H
 #define _FABRIC_DG_BINDING_H
 
@@ -38,6 +38,7 @@ namespace Fabric
       typedef std::multiset<BindingList *> BindingLists; 
     
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Binding> Create( RC::Handle<Context> const &context );
       

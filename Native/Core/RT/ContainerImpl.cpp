@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/RT/ContainerImpl.h>
 #include <Fabric/Core/DG/Container.h>
 #include <Fabric/Base/RC/WeakHandle.h>

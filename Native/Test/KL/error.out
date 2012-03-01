@@ -1,1 +1,1 @@
-error.kl:4:3: error: syntax error, unexpected integer constant, expecting ;
+error.kl:8:3: error: syntax error, unexpected integer constant, expecting ;

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/CG/Function.h>
 #include <Fabric/Core/CG/ModuleBuilder.h>
 #include <Fabric/Core/CG/Mangling.h>
@@ -73,6 +73,7 @@ namespace Fabric
         return false;
      
       maxCost = 0;
+      size_t numExactTypeMatch = 0;
        
       for ( size_t i=0; i<argTypes.size(); ++i )
       {
@@ -82,14 +83,20 @@ namespace Fabric
         if ( argUsage == paramUsage
           && argAdapter->isEquivalentTo( paramAdapter )
           )
+        {
+          ++numExactTypeMatch;
           continue;
+        }
           
         if ( paramUsage == USAGE_RVALUE )
         {
           if ( argUsage == USAGE_LVALUE
             && argAdapter->isEquivalentTo( paramAdapter )
             )
+          {
+            ++numExactTypeMatch;
             continue;
+          }
 
           Function const *function = moduleBuilder.maybeGetPreciseFunction(
             ConstructorPencilKey( paramAdapter ),
@@ -100,7 +107,7 @@ namespace Fabric
             );
           if ( function )
           {
-            maxCost += function->getCost();
+            maxCost += function->getPolymorphismParameters()->cost;
             continue;
           }
         }
@@ -108,7 +115,7 @@ namespace Fabric
         return false;
       }
       
-      return true;
+      return numExactTypeMatch >= getPolymorphismParameters()->minExactTypeMatch;
     }
     
     ExprValue Function::llvmCreateCall( BasicBlockBuilder &basicBlockBuilder, std::vector<ExprValue> &args ) const

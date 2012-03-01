@@ -1,0 +1,5 @@
+error registering Foobar1: RT.registerType: second parameter: must be an object
+error registering Foobar2: RT.registerType: second parameter: invalid members element
+error registering Foobar3: RT.registerType: second parameter: missing members element
+Foobar4: have x = 0, y = 0
+no z element exists

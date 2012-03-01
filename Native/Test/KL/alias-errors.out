@@ -1,2 +1,2 @@
-alias-errors.kl:1:1: error: 'UnregisteredType': type not registered
-alias-errors.kl:3:1: error: type 'AliasTypeTwo' already registered with a different definition
+alias-errors.kl:5:1: error: 'UnregisteredType': type not registered
+alias-errors.kl:7:1: error: type 'AliasTypeTwo' already registered with a different definition

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_CASE_VECTOR_H
 #define _FABRIC_AST_CASE_VECTOR_H
 
@@ -31,6 +31,7 @@ namespace Fabric
     class CaseVector : public RC::Vector< RC::ConstHandle<Case> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<CaseVector> Create( RC::ConstHandle<Case> const &first = 0, RC::ConstHandle<CaseVector> const &remaining = 0 );
 

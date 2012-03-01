@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_DG_FUNCTION_H
 #define _FABRIC_DG_FUNCTION_H
 
@@ -18,6 +18,7 @@ namespace Fabric
     class Function : public MT::Function
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<Function> Create( RC::ConstHandle<Code> const &code, std::string const &functionName );
     

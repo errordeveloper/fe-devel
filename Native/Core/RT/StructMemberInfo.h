@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_STRUCT_MEMBER_INFO_H
 #define _FABRIC_RT_STRUCT_MEMBER_INFO_H
 

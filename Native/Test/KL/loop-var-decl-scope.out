@@ -1,1 +1,1 @@
-loop-var-decl-scope.kl:5:10: error: 'i': symbol not found
+loop-var-decl-scope.kl:9:10: error: 'i': symbol not found

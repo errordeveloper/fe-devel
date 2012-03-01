@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_VALUE_TRANSFORM_OPERATOR_H
 #define _FABRIC_MR_VALUE_TRANSFORM_OPERATOR_H
 
@@ -14,6 +14,7 @@ namespace Fabric
     class ValueTransformOperator : public ValueOutputOperator
     {
     public:
+      REPORT_RC_LEAKS
 
       static RC::Handle<ValueTransformOperator> Create(
         void (*functionPtr)(...),

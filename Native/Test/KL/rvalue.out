@@ -1,1 +1,1 @@
-rvalue.kl:6:3: error: calling method 'push' of type 'String[]': expression is not an l-value
+rvalue.kl:10:3: error: calling method 'push' of type 'String[]': expression is not an l-value

@@ -1,8 +1,12 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 F = require('Fabric').createClient();
 
 op = F.DG.createOperator("videoSeekTime");
 op.setSourceCode(
-'use FabricVIDEO;\n'+
+'require FabricVIDEO;\n'+
 'operator videoSeekTime(\n'+
 '  io VideoHandle handle,\n'+
 '  io Scalar time,\n'+

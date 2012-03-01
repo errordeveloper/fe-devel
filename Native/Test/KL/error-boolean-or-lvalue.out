@@ -1,1 +1,1 @@
-error-boolean-or-lvalue.kl:10:3: error: no definition found for function foo(Integer)
+error-boolean-or-lvalue.kl:14:3: error: no definition found for function foo(Integer)

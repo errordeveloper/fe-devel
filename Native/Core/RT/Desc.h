@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_DESC_H
 #define _FABRIC_RT_DESC_H
 
@@ -36,11 +36,13 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
       
-      static RC::ConstHandle<Desc> Create( std::string const &userName, RC::ConstHandle<Impl> const &impl )
-      {
-        return new Desc( userName, impl );
-      }
+      static RC::ConstHandle<Desc> Create(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<Impl> const &impl
+        );
     
       std::string const &getUserName() const
       {
@@ -77,16 +79,32 @@ namespace Fabric
       
     protected:
     
-      Desc( std::string const &userName, RC::ConstHandle<Impl> const &impl );
+      Desc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<Impl> const &impl
+        );
+      
+      std::string const &getUserNameBase() const
+      {
+        return m_userNameBase;
+      }
+      
+      std::string const &getUserNameArraySuffix() const
+      {
+        return m_userNameArraySuffix;
+      }
       
     private:
     
-      std::string m_userName;
       RC::ConstHandle<Impl> m_impl;
+      std::string m_userNameBase;
+      std::string m_userNameArraySuffix;
+      std::string m_userName;
       
       mutable RC::ConstHandle<RC::Object> m_klBindingsAST;
     };
-  };
-};
+  }
+}
 
 #endif // _FABRIC_RT_DESC_H

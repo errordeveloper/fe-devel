@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_DG_OPERATOR_H
 #define _FABRIC_DG_OPERATOR_H
 
@@ -55,6 +55,7 @@ namespace Fabric
       friend class BindingList;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Operator> Create( std::string const &name, RC::Handle<Context> const &context );
       

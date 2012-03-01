@@ -1,10 +1,7 @@
 /*
- *
- *  Created by Peter Zion on 10-10-08.
- *  Copyright 2010 Fabric 3D Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/MT/ParallelCall.h>
 
 namespace Fabric

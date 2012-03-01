@@ -1,0 +1,1 @@
+error-no-cast-from-struct-to-boolean.kl:7:3: error: no cast exists from MyType to Boolean

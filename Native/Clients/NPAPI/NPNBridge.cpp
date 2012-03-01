@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 #include <assert.h>
 #include <npapi/npapi.h>
 #include <npapi/npfunctions.h>

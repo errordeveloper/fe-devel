@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_VALUE_PRODUCER_WRAPPER_H
 #define _FABRIC_MR_VALUE_PRODUCER_WRAPPER_H
 
@@ -20,6 +20,7 @@ namespace Fabric
       // Virtual functions: GC::Object
       
     public:
+      REPORT_RC_LEAKS
       
       virtual RC::ConstHandle<ValueProducer> getUnwrapped() const = 0;
 

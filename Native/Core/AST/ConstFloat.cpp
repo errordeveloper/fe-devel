@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include "ConstFloat.h"
@@ -36,12 +36,12 @@ namespace Fabric
     
     void ConstFloat::registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const
     {
-      cgManager->getFP64Adapter();
+      cgManager->getFloat64Adapter();
     }
     
     CG::ExprType ConstFloat::getExprType( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
-      RC::ConstHandle<CG::Adapter> adapter = basicBlockBuilder.getManager()->getFP64Adapter();
+      RC::ConstHandle<CG::Adapter> adapter = basicBlockBuilder.getManager()->getFloat64Adapter();
       adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
       return CG::ExprType( adapter, CG::USAGE_RVALUE );
     }
@@ -50,7 +50,7 @@ namespace Fabric
     {
       if ( usage == CG::USAGE_LVALUE )
         throw Exception( "constants cannot be used as l-values" );
-      RC::ConstHandle<CG::FloatAdapter> floatAdapter = basicBlockBuilder.getManager()->getFP64Adapter();
+      RC::ConstHandle<CG::FloatAdapter> floatAdapter = basicBlockBuilder.getManager()->getFloat64Adapter();
       floatAdapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
       double value = Util::parseDouble( m_valueString );
       return CG::ExprValue( floatAdapter, CG::USAGE_RVALUE, basicBlockBuilder.getContext(), floatAdapter->llvmConst( basicBlockBuilder.getContext(), value ) );

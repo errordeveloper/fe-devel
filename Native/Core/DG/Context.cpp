@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/DG/Context.h>
 #include <Fabric/Core/DG/CodeManager.h>
 #include <Fabric/Core/DG/Client.h>
@@ -46,17 +46,15 @@ namespace Fabric
   {
     Util::Mutex Context::s_contextMapMutex("Context::s_contextMapMutex");
     Context::ContextMap Context::s_contextMap;
-    static bool s_checkExpiry = true;
 
     RC::Handle<Context> Context::Create(
       RC::Handle<IO::Manager> const &ioManager,
       std::vector<std::string> const &pluginDirs,
       CG::CompileOptions const &compileOptions,
-      bool optimizeSynchronously,
-      bool checkExpiry
+      bool optimizeSynchronously
       )
     {
-       return new Context( ioManager, pluginDirs, compileOptions, optimizeSynchronously, checkExpiry );
+       return new Context( ioManager, pluginDirs, compileOptions, optimizeSynchronously );
     }
     
     RC::Handle<Context> Context::Bind( std::string const &contextID )
@@ -72,8 +70,7 @@ namespace Fabric
       RC::Handle<IO::Manager> const &ioManager,
       std::vector<std::string> const &pluginDirs,
       CG::CompileOptions const &compileOptions,
-      bool optimizeSynchronously,
-      bool checkExpiry
+      bool optimizeSynchronously
       )
       : m_mutex( "Context::Context" )
       , m_logCollector( LogCollector::Create( this ) )
@@ -97,8 +94,6 @@ namespace Fabric
       static const size_t contextIDByteCount = 96;
       uint8_t contextIDBytes[contextIDByteCount];
       Util::generateSecureRandomBytes( contextIDByteCount, contextIDBytes );
-      
-      s_checkExpiry = checkExpiry;
 
       m_contextID = Util::encodeBase64( contextIDBytes, contextIDByteCount );
       Util::Mutex::Lock contextMapLock( s_contextMapMutex );
@@ -349,19 +344,6 @@ namespace Fabric
       return eventHandler;
     }
     
-    static bool IsExpired()
-    {
-      static bool haveIsExpired = false;
-      static bool isExpired;
-      if ( !haveIsExpired )
-      {
-        time_t currentTime = time( NULL );
-        isExpired = s_checkExpiry && currentTime >= buildExpiry;
-        haveIsExpired = true;
-      }
-      return isExpired;
-    }
-    
     void Context::jsonRoute(
       std::vector<JSON::Entity> const &dst,
       size_t dstOffset,
@@ -370,13 +352,6 @@ namespace Fabric
       JSON::ArrayEncoder &resultArrayEncoder
       )
     {
-      if ( IsExpired() )
-      {
-        static char const *expiryMessage = "This build of Fabric has expired and will no longer work!\nContact customer support to obtain a more recent build.";
-        FABRIC_LOG( expiryMessage );
-        throw Exception( expiryMessage );
-      }
-      
       Util::Mutex::Lock mutexLock( m_mutex );
       if ( dst.size() - dstOffset == 0 )
       {
@@ -535,10 +510,6 @@ namespace Fabric
     static void jsonDescBuild( JSON::Encoder &resultEncoder )
     {
       JSON::ObjectEncoder resultObjectEncoder = resultEncoder.makeObject();
-      {
-        JSON::Encoder memberEncoder = resultObjectEncoder.makeMember( "isExpired", 9 );
-        memberEncoder.makeBoolean( IsExpired() );
-      }
       {
         JSON::Encoder memberEncoder = resultObjectEncoder.makeMember( "name", 4 );
         memberEncoder.makeString( buildName );

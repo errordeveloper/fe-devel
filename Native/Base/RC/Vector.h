@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_RC_VECTOR_H
@@ -17,6 +17,7 @@ namespace Fabric
     template<class T> class Vector : public Object, public std::vector<T>
     {
     public:
+      REPORT_RC_LEAKS
     
       static Handle<Vector> Create()
       {

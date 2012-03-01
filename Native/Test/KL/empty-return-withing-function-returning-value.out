@@ -1,2 +1,2 @@
-empty-return-withing-function-returning-value.kl:3:3: error: function must return a value
-empty-return-withing-function-returning-value.kl:1:1: error: not all paths return a value
+empty-return-withing-function-returning-value.kl:7:3: error: function must return a value
+empty-return-withing-function-returning-value.kl:5:1: error: not all paths return a value

@@ -1,1 +1,1 @@
-error-no-uni-op.kl:9:10: error: no definition found for unary operator -(io S)
+error-no-uni-op.kl:13:10: error: no definition found for unary operator -(io S)

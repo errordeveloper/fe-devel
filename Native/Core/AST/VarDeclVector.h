@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_VAR_DECL_VECTOR_H
 #define _FABRIC_AST_VAR_DECL_VECTOR_H
 
@@ -31,6 +31,7 @@ namespace Fabric
     class VarDeclVector : public RC::Vector< RC::ConstHandle<VarDecl> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<VarDeclVector> Create( RC::ConstHandle<VarDecl> const &first = 0, RC::ConstHandle<VarDeclVector> const &remaining = 0 );
 

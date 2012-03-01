@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_CG_STRUCT_ADAPTER_H
 #define _FABRIC_CG_STRUCT_ADAPTER_H
 
@@ -28,6 +28,7 @@ namespace Fabric
       typedef std::vector< RC::ConstHandle<Adapter> > MemberAdaptorVector;
       
     public:
+      REPORT_RC_LEAKS
     
       // Adapter
 

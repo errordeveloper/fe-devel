@@ -1,0 +1,5 @@
+const Size display = 42;
+
+function display() {
+  report "hello";
+}

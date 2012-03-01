@@ -1,1 +1,1 @@
-return-from-procedure.kl:3:3: error: functions with no return types do not return values
+return-from-procedure.kl:7:3: error: functions with no return types do not return values

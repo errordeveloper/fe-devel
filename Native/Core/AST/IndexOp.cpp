@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 #include "IndexOp.h"
 #include <Fabric/Core/CG/ArrayAdapter.h>
 #include <Fabric/Core/CG/DictAdapter.h>

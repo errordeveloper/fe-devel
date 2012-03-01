@@ -1,10 +1,9 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
-#include "SlicedArrayDesc.h"
-#include "SlicedArrayImpl.h"
 
+#include <Fabric/Core/RT/SlicedArrayDesc.h>
+#include <Fabric/Core/RT/SlicedArrayImpl.h>
 #include <Fabric/Base/Exception.h>
 #include <Fabric/Base/JSON/Encoder.h>
 
@@ -12,8 +11,18 @@ namespace Fabric
 {
   namespace RT
   {
-    SlicedArrayDesc::SlicedArrayDesc( std::string const &name, RC::ConstHandle<SlicedArrayImpl> const &slicedArrayImpl, RC::ConstHandle<Desc> const &memberDesc )
-      : ArrayDesc( name, slicedArrayImpl, memberDesc )
+    SlicedArrayDesc::SlicedArrayDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<SlicedArrayImpl> const &slicedArrayImpl,
+      RC::ConstHandle<Desc> const &memberDesc
+      )
+      : ArrayDesc(
+        userNameBase,
+        userNameArraySuffix,
+        slicedArrayImpl,
+        memberDesc
+        )
       , m_slicedArrayImpl( slicedArrayImpl )
     {
     }
@@ -34,5 +43,5 @@ namespace Fabric
     {
       return m_slicedArrayImpl->setNumMembers( data, numMembers, defaultMemberData );
     }
-  };
-};
+  }
+}

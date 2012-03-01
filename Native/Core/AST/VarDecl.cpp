@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "VarDecl.h"
 #include <Fabric/Core/CG/Adapter.h>
 #include <Fabric/Core/CG/Manager.h>
@@ -13,17 +13,6 @@ namespace Fabric
 {
   namespace AST
   {
-    FABRIC_AST_NODE_IMPL( VarDecl );
-    
-    RC::ConstHandle<VarDecl> VarDecl::Create(
-      CG::Location const &location,
-      std::string const &name,
-      std::string const &arrayModifier
-      )
-    {
-      return new VarDecl( location, name, arrayModifier );
-    }
-    
     VarDecl::VarDecl(
       CG::Location const &location,
       std::string const &name,
@@ -62,11 +51,6 @@ namespace Fabric
       getAdapter( baseType, cgManager, diagnostics );
     }
 
-    void VarDecl::llvmCompileToBuilder( std::string const &baseType, CG::BasicBlockBuilder &basicBlockBuilder, CG::Diagnostics &diagnostics ) const
-    {
-      llvmAllocateVariable( baseType, basicBlockBuilder, diagnostics );
-    }
-
     CG::ExprValue VarDecl::llvmAllocateVariable( std::string const &baseType, CG::BasicBlockBuilder &basicBlockBuilder, CG::Diagnostics &diagnostics ) const
     {
       RC::ConstHandle<CG::Adapter> adapter = getAdapter( baseType, basicBlockBuilder.getManager(), diagnostics );
@@ -76,8 +60,8 @@ namespace Fabric
       adapter->llvmInit( basicBlockBuilder, result );
       
       CG::Scope &scope = basicBlockBuilder.getScope();
-      if ( scope.has( m_name ) )
-        addError( diagnostics, ("variable '" + m_name + "' already exists").c_str() );
+      if ( scope.hasLocal( m_name ) )
+        addError( diagnostics, ("variable " + _(m_name) + " already exists").c_str() );
       else scope.put( m_name, CG::VariableSymbol::Create( CG::ExprValue( adapter, CG::USAGE_LVALUE, basicBlockBuilder.getContext(), result ) ) );
         
       return CG::ExprValue( adapter, CG::USAGE_LVALUE, basicBlockBuilder.getContext(), result );

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_MANAGER_H
 #define _FABRIC_RT_MANAGER_H
 
@@ -51,6 +51,7 @@ namespace Fabric
     class Manager : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       class KLCompiler : public RC::Object
       {
@@ -71,8 +72,8 @@ namespace Fabric
       RC::ConstHandle<IntegerDesc> getIntegerDesc() const;
       RC::ConstHandle<SizeDesc> getSizeDesc() const;
       RC::ConstHandle<Desc> getIndexDesc() const;
-      RC::ConstHandle<FloatDesc> getScalarDesc() const;
-      RC::ConstHandle<FloatDesc> getFP64Desc() const;
+      RC::ConstHandle<FloatDesc> getFloat32Desc() const;
+      RC::ConstHandle<FloatDesc> getFloat64Desc() const;
       RC::ConstHandle<StringDesc> getStringDesc() const;
       RC::ConstHandle<OpaqueDesc> getDataDesc() const;
       RC::ConstHandle<ContainerDesc> getContainerDesc() const;
@@ -129,7 +130,7 @@ namespace Fabric
       RC::ConstHandle<IntegerDesc> m_integerDesc;
       RC::ConstHandle<SizeDesc> m_sizeDesc;
       RC::ConstHandle<Desc> m_indexDesc;
-      RC::ConstHandle<FloatDesc> m_scalarDesc;
+      RC::ConstHandle<FloatDesc> m_fp32Desc;
       RC::ConstHandle<FloatDesc> m_fp64Desc;
       RC::ConstHandle<StringDesc> m_stringDesc;
       RC::ConstHandle<OpaqueDesc> m_dataDesc;

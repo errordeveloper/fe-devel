@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "ValueProducerDesc.h"
 #include "ValueProducerImpl.h"
 #include <Fabric/Base/JSON/Encoder.h>
@@ -11,11 +11,16 @@ namespace Fabric
   namespace RT
   {
     ValueProducerDesc::ValueProducerDesc(
-      std::string const &name,
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
       RC::ConstHandle<ValueProducerImpl> const &valueProducerImpl,
       RC::ConstHandle<RT::Desc> const &valueDesc
       )
-      : Desc( name, valueProducerImpl )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        valueProducerImpl
+        )
       , m_valueProducerImpl( valueProducerImpl )
       , m_valueDesc( valueDesc )
     {

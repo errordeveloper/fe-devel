@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 function Size fsum(Size n) {
   Size result = 0;
   for (Size f=2; f*f<=n; ++f) {

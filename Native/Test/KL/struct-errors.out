@@ -1,3 +1,3 @@
-struct-errors.kl:3:3: error: 'UnregisteredType': type not registered
-struct-errors.kl:3:3: error: member 'a': type 'UnregisteredType' not registered
-struct-errors.kl:12:1: error: type 'Bar' already registered with a different definition
+struct-errors.kl:7:3: error: 'UnregisteredType': type not registered
+struct-errors.kl:7:3: error: member 'a': type 'UnregisteredType' not registered
+struct-errors.kl:16:1: error: type 'Bar' already registered with a different definition

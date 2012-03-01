@@ -1,0 +1,3 @@
+op.getErrors(): 
+node.getErrors(): binding 0: operator 'foo': node 'self': parameter 1: member 'bar': parameter type mismatch: member array type is 'Size<>[]', operator parameter type is 'Integer<>[]'
+Caught exception: Fabric core exception: DG.fooNode.evaluate(): cannot execute because of errors

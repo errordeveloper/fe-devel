@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_PYTHON_CLIENT_WRAP_H
 #define _FABRIC_PYTHON_CLIENT_WRAP_H
 
@@ -22,6 +22,7 @@ namespace Fabric
     class ClientWrap : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       ClientWrap();
       virtual ~ClientWrap();

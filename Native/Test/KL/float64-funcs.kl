@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 function Float64 truncate( Float64 x ) {
   return round( x * 100000.0 );
 }

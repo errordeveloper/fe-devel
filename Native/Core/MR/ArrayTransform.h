@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_ARRAY_TRANSFORM_H
 #define _FABRIC_MR_ARRAY_TRANSFORM_H
 
@@ -20,6 +20,7 @@ namespace Fabric
     class ArrayTransform : public ArrayProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayTransform> Create(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer,
@@ -40,6 +41,7 @@ namespace Fabric
       class ComputeState : public ArrayProducer::ComputeState
       {
       public:
+        REPORT_RC_LEAKS
       
         static RC::Handle<ComputeState> Create( RC::ConstHandle<ArrayTransform> const &arrayTransform );
       

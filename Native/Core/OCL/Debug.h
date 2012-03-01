@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-10-12.
- *  Copyright 2010 Fabric 3D Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_OCL_DEBUG_H

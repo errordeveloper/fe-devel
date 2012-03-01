@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_CG_VARIABLE_ARRAY_ADAPTER_H
 #define _FABRIC_CG_VARIABLE_ARRAY_ADAPTER_H
 
@@ -23,6 +23,7 @@ namespace Fabric
       friend class SlicedArrayAdapter;
     
     public:
+      REPORT_RC_LEAKS
 
       // Adapter
     

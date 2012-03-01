@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-12-02.
- *  Copyright 2010 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_CASE_H
@@ -28,6 +25,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( Case );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<Case> Create(
         CG::Location const &location,

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_CONTAINER_DESC_H
 #define _FABRIC_RT_CONTAINER_DESC_H
 
@@ -23,6 +23,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       virtual void jsonDesc( JSON::ObjectEncoder &resultObjectEncoder ) const;
 
@@ -31,13 +32,17 @@ namespace Fabric
 
     protected:
     
-      ContainerDesc( std::string const &name, RC::ConstHandle<ContainerImpl> const &containerImpl );
+      ContainerDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ContainerImpl> const &containerImpl
+        );
     
     private:
     
       RC::ConstHandle<ContainerImpl> m_containerImpl;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_CONTAINER_DESC_H

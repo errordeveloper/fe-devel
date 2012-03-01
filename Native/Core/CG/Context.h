@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_CG_CONTEXT_H
 #define _FABRIC_CG_CONTEXT_H
 
@@ -26,6 +26,7 @@ namespace Fabric
       typedef std::map< std::string, llvm::Type const * > LLVMTypeMap;
     
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Context> Create();
       

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/AST/GlobalList.h>
 #include <Fabric/Core/AST/Function.h>
 #include <Fabric/Core/AST/Global.h>
@@ -56,14 +56,14 @@ namespace Fabric
         m_after->appendJSON( jsonArrayEncoder, includeLocation );
     }
     
-    void GlobalList::collectUses( UseNameToLocationMap &uses ) const
+    void GlobalList::collectRequires( RequireNameToLocationMap &requires ) const
     {
       if ( m_before )
-        m_before->collectUses( uses );
+        m_before->collectRequires( requires );
       if ( m_global )
-        m_global->collectUses( uses );
+        m_global->collectRequires( requires );
       if ( m_after )
-        m_after->collectUses( uses );
+        m_after->collectRequires( requires );
     }
     
     void GlobalList::registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const
@@ -113,5 +113,5 @@ namespace Fabric
       if ( m_after )
         m_after->collectFunctionBases( result );
     }
-  };
-};
+  }
+}

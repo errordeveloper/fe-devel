@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "StringDesc.h"
 #include "StringImpl.h"
 #include <Fabric/Base/JSON/Encoder.h>
@@ -10,8 +10,16 @@ namespace Fabric
 {
   namespace RT
   {
-    StringDesc::StringDesc( std::string const &name, RC::ConstHandle<StringImpl> const &stringImpl )
-      : ComparableDesc( name, stringImpl )
+    StringDesc::StringDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<StringImpl> const &stringImpl
+      )
+      : ComparableDesc(
+        userNameBase,
+        userNameArraySuffix,
+        stringImpl
+        )
       , m_stringImpl( stringImpl )
     {
     }
@@ -36,5 +44,5 @@ namespace Fabric
       Desc::jsonDesc( resultObjectEncoder );
       resultObjectEncoder.makeMember( "internalType" ).makeString( "string" );
     }
-  };
-};
+  }
+}

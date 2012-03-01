@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_NPAPI_CONTEXT_H
@@ -38,6 +38,7 @@ namespace Fabric
       typedef std::map< std::string, ViewPort * > ViewPorts;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Context> Create( RC::Handle<IOManager> const &ioManager, std::vector<std::string> const &pluginDirs );
       

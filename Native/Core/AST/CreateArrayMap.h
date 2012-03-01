@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_CREATE_ARRAY_MAP_H
@@ -16,6 +16,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( CreateArrayMap );
 
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<CreateArrayMap> Create(
         CG::Location const &location,

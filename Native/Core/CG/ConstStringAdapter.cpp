@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "ConstStringAdapter.h"
 #include "BooleanAdapter.h"
 #include "IntegerAdapter.h"

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_DG_SCOPE_H
@@ -80,7 +80,7 @@ namespace Fabric
     class NamedScope : public Scope
     {
     public:
-    
+   
       NamedScope( std::string const &name, RC::Handle<Container> const &container, Scope const *parentScope = 0 )
         : Scope( parentScope )
         , m_name( name )

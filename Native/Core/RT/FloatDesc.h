@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_FLOAT_DESC_H
 #define _FABRIC_RT_FLOAT_DESC_H
 
@@ -15,11 +15,22 @@ namespace Fabric
     class FloatDesc : public NumericDesc
     {
       friend class Manager;
+
+    public:
+      REPORT_RC_LEAKS
       
     protected:
     
-      FloatDesc( std::string const &name, RC::ConstHandle<FloatImpl> const &floatImpl )
-        : NumericDesc( name, floatImpl )
+      FloatDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<FloatImpl> const &floatImpl
+        )
+        : NumericDesc(
+          userNameBase,
+          userNameArraySuffix,
+          floatImpl
+          )
         , m_floatImpl( floatImpl )
       {
       }
@@ -54,8 +65,16 @@ namespace Fabric
       
     protected:
     
-      FloatDescT( std::string const &name, RC::ConstHandle< FloatImplT<T> > const &floatImpl )
-        : FloatDesc( name, floatImpl )
+      FloatDescT(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle< FloatImplT<T> > const &floatImpl
+        )
+        : FloatDesc(
+          userNameBase,
+          userNameArraySuffix,
+          floatImpl
+          )
         , m_floatImpl( floatImpl )
       {
       }
@@ -65,18 +84,46 @@ namespace Fabric
       RC::ConstHandle< FloatImplT<T> > m_floatImpl;
     };
     
-    class FP32Desc : public FloatDescT<float>
+    class Float32Desc : public FloatDescT<float>
     {
       friend class Manager;
       
     protected:
     
-      FP32Desc( std::string const &name, RC::ConstHandle<FP32Impl> fp32Impl )
-        : FloatDescT<float>( name, fp32Impl )
+      Float32Desc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<Float32Impl> const &float32Impl
+        )
+        : FloatDescT<float>(
+          userNameBase,
+          userNameArraySuffix,
+          float32Impl
+          )
       {
       }
     };
-  };
-};
+    
+    class Float64Desc : public FloatDescT<double>
+    {
+      friend class Manager;
+      
+    protected:
+    
+      Float64Desc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<Float64Impl> const &float64Impl
+        )
+        : FloatDescT<double>(
+          userNameBase,
+          userNameArraySuffix,
+          float64Impl
+          )
+      {
+      }
+    };
+  }
+}
 
 #endif //_FABRIC_RT_FLOAT_DESC_H

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2012 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_IO_FILEHANDLEMANAGER_H
@@ -17,24 +17,28 @@ namespace Fabric
     class FileHandleManager : public RC::Object
     {
     public:
-      static RC::Handle<FileHandleManager> Create();
-      char const * getUrlScheme() const;
+
+      virtual char const * getUrlScheme() const = 0;
 
       //Note: createHandle does no check if the file/folder exists
-      virtual std::string createHandle( std::string const &path, bool folder, bool readOnly );
-      virtual std::string createRelativeHandle( std::string const &handlePlusRelativePath, bool folder );
+      virtual std::string createHandle( std::string const &path, bool folder, bool readOnly ) = 0;
+      virtual std::string createRelativeHandle( std::string const &handlePlusRelativePath, bool folder ) = 0;
 
       //Note: the following methods supports handle with relative path postfix when applicable
-      bool isValid( std::string const &handle ) const;
-      bool hasRelativePath( std::string const &handle ) const;
-      std::string getPath( std::string const &handle ) const;
-      bool isReadOnly( std::string const &handle ) const;
-      bool isFolder( std::string const &handle ) const;
+      virtual bool isValid( std::string const &handle ) const = 0;
+      virtual bool hasRelativePath( std::string const &handle ) const = 0;
+      virtual std::string getPath( std::string const &handle ) const = 0;
+      virtual bool isReadOnly( std::string const &handle ) const = 0;
+      virtual bool isFolder( std::string const &handle ) const = 0;
+
       bool targetExists( std::string const &handle ) const;
       void ensureTargetExists( std::string const &handle ) const;
 
       void putFile( std::string const &handle, size_t size, const void* data, bool append ) const;
       void copyFile( std::string const &source, std::string const &target ) const;
+
+    protected:
+      FileHandleManager();
 
     private:
       struct Data
@@ -49,8 +53,6 @@ namespace Fabric
 
       typedef std::map< std::string, Data > HandleToDataMap;
       typedef std::multimap< std::string, HandleToDataMap::iterator > PathToHandleMap;
-
-      FileHandleManager();
 
       Data const &validateHandleAndGetData( std::string const &handle, std::string& relativePathPostfix ) const;
       std::string getPathInternal( Data const &data, std::string const &relativePathPostfix ) const;

@@ -824,33 +824,6 @@ install_tiff_libraries:
           cp Build/tiff-$(TIFF_VERSION)-$$ARCH/libtiff/.libs/*.a $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/lib/tiff/; \
         done
 
-install_opencv: install_opencv_headers install_opencv_libraries
-
-install_opencv_headers:
-	for ARCH in $(ARCHS); do \
-          mkdir -p $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-          cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/include/open* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/calib3d/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/contrib/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/core/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/features2d/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/flann/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/gpu/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/highgui/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/imgproc/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/legacy/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/ml/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/objdetect/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/ts/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-					cp -r Build/OpenCV-$(OPENCV_VERSION)-$(FIRST_ARCH)/modules/video/include/* $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/OpenCV; \
-        done
-
-install_opencv_libraries:
-	for ARCH in $(ARCHS); do \
-          mkdir -p $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/lib/OpenCV/; \
-          cp Build/OpenCV-$(OPENCV_VERSION)-$$ARCH/lib/*.a $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/lib/OpenCV/; \
-        done
-
 install_ilmbase: install_ilmbase_headers install_ilmbase_libraries
 
 install_ilmbase_headers:
@@ -1117,12 +1090,6 @@ clean_tiff:
 		rm -rf Build/tiff-$(TIFF_VERSION)-$$ARCH; \
 	done
 	rm -rf Build/.tiff.*
-
-clean_opencv:
-	for ARCH in $(ARCHS); do \
-		rm -rf Build/OpenCV-$(OPENCV_VERSION)-$$ARCH; \
-	done
-	rm -rf Build/.opencv.*
 
 clean_libedit:
 	for ARCH in $(ARCHS); do \

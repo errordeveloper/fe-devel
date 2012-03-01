@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_PLUG_INST_H
@@ -65,6 +65,7 @@ namespace Fabric
       typedef std::map< std::string, void * > ExternalFunctionMap;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Inst> Create(
         RC::ConstHandle<IO::Dir> const &extensionDir,

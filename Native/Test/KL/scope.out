@@ -1,0 +1,22 @@
+top of entry; t is now 2.75
+created T; s = entryT
+declared t in entry; t is now {s:"entryT"}
+start of foo; t is now {s:"entryT"}
+created T; s = fooT
+declared t in foo; t is now {s:"fooT"}
+top of loop body; t is now {s:"fooT"}
+created T; s = loopT:0
+declared t in loop; t is now {s:"loopT:0"}
+destroying T; s = loopT:0
+top of loop body; t is now {s:"fooT"}
+created T; s = loopT:1
+declared t in loop; t is now {s:"loopT:1"}
+destroying T; s = loopT:1
+top of loop body; t is now {s:"fooT"}
+created T; s = loopT:2
+declared t in loop; t is now {s:"loopT:2"}
+destroying T; s = loopT:2
+after loop; t is now {s:"fooT"}
+destroying T; s = fooT
+came back from foo; t is now {s:"entryT"}
+destroying T; s = entryT

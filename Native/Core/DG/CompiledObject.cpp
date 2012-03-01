@@ -1,8 +1,9 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Core/DG/CompiledObject.h>
+#include <Fabric/Core/DG/Context.h>
 #include <Fabric/Core/Util/Timer.h>
 #include <Fabric/Base/JSON/Encoder.h>
 
@@ -13,11 +14,13 @@ namespace Fabric
   namespace DG
   {
     CompiledObject::CompiledObject( RC::Handle<Context> const &context )
-      : m_markForRecompileGeneration( s_markForRecompileGlobalGeneration )
-      , m_markForRefreshGeneration( s_markForRefreshGlobalGeneration )
-      , m_collectTasksGeneration( s_collectTasksGlobalGeneration )
+      : m_context( context.ptr() )
       , m_canExecute( true )
     {
+      GlobalData *cogd = m_context->getCompiledObjectGlobalData();
+      m_markForRecompileGeneration = cogd->markForRecompileGlobalGeneration;
+      m_markForRefreshGeneration = cogd->markForRefreshGlobalGeneration;
+      m_collectTasksGeneration = cogd->collectTasksGlobalGeneration;
     }
     
     CompiledObject::Errors const &CompiledObject::getErrors() const
@@ -37,14 +40,16 @@ namespace Fabric
     
     void CompiledObject::markForRecompile()
     {
-      markForRecompile( s_markForRecompileGlobalGeneration + 1 );
+      GlobalData *cogd = m_context->getCompiledObjectGlobalData();
+      markForRecompile( cogd->markForRecompileGlobalGeneration + 1 );
     }
     
     void CompiledObject::markForRecompile( unsigned generation )
     {
       if ( m_markForRecompileGeneration != generation )
       {
-        s_compiledObjectsMarkedForRecompile.insert( this );
+        GlobalData *cogd = m_context->getCompiledObjectGlobalData();
+        cogd->compiledObjectsMarkedForRecompile.insert( this );
         m_markForRecompileGeneration = generation;
         propagateMarkForRecompileImpl( generation );
       }
@@ -83,17 +88,19 @@ namespace Fabric
     
     void CompiledObject::markForRefresh()
     {
-      markForRefresh( s_markForRefreshGlobalGeneration + 1 );
+      GlobalData *cogd = m_context->getCompiledObjectGlobalData();
+      markForRefresh( cogd->markForRefreshGlobalGeneration + 1 );
     }
     
     void CompiledObject::markForRefresh( unsigned generation )
     {
       if ( m_markForRefreshGeneration != generation )
       {
+        GlobalData *cogd = m_context->getCompiledObjectGlobalData();
         {//Scope mutexLock
           //[JCG 20111220 Container::resize can happen in parallel and will call this function]
-          Util::Mutex::Lock mutexLock( s_markForRefreshMutex );
-          s_compiledObjectsMarkedForRefresh.insert( this );
+          Util::Mutex::Lock mutexLock( cogd->markForRefreshMutex );
+          cogd->compiledObjectsMarkedForRefresh.insert( this );
         }
         m_markForRefreshGeneration = generation;
         propagateMarkForRefreshImpl( generation );
@@ -111,7 +118,8 @@ namespace Fabric
     
     void CompiledObject::collectTasks( MT::TaskGroupStream &taskGroupStream ) const
     {
-      collectTasks( ++s_collectTasksGlobalGeneration, taskGroupStream );
+      GlobalData *cogd = m_context->getCompiledObjectGlobalData();
+      collectTasks( ++cogd->collectTasksGlobalGeneration, taskGroupStream );
     }
       
     void CompiledObject::collectTasks( unsigned generation, MT::TaskGroupStream &taskGroupStream ) const
@@ -122,15 +130,6 @@ namespace Fabric
         collectTasksImpl( generation, taskGroupStream );
       }
     }
-    
-    std::set< RC::Handle<CompiledObject> > CompiledObject::s_compiledObjectsMarkedForRecompile;
-    unsigned CompiledObject::s_markForRecompileGlobalGeneration = 0;
-    
-    std::set< RC::Handle<CompiledObject> > CompiledObject::s_compiledObjectsMarkedForRefresh;
-    Util::Mutex CompiledObject::s_markForRefreshMutex( "DG::CompiledObject::MarkForRefresh" );
-    unsigned CompiledObject::s_markForRefreshGlobalGeneration = 0;
-    
-    unsigned CompiledObject::s_collectTasksGlobalGeneration = 0;
       
     void CompiledObject::jsonDescErrors( JSON::Encoder &resultEncoder ) const
     {
@@ -148,21 +147,23 @@ namespace Fabric
     {
     }
     
-    void CompiledObject::PrepareForExecution()
+    void CompiledObject::PrepareForExecution( RC::Handle<Context> const &context )
     {
-      if ( !s_compiledObjectsMarkedForRecompile.empty() )
+      GlobalData *cogd = context->getCompiledObjectGlobalData();
+
+      if ( !cogd->compiledObjectsMarkedForRecompile.empty() )
       {
-        Compile( s_compiledObjectsMarkedForRecompile );
-        s_compiledObjectsMarkedForRecompile.clear();
+        Compile( cogd->compiledObjectsMarkedForRecompile );
+        cogd->compiledObjectsMarkedForRecompile.clear();
       }
-      ++s_markForRecompileGlobalGeneration;
+      ++cogd->markForRecompileGlobalGeneration;
       
-      if ( !s_compiledObjectsMarkedForRefresh.empty() )
+      if ( !cogd->compiledObjectsMarkedForRefresh.empty() )
       {
-        Refresh( s_compiledObjectsMarkedForRefresh );
-        s_compiledObjectsMarkedForRefresh.clear();
+        Refresh( cogd->compiledObjectsMarkedForRefresh );
+        cogd->compiledObjectsMarkedForRefresh.clear();
       }
-      ++s_markForRefreshGlobalGeneration;
+      ++cogd->markForRefreshGlobalGeneration;
     }
-  };
-};
+  }
+}

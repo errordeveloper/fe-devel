@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Clients/NPAPI/Linux/X11ViewPort.h>
@@ -51,14 +51,7 @@ namespace Fabric
       if ( m_drawingArea )
       {
         DG::Context::NotificationBracket notificationBracket( getInterface()->getContext() );
-
-        GdkGLDrawable *gdkGLDrawable = gtk_widget_get_gl_drawable( m_drawingArea );
-        FABRIC_ASSERT( gdkGLDrawable );
-        GdkGLContext *gdkGLContext = gtk_widget_get_gl_context( m_drawingArea );
-        FABRIC_ASSERT( gdkGLContext );
-
-        bool gdkGLDrawableMakeCurrentResult = gdk_gl_drawable_make_current( gdkGLDrawable, gdkGLContext );
-        FABRIC_ASSERT( gdkGLDrawableMakeCurrentResult );
+        pushOGLContext();
 
         static bool printedOpenGLVersionString = false;
         if ( !printedOpenGLVersionString )
@@ -84,9 +77,11 @@ namespace Fabric
         drawWatermark( m_windowWidth, m_windowHeight );
         glFinish();
 
+        GdkGLDrawable *gdkGLDrawable = gdk_gl_drawable_get_current();
         if ( gdk_gl_drawable_is_double_buffered( gdkGLDrawable ) )
           gdk_gl_drawable_swap_buffers( gdkGLDrawable );
-          
+
+        popOGLContext();
         redrawFinished();
       }
     }
@@ -209,6 +204,10 @@ namespace Fabric
           gtk_widget_show_all( GTK_WIDGET(m_plug) );
 
           g_signal_connect( G_OBJECT(m_drawingArea), "event", G_CALLBACK( &X11ViewPort::EventCallback ), this );
+
+          //Test GL context validity
+          pushOGLContext();
+          popOGLContext();
         }
       }
 
@@ -248,8 +247,8 @@ namespace Fabric
       
     void X11ViewPort::pushOGLContext()
     {
-      m_gdkGLStack.push_back( GdkGLDrawableAndContext( gdk_gl_drawable_get_current(), gdk_gl_context_get_current() ) );
-      
+      GdkGLDrawableAndContext prevContext( gdk_gl_drawable_get_current(), gdk_gl_context_get_current() );
+
       if ( m_drawingArea )
       {
         GdkGLDrawable *gdkGLDrawable = gtk_widget_get_gl_drawable( m_drawingArea );
@@ -257,19 +256,20 @@ namespace Fabric
         GdkGLContext *gdkGLContext = gtk_widget_get_gl_context( m_drawingArea );
         FABRIC_ASSERT( gdkGLContext );
 
-        bool gdkGLDrawableMakeCurrentResult = gdk_gl_drawable_make_current( gdkGLDrawable, gdkGLContext );
-        FABRIC_ASSERT( gdkGLDrawableMakeCurrentResult );
+        if( !gdk_gl_drawable_make_current( gdkGLDrawable, gdkGLContext ) )
+          throw Exception( "Viewport error: unable to set OGL context" );
       }
+      m_gdkGLStack.push_back( prevContext );
     }
     
     void X11ViewPort::popOGLContext()
     {
       FABRIC_ASSERT( !m_gdkGLStack.empty() );
-
-      bool gdkGLDrawableMakeCurrentResult = gdk_gl_drawable_make_current( m_gdkGLStack.back().first, m_gdkGLStack.back().second );
-      FABRIC_ASSERT( gdkGLDrawableMakeCurrentResult );
-
+      GdkGLDrawableAndContext prevContext( m_gdkGLStack.back() );
       m_gdkGLStack.pop_back();
+
+      if( prevContext.first && !gdk_gl_drawable_make_current( prevContext.first, prevContext.second ) )
+        throw Exception( "Viewport error: unable to restore previous OGL context" );
     }
 
     std::string X11ViewPort::queryUserFilePath( bool existingFile, std::string const &title, std::string const &defaultFilename, std::string const &extension )

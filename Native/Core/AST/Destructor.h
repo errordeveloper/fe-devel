@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_DESTRUCTOR_H
 #define _FABRIC_AST_DESTRUCTOR_H
 
@@ -16,6 +16,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( Destructor );
 
     public:
+      REPORT_RC_LEAKS
 
       static RC::ConstHandle<Destructor> Create(
         CG::Location const &location,

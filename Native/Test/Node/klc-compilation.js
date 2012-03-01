@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 FC = require('Fabric').createClient();
 KLC = FC.KLC.createCompilation("foo.kl", "operator foo() { bad }");
 console.log(KLC.getSources());

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_CG_BIN_OP_BUILDER_H
 #define _FABRIC_CG_BIN_OP_BUILDER_H
 
@@ -44,7 +44,8 @@ namespace Fabric
             FriendlyFunctionParam( "lhs", lhsAdapter, USAGE_RVALUE ),
             FriendlyFunctionParam( "rhs", rhsAdapter, USAGE_RVALUE )
             ),
-          0
+          0,
+          PolymorphismParameters( PolymorphismParameters::PT_MIN_EXACT_TYPE_MATCH, 1 )
           )
       {
       }

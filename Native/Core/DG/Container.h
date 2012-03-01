@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_DG_CONTAINER_H
 #define _FABRIC_DG_CONTAINER_H
 
@@ -52,6 +52,7 @@ namespace Fabric
       friend class Prototype;
       
     public:
+      REPORT_RC_LEAKS
     
       virtual bool isContainer() const { return true; }
       virtual bool isNode() const { return false; }

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/RT/ConstStringDesc.h>
 #include <Fabric/Core/RT/ConstStringImpl.h>
 #include <Fabric/Base/JSON/Encoder.h>
@@ -10,8 +10,16 @@ namespace Fabric
 {
   namespace RT
   {
-    ConstStringDesc::ConstStringDesc( std::string const &name, RC::ConstHandle<ConstStringImpl> const &constStringImpl )
-      : Desc( name, constStringImpl )
+    ConstStringDesc::ConstStringDesc( 
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<ConstStringImpl> const &constStringImpl
+      )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        constStringImpl
+        )
       , m_constStringImpl( constStringImpl )
     {
     }

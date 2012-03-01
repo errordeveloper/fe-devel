@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 operator entry() {
   var Size index = 2;
   var Integer bob = ( index > 0 ? ( index > 4 ? 7 : 4 ) : 5);

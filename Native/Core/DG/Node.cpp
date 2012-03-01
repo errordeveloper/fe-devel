@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/DG/Node.h>
 #include <Fabric/Core/DG/Binding.h>
 #include <Fabric/Core/DG/Scope.h>
@@ -203,7 +203,7 @@ namespace Fabric
 
     void Node::evaluate()
     {
-      PrepareForExecution();
+      PrepareForExecution( m_context );
       ensureRunState();
       if ( !m_runState->canEvaluate )
         throw Exception( "cannot execute because of errors" );
@@ -220,7 +220,7 @@ namespace Fabric
       void *finishedUserdata
       )
     {
-      PrepareForExecution();
+      PrepareForExecution( m_context );
       ensureRunState();
       if ( !m_runState->canEvaluate )
         throw Exception( "cannot execute because of errors" );

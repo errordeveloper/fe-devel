@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Clients/NPAPI/Interface.h>
@@ -335,6 +335,9 @@ namespace Fabric
         NPN_ReleaseObject( m_callbackNPObject );
         m_callbackNPObject = 0;
       }
+
+      if ( m_context )
+        m_context->getIOManager()->getResourceManager()->releaseAllFiles();
 
       if ( m_viewPort )
         return m_viewPort->nppDestroy( save );

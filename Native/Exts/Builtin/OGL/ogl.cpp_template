@@ -77,13 +77,14 @@ static void _checkError(const char * functionName)
     size_t const maxBufLen = 4095;
     size_t bufLen = 0;
     char buf[maxBufLen+1];
+    bufLen += snprintf( buf, maxBufLen, "[Fabric::OGL::%s] ERROR(s): ", functionName );
     do
     {
-      if ( !bufLen )
-        bufLen += snprintf( buf, maxBufLen, "[Fabric::OGL::%s] ERROR(s): ", functionName );
-      else
-        bufLen += snprintf( buf, maxBufLen, ", " );
-      bufLen += snprintf( &buf[bufLen], maxBufLen - bufLen, "%s (0x%04X)", glErrorDesc( glError ), (unsigned)glError );
+      if( maxBufLen - bufLen )//snprintf returns -1 on some platforms if nb == 0
+			{
+        bufLen += snprintf( &buf[bufLen], maxBufLen - bufLen, ", " );
+				bufLen += snprintf( &buf[bufLen], maxBufLen - bufLen, "%s (0x%04X)", glErrorDesc( glError ), (unsigned)glError );
+			}
       glError = glGetError();
     } while ( glError != GL_NO_ERROR );
     printf( "%s\n", buf );

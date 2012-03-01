@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_DG_NAMED_OBJECT_H
@@ -22,6 +22,7 @@ namespace Fabric
     class NamedObject : public CompiledObject
     {
     public:
+      REPORT_RC_LEAKS
 
       std::string const &getName() const;
       

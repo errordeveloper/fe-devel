@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_NUMERIC_IMPL_H
 #define _FABRIC_RT_NUMERIC_IMPL_H
 
@@ -14,6 +14,7 @@ namespace Fabric
     class NumericImpl : public SimpleImpl
     {
     public:
+      REPORT_RC_LEAKS
     
       // NumericImpl
 
@@ -27,7 +28,7 @@ namespace Fabric
       {
       }
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_NUMERIC_IMPL_H

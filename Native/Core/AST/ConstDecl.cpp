@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include "ConstDecl.h"
@@ -78,10 +78,11 @@ namespace Fabric
       RC::ConstHandle<CG::ByteAdapter> byteAdapter = manager->getByteAdapter();
       RC::ConstHandle<CG::IntegerAdapter> integerAdapter = manager->getIntegerAdapter();
       RC::ConstHandle<CG::SizeAdapter> sizeAdapter = manager->getSizeAdapter();
-      RC::ConstHandle<CG::FloatAdapter> scalarAdapter = manager->getFP32Adapter();
+      RC::ConstHandle<CG::FloatAdapter> float32Adapter = manager->getFloat32Adapter();
+      RC::ConstHandle<CG::FloatAdapter> float64Adapter = manager->getFloat64Adapter();
       
       CG::ExprValue exprValue( moduleBuilder.getContext() );
-      if ( adapter == byteAdapter )
+      if ( adapter->isEquivalentTo( byteAdapter ) )
       {
         uint64_t uint64Value = Util::parseUInt64( m_value );
         if ( uint64Value > UINT8_MAX )
@@ -89,7 +90,7 @@ namespace Fabric
         uint8_t value = uint8_t(uint64Value);
         exprValue = CG::ExprValue( byteAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), byteAdapter->llvmConst( moduleBuilder.getContext(), value ) );
       }
-      else if ( adapter == integerAdapter )
+      else if ( adapter->isEquivalentTo( integerAdapter ) )
       {
         uint64_t uint64Value = Util::parseUInt64( m_value );
         if ( uint64Value > INT32_MAX )
@@ -97,7 +98,7 @@ namespace Fabric
         int32_t value = int32_t(uint64Value);
         exprValue = CG::ExprValue( integerAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), integerAdapter->llvmConst( moduleBuilder.getContext(), value ) );
       }
-      else if ( adapter == sizeAdapter )
+      else if ( adapter->isEquivalentTo( sizeAdapter ) )
       {
         uint64_t uint64Value = Util::parseUInt64( m_value );
         if ( uint64Value > SIZE_MAX )
@@ -105,9 +106,11 @@ namespace Fabric
         size_t value = size_t(uint64Value);
         exprValue = CG::ExprValue( sizeAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), sizeAdapter->llvmConst( moduleBuilder.getContext(), value ) );
       }
-      else if ( adapter == scalarAdapter )
-        exprValue = CG::ExprValue( scalarAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), scalarAdapter->llvmConst( moduleBuilder.getContext(), Util::parseDouble( m_value ) ) );
-      else throw CG::Error( getLocation(), "constant declaration type must be Byte, Integer, Size or Scalar" );
+      else if ( adapter->isEquivalentTo( float32Adapter ) )
+        exprValue = CG::ExprValue( float32Adapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), float32Adapter->llvmConst( moduleBuilder.getContext(), Util::parseDouble( m_value ) ) );
+      else if ( adapter->isEquivalentTo( float64Adapter ) )
+        exprValue = CG::ExprValue( float64Adapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), float64Adapter->llvmConst( moduleBuilder.getContext(), Util::parseDouble( m_value ) ) );
+      else throw CG::Error( getLocation(), "constant declaration type must be Byte, Integer, Size, Float32 or Float64" );
         
       if ( scope.has( m_name ) )
         throw CG::Error( getLocation(), "symbol " + _(m_name) + " already exists" );

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_PARAM_VECTOR_H
 #define _FABRIC_AST_PARAM_VECTOR_H
 
@@ -38,6 +38,7 @@ namespace Fabric
     class ParamVector : public RC::Vector< RC::ConstHandle<Param> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<ParamVector> Create( RC::ConstHandle<Param> const &firstParam = 0, RC::ConstHandle<ParamVector> const &remainingParams = 0 );
       static RC::ConstHandle<ParamVector> Create( RC::ConstHandle<Param> const &firstParam, RC::ConstHandle<Param> const &secondParam );

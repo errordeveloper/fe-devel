@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_STRUCT_DECL_MEMBER_VECTOR_H
 #define _FABRIC_AST_STRUCT_DECL_MEMBER_VECTOR_H
 
@@ -36,6 +36,7 @@ namespace Fabric
     class MemberDeclVector : public RC::Vector< RC::ConstHandle<MemberDecl> >
     {
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<MemberDeclVector> Create( RC::ConstHandle<MemberDecl> const &first = 0, RC::ConstHandle<MemberDeclVector> const &remaining = 0 );
 

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_PYTHON_CLIENT_H
 #define _FABRIC_PYTHON_CLIENT_H
 
@@ -21,6 +21,7 @@ namespace Fabric
     class Client : public DG::Client
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Client> Create( RC::Handle<DG::Context> const &context, ClientWrap *clientWrap );
       virtual void notify( Util::SimpleString const &jsonEncodedNotifications ) const;

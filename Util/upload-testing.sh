@@ -55,10 +55,8 @@ fi
 SG_DIR="$DIST_DIR/sg"
 rexec mkdir -p "$SG_DIR" || error
 rcp "$FABRIC_CORE_PATH/index.html" "$SG_DIR/" || error
-FABRIC_DIR="$SG_DIR/Fabric"
-rexec mkdir -p "$FABRIC_DIR" || error
 for DIR in "$FABRIC_CORE_PATH/Web/"*; do
-  rcp -r "$DIR" "$FABRIC_DIR/" || error
+  rcp -r "$DIR" "$SG_DIR/" || error
 done
 
 BIN_DIR="$DIST_DIR/bin"

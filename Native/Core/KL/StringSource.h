@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_KL_STRING_SOURCE_H
 #define _FABRIC_KL_STRING_SOURCE_H
 
@@ -18,6 +18,7 @@ namespace Fabric
     class StringSource : public Source
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<StringSource> Create( std::string const &filename, std::string const &source )
       {

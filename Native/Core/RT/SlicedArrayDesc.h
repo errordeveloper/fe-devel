@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_SLICED_ARRAY_DESC_H
 #define _FABRIC_RT_SLICED_ARRAY_DESC_H
 
@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       RC::ConstHandle<RT::SlicedArrayImpl> getImpl() const;
 
@@ -27,13 +28,18 @@ namespace Fabric
       
     protected:
     
-      SlicedArrayDesc( std::string const &name, RC::ConstHandle<SlicedArrayImpl> const &slicedArrayImpl, RC::ConstHandle<Desc> const &memberDesc );
+      SlicedArrayDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<SlicedArrayImpl> const &slicedArrayImpl,
+        RC::ConstHandle<Desc> const &memberDesc
+        );
       
     private:
     
       RC::ConstHandle<SlicedArrayImpl> m_slicedArrayImpl;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_SLICED_ARRAY_DESC_H

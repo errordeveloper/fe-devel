@@ -1,14 +1,13 @@
 /*
- *
- *  Created by Peter Zion on 10-12-02.
- *  Copyright 2010 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Core/AST/AssignedVarDecl.h>
 #include <Fabric/Core/AST/Expr.h>
 #include <Fabric/Core/CG/Adapter.h>
+#include <Fabric/Core/CG/Function.h>
 #include <Fabric/Core/CG/Mangling.h>
+#include <Fabric/Core/CG/ModuleBuilder.h>
 #include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Core/CG/Error.h>
 #include <Fabric/Base/Util/SimpleString.h>
@@ -68,12 +67,38 @@ namespace Fabric
           addError( diagnostics, e );
         }
         
-        if( initialExprExprValue.isValid() )
+        if ( !initialExprExprValue.isValid() )
+          throw CG::Error( getLocation(), "Invalid expression for variable assignment" );
+
+        CG::Function const *function = 0;
+        if ( !initialExprExprValue.getAdapter()->isEquivalentTo( result.getAdapter() ) )
+          function = basicBlockBuilder.getModuleBuilder().maybeGetFunction(
+            getLocation(),
+            CG::ConstructorPencilKey( result.getAdapter() ),
+            CG::ExprTypeVector(
+              result.getExprType(),
+              initialExprExprValue.getExprType()
+              ),
+            CG::ConstructorQueryDesc(
+              result.getAdapter(),
+              CG::AdapterVector(
+                initialExprExprValue.getAdapter()
+                )
+              )
+            );
+            
+        if ( function )
+        {
+          std::vector<CG::ExprValue> exprValues;
+          exprValues.push_back( result );
+          exprValues.push_back( initialExprExprValue );
+          function->llvmCreateCall( basicBlockBuilder, exprValues );
+        }
+        else
         {
           llvm::Value *initialExprCastedRValue = result.getAdapter()->llvmCast( basicBlockBuilder, initialExprExprValue );
           result.getAdapter()->llvmAssign( basicBlockBuilder, result.getValue(), initialExprCastedRValue );
         }
-        else addError( diagnostics, "Invalid expression for variable assignment" );
       }
       catch ( CG::Error e )
       {

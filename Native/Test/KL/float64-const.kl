@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 operator entry() {
   Float64 pi = 3.14159265358979;
   report pi;

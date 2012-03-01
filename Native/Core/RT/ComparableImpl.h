@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 #ifndef _FABRIC_RT_COMPARABLE_IMPL_H
 #define _FABRIC_RT_COMPARABLE_IMPL_H
 
@@ -10,6 +14,7 @@ namespace Fabric
     class ComparableImpl : public Impl
     {
     public:
+      REPORT_RC_LEAKS
     
       // Impl
       

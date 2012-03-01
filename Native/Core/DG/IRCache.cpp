@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/DG/IRCache.h>
 #include <Fabric/Core/IO/Dir.h>
 #include <Fabric/Core/Util/MD5.h>
@@ -21,14 +21,21 @@ namespace Fabric
 {
   namespace DG
   {
+    std::map< std::string, RC::Handle<IRCache> > g_instances;
+
     RC::Handle<IRCache> IRCache::Instance( CG::CompileOptions const *compileOptions )
     {
       std::string compileOptionsString = compileOptions->getString();
-      static std::map< std::string, RC::Handle<IRCache> > instances;
-      RC::Handle<IRCache> &instance = instances[compileOptionsString];
+      RC::Handle<IRCache> &instance = g_instances[compileOptionsString];
       if ( !instance )
         instance = new IRCache( compileOptionsString );
+
       return instance;
+    }
+
+    void IRCache::Terminate()
+    {
+      g_instances.clear();
     }
       
     IRCache::IRCache( std::string const &compileOptionsString )

@@ -1,14 +1,14 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Clients/NPAPI/IOManager.h>
 #include <Fabric/Clients/NPAPI/Context.h>
-#include <Fabric/Core/IO/FileHandleManager.h>
 #include <Fabric/Core/IO/FileHandleResourceProvider.h>
 #include <Fabric/Core/MT/LogCollector.h>
 #include <Fabric/Base/Util/Assert.h>
 #include <npapi/npapi.h>
+#include "SecureFileHandleManager.h"
 #include "HTTPResourceProvider.h"
 
 namespace Fabric
@@ -26,11 +26,12 @@ namespace Fabric
     }
   
     IOManager::IOManager( NPP npp )
-      : IO::Manager( ScheduleAsyncCallback, npp )
+      : IO::Manager( SecureFileHandleManager::Create(), ScheduleAsyncCallback, npp )
       , m_npp( npp )
       , m_httpResourceProvider( HTTPResourceProvider::Create( npp ) )
       , m_context( NULL )
     {
+      getResourceManager()->registerProvider( RC::Handle<IO::ResourceProvider>::StaticCast( IO::FileHandleResourceProvider::Create( getFileHandleManager() ) ) );
       getResourceManager()->registerProvider( RC::Handle<IO::ResourceProvider>::StaticCast( m_httpResourceProvider ), true );
     }
 

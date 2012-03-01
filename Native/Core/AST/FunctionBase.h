@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_FUNCTION_BASE_H
 #define _FABRIC_AST_FUNCTION_BASE_H
 
@@ -29,6 +29,7 @@ namespace Fabric
     class FunctionBase : public Global
     {
     public:
+      REPORT_RC_LEAKS
           
       virtual bool isFunctionBase() const { return true; }
       virtual bool isFunction() const { return false; }

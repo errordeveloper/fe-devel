@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_VARIABLE_ARRAY_DESC_H
 #define _FABRIC_RT_VARIABLE_ARRAY_DESC_H
 
@@ -18,6 +18,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       RC::ConstHandle<RT::VariableArrayImpl> getImpl() const;
       
@@ -32,13 +33,18 @@ namespace Fabric
       
     protected:
     
-      VariableArrayDesc( std::string const &name, RC::ConstHandle<VariableArrayImpl> const &variableArrayImpl, RC::ConstHandle<Desc> const &memberDesc );
+      VariableArrayDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<VariableArrayImpl> const &variableArrayImpl,
+        RC::ConstHandle<Desc> const &memberDesc
+        );
       
     private:
     
       RC::ConstHandle<VariableArrayImpl> m_variableArrayImpl;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_VARIABLE_ARRAY_DESC_H

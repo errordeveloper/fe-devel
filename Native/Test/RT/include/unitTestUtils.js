@@ -1,3 +1,6 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
 
 var fs = require('fs');
 

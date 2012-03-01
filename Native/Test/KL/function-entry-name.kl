@@ -1,5 +1,7 @@
-// This function is accessible from KL as "foo" but gets
-// compiled to the global symbol "bar"
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 function Scalar foo( Scalar x ) = "bar" {
   return 1.0/x;
 }

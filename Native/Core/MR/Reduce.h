@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_REDUCE_H
 #define _FABRIC_MR_REDUCE_H
 
@@ -24,6 +24,7 @@ namespace Fabric
       class Execution;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Reduce> Create(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer,

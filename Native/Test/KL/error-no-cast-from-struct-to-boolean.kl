@@ -1,0 +1,10 @@
+struct MyType {
+  Integer foo;
+};
+
+operator entry() {
+  MyType myType;
+  if (myType) {
+    report "blah";
+  }
+}

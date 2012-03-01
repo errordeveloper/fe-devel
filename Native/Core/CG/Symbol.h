@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_CG_SYMBOL_H
@@ -22,6 +22,7 @@ namespace Fabric
     class Symbol : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       virtual bool isValue() const { return false; }
       virtual bool isPencil() const { return false; }
@@ -30,6 +31,7 @@ namespace Fabric
     class ValueSymbol : public Symbol
     {
     public:
+      REPORT_RC_LEAKS
     
       virtual bool isValue() const { return true; }
       virtual bool isVariable() const { return false; }
@@ -61,6 +63,7 @@ namespace Fabric
     class VariableSymbol : public ValueSymbol
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<VariableSymbol> Create( CG::ExprValue const &exprValue )
       {
@@ -80,6 +83,7 @@ namespace Fabric
     class ParameterSymbol : public ValueSymbol
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<ParameterSymbol> Create( CG::ExprValue const &exprValue )
       {
@@ -99,6 +103,7 @@ namespace Fabric
     class ConstantSymbol : public ValueSymbol
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::ConstHandle<ConstantSymbol> Create( CG::ExprValue const &exprValue )
       {

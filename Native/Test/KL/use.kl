@@ -1,3 +1,0 @@
-use UnknownType;
-use UnknownPlugin, AnotherUnknownType;
-use AnotherUnknownPlugin;

@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 function displayRValue( Scalar a[String] ) {
   for ( k, v in a ) {
     report "a['" + k + "'] = " + v;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_CG_SCOPE_H
@@ -40,10 +40,16 @@ namespace Fabric
         m_namedSymbols.insert( StringToSymbolMap::value_type( name, symbol ) );
       }
       
-      bool has( std::string const &name ) const
+      bool hasLocal( std::string const &name ) const
       {
         StringToSymbolMap::const_iterator it = m_namedSymbols.find(name);
-        return it != m_namedSymbols.end() || (m_parentScope && m_parentScope->has( name ));
+        return it != m_namedSymbols.end();
+      }
+      
+      bool has( std::string const &name ) const
+      {
+        return hasLocal( name )
+          || (m_parentScope && m_parentScope->has( name ));
       }
       
       RC::ConstHandle<Symbol> get( std::string const &name ) const

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_IMPL_H
 #define _FABRIC_RT_IMPL_H
 
@@ -37,6 +37,7 @@ namespace Fabric
     class Impl : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
       
       std::string const &getCodeName() const { return m_codeName; }
       size_t getAllocSize() const { return m_size; }

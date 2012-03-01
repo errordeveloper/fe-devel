@@ -1,3 +1,7 @@
+#
+#  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+#
+
 import os
 import sys
 import json
@@ -9,6 +13,8 @@ import signal
 import threading
 
 class _FABRIC:
+  _NOTIFYCALLBACK = ctypes.CFUNCTYPE( None, ctypes.c_char_p )
+
   def __init__( self ):
     # FIXME Windows
     self.__caughtSIGINT = False
@@ -83,7 +89,6 @@ class _ACTIONITEM:
 class _ASYNCTHREAD( threading.Thread ):
   def __init__( self, fabric ):
     super( _ASYNCTHREAD, self ).__init__()
-
     self.__fabric = fabric
 
   def __clientsRunning( self ):
@@ -104,15 +109,40 @@ class _ASYNCTHREAD( threading.Thread ):
     if os.name == 'posix':
       self.__clib = ctypes.CDLL( os.path.dirname( __file__ ) + '/libFabricPython.so' )
     else:
-      # FIXME Windows
-      raise Exception('not implemented for Windows yet!')
+      self.__clib = ctypes.CDLL( os.path.dirname( __file__ ) + '/FabricPython.dll' )
+
+    # declare explicit prototypes for all the external library calls
+    self.__clib.identify.argtypes = []
+    self.__clib.createClient.argtypes = [
+      ctypes.c_void_p
+    ]
+    self.__clib.jsonExec.argtypes = [
+      ctypes.c_void_p,
+      ctypes.c_char_p,
+      ctypes.c_size_t,
+      ctypes.c_void_p
+    ]
+    self.__clib.runScheduledCallbacks.argtypes = [
+      ctypes.c_void_p
+    ]
+    self.__clib.freeClient.argtypes = [
+      ctypes.c_void_p
+    ]
+    self.__clib.freeString.argtypes = [
+      ctypes.c_void_p,
+      ctypes.c_char_p
+    ]
+    self.__clib.setJSONNotifyCallback.argtypes = [
+      ctypes.c_void_p,
+      _FABRIC._NOTIFYCALLBACK
+    ]
 
     self.__clib.identify()
 
     while ( not self.__fabric.createdOneClient or self.__clientsRunning() or not self.__fabric.actionQueue.empty() ) and not self.__fabric._shouldExit():
       q = self.__fabric.actionQueue.get()
-      if q is not None:
-        print 'PROCESSING ACTION: '+q.action
+      #if q is not None:
+      #  print 'PROCESSING ACTION: '+q.action
 
       if q is None:
         pass # only to re-check loop conditions
@@ -180,6 +210,8 @@ class _ASYNCTHREAD( threading.Thread ):
       raise Exception( 'unable to parse JSON results: ' + jsonEncodedResults )
     self.__clib.freeString( client.getClientPtr(), jsonEncodedResults )
 
+    # FIXME must process notifications before callbacks
+
     for i in range(len(results)):
       result = results[i]
       callback = callbacks[i]
@@ -189,6 +221,7 @@ class _ASYNCTHREAD( threading.Thread ):
           unwind = unwinds[ j ]
           if ( unwind is not None ):
             unwind()
+        # FIXME must process notifications before exception
         raise Exception( 'Fabric core exception: ' + result[ 'exception' ] )
       elif ( callback is not None ):
         callback( result[ 'result' ] )
@@ -203,7 +236,6 @@ class _INTERFACE( object ):
     self.RegisteredTypesManager = self.RT
     self.DG = self._client.dg
     self.DependencyGraph = self.DG
-    self.VP = self._client.vp
     self.EX = self._client.ex
     self.IO = self._client.io
     self.build = self._client.build
@@ -216,6 +248,9 @@ class _INTERFACE( object ):
 
   def running( self ):
     return self._client.running()
+
+  def waitForClose( self ):
+    return self.__client.waitForClose()
 
   def getMemoryUsage( self ):
     # dictionary hack to simulate Python 3.x nonlocal
@@ -241,7 +276,6 @@ class _CLIENT( object ):
     self.mr = _MR( self )
     self.rt = _RT( self )
     self.dg = _DG( self )
-    self.vp = _VP( self )
     self.ex = _EX( self )
     self.io = _IO( self )
     self.build = _BUILD( self )
@@ -257,7 +291,6 @@ class _CLIENT( object ):
 
     # declare all class variables needed in the notifyCallback above
     # here as the closure remembers the current class members immediately
-    self.__NOTIFYCALLBACK = ctypes.CFUNCTYPE( None, ctypes.c_char_p )
     self.__registerNotifyCallback()
 
   def running( self ):
@@ -291,6 +324,18 @@ class _CLIENT( object ):
     self.__closed = True
     self.__queueAction( _ACTIONITEM.FREE_CLIENT )
     # FIXME unlink the fabric client from the FABRIC instance
+
+    # these must be explicitly set to None due to circular referencing
+    # preventing garbage collection if not
+    self.gc = None
+    self.klc = None
+    self.mr = None
+    self.rt = None
+    self.dg = None
+    self.ex = None
+    self.io = None
+    self.build = None
+    self.__CFUNCTYPE_notifyCallback = None
 
   def getLicenses( self ):
     return self.__state.licenses;
@@ -342,8 +387,6 @@ class _CLIENT( object ):
     self.dg._handleStateNotification( newState[ 'DG' ] )
     self.rt._handleStateNotification( newState[ 'RT' ] )
     self.ex._handleStateNotification( newState[ 'EX' ] )
-    if 'VP' in newState:
-      self.vp.handleStateNotification( newState[ 'VP' ] )
 
   def _patch( self, diff ):
     if 'licenses' in diff:
@@ -361,6 +404,9 @@ class _CLIENT( object ):
       raise Exception( 'command "' + cmd + '": ' + str( e ) )
 
   def _route( self, src, cmd, arg ):
+    if self.__closed:
+      return
+
     if len(src) == 0:
       self._handle( cmd, arg )
     else:
@@ -373,8 +419,6 @@ class _CLIENT( object ):
         self.dg._route( src, cmd, arg )
       elif firstSrc == 'EX':
         self.ex._route( src, cmd, arg )
-      elif firstSrc == 'VP':
-        self.vp._route( src, cmd, arg )
       elif firstSrc == 'GC':
         self.gc._route( src, cmd, arg )
       elif firstSrc == 'ClientWrap':
@@ -403,7 +447,7 @@ class _CLIENT( object ):
     # this is important, we have to maintain a reference to the CFUNCTYPE
     # ptr and not just return it, otherwise it will be garbage collected
     # and callbacks will fail
-    self.__CFUNCTYPE_notifyCallback = self.__NOTIFYCALLBACK ( notifyCallback )
+    self.__CFUNCTYPE_notifyCallback = _FABRIC._NOTIFYCALLBACK ( notifyCallback )
     return self.__CFUNCTYPE_notifyCallback
 
   def __registerNotifyCallback( self ):
@@ -417,10 +461,7 @@ class _GCOBJECT( object ):
     self._nsobj = nsobj
     nsobj._client.gc.addObject( self )
 
-  def __del__( self ):
-    self.__dispose()
-
-  def __dispose( self ):
+  def dispose( self ):
     self._gcObjQueueCommand( 'dispose' )
     self.__nsobj._client.gc.disposeObject( self )
     self.__id = None
@@ -818,7 +859,8 @@ class _DG( _NAMESPACE ):
       super( _DG._CONTAINER, self ).__init__( dg, name )
       self.__rt = dg._client.rt
       self.__members = None
-      self.__count = None
+      self.__size = None
+      self.__sizeNeedRefresh = True
 
     def _patch( self, diff ):
       super( _DG._CONTAINER, self )._patch( diff )
@@ -827,7 +869,7 @@ class _DG( _NAMESPACE ):
         self.__members = diff[ 'members' ]
 
       if 'size' in diff:
-        self.__count = diff[ 'size' ]
+        self.__size = diff[ 'size' ]
 
     def _handle( self, cmd, arg ):
       if cmd == 'dataChange':
@@ -838,22 +880,20 @@ class _DG( _NAMESPACE ):
         super( _DG._CONTAINER, self )._handle( cmd, arg )
 
     def getCount( self ):
-      if self.__count is None:
+      if self.__sizeNeedRefresh:
+        self.__sizeNeedRefresh = None
         self._dg._executeQueuedCommands()
-      return self.__count
+      return self.__size
 
     def size( self ):
-      if self.__count is None:
-        self._dg._executeQueuedCommands()
-      return self.__count
+      return self.getCount()
 
     def setCount( self, count ):
       self._nObjQueueCommand( 'resize', count )
-      self.__count = None
+      self.__sizeNeedRefresh = True
 
     def resize( self, count ):
-      self._nObjQueueCommand( 'resize', count )
-      self.__count = None
+      self.setCount( count )
 
     def getMembers( self ):
       if self.__members is None:
@@ -1742,6 +1782,13 @@ class _RT( _NAMESPACE ):
     return self.__registeredTypes
 
   def registerType( self, name, desc ):
+    if type( desc ) is not dict:
+      raise Exception( 'RT.registerType: second parameter: must be an object' )
+    if 'members' not in desc:
+      raise Exception( 'RT.registerType: second parameter: missing members element' )
+    if type( desc[ 'members' ] ) is not list:
+      raise Exception( 'RT.registerType: second parameter: invalid members element' )
+
     members = []
     for i in range( 0, len( desc[ 'members' ] ) ):
       member = desc[ 'members' ][ i ]
@@ -1754,8 +1801,16 @@ class _RT( _NAMESPACE ):
       }
       members.append( member )
 
-    defaultValue = desc[ 'constructor' ]()
-    self.__prototypes[ name ] = desc[ 'constructor' ]
+    constructor = None
+    if 'constructor' in desc:
+      constructor = desc[ 'constructor' ]
+    else:
+      class _Empty:
+        pass
+      constructor = _Empty
+
+    defaultValue = constructor()
+    self.__prototypes[ name ] = constructor
 
     arg = {
       'name': name,
@@ -1985,17 +2040,6 @@ class _BUILD( _NAMESPACE ):
 
   def getArch( self ):
     return self.__build[ 'arch' ]
-
-class _VP( _NAMESPACE ):
-  def __init__( self, client ):
-    super( _VP, self ).__init__( client, 'VP' )
-    self.__viewPorts = {}
-
-  def _handleStateNotification( self, state ):
-    pass
-
-  def _route( self, src, cmd, arg ):
-    pass
 
 _fabric = _FABRIC()
 

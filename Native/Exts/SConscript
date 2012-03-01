@@ -6,6 +6,7 @@ import os, shutil
 Import( 'baseEnv', 'buildOS', 'buildArch', 'fabricExtsDistDir' )
 
 extsEnv = baseEnv.Clone()
+
 def ExtSLName( baseName ):
   return baseName + "-" + buildOS + "-" + buildArch
 Export( 'extsEnv', 'ExtSLName' )
@@ -52,5 +53,8 @@ if sampleExtFiles:
   installerExtFiles.append( sampleExtFiles )
 
 Export( 'installerExtFiles' )
+Export( 'extFiles' )
+
 Install( fabricExtsDistDir, extFiles )
 Alias( 'exts', extFiles )
+

@@ -1,0 +1,18 @@
+function display(Integer a) {
+  report "integer value is " + a;
+}
+
+function display(String s) {
+  report "string value is '" + s + "'";
+}
+
+operator entry() {
+  Integer integer = 42;
+  display(integer);
+
+  String string = "hello";
+  display(string);
+
+  Byte byte = 64;
+  display(byte);
+}

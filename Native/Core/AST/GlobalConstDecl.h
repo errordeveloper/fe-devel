@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_GLOBAL_CONST_DECL_H
 #define _FABRIC_AST_GLOBAL_CONST_DECL_H
 
@@ -18,6 +18,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( GlobalConstDecl );
 
     public:
+      REPORT_RC_LEAKS
 
       static RC::ConstHandle<GlobalConstDecl> Create(
         CG::Location const &location,

@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-12-02.
- *  CopyargList 2010 Fabric Technologies Inc. All argLists reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_INDEX_OP_H
@@ -19,6 +16,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( IndexOp );
 
     public:
+      REPORT_RC_LEAKS
         
       static RC::ConstHandle<IndexOp> Create(
         CG::Location const &location,

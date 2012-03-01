@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_DICT_DESC_H
 #define _FABRIC_RT_DICT_DESC_H
 
@@ -19,6 +19,7 @@ namespace Fabric
       friend class Manager;
       
     public:
+      REPORT_RC_LEAKS
     
       RC::ConstHandle<RT::DictImpl> getImpl() const;
       
@@ -36,7 +37,8 @@ namespace Fabric
     protected:
     
       DictDesc(
-        std::string const &name,
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
         RC::ConstHandle<DictImpl> const &dictImpl,
         RC::ConstHandle<ComparableDesc> const &keyDesc,
         RC::ConstHandle<Desc> const &valueDesc
@@ -47,8 +49,8 @@ namespace Fabric
       RC::ConstHandle<DictImpl> m_dictImpl;
       RC::ConstHandle<ComparableDesc> m_keyDesc;
       RC::ConstHandle<Desc> m_valueDesc;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_DICT_DESC_H

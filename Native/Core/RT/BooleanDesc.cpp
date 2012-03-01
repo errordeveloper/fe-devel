@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "BooleanDesc.h"
 
 #include <Fabric/Core/RT/BooleanImpl.h>
@@ -11,8 +11,16 @@ namespace Fabric
 {
   namespace RT
   {
-    BooleanDesc::BooleanDesc( std::string const &name, RC::ConstHandle<BooleanImpl> const &booleanImpl )
-      : ComparableDesc( name, booleanImpl )
+    BooleanDesc::BooleanDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<BooleanImpl> const &booleanImpl
+      )
+      : ComparableDesc(
+        userNameBase,
+        userNameArraySuffix,
+        booleanImpl
+        )
       , m_booleanImpl( booleanImpl )
     {
     }
@@ -32,5 +40,5 @@ namespace Fabric
       ComparableDesc::jsonDesc( resultObjectEncoder );
       resultObjectEncoder.makeMember( "internalType" ).makeString( "boolean" );
     }
-  };
-};
+  }
+}

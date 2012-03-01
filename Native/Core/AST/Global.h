@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_AST_GLOBAL_H
 #define _FABRIC_AST_GLOBAL_H
 
@@ -25,17 +25,18 @@ namespace Fabric
   
   namespace AST
   {
-    class UseNameToLocationMap;
+    class RequireNameToLocationMap;
 
     class Global : public Node
     {
     public:
+      REPORT_RC_LEAKS
     
       virtual void appendJSON( JSON::Encoder const &encoder, bool includeLocation ) const;
     
       virtual bool isFunctionBase() const { return false; }
       
-      virtual void collectUses( UseNameToLocationMap &uses ) const;
+      virtual void collectRequires( RequireNameToLocationMap &requires ) const;
       virtual void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const = 0;
       virtual void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctionBodies ) const = 0;
       
@@ -47,7 +48,7 @@ namespace Fabric
     
       mutable Util::SimpleString m_json;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_AST_GLOBAL_H

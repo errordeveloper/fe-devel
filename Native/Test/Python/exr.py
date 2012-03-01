@@ -1,3 +1,7 @@
+#
+#  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+#
+
 import fabrictest
 import fabric
 fabricClient = fabric.createClient()
@@ -5,7 +9,7 @@ fabricClient = fabric.createClient()
 op = fabricClient.DependencyGraph.createOperator("op")
 op.setEntryFunctionName("load")
 op.setSourceCode('\
-use FabricEXR;\n\
+require FabricEXR;\n\
 \n\
 struct Color\n\
 {\n\

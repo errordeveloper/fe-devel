@@ -1,2 +1,2 @@
-CORE-130.kl:9:3: error: no definition found for function myFunction(Integer, io Integer)
-CORE-130.kl:10:3: error: no definition found for function myFunction(Integer, Integer, Integer, io Integer)
+CORE-130.kl:13:3: error: no definition found for function myFunction(Integer, io Integer)
+CORE-130.kl:14:3: error: no definition found for function myFunction(Integer, Integer, Integer, io Integer)

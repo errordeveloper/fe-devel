@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_JSON_COMMAND_CHANNEL_H
@@ -25,6 +25,7 @@ namespace Fabric
     class CommandChannel : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       virtual void jsonNotify(
         std::vector<std::string> const &src,

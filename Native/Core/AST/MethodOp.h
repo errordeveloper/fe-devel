@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_METHOD_OP_H
@@ -23,6 +23,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( MethodOp );
 
     public:
+      REPORT_RC_LEAKS
         
       static RC::ConstHandle<MethodOp> Create(
         CG::Location const &location,

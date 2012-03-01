@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_CONST_VALUE_H
 #define _FABRIC_MR_CONST_VALUE_H
 
@@ -27,6 +27,7 @@ namespace Fabric
     class ConstValue : public ValueProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ConstValue> Create(
         RC::ConstHandle<RT::Manager> const &rtManager,

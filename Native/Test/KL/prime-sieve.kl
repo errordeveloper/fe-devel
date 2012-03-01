@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 function reportStats( Size n, Size count )
 {
   report n + ": count=" + count + " n/log(n)=" + n/log(n);

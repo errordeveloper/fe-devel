@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "VariableArrayDesc.h"
 #include "VariableArrayImpl.h"
 
@@ -12,8 +12,18 @@ namespace Fabric
 {
   namespace RT
   {
-    VariableArrayDesc::VariableArrayDesc( std::string const &name, RC::ConstHandle<VariableArrayImpl> const &variableArrayImpl, RC::ConstHandle<Desc> const &memberDesc )
-      : ArrayDesc( name, variableArrayImpl, memberDesc )
+    VariableArrayDesc::VariableArrayDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<VariableArrayImpl> const &variableArrayImpl,
+      RC::ConstHandle<Desc> const &memberDesc
+      )
+      : ArrayDesc(
+        userNameBase,
+        userNameArraySuffix,
+        variableArrayImpl,
+        memberDesc
+        )
       , m_variableArrayImpl( variableArrayImpl )
     {
     }
@@ -54,5 +64,5 @@ namespace Fabric
       resultObjectEncoder.makeMember( "internalType" ).makeString( "variableArray" );
       resultObjectEncoder.makeMember( "memberType" ).makeString( getMemberDesc()->getUserName() );
     }
-  };
-};
+  }
+}

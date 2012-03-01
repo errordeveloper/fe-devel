@@ -1,12 +1,16 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 operator entry() {
-  Integer sa<>(Size(10));
+  Integer sa<>(10);
   for (Size i=0; i<10; ++i)
     sa[i] = i;
   report sa;
 
-  Integer nsa<>(sa, Size(2), Size(5));
+  Integer nsa<>(sa, 2, 5);
   report nsa;
 
-  Integer nnsa<>(nsa, Size(2), Size(2));
+  Integer nnsa<>(nsa, 2, 2);
   report nnsa;
 }

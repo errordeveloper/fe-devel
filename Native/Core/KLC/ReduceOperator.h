@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_KLC_REDUCE_OPERATOR_H
 #define _FABRIC_KLC_REDUCE_OPERATOR_H
 
@@ -21,6 +21,7 @@ namespace Fabric
     class ReduceOperator : public ArrayIOOperator
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ReduceOperator> Create(
         RC::ConstHandle<Executable> const &executable,

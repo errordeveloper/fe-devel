@@ -1,1 +1,1 @@
-cond-expr-unrelated.kl:11:3: error: ternary operation: types 'Integer' and 'Vec3' are unrelated
+cond-expr-unrelated.kl:15:3: error: ternary operation: types 'Integer' and 'Vec3' are unrelated

@@ -146,9 +146,9 @@ if 'dist' in COMMAND_LINE_TARGETS:
   installers = []
   installers += SConscript( 'Chrome/SConscript' )
   installers += SConscript( 'Firefox/SConscript' )
+  installers += SConscript( 'Python/SConscript' )
   if buildOS != 'Windows':
     installers += SConscript( 'Node/SConscript' )
-    installers += SConscript( 'Python/SConscript' )
   Alias( 'dist', installers )
   if 'upload' in COMMAND_LINE_TARGETS:
     if buildOS == 'Windows':

@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_DG_NODE_H
 #define _FABRIC_DG_NODE_H
 
@@ -49,6 +49,7 @@ namespace Fabric
       friend class Prototype;
       
     public:
+      REPORT_RC_LEAKS
     
       typedef Util::UnorderedMap< std::string, RC::Handle<Node> > Dependencies;
       typedef std::multiset<Node *> Dependents;

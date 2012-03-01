@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_CG_MANAGER_H
 #define _FABRIC_CG_MANAGER_H
 
@@ -51,6 +51,7 @@ namespace Fabric
       typedef std::map< RC::ConstHandle<RT::Desc>, RC::ConstHandle<Adapter> > DescToAdapterMap;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Manager> Create( RC::Handle<RT::Manager> const &rtManager );
       
@@ -65,8 +66,8 @@ namespace Fabric
       RC::ConstHandle<ByteAdapter> getByteAdapter() const;
       RC::ConstHandle<IntegerAdapter> getIntegerAdapter() const;
       RC::ConstHandle<SizeAdapter> getSizeAdapter() const;
-      RC::ConstHandle<FloatAdapter> getFP32Adapter() const;
-      RC::ConstHandle<FloatAdapter> getFP64Adapter() const;
+      RC::ConstHandle<FloatAdapter> getFloat32Adapter() const;
+      RC::ConstHandle<FloatAdapter> getFloat64Adapter() const;
       RC::ConstHandle<StringAdapter> getStringAdapter() const;
       RC::ConstHandle<OpaqueAdapter> getDataAdapter() const;
       RC::ConstHandle<ConstStringAdapter> getConstStringAdapter() const;
@@ -102,8 +103,8 @@ namespace Fabric
       mutable RC::ConstHandle<ByteAdapter> m_byteAdapter;
       mutable RC::ConstHandle<IntegerAdapter> m_integerAdapter;
       mutable RC::ConstHandle<SizeAdapter> m_sizeAdapter;
-      mutable RC::ConstHandle<FloatAdapter> m_scalarAdapter;
-      mutable RC::ConstHandle<FloatAdapter> m_fp64Adapter;
+      mutable RC::ConstHandle<FloatAdapter> m_float32Adapter;
+      mutable RC::ConstHandle<FloatAdapter> m_float64Adapter;
       mutable RC::ConstHandle<StringAdapter> m_stringAdapter;
       mutable RC::ConstHandle<OpaqueAdapter> m_dataAdapter;
       mutable RC::ConstHandle<ConstStringAdapter> m_constStringAdapter;

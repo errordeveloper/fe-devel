@@ -1,1 +1,1 @@
-Caught exception: va-out-of-bounds-non-const.kl:7:3: index (1) out of range (1)
+Caught exception: va-out-of-bounds-non-const.kl:11:3: index (1) out of range (1)

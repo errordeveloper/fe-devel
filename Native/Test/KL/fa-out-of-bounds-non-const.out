@@ -1,1 +1,1 @@
-Caught exception: fa-out-of-bounds-non-const.kl:6:3: index (2) out of range (2)
+Caught exception: fa-out-of-bounds-non-const.kl:10:3: index (2) out of range (2)

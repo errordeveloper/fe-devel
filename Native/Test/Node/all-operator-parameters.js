@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 FABRIC = require('Fabric').createClient();
 
 for( var i = 1; i < 32; i++ )

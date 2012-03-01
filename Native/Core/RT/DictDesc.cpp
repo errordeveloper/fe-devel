@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "DictDesc.h"
 #include "DictImpl.h"
 #include "ComparableDesc.h"
@@ -14,12 +14,17 @@ namespace Fabric
   namespace RT
   {
     DictDesc::DictDesc(
-      std::string const &name,
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
       RC::ConstHandle<DictImpl> const &dictImpl,
       RC::ConstHandle<ComparableDesc> const &keyDesc,
       RC::ConstHandle<Desc> const &valueDesc
       )
-      : Desc( name, dictImpl )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        dictImpl
+        )
       , m_dictImpl( dictImpl )
       , m_keyDesc( keyDesc )
       , m_valueDesc( valueDesc )
@@ -67,6 +72,6 @@ namespace Fabric
     std::string DictDesc::descData( void const *data, size_t limit ) const
     {
       return m_dictImpl->descData( data, limit );
-    }
-  };
-};
+    }    
+  }
+}

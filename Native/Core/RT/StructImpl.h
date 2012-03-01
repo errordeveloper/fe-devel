@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_RT_STRUCT_IMPL_H
 #define _FABRIC_RT_STRUCT_IMPL_H
 
@@ -21,6 +21,7 @@ namespace Fabric
       typedef Util::UnorderedMap< std::string, size_t > NameToIndexMap;
       
     public:
+      REPORT_RC_LEAKS
       
       // Impl
       

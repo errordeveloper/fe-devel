@@ -361,19 +361,25 @@ namespace Fabric
       
     void WindowedCAViewPort::pushOGLContext()
     {
-      m_cglContextStack.push_back( CGLGetCurrentContext() );
+      CGLContextObj prevContext = CGLGetCurrentContext();
       
       RC::Handle<DG::Context> context = getInterface()->getContext();
       ContextToCGLContextMap::const_iterator it = s_contextToCGLContextMap.find( context.ptr() );
       if ( it != s_contextToCGLContextMap.end() )
-        CGLSetCurrentContext( it->second );
+      {
+        if( CGLSetCurrentContext( it->second ) != kCGLNoError )
+          throw Exception( "Viewport error: unable to set OGL context" );
+      }
+      m_cglContextStack.push_back( prevContext );
     }
     
     void WindowedCAViewPort::popOGLContext()
     {
       FABRIC_ASSERT( !m_cglContextStack.empty() );
-      CGLSetCurrentContext( m_cglContextStack.back() );
+      CGLContextObj prevContext = m_cglContextStack.back();
       m_cglContextStack.pop_back();
+      if( CGLSetCurrentContext( prevContext ) != kCGLNoError )
+        throw Exception( "Viewport error: unable to restore previous OGL context" );
     }
 
     std::string WindowedCAViewPort::getPathFromSaveAsDialog( std::string const &title, std::string const &defaultFilename, std::string const &extension )

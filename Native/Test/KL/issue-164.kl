@@ -1,0 +1,20 @@
+struct MyType {
+  String string;
+};
+
+// Construct from a string
+function MyType(String string) {
+  this.string = "The string was '" + string + "'";
+}
+
+// Construct from a scalar
+function MyType(Scalar scalar) {
+  this.string = "The scalar was " + scalar;
+}
+
+operator entry() {
+  MyType myTypeFromString = "foo";
+  report myTypeFromString;
+  MyType myTypeFromScalar = 2.718;
+  report myTypeFromScalar;
+}

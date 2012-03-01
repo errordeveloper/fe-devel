@@ -1,1 +1,5 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 function currentTimeString( io String result ) = "currentTimeString";

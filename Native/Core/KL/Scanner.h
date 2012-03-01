@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_KL_SCANNER_H
 #define _FABRIC_KL_SCANNER_H
 
@@ -15,6 +15,7 @@ namespace Fabric
     class Scanner : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Scanner> Create( RC::ConstHandle<Source> const &source )
       {

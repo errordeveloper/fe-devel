@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "ArrayDesc.h"
 
 #include <Fabric/Core/RT/ArrayImpl.h>
@@ -11,8 +11,17 @@ namespace Fabric
 {
   namespace RT
   {
-    ArrayDesc::ArrayDesc( std::string const &name, RC::ConstHandle<ArrayImpl> const &arrayImpl, RC::ConstHandle<Desc> const &memberDesc )
-      : Desc( name, arrayImpl )
+    ArrayDesc::ArrayDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<ArrayImpl> const &arrayImpl,
+      RC::ConstHandle<Desc> const &memberDesc
+      )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        arrayImpl
+        )
       , m_arrayImpl( arrayImpl )
       , m_memberDesc( memberDesc )
     {
@@ -48,5 +57,5 @@ namespace Fabric
       Desc::jsonDesc( resultObjectEncoder );
       resultObjectEncoder.makeMember( "memberType" ).makeString( getMemberDesc()->getUserName() );
     }
-  };
-};
+  }
+}

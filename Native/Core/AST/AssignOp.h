@@ -1,10 +1,5 @@
 /*
- *  AssignOp.h
- *  Fabric
- *
- *  Created by Halfdan Ingvarsson on 11-01-10.
- *  Copyright 2011 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_ASSIGN_OP_H
@@ -30,6 +25,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( AssignOp );
       
     public:
+      REPORT_RC_LEAKS
       
       static RC::ConstHandle<AssignOp> Create( CG::Location const &location, CG::AssignOpType assignOpType, RC::ConstHandle<Expr> const &left, RC::ConstHandle<Expr> const &right );
       

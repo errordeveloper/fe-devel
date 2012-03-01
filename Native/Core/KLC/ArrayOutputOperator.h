@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_KLC_ARRAY_OUTPUT_OPERATOR_H
 #define _FABRIC_KLC_ARRAY_OUTPUT_OPERATOR_H
 
@@ -20,6 +20,9 @@ namespace Fabric
 
     class ArrayOutputOperator : public MR::ArrayOutputOperator
     {
+    public:
+      REPORT_RC_LEAKS
+
     protected:
     
       ArrayOutputOperator(

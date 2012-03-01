@@ -1,8 +1,5 @@
 /*
- *
- *  Created by Peter Zion on 10-12-02.
- *  Copyright 2010 Fabric Technologies Inc. All rights reserved.
- *
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_AST_STRUCT_MEMBER_OP_H
@@ -24,6 +21,7 @@ namespace Fabric
       FABRIC_AST_NODE_DECL( StructMemberOp );
 
     public:
+      REPORT_RC_LEAKS
         
       static RC::ConstHandle<StructMemberOp> Create( CG::Location const &location, RC::ConstHandle<Expr> const &structExpr, std::string const &memberName )
       {

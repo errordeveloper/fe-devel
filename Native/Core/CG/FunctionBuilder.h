@@ -1,10 +1,11 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_CG_FUNCTION_BUILDER_H
 #define _FABRIC_CG_FUNCTION_BUILDER_H
 
+#include <Fabric/Core/CG/Function.h>
 #include <Fabric/Core/CG/Scope.h>
 #include <Fabric/Base/RC/Handle.h>
 
@@ -42,7 +43,7 @@ namespace Fabric
         RC::ConstHandle<Adapter> const &returnAdapter, 
         ParamVector const &params,
         size_t flags,
-        size_t cost = 0
+        PolymorphismParameters const &polymorphismParameters = PolymorphismParameters()
         );
       
       FunctionBuilder( 
@@ -138,7 +139,7 @@ namespace Fabric
         RC::ConstHandle<Adapter> const &returnAdapter, 
         ParamVector const &params, 
         size_t flags,
-        size_t cost = 0
+        PolymorphismParameters const &polymorphismParameters = PolymorphismParameters()
         );
                 
       ModuleBuilder &m_moduleBuilder;

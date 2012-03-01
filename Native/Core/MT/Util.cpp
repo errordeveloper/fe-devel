@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 #include <Fabric/Core/MT/Util.h>
 
 #if defined(FABRIC_POSIX)

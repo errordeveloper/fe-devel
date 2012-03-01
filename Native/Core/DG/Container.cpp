@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/DG/Container.h>
 #include <Fabric/Core/DG/Scope.h>
 #include <Fabric/Core/DG/Context.h>
@@ -29,6 +29,7 @@ namespace Fabric
     class Container::Member : public RC::Object
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<Member> Create( RC::Handle<RT::Manager> const &rtManager, RC::ConstHandle<RT::Desc> memberDesc, size_t size, void const *defaultMemberData )
       {

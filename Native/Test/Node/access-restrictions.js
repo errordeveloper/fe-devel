@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 FABRIC = require('Fabric').createClient();
 
 op = FABRIC.DependencyGraph.createOperator("foo");

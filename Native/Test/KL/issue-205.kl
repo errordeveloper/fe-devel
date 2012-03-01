@@ -1,0 +1,5 @@
+const Float64 pi = 3.14159265358979;
+
+operator entry() {
+  report("pi = " + pi);
+}

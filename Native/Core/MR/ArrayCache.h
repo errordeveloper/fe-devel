@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_MR_ARRAY_CACHE_H
 #define _FABRIC_MR_ARRAY_CACHE_H
 
@@ -21,6 +21,7 @@ namespace Fabric
     class ArrayCache : public ArrayProducer
     {
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<ArrayCache> Create(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer

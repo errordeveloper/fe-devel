@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_DG_CODE_MANAGER_H
 #define _FABRIC_DG_CODE_MANAGER_H
 
@@ -33,6 +33,7 @@ namespace Fabric
       typedef Util::UnorderedMap< std::string, RC::WeakConstHandle<Code> > SourceCodeToCodeMap;
       
     public:
+      REPORT_RC_LEAKS
     
       static RC::Handle<CodeManager> Create(
         CG::CompileOptions const *compileOptions,

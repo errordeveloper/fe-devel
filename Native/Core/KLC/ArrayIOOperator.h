@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #ifndef _FABRIC_KLC_ARRAY_IO_OPERATOR_H
 #define _FABRIC_KLC_ARRAY_IO_OPERATOR_H
 
@@ -21,6 +21,7 @@ namespace Fabric
     class ArrayIOOperator : public MR::ArrayIOOperator
     {
     protected:
+      REPORT_RC_LEAKS
     
       ArrayIOOperator(
         RC::ConstHandle<Executable> const &executable,

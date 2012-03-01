@@ -1,1 +1,1 @@
-error-ternary-lvalue.kl:4:4: error: assignment: the result of a ternary operation cannot be an l-value
+error-ternary-lvalue.kl:8:4: error: assignment: the result of a ternary operation cannot be an l-value

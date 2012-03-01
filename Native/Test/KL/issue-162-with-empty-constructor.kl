@@ -1,0 +1,15 @@
+struct MyType {
+  Integer n;
+  Scalar x;
+};
+
+// The empty constructor
+function MyType() {
+  this.n = 42;
+  this.x = 3.141;
+}
+
+operator entry() {
+  MyType myType; // invokes the empty constructor
+  report myType;
+}

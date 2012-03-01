@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Clients/NPAPI/Context.h>
@@ -42,7 +42,7 @@ namespace Fabric
       RC::Handle<IOManager> const &ioManager,
       std::vector<std::string> const &pluginDirs
       )
-      : DG::Context( ioManager, pluginDirs, GetCompileOptions(), false, false )
+      : DG::Context( ioManager, pluginDirs, GetCompileOptions(), false )
       , m_ioManager( ioManager )
     {
     }

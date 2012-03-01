@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 F = require('Fabric').createClient();
 n = F.DG.createNode("n");
 

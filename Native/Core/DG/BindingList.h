@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_DG_BINDING_LIST_H
@@ -31,6 +31,7 @@ namespace Fabric
       typedef std::list< RC::Handle<Binding> > Bindings;
       
     public:
+      REPORT_RC_LEAKS
       
       static RC::Handle<BindingList> Create( RC::Handle<Context> const &context );
       

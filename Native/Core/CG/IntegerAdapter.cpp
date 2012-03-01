@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "IntegerAdapter.h"
 #include "BooleanAdapter.h"
 #include "ByteAdapter.h"
@@ -51,9 +51,9 @@ namespace Fabric
       byteAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<SizeAdapter> sizeAdapter = getManager()->getSizeAdapter();
       sizeAdapter->llvmCompileToModule( moduleBuilder );
-      RC::ConstHandle<FloatAdapter> fp32Adapter = getManager()->getFP32Adapter();
+      RC::ConstHandle<FloatAdapter> fp32Adapter = getManager()->getFloat32Adapter();
       fp32Adapter->llvmCompileToModule( moduleBuilder );
-      RC::ConstHandle<FloatAdapter> fp64Adapter = getManager()->getFP64Adapter();
+      RC::ConstHandle<FloatAdapter> fp64Adapter = getManager()->getFloat64Adapter();
       fp64Adapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<StringAdapter> stringAdapter = getManager()->getStringAdapter();
       stringAdapter->llvmCompileToModule( moduleBuilder );

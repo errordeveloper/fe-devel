@@ -1,3 +1,7 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
 function double( io Scalar input, io Scalar output )
 {
   output = 2 * input;

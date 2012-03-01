@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_MT_LOG_COLLECTOR_H
@@ -21,6 +21,7 @@ namespace Fabric
       typedef Util::UnorderedMap< MT::ThreadID, std::string > ThreadPrefixMap;
       
     public:
+      REPORT_RC_LEAKS
     
       void add( char const *data, size_t length );
       void add( char const *cString )

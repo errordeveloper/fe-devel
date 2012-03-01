@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include "Manager.h"
 #include "ArrayProducerAdapter.h"
 #include "BooleanAdapter.h"
@@ -232,18 +232,18 @@ namespace Fabric
       return m_sizeAdapter;
     }
     
-    RC::ConstHandle<FloatAdapter> Manager::getFP32Adapter() const
+    RC::ConstHandle<FloatAdapter> Manager::getFloat32Adapter() const
     {
-      if ( !m_scalarAdapter )
-        m_scalarAdapter = RC::ConstHandle<FloatAdapter>::StaticCast( getAdapter( m_rtManager->getScalarDesc() ) );
-      return m_scalarAdapter;
+      if ( !m_float32Adapter )
+        m_float32Adapter = RC::ConstHandle<FloatAdapter>::StaticCast( getAdapter( m_rtManager->getFloat32Desc() ) );
+      return m_float32Adapter;
     }
     
-    RC::ConstHandle<FloatAdapter> Manager::getFP64Adapter() const
+    RC::ConstHandle<FloatAdapter> Manager::getFloat64Adapter() const
     {
-      if ( !m_fp64Adapter )
-        m_fp64Adapter = RC::ConstHandle<FloatAdapter>::StaticCast( getAdapter( m_rtManager->getFP64Desc() ) );
-      return m_fp64Adapter;
+      if ( !m_float64Adapter )
+        m_float64Adapter = RC::ConstHandle<FloatAdapter>::StaticCast( getAdapter( m_rtManager->getFloat64Desc() ) );
+      return m_float64Adapter;
     }
     
     RC::ConstHandle<StringAdapter> Manager::getStringAdapter() const

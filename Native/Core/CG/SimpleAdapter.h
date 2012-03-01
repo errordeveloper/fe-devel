@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_CG_SIMPLE_ADAPTER_H
@@ -14,6 +14,7 @@ namespace Fabric
     class SimpleAdapter : public ComparableAdapter
     {
     public:
+      REPORT_RC_LEAKS
     
       // Adapter
     

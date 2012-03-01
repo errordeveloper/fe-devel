@@ -1,1 +1,1 @@
-local-const-is-immutable.kl:4:3: error: expression is not an l-value
+local-const-is-immutable.kl:8:3: error: expression is not an l-value

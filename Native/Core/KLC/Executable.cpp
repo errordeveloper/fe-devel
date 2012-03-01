@@ -1,7 +1,7 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
- 
+
 #include <Fabric/Core/KLC/Executable.h>
 #include <Fabric/Core/KLC/ArrayGeneratorOperatorWrapper.h>
 #include <Fabric/Core/KLC/ArrayTransformOperatorWrapper.h>
@@ -19,7 +19,7 @@
 #include <Fabric/Core/KL/Scanner.h>
 #include <Fabric/Core/CG/Diagnostics.h>
 #include <Fabric/Core/CG/ModuleBuilder.h>
-#include <Fabric/Core/AST/UseInfo.h>
+#include <Fabric/Core/AST/RequireInfo.h>
 #include <Fabric/Core/RT/Manager.h>
 #include <Fabric/Core/MT/LogCollector.h>
 
@@ -83,33 +83,33 @@ namespace Fabric
       
       RC::ConstHandle<RT::Manager> rtManager = cgManager->getRTManager();
       
-      AST::UseNameToLocationMap uses;
-      m_ast->collectUses( uses );
+      AST::RequireNameToLocationMap requires;
+      m_ast->collectRequires( requires );
 
-      std::set<std::string> includedUses;
-      while ( !uses.empty() )
+      std::set<std::string> includedRequires;
+      while ( !requires.empty() )
       {
-        AST::UseNameToLocationMap::iterator it = uses.begin();
+        AST::RequireNameToLocationMap::iterator it = requires.begin();
         std::string const &name = it->first;
-        if ( includedUses.find( name ) == includedUses.end() )
+        if ( includedRequires.find( name ) == includedRequires.end() )
         {
-          RC::ConstHandle<AST::GlobalList> useAST = Plug::Manager::Instance()->maybeGetASTForExt( name );
-          if ( !useAST )
+          RC::ConstHandle<AST::GlobalList> requireAST = Plug::Manager::Instance()->maybeGetASTForExt( name );
+          if ( !requireAST )
           {
             RC::ConstHandle<RC::Object> typeAST;
             if ( rtManager->maybeGetASTForType( name, typeAST ) )
-              useAST = typeAST? RC::ConstHandle<AST::GlobalList>::StaticCast( typeAST ): AST::GlobalList::Create();
+              requireAST = typeAST? RC::ConstHandle<AST::GlobalList>::StaticCast( typeAST ): AST::GlobalList::Create();
           }
             
-          if ( useAST )
+          if ( requireAST )
           {
-            useAST->collectUses( uses );
-            m_ast = AST::GlobalList::Create( useAST, m_ast );
-            includedUses.insert( name );
+            requireAST->collectRequires( requires );
+            m_ast = AST::GlobalList::Create( requireAST, m_ast );
+            includedRequires.insert( name );
           }
-          else m_diagnostics.addError( it->second, "no registered type or plugin named " + _(it->first) );
+          else m_diagnostics.addError( it->second, "no registered type or extension named " + _(it->first) );
         }
-        uses.erase( it );
+        requires.erase( it );
       }
 
       if ( !m_diagnostics.containsError() )

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #ifndef _FABRIC_BUILD_H
@@ -15,11 +15,10 @@ namespace Fabric
   extern char const *buildDesc;
   extern char const *buildCopyright;
   extern char const *buildURL;
-  extern time_t const buildExpiry; 
   extern size_t const buildCacheGeneration;
   extern char const *buildOS;
   extern char const *buildArch;
   extern char const *runningArch;
-};
+}
 
 #endif //_FABRIC_BUILD_H

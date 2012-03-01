@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
 #include <Fabric/Core/AST/Call.h>
@@ -49,10 +49,7 @@ namespace Fabric
     {
       RC::ConstHandle<CG::Symbol> symbol = basicBlockBuilder.getScope().get( m_name );
       if ( !symbol )
-      {
-        std::string pencilKey = CG::FunctionPencilKey( m_name );
         throw CG::Error( getLocation(), "no such function " + _(m_name) );
-      }
       if ( !symbol->isPencil() )
         throw Exception( _(m_name) + " is not a function" );
         
