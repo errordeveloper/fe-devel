@@ -12,6 +12,21 @@ import Queue
 import signal
 import threading
 
+def debug( string ):
+  print threading.currentThread().name + ': ' + string
+
+def synchronized( lockname ):
+  def wrap( function ):
+    def syncFunction( self, *args, **kw ):
+      lock = getattr( self, lockname )
+      lock.acquire()
+      try:
+        return function( self, *args, **kw )
+      finally:
+        lock.release()
+    return syncFunction
+  return wrap
+
 class _FABRIC:
   _NOTIFYCALLBACK = ctypes.CFUNCTYPE( None, ctypes.c_char_p )
 
@@ -27,7 +42,7 @@ class _FABRIC:
     self.__oldExceptHook = sys.excepthook
     def __excepthook( type, value, traceback):
       self._handleUncaughtException( type, value, traceback )
-      self.actionQueue.put( None )
+      self.actionQueue.put( _ACTIONITEM() )
     sys.excepthook = __excepthook
 
     self.__gcId = 0
@@ -46,7 +61,7 @@ class _FABRIC:
   def __handleSIGINT( self, signum, frame ):
     self.__caughtSIGINT = True
     print 'got sigint'
-    self.actionQueue.put( None )
+    self.actionQueue.put( _ACTIONITEM() )
 
   def _handleUncaughtException( self, type, value, traceback ):    
     self.__uncaughtException = True
@@ -77,14 +92,14 @@ class _ACTIONITEM:
   NOTIFY = 'notify'
   SET_JSON_NOTIFY_CALLBACK = 'setJsonNotifyCallback'
   RUN_SCHEDULED_CALLBACKS = 'runScheduledCallbacks'
-  SIGNAL = 'signal'
   CREATE_CLIENT = 'createClient'
   FREE_CLIENT = 'freeClient'
 
-  def __init__( self, client, action, data = None ):
+  def __init__( self, client = None, action = None, data = None, signal = False ):
     self.client = client
     self.action = action
     self.data = data
+    self.signal = signal
 
 class _ASYNCTHREAD( threading.Thread ):
   def __init__( self, fabric ):
@@ -144,8 +159,10 @@ class _ASYNCTHREAD( threading.Thread ):
       #if q is not None:
       #  print 'PROCESSING ACTION: '+q.action
 
-      if q is None:
-        pass # only to re-check loop conditions
+      # FIXME check if client is closed
+
+      if q.action == None:
+        pass
       elif q.action == _ACTIONITEM.EXECUTE:
         self.__executeCommands( q.client, q.data )
       elif q.action == _ACTIONITEM.NOTIFY:
@@ -155,14 +172,15 @@ class _ASYNCTHREAD( threading.Thread ):
         self.__setJSONNotifyCallback( q.client, q.data )
       elif q.action == _ACTIONITEM.RUN_SCHEDULED_CALLBACKS:
         self.__runScheduledCallbacks( q.client )
-      elif q.action == _ACTIONITEM.SIGNAL:
-        self.__signalClient( q.client )
       elif q.action == _ACTIONITEM.CREATE_CLIENT:
         self.__createClient( q.client )
       elif q.action == _ACTIONITEM.FREE_CLIENT:
         self.__freeClient( q.client )
       else:
         raise Exception( 'unrecognized action: "' + q.action + '"' )
+
+      if q.signal:
+        self.__signalClient( q.client )
 
       self.__fabric.actionQueue.task_done()
 
@@ -181,7 +199,6 @@ class _ASYNCTHREAD( threading.Thread ):
     arg = None
     if 'arg' in n:
       arg = n[ 'arg' ]
-    #print "ROUTING TO: "+str(n['src'])+" CMD: "+str(n['cmd'])
     client._route( n[ 'src' ], n[ 'cmd' ], arg )
 
   def _runScheduledCallbacks( self, client ):
@@ -293,11 +310,17 @@ class _CLIENT( object ):
     # here as the closure remembers the current class members immediately
     self.__registerNotifyCallback()
 
+    # once the notification callback is set, the client will notify us with
+    # all its initial state, we will synchronously wait for this before we
+    # start running client commands
+    self.__receivedInitNotifications = False
+    self.waitForAsyncData()
+
   def running( self ):
     return not self.__closed
 
-  def __queueAction( self, cmd, data = None ):
-    action = _ACTIONITEM( self, cmd, data  )
+  def __queueAction( self, cmd, data = None, signal = False ):
+    action = _ACTIONITEM( self, cmd, data, signal )
     self.__fabric.actionQueue.put( action )
 
   def __runScheduledCallbacks( self ):
@@ -317,7 +340,7 @@ class _CLIENT( object ):
     return self.__cClientPtr
 
   def __createFabricClient( self ):
-    self.__queueAction( _ACTIONITEM.CREATE_CLIENT )
+    self.__queueAction( _ACTIONITEM.CREATE_CLIENT, None, True )
     return self.waitForAsyncData()
 
   def close( self ):
@@ -346,7 +369,6 @@ class _CLIENT( object ):
   def waitForAsyncData( self ):
     self.asyncData = None
     self.dataEvent.clear()
-    self.__queueAction( _ACTIONITEM.SIGNAL )
     self.dataEvent.wait()
     return self.asyncData
 
@@ -375,7 +397,7 @@ class _CLIENT( object ):
       'unwinds': unwinds,
       'callbacks': callbacks
     }
-    self.__queueAction( _ACTIONITEM.EXECUTE, data )
+    self.__queueAction( _ACTIONITEM.EXECUTE, data, True )
     self.waitForAsyncData()
 
   def _handleStateNotification( self, newState ):
@@ -437,6 +459,9 @@ class _CLIENT( object ):
 
     for i in range( 0, len( notifications ) ):
       self.__queueAction( _ACTIONITEM.NOTIFY, notifications[ i ] )
+
+    if not self.__receivedInitNotifications:
+      self.__queueAction( None, None, True )
 
   def __getNotifyCallback( self ):
     # use a closure here so that 'self' is maintained without us
@@ -504,6 +529,7 @@ class _NAMESPACE( object ):
   def __init__( self, client, name ):
     self._client = client
     self.__name = name
+    self.lock = threading.RLock()
 
   def _getName( self ):
     return self.__namespace
@@ -532,6 +558,7 @@ class _DG( _NAMESPACE ):
   def _createBindingList( self, dst ):
     return self._BINDINGLIST( self, dst )
 
+  @synchronized('lock')
   def __createNamedObject( self, name, cmd, objType ):
     if name in self._namedObjects:
       raise Exception( 'a NamedObject named "' + name + '" already exists' )
@@ -549,6 +576,8 @@ class _DG( _NAMESPACE ):
     return self.__createNamedObject( name, 'createOperator', self._OPERATOR )
    
   def createNode( self, name ):
+    if threading.currentThread().name == 'Thread-1':
+      raise Exception()
     return self.__createNamedObject( name, 'createNode', self._NODE )
 
   def createResourceLoadNode( self, name ):
@@ -561,11 +590,12 @@ class _DG( _NAMESPACE ):
     return self.__createNamedObject( name, 'createEventHandler', self._EVENTHANDLER )
 
   def getAllNamedObjects( self ):
-    result ={}
+    result = {}
     for namedObjectName in self._namedObjects:
       result[ namedObjectName ] = self._namedObjects[ namedObjectName ]
     return result
 
+  @synchronized('lock')
   def __getOrCreateNamedObject( self, name, type ):
     if name not in self._namedObjects:
       if type == 'Operator':
@@ -580,6 +610,7 @@ class _DG( _NAMESPACE ):
         raise Exception( 'unhandled type "' + type + '"' )
     return self._namedObjects[ name ]
 
+  @synchronized('lock')
   def _handleStateNotification( self, state ):
     self._namedObjects = {}
     for namedObjectName in state:
