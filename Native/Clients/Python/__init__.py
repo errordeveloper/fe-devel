@@ -42,7 +42,7 @@ class _FABRIC:
     self.__oldExceptHook = sys.excepthook
     def __excepthook( type, value, traceback):
       self._handleUncaughtException( type, value, traceback )
-      self.actionQueue.put( _ACTIONITEM() )
+      self.actionQueue.put( None )
     sys.excepthook = __excepthook
 
     self.__gcId = 0
@@ -61,7 +61,7 @@ class _FABRIC:
   def __handleSIGINT( self, signum, frame ):
     self.__caughtSIGINT = True
     print 'got sigint'
-    self.actionQueue.put( _ACTIONITEM() )
+    self.actionQueue.put( None )
 
   def _handleUncaughtException( self, type, value, traceback ):    
     self.__uncaughtException = True
@@ -88,6 +88,13 @@ class _FABRIC:
     return self.__gcId
 
 class _ACTIONITEM:
+  # immediately wake the Client
+  SIGNAL = 'signal'
+
+  # when received, schedule a signal (ensures that all notifications in the 
+  # queue are processed before signalling Client)
+  DEFERRED_SIGNAL = 'deferredSignal'
+
   EXECUTE = 'execute'
   NOTIFY = 'notify'
   SET_JSON_NOTIFY_CALLBACK = 'setJsonNotifyCallback'
@@ -95,11 +102,10 @@ class _ACTIONITEM:
   CREATE_CLIENT = 'createClient'
   FREE_CLIENT = 'freeClient'
 
-  def __init__( self, client = None, action = None, data = None, signal = False ):
+  def __init__( self, client = None, action = None, data = None ):
     self.client = client
     self.action = action
     self.data = data
-    self.signal = signal
 
 class _ASYNCTHREAD( threading.Thread ):
   def __init__( self, fabric ):
@@ -161,7 +167,7 @@ class _ASYNCTHREAD( threading.Thread ):
 
       # FIXME check if client is closed
 
-      if q.action == None:
+      if q == None:
         pass
       elif q.action == _ACTIONITEM.EXECUTE:
         self.__executeCommands( q.client, q.data )
@@ -176,11 +182,12 @@ class _ASYNCTHREAD( threading.Thread ):
         self.__createClient( q.client )
       elif q.action == _ACTIONITEM.FREE_CLIENT:
         self.__freeClient( q.client )
+      elif q.action == _ACTIONITEM.SIGNAL:
+        self.__signalClient( q.client )
+      elif q.action == _ACTIONITEM.DEFERRED_SIGNAL:
+        self.__fabric.actionQueue.put( _ACTIONITEM( q.client, _ACTIONITEM.SIGNAL ) )
       else:
         raise Exception( 'unrecognized action: "' + q.action + '"' )
-
-      if q.signal:
-        self.__signalClient( q.client )
 
       self.__fabric.actionQueue.task_done()
 
@@ -313,14 +320,14 @@ class _CLIENT( object ):
     # once the notification callback is set, the client will notify us with
     # all its initial state, we will synchronously wait for this before we
     # start running client commands
-    self.__receivedInitNotifications = False
+    self.__queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
     self.waitForAsyncData()
 
   def running( self ):
     return not self.__closed
 
-  def __queueAction( self, cmd, data = None, signal = False ):
-    action = _ACTIONITEM( self, cmd, data, signal )
+  def __queueAction( self, cmd, data = None ):
+    action = _ACTIONITEM( self, cmd, data )
     self.__fabric.actionQueue.put( action )
 
   def __runScheduledCallbacks( self ):
@@ -340,7 +347,7 @@ class _CLIENT( object ):
     return self.__cClientPtr
 
   def __createFabricClient( self ):
-    self.__queueAction( _ACTIONITEM.CREATE_CLIENT, None, True )
+    self.__queueAction( _ACTIONITEM.CREATE_CLIENT )
     return self.waitForAsyncData()
 
   def close( self ):
@@ -369,6 +376,7 @@ class _CLIENT( object ):
   def waitForAsyncData( self ):
     self.asyncData = None
     self.dataEvent.clear()
+    self.__queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
     self.dataEvent.wait()
     return self.asyncData
 
@@ -397,7 +405,7 @@ class _CLIENT( object ):
       'unwinds': unwinds,
       'callbacks': callbacks
     }
-    self.__queueAction( _ACTIONITEM.EXECUTE, data, True )
+    self.__queueAction( _ACTIONITEM.EXECUTE, data )
     self.waitForAsyncData()
 
   def _handleStateNotification( self, newState ):
@@ -459,9 +467,6 @@ class _CLIENT( object ):
 
     for i in range( 0, len( notifications ) ):
       self.__queueAction( _ACTIONITEM.NOTIFY, notifications[ i ] )
-
-    if not self.__receivedInitNotifications:
-      self.__queueAction( None, None, True )
 
   def __getNotifyCallback( self ):
     # use a closure here so that 'self' is maintained without us
