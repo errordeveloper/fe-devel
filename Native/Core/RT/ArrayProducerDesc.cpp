@@ -11,11 +11,16 @@ namespace Fabric
   namespace RT
   {
     ArrayProducerDesc::ArrayProducerDesc(
-      std::string const &name,
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
       RC::ConstHandle<ArrayProducerImpl> const &arrayProducerImpl,
       RC::ConstHandle<RT::Desc> const &elementDesc
       )
-      : Desc( name, arrayProducerImpl )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        arrayProducerImpl
+        )
       , m_arrayProducerImpl( arrayProducerImpl )
       , m_elementDesc( elementDesc )
     {

@@ -2,12 +2,14 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'teemFlags', 'libpngFlags', 'ExtSLName' )
+Import( 'extsEnv', 'teemFlags', 'libpngFlags', 'ExtSLName', 'buildOS' )
 
 teemPluginEnv = extsEnv.Clone()
 teemPluginEnv.MergeFlags( teemFlags )
 teemPluginEnv.MergeFlags( libpngFlags )
-teemPlugin = teemPluginEnv.SharedLibrary( ExtSLName('FabricTEEM'), Glob('*.cpp') ),
+teemPlugin = teemPluginEnv.SharedLibrary( ExtSLName('FabricTEEM'), Glob('*.cpp') )
+if buildOS == 'Windows':
+  teemPlugin = teemPlugin[0]
 teemManifest = teemPluginEnv.File('FabricTEEM.fpm.json'),
 teemKL = teemPluginEnv.File('FabricTEEM.kl'),
 teemFiles = [teemManifest, teemPlugin, teemKL]

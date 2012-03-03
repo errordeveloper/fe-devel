@@ -23,6 +23,7 @@ catch (e) {
 }
 
 var fileAndFolderHandles = FABRIC.IO.queryUserFileAndFolderHandle(FABRIC.IO.forOpenWithWriteAccess, "dummy title", "txt", "testfile");
+console.log( 'File and folder handles: ' + JSON.stringify(fileAndFolderHandles));
 console.log('User file name: ' + FABRIC.IO.getFileHandleInfo(fileAndFolderHandles.file).fileName);
 
 var relativeFileHandle = FABRIC.IO.buildFileHandleFromRelativePath(fileAndFolderHandles.folder + '/SubDir/testfile2.txt');
@@ -77,7 +78,7 @@ node.addOnLoadSuccessCallback( function() {
     //Load from explicit file location, to a file handle
     callbackStep = 2;
     node.setData('storeDataAsFile',0,true);
-    node.setData('url',0,'testfile://TMP/SubDir/testfile4.txt');
+    node.setData('url',0,'TMP/SubDir/testfile4.txt');
     node.evaluate();
   }
   else if( callbackStep == 2 ){

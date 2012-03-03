@@ -25,7 +25,12 @@ namespace Fabric
         _LeakReportClassRelease( 0 );
 #endif
       if ( m_refCount.decrementAndGetValue() == 0 )
+      {
+        if ( m_weakContainer )//[JeromeCG 20120224] Invalidate weak containers before destructors to avoid double release from "makeStrong"
+          m_weakContainer->invalidate();
+
         delete this;
+      }
     }
     
     Object::Object()
@@ -40,10 +45,7 @@ namespace Fabric
     Object::~Object()
     {
       if ( m_weakContainer )
-      {
-        m_weakContainer->invalidate();
         m_weakContainer->release();
-      }
     }
 
 #if defined( FABRIC_RC_LEAK_REPORT )

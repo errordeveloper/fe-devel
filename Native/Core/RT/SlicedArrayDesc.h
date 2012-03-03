@@ -28,13 +28,18 @@ namespace Fabric
       
     protected:
     
-      SlicedArrayDesc( std::string const &name, RC::ConstHandle<SlicedArrayImpl> const &slicedArrayImpl, RC::ConstHandle<Desc> const &memberDesc );
+      SlicedArrayDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<SlicedArrayImpl> const &slicedArrayImpl,
+        RC::ConstHandle<Desc> const &memberDesc
+        );
       
     private:
     
       RC::ConstHandle<SlicedArrayImpl> m_slicedArrayImpl;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_SLICED_ARRAY_DESC_H

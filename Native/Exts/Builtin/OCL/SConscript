@@ -10,6 +10,8 @@ if buildOS == 'Darwin' or buildOS == 'Windows':
 
   oclPluginEnv.MergeFlags( openclFlags )
   oclPlugin = oclPluginEnv.SharedLibrary( 'FabricOCL', Glob('*.cpp') ),
+  if buildOS == 'Windows':
+    oclPlugin = oclPlugin[0]
   oclManifest = oclPluginEnv.File('FabricOCL.fpm.json'),
 
   installAction = Install( fabricExtsDistDir, [oclPlugin,oclManifest] )

@@ -54,18 +54,18 @@ namespace Fabric
       : m_jsonCommandChannel( 0 )
       , m_klCompiler( klCompiler )
     {
-      registerDesc( m_booleanDesc = new BooleanDesc( "Boolean", new BooleanImpl( "Boolean" ) ) );
-      registerDesc( m_byteDesc = new ByteDesc( "Byte", new ByteImpl( "Byte" ) ) );
-      registerDesc( m_integerDesc = new SI32Desc( "Integer", new SI32Impl( "Integer" ) ) );
-      registerDesc( m_sizeDesc = new SizeDesc( "Size", new SizeImpl( "Size" ) ) );
+      registerDesc( m_booleanDesc = new BooleanDesc( "Boolean", "", new BooleanImpl( "Boolean" ) ) );
+      registerDesc( m_byteDesc = new ByteDesc( "Byte", "", new ByteImpl( "Byte" ) ) );
+      registerDesc( m_integerDesc = new SI32Desc( "Integer", "", new SI32Impl( "Integer" ) ) );
+      registerDesc( m_sizeDesc = new SizeDesc( "Size", "", new SizeImpl( "Size" ) ) );
       m_indexDesc = registerAlias( "Index", m_sizeDesc );
-      registerDesc( m_fp32Desc = new Float32Desc( "Float32", new Float32Impl( "Float32" ) ) );
+      registerDesc( m_fp32Desc = new Float32Desc( "Float32", "", new Float32Impl( "Float32" ) ) );
       registerAlias( "Scalar", m_fp32Desc );
-      registerDesc( m_fp64Desc = new Float64Desc( "Float64", new Float64Impl( "Float64" ) ) );
-      registerDesc( m_stringDesc = new StringDesc( "String", new StringImpl( "String" ) ) );
-      registerDesc( m_dataDesc = new OpaqueDesc( "Data", new OpaqueImpl( "Data", sizeof(size_t) ) ) );
-      registerDesc( m_constStringDesc = new ConstStringDesc( "ConstString", new ConstStringImpl( "ConstString" ) ) );
-      registerDesc( m_containerDesc = new ContainerDesc( "Container", new ContainerImpl( "Container" ) ) );
+      registerDesc( m_fp64Desc = new Float64Desc( "Float64", "", new Float64Impl( "Float64" ) ) );
+      registerDesc( m_stringDesc = new StringDesc( "String", "", new StringImpl( "String" ) ) );
+      registerDesc( m_dataDesc = new OpaqueDesc( "Data", "", new OpaqueImpl( "Data", sizeof(size_t) ) ) );
+      registerDesc( m_constStringDesc = new ConstStringDesc( "ConstString", "", new ConstStringImpl( "ConstString" ) ) );
+      registerDesc( m_containerDesc = new ContainerDesc( "Container", "", new ContainerImpl( "Container" ) ) );
     }
     
     void Manager::setJSONCommandChannel( JSON::CommandChannel *jsonCommandChannel )
@@ -75,25 +75,37 @@ namespace Fabric
     
     RC::ConstHandle<VariableArrayDesc> Manager::getVariableArrayOf( RC::ConstHandle<RT::Desc> const &memberDesc ) const
     {
-      std::string variableArrayName = memberDesc->getUserName() + "[]";
       RC::ConstHandle<VariableArrayImpl> variableArrayImpl = memberDesc->getImpl()->getVariableArrayImpl();
-      RC::ConstHandle<VariableArrayDesc> variableArrayDesc = new VariableArrayDesc( variableArrayName, variableArrayImpl, memberDesc );
+      RC::ConstHandle<VariableArrayDesc> variableArrayDesc = new VariableArrayDesc(
+        memberDesc->getUserNameBase(),
+        "[]" + memberDesc->getUserNameArraySuffix(),
+        variableArrayImpl,
+        memberDesc
+        );
       return RC::ConstHandle<VariableArrayDesc>::StaticCast( registerDesc( variableArrayDesc ) );
     }
 
     RC::ConstHandle<SlicedArrayDesc> Manager::getSlicedArrayOf( RC::ConstHandle<RT::Desc> const &memberDesc ) const
     {
-      std::string slicedArrayName = memberDesc->getUserName() + "<>";
       RC::ConstHandle<SlicedArrayImpl> slicedArrayImpl = memberDesc->getImpl()->getSlicedArrayImpl();
-      RC::ConstHandle<SlicedArrayDesc> slicedArrayDesc = new SlicedArrayDesc( slicedArrayName, slicedArrayImpl, memberDesc );
+      RC::ConstHandle<SlicedArrayDesc> slicedArrayDesc = new SlicedArrayDesc(
+        memberDesc->getUserNameBase(),
+        "<>" + memberDesc->getUserNameArraySuffix(),
+        slicedArrayImpl,
+        memberDesc
+        );
       return RC::ConstHandle<SlicedArrayDesc>::StaticCast( registerDesc( slicedArrayDesc ) );
     }
 
     RC::ConstHandle<FixedArrayDesc> Manager::getFixedArrayOf( RC::ConstHandle<RT::Desc> const &memberDesc, size_t length ) const
     {
-      std::string fixedArrayName = memberDesc->getUserName() + "[" + _(length) + "]";
       RC::ConstHandle<FixedArrayImpl> fixedArrayImpl = memberDesc->getImpl()->getFixedArrayImpl( length );
-      RC::ConstHandle<FixedArrayDesc> fixedArrayDesc = new FixedArrayDesc( fixedArrayName, fixedArrayImpl, memberDesc );
+      RC::ConstHandle<FixedArrayDesc> fixedArrayDesc = new FixedArrayDesc(
+        memberDesc->getUserNameBase(),
+        "[" + _(length) + "]" + memberDesc->getUserNameArraySuffix(),
+        fixedArrayImpl,
+        memberDesc
+        );
       return RC::ConstHandle<FixedArrayDesc>::StaticCast( registerDesc( fixedArrayDesc ) );
     }
 
@@ -102,9 +114,14 @@ namespace Fabric
       RC::ConstHandle<RT::Desc> const &valueDesc
       ) const
     {
-      std::string dictName = valueDesc->getUserName() + "[" + keyDesc->getUserName() + "]";
       RC::ConstHandle<DictImpl> dictImpl = valueDesc->getImpl()->getDictImpl( keyDesc->getImpl() );
-      RC::ConstHandle<DictDesc> dictDesc = new DictDesc( dictName, dictImpl, keyDesc, valueDesc );
+      RC::ConstHandle<DictDesc> dictDesc = new DictDesc(
+        valueDesc->getUserNameBase(),
+        "[" + keyDesc->getUserName() + "]" + valueDesc->getUserNameArraySuffix(),
+        dictImpl,
+        keyDesc,
+        valueDesc
+        );
       return RC::ConstHandle<DictDesc>::StaticCast( registerDesc( dictDesc ) );
     }
 
@@ -112,9 +129,13 @@ namespace Fabric
       RC::ConstHandle<RT::Desc> const &valueDesc
       ) const
     {
-      std::string valueProducerName = "ValueProducer<" + valueDesc->getUserName() + ">";
       RC::ConstHandle<ValueProducerImpl> valueProducerImpl = valueDesc->getImpl()->getValueProducerImpl();
-      RC::ConstHandle<ValueProducerDesc> valueProducerDesc = new ValueProducerDesc( valueProducerName, valueProducerImpl, valueDesc );
+      RC::ConstHandle<ValueProducerDesc> valueProducerDesc = new ValueProducerDesc(
+        "ValueProducer<" + valueDesc->getUserName() + ">",
+        "",
+        valueProducerImpl,
+        valueDesc
+        );
       return RC::ConstHandle<ValueProducerDesc>::StaticCast( registerDesc( valueProducerDesc ) );
     }
 
@@ -122,9 +143,13 @@ namespace Fabric
       RC::ConstHandle<RT::Desc> const &elementDesc
       ) const
     {
-      std::string arrayProducerName = "ArrayProducer<" + elementDesc->getUserName() + ">";
       RC::ConstHandle<ArrayProducerImpl> arrayProducerImpl = elementDesc->getImpl()->getArrayProducerImpl();
-      RC::ConstHandle<ArrayProducerDesc> arrayProducerDesc = new ArrayProducerDesc( arrayProducerName, arrayProducerImpl, elementDesc );
+      RC::ConstHandle<ArrayProducerDesc> arrayProducerDesc = new ArrayProducerDesc(
+        "ArrayProducer<" + elementDesc->getUserName() + ">",
+        "",
+        arrayProducerImpl,
+        elementDesc
+        );
       return RC::ConstHandle<ArrayProducerDesc>::StaticCast( registerDesc( arrayProducerDesc ) );
     }
 
@@ -135,13 +160,13 @@ namespace Fabric
 
     RC::ConstHandle<StructDesc> Manager::registerStruct( std::string const &name, StructMemberInfoVector const &memberInfos )
     {
-      RC::ConstHandle<StructDesc> structDesc = new StructDesc( name, new StructImpl( name, memberInfos ) );
+      RC::ConstHandle<StructDesc> structDesc = new StructDesc( name, "", new StructImpl( name, memberInfos ) );
       return RC::ConstHandle<StructDesc>::StaticCast( registerDesc( structDesc ) );
     }
 
     RC::ConstHandle<OpaqueDesc> Manager::registerOpaque( std::string const &name, size_t size )
     {
-      RC::ConstHandle<OpaqueDesc> result = new OpaqueDesc( name, new OpaqueImpl( name, size ) );
+      RC::ConstHandle<OpaqueDesc> result = new OpaqueDesc( name, "", new OpaqueImpl( name, size ) );
       return RC::ConstHandle<OpaqueDesc>::StaticCast( registerDesc( result ) );
     }
 
@@ -151,31 +176,60 @@ namespace Fabric
       switch ( desc->getType() )
       {
         case DT_BOOLEAN:
-          aliasDesc = new BooleanDesc( name, RC::ConstHandle<BooleanImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new BooleanDesc( name, "", RC::ConstHandle<BooleanImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_INTEGER:
-          aliasDesc = new IntegerDesc( name, RC::ConstHandle<IntegerImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new IntegerDesc( name, "", RC::ConstHandle<IntegerImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_FLOAT:
-          aliasDesc = new FloatDesc( name, RC::ConstHandle<FloatImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new FloatDesc( name, "", RC::ConstHandle<FloatImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_CONST_STRING:
-          aliasDesc = new ConstStringDesc( name, RC::ConstHandle<ConstStringImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new ConstStringDesc( name, "", RC::ConstHandle<ConstStringImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_STRING:
-          aliasDesc = new StringDesc( name, RC::ConstHandle<StringImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new StringDesc( name, "", RC::ConstHandle<StringImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_OPAQUE:
-          aliasDesc = new OpaqueDesc( name, RC::ConstHandle<OpaqueImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new OpaqueDesc( name, "", RC::ConstHandle<OpaqueImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_STRUCT:
-          aliasDesc = new StructDesc( name, RC::ConstHandle<StructImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new StructDesc( name, "", RC::ConstHandle<StructImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_VARIABLE_ARRAY:
-          aliasDesc = new VariableArrayDesc( name, RC::ConstHandle<VariableArrayImpl>::StaticCast( desc->getImpl() ), RC::ConstHandle<VariableArrayDesc>::StaticCast( desc )->getMemberDesc() );
+          aliasDesc = new VariableArrayDesc( name, "", RC::ConstHandle<VariableArrayImpl>::StaticCast( desc->getImpl() ), RC::ConstHandle<VariableArrayDesc>::StaticCast( desc )->getMemberDesc() );
           break;
         case DT_FIXED_ARRAY:
-          aliasDesc = new FixedArrayDesc( name, RC::ConstHandle<FixedArrayImpl>::StaticCast( desc->getImpl() ), RC::ConstHandle<FixedArrayDesc>::StaticCast( desc )->getMemberDesc() );
+          aliasDesc = new FixedArrayDesc(
+            name, "",
+            RC::ConstHandle<FixedArrayImpl>::StaticCast( desc->getImpl() ),
+            RC::ConstHandle<FixedArrayDesc>::StaticCast( desc )->getMemberDesc()
+            );
+          break;
+        case DT_SLICED_ARRAY:
+          aliasDesc = new SlicedArrayDesc( name, "", RC::ConstHandle<SlicedArrayImpl>::StaticCast( desc->getImpl() ), RC::ConstHandle<SlicedArrayDesc>::StaticCast( desc )->getMemberDesc() );
+          break;
+        case DT_DICT:
+          aliasDesc = new DictDesc(
+            name, "",
+            RC::ConstHandle<DictImpl>::StaticCast( desc->getImpl() ),
+            RC::ConstHandle<DictDesc>::StaticCast( desc )->getKeyDesc(),
+            RC::ConstHandle<DictDesc>::StaticCast( desc )->getValueDesc()
+            );
+          break;
+        case DT_VALUE_PRODUCER:
+          aliasDesc = new ValueProducerDesc(
+            name, "",
+            RC::ConstHandle<ValueProducerImpl>::StaticCast( desc->getImpl() ),
+            RC::ConstHandle<ValueProducerDesc>::StaticCast( desc )->getValueDesc()
+            );
+          break;
+        case DT_ARRAY_PRODUCER:
+          aliasDesc = new ArrayProducerDesc(
+            name, "",
+            RC::ConstHandle<ArrayProducerImpl>::StaticCast( desc->getImpl() ),
+            RC::ConstHandle<ArrayProducerDesc>::StaticCast( desc )->getElementDesc()
+            );
           break;
         default:
           FABRIC_ASSERT( false && "Unhandled type" );

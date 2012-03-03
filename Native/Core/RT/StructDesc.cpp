@@ -10,8 +10,16 @@ namespace Fabric
 {
   namespace RT
   {
-    StructDesc::StructDesc( std::string const &name, RC::ConstHandle<StructImpl> const &structImpl )
-      : Desc( name, structImpl )
+    StructDesc::StructDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<StructImpl> const &structImpl
+      )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        structImpl
+        )
       , m_structImpl( structImpl )
     {
     }

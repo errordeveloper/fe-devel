@@ -207,6 +207,8 @@ Export( 'distDir', 'archDistDir', 'npapiDistDir', 'fabricExtsDistDir' )
 env.Append( CPPPATH=[buildDirBase] )
 Export( 'env' )
 
+SConscript( dirs=['SConsUtils'], variant_dir=os.path.join( buildDir, 'SConsUtils' ) )
+SConscript( dirs=['Licenses'], variant_dir=os.path.join( buildDir, 'Licenses' ) )
 SConscript( dirs=['ThirdParty'], variant_dir=os.path.join( buildDir, 'ThirdParty' ) )
 SConscript( dirs=['Base'], variant_dir=os.path.join( buildDir, 'Base' ) )
 SConscript( dirs=['Core'], variant_dir=os.path.join( buildDir, 'Core' ) )

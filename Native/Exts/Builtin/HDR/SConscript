@@ -2,10 +2,12 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName' )
+Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName', 'buildOS' )
 
 hdrPluginEnv = extsEnv.Clone()
-hdrPlugin = hdrPluginEnv.SharedLibrary( ExtSLName('FabricHDR'), Glob('*.cpp') ),
+hdrPlugin = hdrPluginEnv.SharedLibrary( ExtSLName('FabricHDR'), Glob('*.cpp') )
+if buildOS == 'Windows':
+  hdrPlugin = hdrPlugin[0]
 hdrManifest = hdrPluginEnv.File('FabricHDR.fpm.json'),
 hdrKL = hdrPluginEnv.File('FabricHDR.kl'),
 hdrFiles = [hdrManifest, hdrPlugin, hdrKL]

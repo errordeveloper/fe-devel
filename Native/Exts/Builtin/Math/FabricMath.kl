@@ -2,5 +2,36 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
-function Integer mathRandomInteger( in Size id, in Size offset ) = "mathRandomInteger";
-function Scalar mathRandomScalar( in Size id, in Size offset ) = "mathRandomScalar";
+/*
+** [pzion 20110714] Order of 300772 (mod 2^31=2147483648) is 1073741824
+*/
+const Integer mathRandomBase = 300773;
+
+const Size mathRandomOffsetsPerID = 1048576;
+
+function Integer mathRandomPower(Size exp) {
+  Integer result = 1;
+  Integer mult = mathRandomBase;
+  for (Size mask=1; mask; mask<<=1 ) {
+    if ( exp & mask )
+      result *= mult;
+    mult *= mult;
+  }
+  return result;
+}
+
+function Integer mathRandomInteger(Size id, Size offset) {
+  return mathRandomPower(mathRandomOffsetsPerID*id + offset) & 0x7FFFFFFF;    
+}
+
+function Float64 mathRandomFloat64(Size id, Size offset) {
+  return Float64(mathRandomInteger(id, offset)) / 2147483648.0;
+}
+
+function Float32 mathRandomFloat32(Size id, Size offset) {
+  return Float32(mathRandomFloat64(id, offset));
+}
+
+function Scalar mathRandomScalar(Size id, Size offset) {
+  return mathRandomFloat32(id, offset);
+}

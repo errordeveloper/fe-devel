@@ -19,7 +19,7 @@ namespace Fabric
 
     FileHandleResourceProvider::FileHandleResourceProvider( RC::Handle<FileHandleManager> fileHandleManager )
       : m_fileHandleManager( fileHandleManager )
-      , m_fileResourceProvider( FileResourceProvider::Create() )
+      , m_fileResourceProvider( FileResourceProvider::Create( false ) )
     {
     }
 
@@ -35,7 +35,7 @@ namespace Fabric
       if( !m_fileHandleManager->targetExists( url ) )
           throw Exception( "Error: file not found" );
 
-      std::string fileWithPath = "file:///" + ChangeSeparatorsFileToURL( m_fileHandleManager->getPath( url ) );
+      std::string fileWithPath = "file://" + ChangeSeparatorsFileToURL( m_fileHandleManager->getPath( url ) );
       m_fileResourceProvider->get( fileWithPath.c_str(), getAsFile, userData );
     }
   };

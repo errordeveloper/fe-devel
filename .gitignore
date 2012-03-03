@@ -11,3 +11,4 @@ private-*
 third-party-builds-*
 third-party-source-packages-*
 *.pyc
+Fabric.sublime-workspace

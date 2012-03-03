@@ -26,14 +26,19 @@ namespace Fabric
       
     protected:
     
-      ArrayProducerDesc( std::string const &name, RC::ConstHandle<ArrayProducerImpl> const &arrayProducerImpl, RC::ConstHandle<RT::Desc> const &elementDesc );
+      ArrayProducerDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ArrayProducerImpl> const &arrayProducerImpl,
+        RC::ConstHandle<RT::Desc> const &elementDesc
+        );
     
     private:
     
       RC::ConstHandle<ArrayProducerImpl> m_arrayProducerImpl;
       RC::ConstHandle<Desc> m_elementDesc;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_ARRAY_PRODUCER_DESC_H

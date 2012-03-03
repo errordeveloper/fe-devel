@@ -7,7 +7,7 @@ FABRIC = require('Fabric').createClient();
 op = FABRIC.DependencyGraph.createOperator("op");
 op.setEntryFunctionName("load");
 op.setSourceCode('\
-use FabricPNG;\n\
+require FabricPNG;\n\
 \n\
 struct RGBA\n\
 {\n\

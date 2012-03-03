@@ -14,9 +14,28 @@ namespace Fabric
 {
   namespace RT
   {
-    Desc::Desc( std::string const &userName, RC::ConstHandle<Impl> const &impl )
-      : m_userName( userName )
-      , m_impl( impl )
+    RC::ConstHandle<Desc> Desc::Create(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<Impl> const &impl
+      )
+    {
+      return new Desc(
+        userNameBase,
+        userNameArraySuffix,
+        impl
+        );
+    }
+    
+    Desc::Desc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<Impl> const &impl
+      )
+      : m_impl( impl )
+      , m_userNameBase( userNameBase )
+      , m_userNameArraySuffix( userNameArraySuffix )
+      , m_userName( userNameBase + userNameArraySuffix )
     {
     }
     
@@ -129,5 +148,5 @@ namespace Fabric
     {
       return m_impl->getIndirectMemoryUsage( data );
     }
-  };
-};
+  }
+}

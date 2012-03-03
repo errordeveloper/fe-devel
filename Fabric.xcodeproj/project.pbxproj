@@ -21,6 +21,32 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXFileReference section */
+		DB038C901501868B00CB79F7 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		DB038C921501868B00CB79F7 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html.documentation; path = index.html; sourceTree = "<group>"; };
+		DB038C931501868B00CB79F7 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		DB038C951501868B00CB79F7 /* note.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = note.png; sourceTree = "<group>"; };
+		DB038C961501868B00CB79F7 /* note.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = note.svg; sourceTree = "<group>"; };
+		DB038C971501868B00CB79F7 /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warning.png; sourceTree = "<group>"; };
+		DB038C981501868B00CB79F7 /* warning.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = warning.svg; sourceTree = "<group>"; };
+		DB038C991501868B00CB79F7 /* IOProgrammingGuide.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = IOProgrammingGuide.xml; sourceTree = "<group>"; };
+		DB038C9A1501868B00CB79F7 /* KLProgrammingGuide.mobi */ = {isa = PBXFileReference; lastKnownFileType = file; path = KLProgrammingGuide.mobi; sourceTree = "<group>"; };
+		DB038C9B1501868B00CB79F7 /* KLProgrammingGuide.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = KLProgrammingGuide.pdf; sourceTree = "<group>"; };
+		DB038C9C1501868B00CB79F7 /* KLProgrammingGuide.tmp.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html.documentation; path = KLProgrammingGuide.tmp.html; sourceTree = "<group>"; };
+		DB038C9D1501868B00CB79F7 /* KLProgrammingGuide.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = KLProgrammingGuide.xml; sourceTree = "<group>"; };
+		DB038C9E1501868B00CB79F7 /* Rakefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Rakefile; sourceTree = "<group>"; };
+		DB038C9F1501868B00CB79F7 /* VERSION.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION.txt; sourceTree = "<group>"; };
+		DB038CA01501868B00CB79F7 /* w3centities-f.ent */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "w3centities-f.ent"; sourceTree = "<group>"; };
+		DB038CA21501868B00CB79F7 /* epub.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = epub.css; sourceTree = "<group>"; };
+		DB038CA31501868B00CB79F7 /* epub.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = epub.xsl; sourceTree = "<group>"; };
+		DB038CA41501868B00CB79F7 /* epub_base.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = epub_base.xsl; sourceTree = "<group>"; };
+		DB038CA51501868B00CB79F7 /* fo.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = fo.xml; sourceTree = "<group>"; };
+		DB038CA61501868B00CB79F7 /* html.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = html.css; sourceTree = "<group>"; };
+		DB038CA71501868B00CB79F7 /* html.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = html.xsl; sourceTree = "<group>"; };
+		DB038CA81501868B00CB79F7 /* html_base.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = html_base.xml; sourceTree = "<group>"; };
+		DB038CA91501868B00CB79F7 /* mobi.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mobi.css; sourceTree = "<group>"; };
+		DB038CAA1501868B00CB79F7 /* mobi.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mobi.xsl; sourceTree = "<group>"; };
+		DB038CAB1501868B00CB79F7 /* pdf.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = pdf.xsl; sourceTree = "<group>"; };
+		DB038CAC1501868B00CB79F7 /* rtf.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = rtf.xsl; sourceTree = "<group>"; };
 		DB082E9013E6FB0100FB75DA /* LightsTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LightsTest.html; sourceTree = "<group>"; };
 		DB082E9113E6FB0100FB75DA /* ObjLoadTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ObjLoadTest.html; sourceTree = "<group>"; };
 		DB0831D513E7606800FB75DA /* Core */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Core; sourceTree = "<group>"; };
@@ -1169,12 +1195,76 @@
 		DBD4340113D8B7D700E57C5F /* Tesselation.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Tesselation.html; sourceTree = "<group>"; };
 		DBE4D7F213E9FB2E004A50E5 /* Tools */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Tools; sourceTree = "<group>"; };
 		DBE6FF24142A336A00DC4A01 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
-		DBE6FF25142A340200DC4A01 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		DBFA620F14CC7E3A00552C82 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		DBFA621014CC7F1900552C82 /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		DB038C8E1501868B00CB79F7 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				DB038C8F1501868B00CB79F7 /* Guides */,
+			);
+			path = Documentation;
+			sourceTree = "<group>";
+		};
+		DB038C8F1501868B00CB79F7 /* Guides */ = {
+			isa = PBXGroup;
+			children = (
+				DB038C901501868B00CB79F7 /* .gitignore */,
+				DB038C911501868B00CB79F7 /* html */,
+				DB038C941501868B00CB79F7 /* images */,
+				DB038C991501868B00CB79F7 /* IOProgrammingGuide.xml */,
+				DB038C9A1501868B00CB79F7 /* KLProgrammingGuide.mobi */,
+				DB038C9B1501868B00CB79F7 /* KLProgrammingGuide.pdf */,
+				DB038C9C1501868B00CB79F7 /* KLProgrammingGuide.tmp.html */,
+				DB038C9D1501868B00CB79F7 /* KLProgrammingGuide.xml */,
+				DB038C9E1501868B00CB79F7 /* Rakefile */,
+				DB038C9F1501868B00CB79F7 /* VERSION.txt */,
+				DB038CA01501868B00CB79F7 /* w3centities-f.ent */,
+				DB038CA11501868B00CB79F7 /* xsl */,
+			);
+			path = Guides;
+			sourceTree = "<group>";
+		};
+		DB038C911501868B00CB79F7 /* html */ = {
+			isa = PBXGroup;
+			children = (
+				DB038C921501868B00CB79F7 /* index.html */,
+				DB038C931501868B00CB79F7 /* style.css */,
+			);
+			path = html;
+			sourceTree = "<group>";
+		};
+		DB038C941501868B00CB79F7 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				DB038C951501868B00CB79F7 /* note.png */,
+				DB038C961501868B00CB79F7 /* note.svg */,
+				DB038C971501868B00CB79F7 /* warning.png */,
+				DB038C981501868B00CB79F7 /* warning.svg */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		DB038CA11501868B00CB79F7 /* xsl */ = {
+			isa = PBXGroup;
+			children = (
+				DB038CA21501868B00CB79F7 /* epub.css */,
+				DB038CA31501868B00CB79F7 /* epub.xsl */,
+				DB038CA41501868B00CB79F7 /* epub_base.xsl */,
+				DB038CA51501868B00CB79F7 /* fo.xml */,
+				DB038CA61501868B00CB79F7 /* html.css */,
+				DB038CA71501868B00CB79F7 /* html.xsl */,
+				DB038CA81501868B00CB79F7 /* html_base.xml */,
+				DB038CA91501868B00CB79F7 /* mobi.css */,
+				DB038CAA1501868B00CB79F7 /* mobi.xsl */,
+				DB038CAB1501868B00CB79F7 /* pdf.xsl */,
+				DB038CAC1501868B00CB79F7 /* rtf.xsl */,
+			);
+			path = xsl;
+			sourceTree = "<group>";
+		};
 		DB082E8F13E6FB0100FB75DA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1253,8 +1343,8 @@
 			isa = PBXGroup;
 			children = (
 				DBFA620F14CC7E3A00552C82 /* Makefile */,
-				DBE6FF25142A340200DC4A01 /* index.html */,
 				DB966DC413A5422000616143 /* Native */,
+				DB038C8E1501868B00CB79F7 /* Documentation */,
 				DB96842E13A5445200616143 /* Web */,
 				DB9B27E3140FD8D700711AEE /* Util */,
 			);

@@ -2,39 +2,34 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
-#ifndef _FABRIC_AST_USE_H
-#define _FABRIC_AST_USE_H
+#ifndef _FABRIC_AST_REQUIRE_H
+#define _FABRIC_AST_REQUIRE_H
 
 #include <Fabric/Core/AST/Node.h>
 
 namespace Fabric
 {
-  namespace Util
-  {
-    class SimpleString;
-  };
-  
   namespace AST
   {
-    class UseNameToLocationMap;
+    class RequireNameToLocationMap;
     
-    class Use : public Node
+    class Require : public Node
     {
-      FABRIC_AST_NODE_DECL( Use );
+      FABRIC_AST_NODE_DECL( Require );
       
     public:
       REPORT_RC_LEAKS
 
-      static RC::ConstHandle<Use> Create(
+      static RC::ConstHandle<Require> Create(
         CG::Location const &location,
         std::string const &name
         );
       
-      void collectUses( UseNameToLocationMap &uses ) const;
+      void collectRequires( RequireNameToLocationMap &uses ) const;
      
     protected:
     
-      Use(
+      Require(
         CG::Location const &location,
         std::string const &name
         );
@@ -45,7 +40,7 @@ namespace Fabric
     
       std::string m_name;
     };
-  };
-};
+  }
+}
 
-#endif //_FABRIC_AST_USE_H
+#endif //_FABRIC_AST_REQUIRE_H

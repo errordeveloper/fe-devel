@@ -36,6 +36,7 @@ Depends( rcFile, 'afxres.h' )
 Depends( rcFile, 'winres.h' )
 npapiSources += [npapiEnv.RES( 'FabricPlugin.rc' )]
 npapiPlugin = npapiEnv.LoadableModule( 'npFabricPlugin', npapiSources, register=1 )
+npapiEnv.Depends( npapiPlugin, defFile )
 
 npapiEnv.AddPostAction( npapiPlugin, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2' )
 

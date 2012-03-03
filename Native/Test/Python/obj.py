@@ -8,7 +8,7 @@ fabricClient = fabric.createClient()
 loadOp = fabricClient.DependencyGraph.createOperator("load")
 loadOp.setEntryFunctionName("load")
 loadOp.setSourceCode('\
-use FabricOBJ;\n\
+require FabricOBJ;\n\
 \n\
 operator load(\n\
   io String url,\n\
@@ -41,7 +41,7 @@ rlnode.setData("url", 0, "testfile://test.obj")
 resizeOp = fabricClient.DependencyGraph.createOperator("resize")
 resizeOp.setEntryFunctionName("resize")
 resizeOp.setSourceCode('\
-use FabricOBJ;\n\
+require FabricOBJ;\n\
 operator resize(\n\
   io OBJDataHandle objParseHandle,\n\
   io Container container\n\
@@ -67,7 +67,7 @@ resizeBinding.setParameterLayout([
 setDataOp = fabricClient.DependencyGraph.createOperator("setData")
 setDataOp.setEntryFunctionName("setData")
 setDataOp.setSourceCode('\
-use FabricOBJ;\n\
+require FabricOBJ;\n\
 operator setData(\n\
   io OBJDataHandle objParseHandle,\n\
   io Vec3 positions<>\n\

@@ -26,8 +26,16 @@ namespace Fabric
       
     protected:
     
-      IntegerDesc( std::string const &name, RC::ConstHandle<IntegerImpl> const &integerImpl )
-        : NumericDesc( name, integerImpl )
+      IntegerDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<IntegerImpl> const &integerImpl
+        )
+        : NumericDesc(
+          userNameBase,
+          userNameArraySuffix,
+          integerImpl
+          )
         , m_integerImpl( integerImpl )
       {
       }
@@ -66,8 +74,16 @@ namespace Fabric
       
     protected:
     
-      IntegerDescT( std::string const &name, RC::ConstHandle< IntegerImplT<T> > const &integerImplT )
-        : IntegerDesc( name, integerImplT )
+      IntegerDescT(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle< IntegerImplT<T> > const &integerImplT
+        )
+        : IntegerDesc(
+          userNameBase,
+          userNameArraySuffix,
+          integerImplT
+          )
         , m_integerImplT( integerImplT )
       {
       }
@@ -83,8 +99,16 @@ namespace Fabric
       
     protected:
     
-      ByteDesc( std::string const &name, RC::ConstHandle<ByteImpl> const &byteImpl )
-        : IntegerDescT<uint8_t>( name, byteImpl )
+      ByteDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ByteImpl> const &byteImpl
+        )
+        : IntegerDescT<uint8_t>(
+          userNameBase,
+          userNameArraySuffix,
+          byteImpl
+          )
       {
       }
     };
@@ -95,8 +119,16 @@ namespace Fabric
       
     protected:
     
-      SI32Desc( std::string const &name, RC::ConstHandle<SI32Impl> const &integerImpl )
-        : IntegerDescT<int32_t>( name, integerImpl )
+      SI32Desc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<SI32Impl> const &integerImpl
+        )
+        : IntegerDescT<int32_t>(
+          userNameBase,
+          userNameArraySuffix,
+          integerImpl
+          )
       {
       }
     };
@@ -107,12 +139,20 @@ namespace Fabric
       
     protected:
     
-      SizeDesc( std::string const &name, RC::ConstHandle<SizeImpl> const &sizeImpl )
-        : IntegerDescT<size_t>( name, sizeImpl )
+      SizeDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<SizeImpl> const &sizeImpl
+        )
+        : IntegerDescT<size_t>(
+          userNameBase,
+          userNameArraySuffix,
+          sizeImpl
+          )
       {
       }
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_INTEGER_DESC_H

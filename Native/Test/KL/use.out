@@ -1,4 +1,0 @@
-use.kl:7:5: error: no registered type or plugin named 'AnotherUnknownPlugin'
-use.kl:6:20: error: no registered type or plugin named 'AnotherUnknownType'
-use.kl:6:5: error: no registered type or plugin named 'UnknownPlugin'
-use.kl:5:5: error: no registered type or plugin named 'UnknownType'

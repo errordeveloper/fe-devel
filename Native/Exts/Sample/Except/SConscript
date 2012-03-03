@@ -2,10 +2,12 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName' )
+Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName', 'buildOS' )
 
 exceptSampleExtEnv = extsEnv.Clone()
-exceptSampleExt = exceptSampleExtEnv.SharedLibrary( ExtSLName('ExceptSample'), Glob('*.cpp') ),
+exceptSampleExt = exceptSampleExtEnv.SharedLibrary( ExtSLName('ExceptSample'), Glob('*.cpp') )
+if buildOS == 'Windows':
+  exceptSampleExt = exceptSampleExt[0]
 exceptSampleManifest = exceptSampleExtEnv.File( 'ExceptSample.fpm.json' ),
 exceptSampleKL = exceptSampleExtEnv.File( 'ExceptSample.kl' ),
 exceptFiles = [exceptSampleManifest, exceptSampleExt, exceptSampleKL]

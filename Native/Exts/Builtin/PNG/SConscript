@@ -2,11 +2,13 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'libpngFlags', 'ExtSLName' )
+Import( 'extsEnv', 'libpngFlags', 'ExtSLName', 'buildOS' )
 
 pngPluginEnv = extsEnv.Clone()
 pngPluginEnv.MergeFlags( libpngFlags )
-pngPlugin = pngPluginEnv.SharedLibrary( ExtSLName('FabricPNG'), Glob('*.cpp') ),
+pngPlugin = pngPluginEnv.SharedLibrary( ExtSLName('FabricPNG'), Glob('*.cpp') )
+if buildOS == 'Windows':
+  pngPlugin = pngPlugin[0]
 pngManifest = pngPluginEnv.File('FabricPNG.fpm.json'),
 pngKL = pngPluginEnv.File('FabricPNG.kl'),
 pngFiles = [pngManifest, pngPlugin, pngKL]

@@ -19,6 +19,7 @@ except Exception as e:
 
 
 fileAndFolderHandles = fabricClient.IO.queryUserFileAndFolderHandle(fabricClient.IO.forOpenWithWriteAccess, "dummy title", "txt", "testfile")
+print( 'File and folder handles: ' + fabric.stringify(fileAndFolderHandles));
 print('User file name: ' + fabricClient.IO.getFileHandleInfo(fileAndFolderHandles['file'])['fileName'])
 
 relativeFileHandle = fabricClient.IO.buildFileHandleFromRelativePath(fileAndFolderHandles['folder'] + '/SubDir/testfile2.txt')
@@ -72,7 +73,7 @@ def loadSuccessCallback( selfNode ):
     myvars['callbackStep'] = 2
     node.setData('storeDataAsFile',0,True)
     fabricClient.flush()
-    node.setData('url',0,'testfile://TMP/SubDir/testfile4.txt')
+    node.setData('url',0,'TMP/SubDir/testfile4.txt')
     fabricClient.flush()
     node.evaluate()
   elif myvars['callbackStep'] == 2:

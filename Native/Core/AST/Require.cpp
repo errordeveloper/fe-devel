@@ -2,25 +2,24 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
-#include <Fabric/Core/AST/Use.h>
-#include <Fabric/Core/AST/UseInfo.h>
-#include <Fabric/Base/Util/SimpleString.h>
+#include <Fabric/Core/AST/Require.h>
+#include <Fabric/Core/AST/RequireInfo.h>
 
 namespace Fabric
 {
   namespace AST
   {
-    FABRIC_AST_NODE_IMPL( Use );
+    FABRIC_AST_NODE_IMPL( Require );
     
-    RC::ConstHandle<Use> Use::Create(
+    RC::ConstHandle<Require> Require::Create(
       CG::Location const &location,
       std::string const &name
       )
     {
-      return new Use( location, name );
+      return new Require( location, name );
     }
     
-    Use::Use(
+    Require::Require(
       CG::Location const &location,
       std::string const &name
       )
@@ -29,15 +28,15 @@ namespace Fabric
     {
     }
     
-    void Use::appendJSONMembers( JSON::ObjectEncoder const &jsonObjectEncoder, bool includeLocation ) const
+    void Require::appendJSONMembers( JSON::ObjectEncoder const &jsonObjectEncoder, bool includeLocation ) const
     {
       Node::appendJSONMembers( jsonObjectEncoder, includeLocation );
       jsonObjectEncoder.makeMember( "name" ).makeString( m_name );
     }
     
-    void Use::collectUses( UseNameToLocationMap &uses ) const
+    void Require::collectRequires( RequireNameToLocationMap &uses ) const
     {
-      uses.insert( UseNameToLocationMap::value_type( m_name, getLocation() ) );
+      uses.insert( RequireNameToLocationMap::value_type( m_name, getLocation() ) );
     }
-  };
-};
+  }
+}

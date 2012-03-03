@@ -35,14 +35,19 @@ namespace Fabric
             
     protected:
     
-      ArrayDesc( std::string const &name, RC::ConstHandle<ArrayImpl> const &arrayImpl, RC::ConstHandle<Desc> const &memberDesc );
+      ArrayDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ArrayImpl> const &arrayImpl,
+        RC::ConstHandle<Desc> const &memberDesc
+        );
       
     private:
     
       RC::ConstHandle<ArrayImpl> m_arrayImpl;
       RC::ConstHandle<Desc> m_memberDesc;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_ARRAY_DESC_H

@@ -2,8 +2,8 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
-#ifndef _FABRIC_AST_USE_GLOBAL_H
-#define _FABRIC_AST_USE_GLOBAL_H
+#ifndef _FABRIC_AST_REQUIRE_GLOBAL_H
+#define _FABRIC_AST_REQUIRE_GLOBAL_H
 
 #include <Fabric/Core/AST/Global.h>
 
@@ -17,39 +17,39 @@ namespace Fabric
   
   namespace AST
   {
-    class UseVector;
-    class UseInfoSet;
+    class RequireVector;
+    class RequireInfoSet;
     
-    class UseGlobal : public Global
+    class RequireGlobal : public Global
     {
-      FABRIC_AST_NODE_DECL( UseGlobal );
+      FABRIC_AST_NODE_DECL( RequireGlobal );
       
     public:
       REPORT_RC_LEAKS
 
-      static RC::ConstHandle<UseGlobal> Create(
+      static RC::ConstHandle<RequireGlobal> Create(
         CG::Location const &location,
-        RC::ConstHandle<UseVector> const &useVector
+        RC::ConstHandle<RequireVector> const &useVector
         );
       
-      virtual void collectUses( UseNameToLocationMap &uses ) const;
+      virtual void collectRequires( RequireNameToLocationMap &uses ) const;
       virtual void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
       virtual void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctionBodies ) const;
       
     protected:
     
-      UseGlobal(
+      RequireGlobal(
         CG::Location const &location,
-        RC::ConstHandle<UseVector> const &useVector
+        RC::ConstHandle<RequireVector> const &useVector
         );
       
       virtual void appendJSONMembers( JSON::ObjectEncoder const &jsonObjectEncoder, bool includeLocation ) const;
     
     private:
     
-      RC::ConstHandle<UseVector> m_useVector;
+      RC::ConstHandle<RequireVector> m_requireVector;
     };
-  };
-};
+  }
+}
 
-#endif //_FABRIC_AST_USE_GLOBAL_H
+#endif //_FABRIC_AST_REQUIRE_GLOBAL_H

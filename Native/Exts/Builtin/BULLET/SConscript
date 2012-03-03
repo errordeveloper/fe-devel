@@ -2,7 +2,7 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName' )
+Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName', 'buildOS' )
 
 bulletPluginEnv = extsEnv.Clone()
 bulletRoot = '../../../ThirdParty/Private/bullet-2.78/src'
@@ -19,7 +19,9 @@ bulletSources.extend(Glob(bulletRoot + '/BulletDynamics/Dynamics/*.cpp'))
 bulletSources.extend(Glob(bulletRoot + '/BulletDynamics/Character/*.cpp'))
 bulletSources.extend(Glob(bulletRoot + '/BulletDynamics/Vehicle/*.cpp'))
 bulletSources.extend(Glob(bulletRoot + '/BulletDynamics/ConstraintSolver/*.cpp'))
-bulletPlugin = bulletPluginEnv.SharedLibrary( ExtSLName('FabricBULLET'), bulletSources ),
+bulletPlugin = bulletPluginEnv.SharedLibrary( ExtSLName('FabricBULLET'), bulletSources )
+if buildOS == 'Windows':
+  bulletPlugin = bulletPlugin[0]
 bulletManifest = bulletPluginEnv.File('FabricBULLET.fpm.json'),
 bulletKL = bulletPluginEnv.File('FabricBULLET.kl'),
 bulletFiles = [bulletManifest, bulletPlugin, bulletKL]

@@ -2,11 +2,13 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'openexrFlags', 'ExtSLName' )
+Import( 'extsEnv', 'openexrFlags', 'ExtSLName', 'buildOS' )
 
 exrPluginEnv = extsEnv.Clone()
 exrPluginEnv.MergeFlags( openexrFlags )
-exrPlugin = exrPluginEnv.SharedLibrary( ExtSLName('FabricEXR'), Glob('*.cpp') ),
+exrPlugin = exrPluginEnv.SharedLibrary( ExtSLName('FabricEXR'), Glob('*.cpp') )
+if buildOS == 'Windows':
+  exrPlugin = exrPlugin[0]
 exrManifest = exrPluginEnv.File('FabricEXR.fpm.json'),
 exrKL = exrPluginEnv.File('FabricEXR.kl'),
 exrFiles = [exrManifest, exrPlugin, exrKL]

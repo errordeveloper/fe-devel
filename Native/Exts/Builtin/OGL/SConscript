@@ -30,6 +30,8 @@ oglPluginEnv.Command(
 )
 
 oglPlugin = oglPluginEnv.SharedLibrary( ExtSLName('FabricOGL'), oglSource )
+if buildOS == 'Windows':
+  oglPlugin = oglPlugin[0]
 oglFiles = [oglManifest, oglPlugin, oglKL]
 
 Return( 'oglFiles' )

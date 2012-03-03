@@ -14,12 +14,13 @@ namespace Fabric
 {
   namespace IO
   {
-    RC::Handle<FileResourceProvider> FileResourceProvider::Create()
+    RC::Handle<FileResourceProvider> FileResourceProvider::Create( bool acceptUnformattedLocalPaths )
     {
-      return new FileResourceProvider();
+      return new FileResourceProvider( acceptUnformattedLocalPaths );
     }
 
-    FileResourceProvider::FileResourceProvider()
+    FileResourceProvider::FileResourceProvider( bool acceptUnformattedLocalPaths )
+      : m_acceptUnformattedLocalPaths( acceptUnformattedLocalPaths )
     {
     }
 
@@ -82,10 +83,14 @@ namespace Fabric
 
     void FileResourceProvider::get( char const *url, bool getAsFile, void* userData )
     {
-      if( strncmp( "file:///", url, 8 ) != 0 )
+      if( strncmp( "file://", url, 7 ) == 0 )
+      {
+        url += 7;
+      }
+      else if( !m_acceptUnformattedLocalPaths || strstr( url, "//:" ) != NULL )
           throw Exception( "Error: URL not properly formatted for local files" );//Don't put filename as it might be private
 
-      std::string fileWithPath = ChangeSeparatorsURLToFile( std::string( url+8 ) );
+      std::string fileWithPath = ChangeSeparatorsURLToFile( url );
       if( !FileExists( fileWithPath ) )
           throw Exception( "Error: file doesn't exist" );//Don't put filename as it might be private
 

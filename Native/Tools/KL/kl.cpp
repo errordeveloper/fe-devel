@@ -9,7 +9,7 @@
 #include <Fabric/Core/KL/Scanner.h>
 #include <Fabric/Core/KL/StringSource.h>
 #include <Fabric/Core/AST/GlobalList.h>
-#include <Fabric/Core/AST/UseInfo.h>
+#include <Fabric/Core/AST/RequireInfo.h>
 #include <Fabric/Core/RT/Manager.h>
 #include <Fabric/Core/RT/NumericDesc.h>
 #include <Fabric/Core/RT/StringDesc.h>
@@ -191,10 +191,10 @@ void handleFile( std::string const &filename, FILE *fp, unsigned int runFlags )
 
   if( runFlags & (RF_ShowASM | RF_ShowIR | RF_ShowOptIR | RF_ShowOptASM | RF_Run) )
   {
-    AST::UseNameToLocationMap uses;
-    globalList->collectUses( uses );
-    for ( AST::UseNameToLocationMap::const_iterator it=uses.begin(); it!=uses.end(); ++it )
-      diagnostics.addError( it->second, "no registered type or plugin named " + _(it->first) );
+    AST::RequireNameToLocationMap requires;
+    globalList->collectRequires( requires );
+    for ( AST::RequireNameToLocationMap::const_iterator it=requires.begin(); it!=requires.end(); ++it )
+      diagnostics.addError( it->second, "no registered type or extension named " + _(it->first) );
     
     if ( !diagnostics.containsError() )
       globalList->registerTypes( cgManager, diagnostics );

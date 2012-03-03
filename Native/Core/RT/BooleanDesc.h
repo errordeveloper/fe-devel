@@ -27,7 +27,11 @@ namespace Fabric
       
     protected:
     
-      BooleanDesc( std::string const &name, RC::ConstHandle<BooleanImpl> const &booleanImpl );
+      BooleanDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<BooleanImpl> const &booleanImpl
+        );
       
     private:
     

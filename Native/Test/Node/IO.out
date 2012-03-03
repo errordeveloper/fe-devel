@@ -1,5 +1,6 @@
-Bad handle error: Fabric core exception: IO.putTextFileContent('{"content":"badHandle","file":"d...'): Invalid FileHandle
-No write access error: Fabric core exception: IO.putTextFileContent('{"content":"dummy","file":"fabri...'): File has no write access
+Bad handle error: Fabric core exception: IO.putTextFileContent('{"content":"badHandle","file":"d...'): Error: ambiguous: handle's relative path could be a file or a folder; first create a file or folder handle from relative path
+No write access error: Fabric core exception: IO.putTextFileContent('{"content":"dummy","file":"file:...'): File has no write access
+File and folder handles: {"file":"file://TMP/default.txt","folder":"file://TMP"}
 User file name: default.txt
 File not found error
 File content: FileBody

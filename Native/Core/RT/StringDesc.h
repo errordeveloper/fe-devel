@@ -28,13 +28,17 @@ namespace Fabric
       
     protected:
     
-      StringDesc( std::string const &name, RC::ConstHandle<StringImpl> const &stringImpl );
+      StringDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<StringImpl> const &stringImpl
+        );
     
     private:
     
       RC::ConstHandle<StringImpl> m_stringImpl;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_STRING_DESC_H

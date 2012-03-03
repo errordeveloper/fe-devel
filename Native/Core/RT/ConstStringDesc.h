@@ -29,7 +29,11 @@ namespace Fabric
       
     protected:
     
-      ConstStringDesc( std::string const &name, RC::ConstHandle<ConstStringImpl> const &constStringImpl );
+      ConstStringDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ConstStringImpl> const &constStringImpl
+        );
       
     private:
     

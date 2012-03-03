@@ -1,0 +1,34 @@
+struct T {
+  String s;
+};
+
+function T(String s) {
+  this.s = s;
+  report("created T; s = " + this.s);
+}
+
+function ~T() {
+  report("destroying T; s = " + this.s);
+}
+
+function foo(T t) {
+  report("start of foo; t is now " + t);
+  T t("fooT");
+  report("declared t in foo; t is now " + t);
+  for (Index i=0; i<3; ++i) {
+    report("top of loop body; t is now " + t);
+    T t("loopT:" + i);
+    report("declared t in loop; t is now " + t);
+  }
+  report("after loop; t is now " + t);
+}
+
+const Float32 t = 2.75;
+
+operator entry() {
+  report("top of entry; t is now " + t);
+  T t("entryT");
+  report("declared t in entry; t is now " + t);
+  foo(t);
+  report("came back from foo; t is now " + t);
+}

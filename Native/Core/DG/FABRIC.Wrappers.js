@@ -3,8 +3,9 @@
  */
 
 (function(){return (
-function (fabricClient, logCallback, debugLogCallback) {
+function (originalFabricClient, logCallback, debugLogCallback) {
 
+  var fabricClient = originalFabricClient;
   var queuedCommands = [];
   var queuedUnwinds = [];
   var queuedCallbacks = [];
@@ -155,12 +156,44 @@ function (fabricClient, logCallback, debugLogCallback) {
           throw "RT.registerType: second parameter: missing members element";
           
         var members = [];
-        for (var descMemberName in desc.members) {
-          var member = {
-            name: descMemberName,
-            type: desc.members[descMemberName]
-          };
-          members.push(member);
+
+        // [ { name1:type1 }, { name2:type2 } ]
+        if ( desc.members instanceof Array ) {
+          for (var memberIdx in desc.members) {
+            var descMember = desc.members[memberIdx];
+            var foundOne = false;
+            for (var descMemberName in descMember) {
+              if (foundOne) {
+                throw "RT.registerType: second parameter: invalid members element";
+              }
+              foundOne = true;
+
+              var member = {
+                name: descMemberName,
+                type: descMember[descMemberName]
+              };
+              members.push(member);
+            }
+          }
+        }
+        // support the old method of specifying members for legacy purposes
+        // { name1:type1, name2:type2 }
+        else {
+          for (var descMemberName in desc.members) {
+            var member = {
+              name: descMemberName,
+              type: desc.members[descMemberName]
+            };
+            members.push(member);
+          }
+        }
+
+        // validate members
+        for (var memberName in members) {
+          if (typeof members[memberName].name !== 'string' ||
+              typeof members[memberName].type !== 'string') {
+            throw "RT.registerType: members: member name and type must be strings";
+          }
         }
 
         var constructor = desc.constructor || Object;
@@ -2500,6 +2533,10 @@ function (fabricClient, logCallback, debugLogCallback) {
       });
       executeQueuedCommands();
       return memoryUsage;
+    },
+    swapFabricClient: function( newFabricClient ) {
+      executeQueuedCommands();
+      fabricClient = newFabricClient;
     }
   };
 }

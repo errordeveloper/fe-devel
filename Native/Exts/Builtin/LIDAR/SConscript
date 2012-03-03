@@ -17,7 +17,9 @@ lidarSources.extend(Glob('../../../ThirdParty/Private/libLAS-1.7.0b2/src/detail/
 lidarSources.extend(Glob('../../../ThirdParty/Private/libLAS-1.7.0b2/src/detail/reader/*.cpp'))
 lidarSources.extend(Glob('../../../ThirdParty/Private/libLAS-1.7.0b2/src/detail/writer/*.cpp'))
 lidarSources.extend(Glob('../../../ThirdParty/Private/laszip-2.0.2/src/*.cpp'))
-lidarPlugin = lidarPluginEnv.SharedLibrary( ExtSLName('FabricLIDAR'), lidarSources ),
+lidarPlugin = lidarPluginEnv.SharedLibrary( ExtSLName('FabricLIDAR'), lidarSources )
+if buildOS == 'Windows':
+  lidarPlugin = lidarPlugin[0]
 lidarManifest = lidarPluginEnv.File('FabricLIDAR.fpm.json'),
 lidarKL = lidarPluginEnv.File('FabricLIDAR.kl'),
 lidarFiles = [lidarManifest, lidarPlugin, lidarKL]

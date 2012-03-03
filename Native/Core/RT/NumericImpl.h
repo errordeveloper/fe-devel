@@ -28,7 +28,7 @@ namespace Fabric
       {
       }
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_NUMERIC_IMPL_H

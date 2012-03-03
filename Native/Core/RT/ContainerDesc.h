@@ -32,13 +32,17 @@ namespace Fabric
 
     protected:
     
-      ContainerDesc( std::string const &name, RC::ConstHandle<ContainerImpl> const &containerImpl );
+      ContainerDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ContainerImpl> const &containerImpl
+        );
     
     private:
     
       RC::ConstHandle<ContainerImpl> m_containerImpl;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_CONTAINER_DESC_H

@@ -30,8 +30,16 @@ namespace Fabric
       
     protected:
     
-      NumericDesc( std::string const &name, RC::ConstHandle<NumericImpl> const &numericImpl )
-        : ComparableDesc( name, numericImpl )
+      NumericDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<NumericImpl> const &numericImpl
+        )
+        : ComparableDesc(
+          userNameBase,
+          userNameArraySuffix,
+          numericImpl
+          )
         , m_numericImpl( numericImpl )
       {
       }
@@ -40,7 +48,7 @@ namespace Fabric
     
       RC::ConstHandle<NumericImpl> m_numericImpl;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_NUMERIC_DESC_H

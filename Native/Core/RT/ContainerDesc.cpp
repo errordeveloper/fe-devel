@@ -12,10 +12,15 @@ namespace Fabric
   namespace RT
   {
     ContainerDesc::ContainerDesc(
-      std::string const &name,
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
       RC::ConstHandle<ContainerImpl> const &containerImpl
       )
-      : Desc( name, containerImpl )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        containerImpl
+        )
       , m_containerImpl( containerImpl )
     {
     }

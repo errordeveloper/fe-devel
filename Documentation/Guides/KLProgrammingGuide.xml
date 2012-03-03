@@ -13,7 +13,7 @@
     </copyright>
   </info>
   
-  <chapter>
+  <chapter xml:id="introduction">
     <title>Introduction</title>
 
     <para>
@@ -37,34 +37,34 @@
         </para></listitem>
       </itemizedlist>
 
-      As such, KL is a language with a syntax very similar to JavaScript but which is <emphasis>procedural</emphasis>, <emphasis>strongly-typed</emphasis> and with <emphasis>low-level data layouts</emphasis>.  Being <emphasis>procedural</emphasis> means that, unlike JavaScript, functions (or, rather, closures) are not first-class objets that can be passed around in the language; instead, functions are always globally declared.  Being <emphasis>strongly-typed</emphasis> means that, in a KL program, the types of all variables and function parameters is known at compile type, unlike JavaScript where types are only known at runtime.  Having <emphasis>low-level data layouts</emphasis> means that the size of data and the way that it is laid out in memory is guaranteed and controllable by the programmer.
+      As such, KL is a language with a syntax very similar to JavaScript but that is <emphasis>procedural</emphasis>, <emphasis>strongly-typed</emphasis> and with <emphasis>low-level data layouts</emphasis>.  Being <emphasis>procedural</emphasis> means that, unlike JavaScript, functions (or, rather, closures) are not first-class objets that can be passed around in the language; instead, functions are always globally declared.  Being <emphasis>strongly-typed</emphasis> means that, in a KL program, the types of all variables and function parameters is known at compile type, unlike JavaScript where types are only known at runtime.  Having <emphasis>low-level data layouts</emphasis> means that the size of data and the way that it is laid out in memory is guaranteed and controllable by the programmer.
     </para>
     
     <para>
-      Before diving in to the details of the language, we will present some simple examples.  We don't expect you to understand all the details of the examples, but hopefully they will give you a basic idea of what KL programs look like as well as some of what is possible with KL.  All of these examples can be run by downloading and installing the <filename>FabricEngine-KLTool-...</filename> file that is appropriate for your operating system from <link xlink:href="http://dist.fabric-engine.com/latest/">http://dist.fabric-engine.com/latest/</link>.  Once installed, you can copy the source code to a text file and run <command>kl <replaceable>filename.kl</replaceable></command>.
+      Before diving in to the details of the language, we will present some simple examples.  We don't expect you to understand all the details of the examples, but hopefully they will give you a basic idea of what KL programs look like as well as some of what is possible with KL.  All of these examples can be run by downloading and installing the <filename>FabricEngine-KLTool-...</filename> file that is appropriate for your operating system from <link xlink:href="http://dist.fabric-engine.com/latest/"><uri>http://dist.fabric-engine.com/latest/</uri></link>.  Once installed, you can copy the source code to a text file and run <command>kl <replaceable>filename.kl</replaceable></command>.
     </para>
     
-    <section>
+    <section xml:id="introduction.hello-world">
       <title>Hello World in KL</title>
       
       <para>
         Traditionally, the first program you see in a language is one that says hello.  In KL, the "Hello, world!" program is simple:
         
-        <example xml:id="ex.helloworld.code">
+        <example xml:id="introduction.hello-world.ex">
           <title>Hello world</title>
           <programlisting language="KL"><![CDATA[
 operator entry() {
-  report "Hello, world!";
+  report("Hello, world!");
 }
           ]]></programlisting>
         </example>
         
         Running this program through the <command>kl</command> tool, the output is:
       
-        <informalfigure>
+        <informalfigure xml:id="introduction.hello-world.ex.out">
           <screen><![CDATA[
 operator entry() {
-  report "Hello, world!";
+  report("Hello, world!");
 }
           ]]></screen>
         </informalfigure>
@@ -73,19 +73,18 @@ operator entry() {
         
         <itemizedlist>
           <listitem><para>The <code>entry</code> operator is what is run by the <command>kl</command> tool.  KL distinguishes places in the program that can be called from the outside world&mdash;in this case, the outside world is the <command>kl</command> tool itself.  We discuss more about operators <xref linkend="operators" /></para></listitem>
-          <listitem><para>The <code>report</code> keyword reports something to wherever messages go.  In the case of the <command>kl</command> tool, messages go to standard output; when running within a web browser, messages appear on the JavaScript console.</para></listitem>
+          <listitem><para>The <code>report</code> function sends some text to wherever messages go.  In the case of the <command>kl</command> tool, messages go to standard output; when running within a web browser, messages appear on the JavaScript console.</para></listitem>
           <listitem><para>The text <code>"Hello, world!"</code> is a <glossterm>string constant</glossterm>.  String constants in KL follow almost exactly the same syntax as JavaScript.</para></listitem>
         </itemizedlist>
       </para>
     </section>
-      
-    <section>
+    <section xml:id="introduction.fibonacci">
       <title>Fibonacci Sequence in KL</title>
 
       <para>
         Next, we present a somewhat more sophisticated example that computes the first few terms of the Fibonacci sequence.  The Fibonacci sequence is the number sequence whose first few terms are 1 and 1, and whose further terms are the sum of the previous two in the sequence, ie. 2, 3, 5, 8, and so on.  There are several ways of computing the Fibonacci sequence in a programming language but we choose the naive, recursive way in order to illustrate some more language features of KL.
 
-        <example xml:id="ex.fibonacci.code">
+        <example xml:id="introuction.fibonacci.ex">
           <title>Fibonacci sequence generator</title>
           <programlisting language="KL"><![CDATA[
 /* Recursively compute the Fibonacci sequence.
@@ -100,14 +99,14 @@ function Integer fibonacci(Integer n) {
 
 operator entry() {
   for (Integer i = 0; i < 10; ++i)
-    report fibonacci(i);
+    report(fibonacci(i));
 }
           ]]></programlisting>
         </example>
         
         Running this program through the <command>kl</command> tool, the output is:
       
-        <informalfigure xml:id="fig.fibonacci.out">
+        <informalfigure xml:id="introuction.fibonacci.out">
           <screen><![CDATA[
 1
 1
@@ -133,18 +132,17 @@ operator entry() {
         </itemizedlist>
       </para>
     </section>
-    
-    <section>
+    <section xml:id="introduction.mandelbrot">
       <title>Mandelbrot Set in KL</title>
       
       <para>
-        Finally, we present an example of a KL program that generates the Mandelbrot set and outputs it visually as ASCII art.  The Mandelbrot set is a mathematical set defined by complex recursive functions, but that it best known because the patterns it contains are visually stunning.  Refer to the Wikipedia entry on the Mandelbrot set at <link xlink:href="http://en.wikipedia.org/wiki/Mandelbrot_set">http://en.wikipedia.org/wiki/Mandelbrot_set</link> for more information.
+        Finally, we present an example of a KL program that generates the Mandelbrot set and outputs it visually as ASCII art.  The Mandelbrot set is a mathematical set defined by complex recursive functions, but that it best known because the patterns it contains are visually stunning.  Refer to the Wikipedia entry on the Mandelbrot set at <link xlink:href="http://en.wikipedia.org/wiki/Mandelbrot_set"><uri>http://en.wikipedia.org/wiki/Mandelbrot_set</uri></link> for more information.
       </para>
       
       <para>
         KL includes very powerful features for extending the language for computational problems such as that of computing the values of the Mandelbrot set, as seen in the source code below:
         
-        <example xml:id="ex.mandelbrot.code">
+        <example xml:id="introuction.mandelbrot.ex">
           <title>Mandelbrot set generator</title>
           <programlisting language="KL"><![CDATA[
 struct Complex32 {
@@ -199,7 +197,7 @@ operator entry()
       else
         rowString += " ";
     }
-    report rowString;
+    report(rowString);
   }
 }
           ]]></programlisting>
@@ -247,8 +245,7 @@ operator entry()
         </itemizedlist>
       </para>
     </section>
-    
-    <section>
+    <section xml:id="introduction.organization">
       <title>How This Guide is Organized</title>
       
       <para>
@@ -264,26 +261,33 @@ operator entry()
         
         <itemizedlist>
           <listitem><para>
-            <xref linkend="ch.syntax" /> describes the syntax of KL.  KL has a syntax very similar to JavaScript (like JavaScript, it is a <quote>C-like</quote> language) so this syntax will be familiar to many programmers.
+            <xref linkend="syntax" /> describes the syntax of KL.  KL has a syntax very similar to JavaScript (like JavaScript, it is a <quote>C-like</quote> language) so this syntax will be familiar to many programmers.  If you are already familiar with the syntax of JavaScript or C, we recommend that you skip this chapter and move on to the next; you can always come back to it later for reference.
           </para></listitem>
           
           <listitem><para>
-            <xref linkend="ch.types" /> introduces the type system of KL.  KL comes with a rich set of base types that includes integers, floating-point numbers, strings and booleans, as well as derived types including structures, arrays and dictionaries.
+            <xref linkend="types" /> introduces the type system of KL.  KL comes with a rich set of base types that includes integers, floating-point numbers, strings and booleans, as well as derived types including structures, arrays and dictionaries.
           </para></listitem>
           
           <listitem><para>
-            <xref linkend="ch.functions" /> describes how functions are declared and called in KL.  KL includes support for basic functions (also referred to as procedures in other languages), but also support more complex function concepts such as prototypes, methods and overloaded operators.
+            <xref linkend="globals" /> describes how functions and other global declarations are made in KL.  KL includes support for basic functions (also referred to as procedures in other languages), but also support more complex function concepts such as prototypes, methods and overloaded operators.  It also support global constants, as well as a facility to import functionality from external modules.
+          </para></listitem>
+          
+          <listitem><para>
+            <xref linkend="ops-exprs" /> describes the set of operators supported by KL and the different kinds of expressions that can be formed using these operators.  It also discusses the rules that govern scoping for variables and other symbols.
           </para></listitem>
         </itemizedlist>
       </para>
     </section>
   </chapter>
-  
-  <chapter xml:id="ch.syntax">
+  <chapter xml:id="syntax">
     <title>KL Syntax</title>
     
     <para>
-      When KL was developed it was designed to have a syntax as close as possible to JavaScript, which itself is what is referred to as a <quote>C-like language</quote> (as far as syntax is concerned).  Some of the key characteristics of C-like languages are:
+      When KL was developed it was designed to have a syntax as close as possible to JavaScript, which itself is what is referred to as a <quote>C-like language</quote> (as far as syntax is concerned).  This chapter goes into the details of KL syntax, and can act as a reference for you if you are not familiar with C-like languages.  On the other hand, if you are already familiar with the syntax of JavaScript and/or C, we recommend that you skip this chapter and move on to the next.
+    </para>
+      
+    <para>
+      Some of the key characteristics of C-like languages are:
       
       <itemizedlist>
         <listitem><para>
@@ -314,7 +318,7 @@ operator entry()
       We delve into some more details of the KL syntax below.
     </para>
     
-    <section>
+    <section xml:id="syntax.encoding">
       <title>Encoding</title>
       
       <para>
@@ -324,23 +328,53 @@ operator entry()
       <para>
         If you don't understand exactly what this means, don't worry: plain 7-bit ASCII text files, such as used for C source code (and often for JavaScript source code) are by default UTF-8 encoded.  The only thing to keep in mind is that text files saved on Windows in <quote>Unicode format</quote> (which technically means they are encoded as UCS-2) cannot be read by the KL compiler.  If you want to insert foreign language characters into a KL source file you must use an editor that can write UTF-8 files.
       </para>
+      
+      <para>
+        The benefit of specifying an encoding is that high-bit characters, such as foreign language characters, can be inserted directly into string constants in KL source files.
+      </para>
     </section>
-    
-    <section>
+    <section xml:id="syntax.line-continuations">
+      <title>Line Continuations</title>
+      
+      <para>
+        Like C, any line of a KL program that ends with a <code>\</code> (backslash) character causes the line to be joined with the next line.  This is useful for breaking long lines into multiple lines when a single token needs to be split; usually this token would be a long string.
+      </para>
+            
+      <example xml:id="syntax.line-continuations.ex">
+        <title>Line continuations</title>
+        <programlisting language="KL"><![CDATA[
+operator entry() {
+  report("\
+This is a really, really long string \
+that spans multiple lines.  Note that \
+     <-- the SPACES at the beginning \
+of the next line are preserved!");
+}
+        ]]></programlisting>
+      </example>
+      
+      <informalfigure xml:id="syntax.line-continuations.out">
+        <simpara>Output:</simpara>
+        <screen><![CDATA[
+This is a really, really long string that spans multiple lines.  Note that      <-- the SPACES at the beginning of the next line are preserved!
+        ]]></screen>
+      </informalfigure>
+    </section>
+    <section xml:id="syntax.comments">
       <title>Comments</title>
       
       <para>
         As mentioned previously, KL supports the same two types of comments as C and JavaScript: block comments and line comments.
       </para>
         
-      <section>
+      <section xml:id="syntax.comments.block">
         <title>Block Comments</title>
         
         <para>
           A block comment in KL is an arbitrary sequence of characters that begins with the characters <code>/*</code> and ends with the characters <code>*/</code>.  Like C, KL ends a block comment as soon as it encounters the first sequence <code>*/</code>.  Also like C, KL does not recognize nested comments.  The following examples illustrate acceptable and erroneous bad block comments in KL.
         </para>
         
-        <example>
+        <example xml:id="syntax.comments.block.good.ex">
           <title>Acceptable block comments</title>
           <programlisting language="KL"><![CDATA[
 /* A simple, one-line block comment */
@@ -356,13 +390,13 @@ operator entry()
 
 operator entry() {
   /* comment can appear in source code
-  report "Hello!"; /* pretty much anywhere */
+  report("Hello!"); /* pretty much anywhere */
   foo( 32 /*, 53*/ ); /* block comments are a simple way to temporarily remove code */
 }
           ]]></programlisting>
         </example>
         
-        <example>
+        <example xml:id="syntax.comments.block.bad.ex">
           <title>Erroneous block comments</title>
           <programlisting><![CDATA[
 /* KL ends the comment
@@ -387,15 +421,14 @@ operator entry() {
           Be careful with block comments; if either of the errors of the type given above occur in your program it can be very difficult to figure out what has gone wrong; the syntax errors you are given will seem to have nothing to do with your program.  For this reason, we recommend that you use line comments, which are described next.
         </para>
       </section>
-      
-      <section>
+      <section xml:id="syntax.comments.line">
         <title>Line Comments</title>
         
         <para>
           A line comment in KL begins with the character sequence <code>//</code> and continues until the end of the line (ASCII character 10).  Unlike block comments, there are no <quote>gotchas</quote> with line comments: they work exactly as expected.  However, they can't be used to comment out sections of code in the middle of a line
         </para>
         
-        <example>
+        <example xml:id="syntax.comments.line.ex">
           <title>Line comments</title>
           <programlisting language="KL"><![CDATA[
 // A simple, one-line line comment
@@ -406,7 +439,7 @@ operator entry() {
 
 operator entry() {
   // comment can appear in source code
-  report "Hello!"; // pretty much anywhere
+  report("Hello!"); // pretty much anywhere
   foo( 32 //, 53 ); // can't comment out code in the middle of the line
           ); // but you can continue it on the next line.
 }
@@ -414,38 +447,25 @@ operator entry() {
         </example>
       </section>
     </section>
-    
-    <section>
+    <section xml:id="syntax.tokens">
       <title>Tokens</title>
       
       <para>
         A KL program is <glossterm>parsed</glossterm> as a sequence of tokens.  A token is a sequence of characters that begins with something other than whitespace and is not a comment.  There are four categories of tokens in KL: keywords, identifiers, symbols, and constants.
       </para>
       
-      <section>
+      <section xml:id="syntax.tokens.keywords">
         <title>Keywords</title>
         
         <para>
           The following is the list of all the keywords in KL:
           
-          <simplelist type="vert" columns="3">
+          <simplelist type="vert" columns="4">
             <member><code>alias</code></member>
-            <member><code>ArrayProducer</code></member>
             <member><code>break</code></member>
             <member><code>case</code></member>
             <member><code>const</code></member>
             <member><code>continue</code></member>
-            <member><code>createArrayCache</code></member>
-            <member><code>createArrayGenerator</code></member>
-            <member><code>createArrayMap</code></member>
-            <member><code>createArrayTransform</code></member>
-            <member><code>createConstArray</code></member>
-            <member><code>createConstValue</code></member>
-            <member><code>createReduce</code></member>
-            <member><code>createValueCache</code></member>
-            <member><code>createValueGenerator</code></member>
-            <member><code>createValueMap</code></member>
-            <member><code>createValueTransform</code></member>
             <member><code>default</code></member>
             <member><code>do</code></member>
             <member><code>else</code></member>
@@ -457,12 +477,11 @@ operator entry() {
             <member><code>io</code></member>
             <member><code>operator</code></member>
             <member><code>report</code></member>
+            <member><code>require</code></member>
             <member><code>return</code></member>
             <member><code>struct</code></member>
             <member><code>switch</code></member>
             <member><code>true</code></member>
-            <member><code>use</code></member>
-            <member><code>ValueProducer</code></member>
             <member><code>var</code></member>
             <member><code>while</code></member>
           </simplelist>
@@ -472,8 +491,7 @@ operator entry() {
           Keywords cannot be used as identifiers, ie. cannot be used for variable, parameter, function, constant or type names.
         </para>
       </section>
-    
-      <section>
+      <section xml:id="syntax.tokens.identifiers">
         <title>Identifiers</title>
         
         <para>
@@ -488,7 +506,7 @@ operator entry() {
         <para>
           Identifiers are used in KL for variable names, parameter names, function names, constant names, method names and type names.
           
-          <note><para>Note that the built-in base types in KL (eg. <code>Boolean</code>, <code>String</code>, <code>Float32</code>) are not  keywords but rather identifiers.  This is a technical detail which is important in the design of the language grammar but doesn't make much difference in practice; it simply changes certain syntax errors into semantic errors.</para></note>
+          <note><para>The built-in base types in KL (eg. <code>Boolean</code>, <code>String</code>, <code>Float32</code>) are not  keywords but rather identifiers.  This is a technical detail that is important in the design of the language grammar but doesn't make much difference in practice; it simply changes certain syntax errors into semantic errors.</para></note>
         </para>
         
         <para>
@@ -513,8 +531,7 @@ operator entry() {
           </itemizedlist>
         </para>
       </section>
-      
-      <section>
+      <section xml:id="syntax.tokens.symbols">
         <title>Symbols</title>
         
         <para>
@@ -573,16 +590,248 @@ operator entry() {
           The KL compiler is <quote>greedy</quote> when looking for symbols: it looks for the longest sequence of characters that are a valid symbol.  This is why <code>==(</code> is treated as the two symbols <code>==</code> and <code>(</code>: there is no symbol starting with <code>==(</code> but <code>==</code> is a symbol.
         </para>
       </section>
+      <section xml:id="constants">
+        <title>Constants</title>
+        
+        <para>
+          A constant is a token that is interpreted as a fixed value of a specific type. KL support five types of constants: boolean constants, integer constants, float-point constants, and string constants.  Each of these are explained below.
+        </para>
+        
+        <section xml:id="syntax.tokens.constants.boolean">
+          <title>Boolean Constants</title>
+          
+          <para>
+            The two keywords <code>true</code> and <code>false</code> are the two boolean constants.  They are each a value of type <code>Boolean</code>.
+          </para>
+          
+          <example xml:id="syntax.tokens.constants.boolean.ex">
+            <title>Boolean constants</title>
+            <programlisting language="KL"><![CDATA[
+operator entry() {
+  Float32 value = 1.1;
+  Index steps = 0;
+  Boolean done = false;
+  while (!done) {
+    value *= value;
+    if (value > 2)
+      done = true;
+    ++steps;
+  }
+  report("took " + steps + " steps");
+}
+            ]]></programlisting>
+          </example>
+          
+          <informalfigure xml:id="syntax.tokens.constants.boolean.ex.out">
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+took 3 steps
+            ]]></screen>
+          </informalfigure>
+        </section>
+        <section xml:id="syntax.tokens.constants.integer">
+          <title>Integer Constants</title>
+          
+          <para>
+            A integer constant can take one of three forms:
+
+            <itemizedlist>
+              <listitem><simpara>The single digit <code>0</code></simpara></listitem>
+              <listitem><simpara>A decimal constant that starts with a single digit in the range <code>1</code>...<code>9</code> followed by zero or more digits in the range <code>0</code>...<code>9</code></simpara></listitem>
+              <listitem><simpara>The two characters <code>0x</code> or <code>0X</code> followed by one or more characters in one of the ranges <code>0</code>...<code>9</code>, <code>a</code>...<code>f</code> and <code>A</code>...<code>F</code></simpara></listitem>
+            </itemizedlist>
+            
+            The type of an integer constant depends on its value:
+            
+            <itemizedlist>
+              <listitem><para>
+                If it is less than <inlineequation><mathphrase>2<superscript >31</superscript>-1</mathphrase></inlineequation> then it is of type <code>Integer</code>;
+              </para></listitem>
+              
+              <listitem><para>
+                If it is at least <inlineequation><mathphrase>2<superscript >31</superscript></mathphrase></inlineequation> but less than <inlineequation><mathphrase>2<superscript >32</superscript>-1</mathphrase></inlineequation> (on 32-bit platforms) or <inlineequation><mathphrase>2<superscript >64</superscript>-1</mathphrase></inlineequation> (on 64-bit platforms) then it is of type <code>Size</code>;
+              </para></listitem>
+              
+              <listitem><para>
+                Otherwise, the integer constant is too large and the compiler will generate a syntax error.
+              </para></listitem>
+            </itemizedlist>
+            
+            <note><para>
+              All integer constants are positive; a <code>-</code> (minus sign) followed by an integer constant is interpreted as the unary minus operator applied to the integer constant.
+            </para></note>
+          </para>
+            
+          <example xml:id="syntax.tokens.constants.integer.ex">
+            <title>Integer constants</title>
+            <programlisting language="KL"><![CDATA[
+operator entry() {
+  report(0);
+  report(1);
+  report(123456789);
+  report(0xA9);
+  report(0xdeadBEEF);
+}
+            ]]></programlisting>
+          </example>
+          
+          <informalfigure xml:id="syntax.tokens.constants.integer.ex.out">
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+0
+1
+123456789
+169
+3735928559
+            ]]></screen>
+          </informalfigure>
+        </section>
+        <section xml:id="syntax.tokens.constants.floating-point">
+          <title>Floating-Point Constants</title>
+          
+          <para>
+            A floating-point constant takes the following form:
+
+            <itemizedlist>
+              <listitem><simpara>Either a single <code>0</code> or one digit in the range <code>1</code>...<code>9</code> followed by zero or more digits in the range <code>0</code>...<code>9</code> (the <glossterm>whole part</glossterm>; the same syntax as a decimal integer constant)...</simpara></listitem>
+              <listitem><simpara>...optionally followed by a <code>.</code> and zero or more characters in the range <code>0</code>...<code>9</code> (the <glossterm>fractional part</glossterm>)...</simpara></listitem>
+              <listitem><simpara>...optionally followed by an <code>e</code> or an <code>E</code>, then optionally by a <code>+</code> or a <code>-</code>, then by one or more characters in the range <code>0</code>...<code>9</code> (the <glossterm>exponent</glossterm>).</simpara></listitem>
+            </itemizedlist>
+            
+            <note><para>C accepts floating-point constants that start with a <code>.</code> but floating-point constants in KL must start with a digit</para></note>
+            
+            However, for a constant to be floating-point (and not integer) it must have a fractional part, an exponent, or both.
+            
+            <note><para>
+              It is not possible to represent many decimal fractional expressions in IEEE floating point format.  As such, do not be surprised if the output values of such expressions appear to be slightly off, as seen in the example below with the constant <code>8.9e-6</code>.
+            </para></note>
+          </para>
+            
+          <para>
+            In KL, all floating-point constants are of type <code>Float64</code>, regardless of value.
+            
+            <note><para>
+              All floating-point constants are positive; a <code>-</code> (minus sign) followed by a floating-point constant is interpreted as the unary minus operator applied to the floating-point constant.
+            </para></note>
+          </para>
+            
+          <example>
+            <title>Floating-point constants</title>
+            <programlisting language="KL"><![CDATA[
+operator entry() {
+  report(0.0);
+  report(1.4142);
+  report(3.14159265358979);
+  report(8.9e-6);
+  report(4356.123E42);
+}
+            ]]></programlisting>
+          </example>
+          
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+0
+1.4142
+3.14159265358979
+8.899999999999999e-06
+4.356123e+45
+            ]]></screen>
+          </informalfigure>
+        </section>
+        <section xml:id="syntax.tokens.constants.string">
+          <title>String Constants</title>
+          
+          <para>
+            A <glossterm>string constant</glossterm> is a constant value of type <code>String</code>.  It takes one of the following forms:
+
+            <itemizedlist>
+              <listitem><para>
+                A sequence of characters, possibly including string constant escape sequences (described below), enclosed in a pair of <code>"</code> (<quote>double-quote</quote>) characters; or
+              </para></listitem>
+              <listitem><para>
+                A sequence of characters, possibly including string constant escape sequences (described below), enclosed in a pair of <code>'</code> (<quote>single-quote</quote>) characters; or
+              </para></listitem>
+            </itemizedlist>
+            
+            A <glossterm>string constant escape sequence</glossterm> is one of the following sequences of characters, describing what the sequence is replace by in the string: 
+            
+            <variablelist>
+              <varlistentry><term><code>\n</code></term><listitem><simpara>a single newline (ASCII 10) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\f</code></term><listitem><simpara>a single form feed (ASCII 12) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\r</code></term><listitem><simpara>a single carriage return (ASCII 13) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\t</code></term><listitem><simpara>a single carriage tab (ASCII 9) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\v</code></term><listitem><simpara>a single vertical tab (ASCII 11) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\a</code></term><listitem><simpara>a single bell (ASCII 7) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\b</code></term><listitem><simpara>a single backspace (ASCII 8) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\0</code></term><listitem><simpara>a single null (ASCII 0) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\"</code></term><listitem><simpara>a single double-quote (ASCII 34) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\'</code></term><listitem><simpara>a single single-quote (ASCII 39) character</simpara></listitem></varlistentry>
+              <varlistentry><term><code>\\</code></term><listitem><simpara>a single backslash (ASCII 92) character</simpara></listitem></varlistentry>
+              <varlistentry>
+                <term><code>\x<replaceable>HH</replaceable></code></term>
+                <listitem><para>
+                  A single character whose ASCCI code is given in hexadecimal.  The two characters <code><replaceable>HH</replaceable></code> must each be a hexadecimal character, ie. in one of the ranges <code>0</code>...<code>9</code>, <code>a</code>...<code>f</code> and <code>A</code>...<code>F</code>.  For example, the escape sequence <code>0x0A</code> (decimal 10) is equivalent to the escape sequence <code>\n</code> (ASCII 10).
+                </para></listitem>
+              </varlistentry>
+            </variablelist>
+          </para>
+          
+          <example xml:id="syntax.tokens.constants.string.ex">
+            <title>String constants</title>
+            <programlisting language="KL"><![CDATA[
+operator entry() {
+  report("double-quoted!");
+  report('single-quoted\nwith a newline');
+  report("double-quoted containing \"double quotes\"");
+}
+            ]]></programlisting>
+          </example>
+          
+          <informalfigure xml:id="syntax.tokens.constants.string.ex.out">
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+double-quoted!
+single-quoted
+with a newline
+double-quoted containing "double quotes"
+            ]]></screen>
+          </informalfigure>
+        </section>
+      </section>
     </section>
-    
-    <section>
-      <title>Line Continuations</title>
+    <section xml:id="syntax.structure">
+      <title>Program Structure</title>
       
-      <para>TBD</para>
+      <para>
+        A KL program consists of zero or more <glossterm>global declarations</glossterm> in sequence.  A global declaration is one of:
+        
+        <itemizedlist>
+          <listitem><para>
+            A declaration of a function, a function prototype, an operator, a method or an operator overload; see <xref linkend="functions" />.
+          </para></listitem>
+          <listitem><para>
+            A declaration of structure; see <xref linkend="structs" />.
+          </para></listitem>
+          <listitem><para>
+            A declaration of global constant; see <xref linkend="global-constants" />.
+          </para></listitem>
+          <listitem><para>
+            A <code>require</code> statement; see <xref linkend="use" />.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    
+      <para>
+        In turn, functions, operators, and other similar constructs consist of zero or more <glossterm>statements</glossterm>.  Each statement is terminated with a <code>; </code> (semicolon) character.  For more detailed information on all the statements available in KL, see <xref linkend="statements" />.
+      </para>
+      
+      <para>
+        A sequence of statements, surrounded by braces (a <code>{</code> and a <code>}</code>), can take the place of a single statement.  This also introduces a nested  scope; for more information, see <xref linkend="scope.compound-statement" />.
+      </para>
     </section>
   </chapter>
-
-  <chapter xml:id="ch.types">
+  <chapter xml:id="types">
     <title>The KL Type System</title>
 
     <para>
@@ -593,7 +842,7 @@ operator entry() {
       Like most programming languages, KL has support for both a fixed set of base types from which other types are derived as well as different kinds of derived types.
     </para>
 
-    <section>
+    <section xml:id="types.base">
       <title>Base Types</title>
 
       <para>
@@ -602,22 +851,22 @@ operator entry() {
         <variablelist>
           <varlistentry>
             <term><code>Boolean</code></term>
-            <listitem><para>a type whose value can be either <code>true</code> or <code>false</code></para></listitem>
+            <listitem><para>can be either <code>true</code> or <code>false</code></para></listitem>
           </varlistentry>
     
           <varlistentry>
             <term><code>Byte</code></term>
-            <listitem><para>an 8-bit unsigned integer value</para></listitem>
+            <listitem><para>an 8-bit unsigned integer</para></listitem>
           </varlistentry>
     
           <varlistentry>
             <term><code>Integer</code></term>
-            <listitem><para>a 32-bit signed integer value</para></listitem>
+            <listitem><para>a 32-bit signed integer</para></listitem>
           </varlistentry>
 
           <varlistentry>
             <term><code>Size</code></term>
-            <listitem><para>an unsigned integer value which is 32-bit on 32-bit platforms and 64-bit on 64-bit platforms.  <code>Size</code> is usually used to either index into or count the number of elements in an array</para></listitem>
+            <listitem><para>an unsigned integer that is 32-bit on 32-bit platforms and 64-bit on 64-bit platforms.  <code>Size</code> is usually used to either index into or count the number of elements in an array</para></listitem>
           </varlistentry>
 
           <varlistentry>
@@ -627,7 +876,7 @@ operator entry() {
 
           <varlistentry>
             <term><code>Float32</code></term>
-            <listitem><para>a 32-bit IEEE floating point value</para></listitem>
+            <listitem><para>a 32-bit IEEE floating point</para></listitem>
           </varlistentry>
 
           <varlistentry>
@@ -637,7 +886,7 @@ operator entry() {
 
           <varlistentry>
             <term><code>Float64</code></term>
-            <listitem><para>a 64-bit IEEE floating point value</para></listitem>
+            <listitem><para>a 64-bit IEEE floating point</para></listitem>
           </varlistentry>
 
           <varlistentry>
@@ -647,7 +896,7 @@ operator entry() {
         </variablelist>
       </para>
       
-      <section>
+      <section xml:id="types.base.boolean">
         <title>The <code>Boolean</code> Type</title>
 
         <para>
@@ -666,7 +915,7 @@ operator entry() {
                 <listitem><para><code>Float32</code> and <code>Float64</code> values cast true if and only if the value is not equal to <code>0.0</code> or <code>-0.0</code></para></listitem>
                 <listitem><para><code>String</code> values cast to true if and only if their length is greater than zero</para></listitem>
                 <listitem><para>arrays and dictionaries cast to true if and only if they are non-empty</para></listitem>
-                <listitem><para>by default, structures do not cast to <code>Boolean</code>, but you can implement the cast if desired</para></listitem>
+                <listitem><para>by default, structures do not cast to <code>Boolean</code>, but you can implement the cast if desired by creating a <code>Boolean</code> constructor that takes the structure as a parameter; see <xref linkend="constructors" /></para></listitem>
               </itemizedlist>
             </para></listitem>
 
@@ -682,22 +931,20 @@ operator entry() {
           </itemizedlist>
         </para>
         
-        <example xml:id="ex.boolean">
+        <example xml:id="types.base.boolean.ex">
           <title>The <code>Boolean</code> type</title>
           <programlisting language="KL"><![CDATA[
 operator entry() {
   Boolean a = true;
-  report a;
+  report(a);
   Boolean b = a & false;
-  report b;
-  report a != b;
+  report(b);
+  report(a != b);
 }
           ]]></programlisting>
         </example>
-
-        <simpara>Output:</simpara>
-        
-        <informalfigure>
+        <informalfigure xml:id="types.base.boolean.ex.out">
+          <simpara>Output:</simpara>
           <screen><![CDATA[
 true
 false
@@ -705,8 +952,7 @@ true
           ]]></screen>
         </informalfigure>
       </section>
-
-      <section>
+      <section xml:id="integers">
         <title>Integer Types</title>
         
         <para>
@@ -715,17 +961,17 @@ true
           <variablelist>
             <varlistentry>
               <term><code>Byte</code></term>
-              <listitem><simpara>8-bit unsigned integer</simpara></listitem>
+              <listitem><simpara>an 8-bit unsigned integer</simpara></listitem>
             </varlistentry>
             
             <varlistentry>
               <term><code>Integer</code></term>
-              <listitem><simpara>32-bit signed integer</simpara></listitem>
+              <listitem><simpara>a 32-bit signed integer</simpara></listitem>
             </varlistentry>
             
             <varlistentry>
               <term><code>Size</code></term>
-              <listitem><simpara>unsigned integer that is 32-bit on 32-bit systems and 64-bit on 64-bit systems</simpara></listitem>
+              <listitem><simpara>an unsigned integer that is 32-bit on 32-bit systems and 64-bit on 64-bit systems</simpara></listitem>
             </varlistentry>
             
             <varlistentry>
@@ -740,37 +986,42 @@ true
           
           <itemizedlist>
             <listitem><simpara>
-              Integer constants (eg. <code>43562</code>) are of type <code>Integer</code> if their value is less than <inlineequation><mathphrase>2<superscript >31</superscript>-1</mathphrase></inlineequation>, otherwise they are of type <code>Size</code>.
+              Integer constants (eg. <code>43562</code>) are of type <code>Integer</code> if their value is less than <inlineequation><mathphrase>2<superscript >31</superscript>-1</mathphrase></inlineequation>, otherwise they are of type <code>Size</code>.  For more details, see <xref linkend="syntax.tokens.constants.integer" />.
             </simpara></listitem>
 
-            <listitem><simpara>
-              All of the arithmetic, comparison and bitwise operators work as expected for <glossterm>integer types</glossterm>, with the exception of unary <code>-</code> which does not work for values of type <code>Size</code> and <code>Byte</code>.
-            </simpara></listitem>
+            <listitem><para>
+              All of the <link linkend="arithmetic-ops">arithmetic</link>, <link linkend="logical-ops">logical</link> and <link linkend="bitwise-ops">bitwise</link> operators work as expected for all integer types.
+              
+              <note><para>
+                The result of applying the unary <code>-</code> (minus) operator to a <code>Byte</code> or a <code>Size</code> is still a positive number; it is the resulting unsigned integer that, when added to the original, results in 0 because of the type <quote>wrapping around</quote>.
+              </para></note>
+            </para></listitem>
           </itemizedlist>
         </para>
         
-        <example xml:id="ex.integers">
+        <example xml:id="types.base.integers.ex">
           <title>Integer types</title>
           <programlisting language="KL"><![CDATA[
 operator entry() {
   Byte b = 64;
-  report b;
+  report(b);
   Size s = 45 * Size(b) + 32;
-  report s;
+  report(s);
   Integer i = -75 * Integer(s) + 18;
-  report i;
+  report(i);
 }
           ]]></programlisting>
+        </example>
+        <informalfigure xml:id="types.base.integers.ex.out">
           <simpara>Output:</simpara>
           <screen><![CDATA[
 64
 2912
 -218382
           ]]></screen>
-        </example>
+        </informalfigure>
       </section>
-
-      <section>
+      <section xml:id="types.base.floating-point">
         <title>Floating-Point Types</title>
         
         <para>
@@ -779,19 +1030,19 @@ operator entry() {
           <variablelist>
             <varlistentry>
               <term><code>Float32</code></term>
-              <listitem><simpara>32-bit <acronym>IEEE</acronym> floating-point number</simpara></listitem>
+              <listitem><simpara>a 32-bit <acronym>IEEE</acronym> floating-point number</simpara></listitem>
             </varlistentry>
             
             <varlistentry>
               <term><code>Float64</code></term>
-              <listitem><simpara>64-bit <acronym>IEEE</acronym> floating-point number</simpara></listitem>
+              <listitem><simpara>a 64-bit <acronym>IEEE</acronym> floating-point number</simpara></listitem>
             </varlistentry>
             
             <varlistentry>
               <term><code>Scalar</code></term>
               <listitem><para>
                 an alias for <code>Float32</code>
-                <note><para>The <code>Scalar</code> alias will probably be removed in a future version of KL.  We recommend that you not use it in any new code.</para></note>
+                <warning><para>The <code>Scalar</code> alias will probably be removed in a future version of KL.  We recommend that you not use it in any new code.</para></warning>
               </para></listitem>
             </varlistentry>
           </variablelist>
@@ -802,14 +1053,7 @@ operator entry() {
           
           <itemizedlist>
             <listitem><para>
-              Floating-point constants have the same syntax as in JavaScript and C, and are of type <code>Float64</code>.  The following are examples of floating-point constants:
-              <itemizedlist>
-                <listitem><simpara><code>0.0</code></simpara></listitem>
-                <listitem><simpara><code>1.4142</code></simpara></listitem>
-                <listitem><simpara><code>3.14159265358979</code></simpara></listitem>
-                <listitem><simpara><code>8.9e-6</code></simpara></listitem>
-                <listitem><simpara><code>4356.123E42</code></simpara></listitem>
-              </itemizedlist>
+              Floating-point constants have the same syntax as in JavaScript and C, and are of type <code>Float64</code>.  For more details, see <xref linkend="syntax.tokens.constants.floating-point" />.
             </para></listitem>
             
             <listitem><para>
@@ -818,28 +1062,29 @@ operator entry() {
           </itemizedlist>
         </para>
 
-        <example xml:id="ex.floats">
+        <example xml:id="types.base.floating-points.ex">
           <title>Floating-point types</title>
           <programlisting language="KL"><![CDATA[
 operator entry() {
   Float32 x = 3.141;
-  report x;
+  report(x);
   Float64 y = 2.718;
-  report y;
+  report(y);
   Float32 z = x*x + y*y;
-  report z;
+  report(z);
 }
           ]]></programlisting>
+        </example>
+        <informalfigure xml:id="types.base.floating-points.ex.out">
           <simpara>Output:</simpara>
           <screen><![CDATA[
 3.141
 2.718
 17.2534
           ]]></screen>
-        </example>
+        </informalfigure>
       </section>
-
-      <section>
+      <section xml:id="string-type">
         <title>The <code>String</code> Type</title>
         
         <para>
@@ -853,13 +1098,7 @@ operator entry() {
             <listitem><simpara>A string is a sequence of zero or more characters.</simpara></listitem>
             <listitem><simpara>The length of a string is value of type <code>Size</code>, and the maximum length of a string is the maximum value of type <code>Size</code>.</simpara></listitem>
             <listitem><para>
-              String constants can be specified inline in KL source files using single- or double-quotation marks, just as JavaScript.  Examples of string constants:
-              
-              <itemizedlist>
-                <listitem><simpara><code>"Hello, world!"</code></simpara></listitem>
-                <listitem><simpara><code>'A string\nwith a newline'</code></simpara></listitem>
-                <listitem><simpara><code>"A string containing \"double quotes\""</code></simpara></listitem>
-              </itemizedlist>
+              String constants can be specified inline in KL source files using single- or double-quotation marks, just as JavaScript.  For more details and examples of string constants, see <xref linkend="syntax.tokens.constants.string" />.
             </para></listitem>
             <listitem><simpara>Strings are <emphasis>reference-counted</emphasis> and <emphasis>copy-on-write</emphasis>.  This means that if you assign a string value to multiple variables, there is only one copy of the actual string until someone changes one of the strings.</simpara></listitem>
             <listitem><para>
@@ -873,25 +1112,27 @@ operator entry() {
             </para></listitem>
             <listitem><simpara>Unlike C or C++, strings can contain the null character (ASCII 0).</simpara></listitem>
             <listitem><simpara>Strings have no notion of encoding; they are just sequences of bytes.  String encodings are determined by the application space where the strings are used.  Note that everything in Fabric itself uses the UTF-8 encoding, but Fabric extensions may need to convert strings into other encodings.</simpara></listitem>
-            <listitem><simpara>All other types in KL can be converted to strings through a cast; this conversion simply creates a string which is a human-readable version of the value.</simpara></listitem>
+            <listitem><simpara>All other types in KL can be converted to strings through a cast; this conversion simply creates a string that is a human-readable version of the value.</simpara></listitem>
           </itemizedlist>
         </para>
 
-        <example>
-          <title>String values</title>
+        <example xml:id="types.base.string.ex">
+          <title>String type</title>
           <programlisting language="KL"><![CDATA[
 operator entry() {
   String a = "A string";
-  report a;
-  report "a has length " + a.length;
+  report(a);
+  report("a has length " + a.length);
   String b = "Another string";
-  report b;
+  report(b);
   String c = a + " and " + b;
-  report c;
+  report(c);
   b += " now includes " + a;
-  report b;
+  report(b);
 }
           ]]></programlisting>
+        </example>
+        <informalfigure xml:id="types.base.string.ex.out">
           <simpara>Output:</simpara>
           <screen><![CDATA[
 A string
@@ -900,18 +1141,17 @@ Another string
 A string and Another string
 Another string now includes A string
           ]]></screen>
-        </example>
+        </informalfigure>
       </section>
     </section>
-
-    <section>
+    <section xml:id="types.derived">
       <title>Derived Types</title>
       
       <para>
         In addition to the base types, KL supports three classes of derived types: structures, arrays and dictionaries.
       </para>
       
-      <section>
+      <section xml:id="structs">
         <title>Structures</title>
         
         <para>
@@ -921,8 +1161,7 @@ Another string now includes A string
         <para>
           Structures are usually defined outside of KL using Fabric's <glossterm>registered type system</glossterm>, but they can also be declared in KL source code itself using the <code>struct</code> keyword:
           
-          <example>
-            <title>Structure definition in KL</title>
+          <informalexample>
             <programlisting language="KL"><![CDATA[
 struct NewType {
   Float32 firstMember;
@@ -930,24 +1169,25 @@ struct NewType {
   Integer thirdMemberVarArray[];
 };
             ]]></programlisting>
+          </informalexample>
 
-            <note><simpara>Note the use of the variable-size array as the last member; derived types can nest arbitrarily.</simpara></note>
-            <warning><simpara>All structure declarations in KL must be in the global scope; it is not possible to declare a structure within a function scope.</simpara></warning>
-          </example>
+          Note the use of the variable-size array as the last member; derived types can nest arbitrarily.
+
+          <note><simpara>All structure declarations in KL must be in the global scope; it is not possible to declare a structure within a function scope.</simpara></note>
         </para>
         
         <para>
           More details about structures:
           
           <itemizedlist>
-            <listitem><simpara>Access to structure members is through the <code>.</code> operator, as in JavaScript.</simpara></listitem>
+            <listitem><simpara>Access to structure members is through the <code>.</code> (dot) operator, as in JavaScript.</simpara></listitem>
             <listitem><simpara>Currently, the structure members are <glossterm>packed</glossterm>, meaning that there is no space in member between the structure members.  In a future version of Fabric it will be possible to explicitly specify structure member alignment and packing.</simpara></listitem>
-            <listitem><simpara>It is possible to overload operators and add <glossterm>methods</glossterm> to structures; this will be described below.</simpara></listitem>
+            <listitem><simpara>It is possible to overload operators and add <glossterm>methods</glossterm> to structures; see <xref linkend="methods" />.</simpara></listitem>
           </itemizedlist>
         </para>
 
-        <example>
-          <title>Definition and use of a structure</title>
+        <example xml:id="types.derived.struct.use.ex">
+          <title>Structure use</title>
           <programlisting language="KL"><![CDATA[
 struct MyNewType {
   Integer i;
@@ -958,17 +1198,18 @@ function entry() {
   MyNewType mnt;
   mnt.s = "Hello!";
   mnt.i = 42;
-  report mnt;
+  report(mnt);
 }
           ]]></programlisting>
+        </example>
+        <informalexample xml:id="types.derived.struct.use.ex.out">
           <simpara>Output:</simpara>
           <screen><![CDATA[
 {i:42,s:"Hello!"}
           ]]></screen>
-        </example>
+        </informalexample>
       </section>
-
-      <section>
+      <section xml:id="arrays">
         <title>Arrays</title>
       
         <para>
@@ -988,7 +1229,7 @@ Size sizes[];    // Declare a variable-size array
 sizes.push(42);  // Push some elements onto the end of the array
 sizes.push(21);
 sizes.push(3);
-report sizes[1]; // outputs "21"
+report(sizes[1]); // outputs "21"
                   ]]></programlisting>
                 </informalexample>
               </para></listitem>
@@ -1016,7 +1257,7 @@ String c<>[];   // A sliced array of variable-size
           </itemizedlist>
         </para>
       
-        <section>
+        <section xml:id="types.derived.arrays.variable">
           <title>Variable-Size Arrays</title>
         
           <para>
@@ -1047,29 +1288,31 @@ String c<>[];   // A sliced array of variable-size
             </itemizedlist>
           </para>
         
-          <example>
+          <example xml:id="types.derived.arrays.variable.ex">
             <title>Variable-size arrays</title>
             <programlisting><![CDATA[
 operator entry() {
   Integer a[];
-  report "The array a has size " + a.size + " and value " + a;
+  report("The array a has size " + a.size + " and value " + a);
   a.push(42);
   a.push(84);
-  report "The array NOW has size " + a.size + " and value " + a;
+  report("The array NOW has size " + a.size + " and value " + a);
   a.resize(4);
-  report "The array NOW has size " + a.size + " and value " + a;
+  report("The array NOW has size " + a.size + " and value " + a);
 }
             ]]></programlisting>
+          </example>
+          <informalfigure xml:id="types.derived.arrays.variable.ex.out">
             <simpara>Output:</simpara>
             <screen><![CDATA[
 The array a has size 0 and value []
 The array NOW has size 2 and value [42,84]
 The array NOW has size 4 and value [42,84,0,0]
             ]]></screen>
-          </example>
+          </informalfigure>
         </section>
       
-        <section>
+        <section xml:id="types.derived.arrays.fixed">
           <title>Fixed-Size Arrays</title>
         
           <para>
@@ -1092,7 +1335,7 @@ The array NOW has size 4 and value [42,84,0,0]
             </itemizedlist>
           </para>
         
-          <example>
+          <example xml:id="types.derived.arrays.fixed.ex">
             <title>Fixed-size arrays</title>
             <programlisting><![CDATA[
 function Float32 det(Float32 mat[2][2]) {
@@ -1105,17 +1348,19 @@ operator entry() {
   mat[0][1] = -9.2;
   mat[1][0] = -2.1;
   mat[1][1] = 8.6;
-  report "The determinant of " + mat + " is " + det(mat);
+  report("The determinant of " + mat + " is " + det(mat));
 }
             ]]></programlisting>
+          </example>
+          <informalexample xml:id="types.derived.arrays.fixed.ex.out">
             <simpara>Output:</simpara>
             <screen><![CDATA[
 The determinant of [[3.5,-9.2],[-2.1,8.6]] is 10.78
             ]]></screen>
-          </example>
+          </informalexample>
         </section>
 
-        <section>
+        <section xml:id="types.derived.arrays.sliced">
           <title>Sliced Arrays</title>
         
           <para>
@@ -1138,8 +1383,8 @@ for (Size i=0; i<8; ++i)
 Size subSizes<>( sizes, 2, 4 ); // A sliced array of elements of type Size that accesses
                                 // elements 2 through 5 (inclusive) of the underlying
                                 // sliced array
-report subSizes[0];             // will output '2'
-report subSizes.size;           // will output '4'
+report(subSizes[0]);            // will output '2'
+report(subSizes.size);          // will output '4'
                   ]]></programlisting>
                 </informalexample>
               </para></listitem>
@@ -1157,24 +1402,26 @@ report subSizes.size;           // will output '4'
             </itemizedlist>
           </para>
         
-          <example>
+          <example xml:id="types.derived.arrays.sliced.ex">
             <title>Sliced arrays</title>
             <programlisting><![CDATA[
 operator entry() {
   String strings<>(8);
   for (Size i=0; i<8; ++i)
     strings[i] = "string " + (i+1);
-  report "strings = " + strings;
+  report("strings = " + strings);
   
   String subStrings<>(strings, 2, 4);
-  report "subStrings = " + subStrings;
+  report("subStrings = " + subStrings);
   
-  report "Replacing subStrings element...";
+  report("Replacing subStrings element...");
   subStrings[3] = "replaced string";
-  report "subStrings = " + subStrings;
-  report "strings = " + strings;
+  report("subStrings = " + subStrings);
+  report("strings = " + strings);
 }
             ]]></programlisting>
+          </example>
+          <informalfigure xml:id="types.derived.arrays.sliced.ex.out">
             <simpara>Output:</simpara>
             <screen><![CDATA[
 strings = ["string 1","string 2","string 3","string 4","string 5","string 6","string 7","string 8"]
@@ -1183,11 +1430,10 @@ Replacing subStrings element...
 subStrings = ["string 3","string 4","string 5","replaced string"]
 strings = ["string 1","string 2","string 3","string 4","string 5","replaced string","string 7","string 8"]
             ]]></screen>
-          </example>
+          </informalfigure>
         </section>
       </section>
-
-      <section>
+      <section xml:id="dicts">
         <title>Dictionaries</title>
       
         <para>
@@ -1218,7 +1464,7 @@ Boolean a[][Integer]; // A variable array of Integer-to-Boolean dictionaries
             </para></listitem>
           
             <listitem><para>There is no limit to the size of dictionaries other than available memory</para></listitem>
-            <listitem><para>
+            <listitem xml:id="dict-indexing"><para>
               Dictionaries support indexing using the <code>[<replaceable>key</replaceable>]</code> indexing operator to both return the element at the give key or assign to the element at the given key.  When retrieving a value from a dictionary, if there is no value for the given key then an exception is thrown.</para></listitem>
             <listitem><para>Dictionaries support the <code>has(<replaceable>key</replaceable>)</code> method that returns a <code>Boolean</code> value indicating whether there is a value in the dictionary for the given key.</para></listitem>
             <listitem><para>Dictionaries support the <code>delete(<replaceable>key</replaceable>)</code> method that deletes the value for the given key.  If there is no value for the given key, nothing happens.</para></listitem>
@@ -1229,7 +1475,7 @@ Boolean a[][Integer]; // A variable array of Integer-to-Boolean dictionaries
               <informalexample><programlisting language="KL"><![CDATA[
 String dict[String];
 for (k in dict)
-  report "dict["+k+"] = "+dict[k];
+  report("dict[" + k + "] = " + dict[k]);
               ]]></programlisting></informalexample>
             
               For improved performance, both the key and value can be made available through <code>in</code> iteration.  The value can be assigned to if and only if the dictionary can be assigned to.  For example:
@@ -1237,7 +1483,7 @@ for (k in dict)
               <informalexample><programlisting language="KL"><![CDATA[
 String dict[String];
 for (k, v in dict)
-  report "dict["+k+"] = "+v;
+  report("dict[" + k + "] = " + v);
               ]]></programlisting></informalexample>
             </para></listitem>
 
@@ -1249,33 +1495,35 @@ operator entry() {
   String numbers[Integer];
   numbers[3] = "three";
   numbers[2] = "two";
-  report numbers; // outputs '{3:"three",2:"two"}'
+  report(numbers); // outputs '{3:"three",2:"two"}'
   numbers[1] = "one";
-  report numbers; // outputs '{3:"three",2:"two",1:"one"}'
+  report(numbers); // outputs '{3:"three",2:"two",1:"one"}'
 }
               ]]></programlisting></informalexample>
             </para></listitem>
           </itemizedlist>
         </para>
 
-        <example>
+        <example xml:id="types.derived.dicts.ex">
           <title>Dictionaries</title>
           <programlisting><![CDATA[
 operator entry() {
   Float32 a[String];
   a['pi'] = 3.14;
   a['e'] = 2.71;
-  report "a is:";
+  report("a is:");
   for ( k, v in a ) {
-    report "a['" + k + "'] = " + v;
+    report("a['" + k + "'] = " + v);
   }
   a.delete('pi');
-  report "a is now:";
+  report("a is now:");
   for ( k, v in a ) {
-    report "a['" + k + "'] = " + v;
+    report("a['" + k + "'] = " + v);
   }
 }
           ]]></programlisting>
+        </example>
+        <informalfigure xml:id="types.derived.dicts.ex.out">
           <simpara>Output:</simpara>
           <screen><![CDATA[
 a is:
@@ -1284,11 +1532,24 @@ a['e'] = 2.71
 a is now:
 a['e'] = 2.71
         ]]></screen>
-        </example>
+        </informalfigure>
+      </section>
+      <section xml:id="map-reduce-types">
+        <title>Map-Reduce Types</title>
+        
+        <para>
+          There are two additional derived types used exclusively for work within Fabric's map-reduce framework, namely:
+          
+          <itemizedlist>
+            <listitem><para><code>ValueProducer&lt;<replaceable>Type</replaceable>&gt;</code></para></listitem>
+            <listitem><para><code>ArrayProducer&lt;<replaceable>Type</replaceable>&gt;</code></para></listitem>
+          </itemizedlist>
+          
+          For more information, see <xref linkend="map-reduce" />.
+        </para>
       </section>
     </section>
-
-    <section>
+    <section xml:id="types.aliases">
       <title>Type Aliases</title>
       
       <para>
@@ -1303,24 +1564,25 @@ alias Float32 Mat22[2][2];  // Mat22 is now an alias for Float32[2][2], ie. a si
         <code>alias</code> statements must appear within the global scope of a KL program.
       </para>
       
-      <example>
+      <example xml:id="types.aliases.ex">
         <title>Type aliases</title>
         <programlisting><![CDATA[
 alias Float32 Mat22[2][2];
 
 operator entry() {
   Mat22 mat22;
-  report mat22;
+  report(mat22);
 }
         ]]></programlisting>
+      </example>
+      <informalfigure xml:id="types.aliases.ex.out">
         <simpara>Output:</simpara>
         <screen><![CDATA[
 [[0,0],[0,0]]
       ]]></screen>
-      </example>
+      </informalfigure>
     </section>
-
-    <section>
+    <section xml:id="types.data">
       <title>The <code>Data</code> Type and the <code>data</code> and <code>dataSize</code> Methods</title>
 
       <para>
@@ -1332,9 +1594,9 @@ operator entry() {
         
         <programlisting language="KL"><![CDATA[
 Integer integers[];
-report integers.data;  // OK: integers are contiguous in memory
+report(integers.data);  // OK: integers are contiguous in memory
 String strings[];
-report strings.data;   // ERROR: string data is not contiguous in memory
+report(strings.data);   // ERROR: string data is not contiguous in memory
         ]]></programlisting>
       </para>
 
@@ -1343,25 +1605,27 @@ report strings.data;   // ERROR: string data is not contiguous in memory
       </para>
 
       <note><para>
-        For values of type <code>String</code>, the value returned by <code>dataSize</code> includes a null terminator which is automatically appended to the string by Fabric; this is so that the string data can be directly used in C library calls as a regular C string.  If you want to pass the number of characters in the string, pass <code>string.length</code> instead.
+        For values of type <code>String</code>, the value returned by <code>dataSize</code> includes a null terminator that is automatically appended to the string by Fabric; this is so that the string data can be directly used in C library calls as a regular C string.  If you want to pass the number of characters in the string, pass <code>string.length</code> instead.
       </para></note>
 
-      <example>
+      <example xml:id="types.data.ex">
         <title><code>Data</code> values and the <code>data</code> and <code>dataSize</code> methods</title>
         <programlisting language="KL"><![CDATA[
 operator entry() {
   String s;
-  report "s = '" + s + "'";
-  report "s.data = " + s.data;
-  report "Boolean(s.data) = " + Boolean(s.data);
-  report "s.dataSize = " + s.dataSize;
+  report("s = '" + s + "'");
+  report("s.data = " + s.data);
+  report("Boolean(s.data) = " + Boolean(s.data));
+  report("s.dataSize = " + s.dataSize);
   s = "Hello";
-  report "s = '" + s + "'";
-  report "s.data = " + s.data;
-  report "Boolean(s.data) = " + Boolean(s.data);
-  report "s.dataSize = " + s.dataSize;
+  report("s = '" + s + "'");
+  report("s.data = " + s.data);
+  report("Boolean(s.data) = " + Boolean(s.data));
+  report("s.dataSize = " + s.dataSize);
 }
         ]]></programlisting>
+      </example>
+      <informalfigure xml:id="types.data.ex.out">
         <simpara>Output:</simpara>
         <screen><![CDATA[
 s = ''
@@ -1373,18 +1637,17 @@ s.data = <Opaque>
 Boolean(s.data) = true
 s.dataSize = 6
       ]]></screen>
-      </example>
+      </informalfigure>
     </section>
   </chapter>
-  
-  <chapter xml:id="ch.functions">
-    <title>KL Functions</title>
+  <chapter xml:id="globals">
+    <title>Functions and Other Global Declarations</title>
 
-    <section>
-      <title>Function Declarations</title>
+    <section xml:id="functions">
+      <title>Function Definitions</title>
 
       <para>
-        Function declarations in KL are much the same as the <quote>traditional</quote> function declaration syntax in JavaScript, with the following key differences:
+        Function definitions in KL are much the same as the <quote>traditional</quote> function definition syntax in JavaScript, with the following key differences:
 
         <itemizedlist>
           <listitem><para>The return type and the type of each function parameter must be explicitly declared.  If a function does not return a value, the return type must be omitted.</para></listitem>
@@ -1392,33 +1655,33 @@ s.dataSize = 6
         </itemizedlist>
       </para>
 
-      <example>
-        <title>Function returning a value and using only input parameters</title>
+      <example xml:id="functions.ex">
+        <title>Function definitions</title>
         <programlisting language="KL"><![CDATA[
+// Function returning a value and using only
+// input parameters
+
 function Float32 add(Float32 lhs, Float32 rhs) {
   return lhs + rhs;
 }
-        ]]></programlisting>
-      </example>
 
-      <example>
-        <title>Function not returning a value and using both input and input-output parameters</title>
-        <programlisting language="KL"><![CDATA[
+// Function not returning a value and using both
+// input and input-output parameters
+
 function add(in Float32 lhs, in Float32 rhs, io Float32 result) {
   result = lhs + rhs;
 }
         ]]></programlisting>
       </example>
     </section>
-    
-    <section>
-      <title>Function Calls</title>
+    <section xml:id="function-calls">
+      <title>Function Invocations</title>
       
       <para>
-        Function calls are made using the same syntax as JavaScript, namely by appending a comma-delimited list of arguments, surrounded by parentheses, to the function name.
+        Function invocations (<quote>calls</quote>) are made using the same syntax as JavaScript, namely by appending a comma-delimited list of arguments, surrounded by parentheses, to the function name.
       </para>
       
-      <example>
+      <example xml:id="functions.call.ex">
         <title>Function call</title>
         <programlisting language="KL"><![CDATA[
 function Integer add(Integer lhs, Integer rhs) {
@@ -1426,17 +1689,18 @@ function Integer add(Integer lhs, Integer rhs) {
 }
 
 operator entry() {
-  report "2 plus 2 is " + add(2, 2);
+  report("2 plus 2 is " + add(2, 2));
 }
         ]]></programlisting>
+      </example>
+      <informalfigure xml:id="functions.call.ex.out">
         <simpara>Output:</simpara>
         <screen><![CDATA[
 2 plus 2 is 4
         ]]></screen>
-      </example>
+      </informalfigure>
     </section>
-    
-    <section>
+    <section xml:id="prototypes">
       <title>Function Prototypes</title>
       
       <para>
@@ -1446,7 +1710,7 @@ operator entry() {
           <listitem><para>
             When two or more functions call each other.  Such functions are sometimes referred to as <glossterm>co-recursive</glossterm>.
             
-            <example>
+            <example xml:id="prototypes.ex">
               <title>Co-recursion using a prototype</title>
               <programlisting language="KL"><![CDATA[
 // Function prototype for 'two', so that 'one' can call it before it is defined
@@ -1454,14 +1718,14 @@ function two(Integer n);
 
 // The function 'one' calls 'two' even though it is not yet defined
 function one(Integer n) {
-  report "one";
+  report("one");
   if (n > 0)
     two(n - 1);
 }
 
 // The definition of the function 'two' comes after its prototype
 function two(Integer n) {
-  report "two";
+  report("two");
   if (n > 0)
     one(n - 1);
 }
@@ -1470,6 +1734,8 @@ operator entry() {
   one(4);
 }
               ]]></programlisting>
+            </example>
+            <informalfigure xml:id="prototypes.ex.out">
               <simpara>Output:</simpara>
               <screen><![CDATA[
 one
@@ -1478,13 +1744,13 @@ one
 two
 one
               ]]></screen>
-            </example>
+            </informalfigure>
           </para></listitem>
           
           <listitem><para>
             When a function definition is provided by a Fabric extension.  The name of the symbol of the function in the Fabric extension is provided by appending <code>= "<replaceable>symbol name</replaceable>"</code> or <code>= '<replaceable>symbol name</replaceable>'</code> to the function prototype.
             
-            <example>
+            <example xml:id="prototypes.external.ex">
               <title>External function</title>
               <programlisting language="KL"><![CDATA[
 // The prototype 'libc_perror' is linked to an external function 'perror'
@@ -1504,14 +1770,121 @@ operator entry() {
         </itemizedlist>
       </para>
     </section>
-    
-    <section>
+    <section xml:id="built-in-functions">
       <title>Built-in Functions</title>
       
-      <para>TBD</para>
+      <para>
+        KL has several built-in functions that are available to all KL programs.
+      </para>
+      
+      <section xml:id="built-in-functions.report">
+        <title>The <code>report</code> Function</title>
+        
+        <para>
+          The <code>report</code> function outputs a message to wherever messages are sent from KL; when KL is used from Fabric running in a browser this is to the JavaScript console, whereas when Fabric is used from the command line or when the KL tool is used the output is sent to standard output.  A newline is appended to the message when it is sent.
+        </para>
+        
+        <para>
+          The prototype of the <code>report</code> function is:
+          
+          <programlisting language="KL"><![CDATA[
+function report(String message);
+          ]]></programlisting>
+        </para>
+        
+        <para>
+          Within Fabric the report function is primarily used for debugging, whereas it is used for general output from the KL tool.
+        </para>
+        
+        <note><simpara>The <code>report</code> function is actually a statement, but this will change in a future version of KL.  As such, even thought the parentheses around the <quote>argument</quote> of <code>report</code> are not strictly required, we recommend that you use them to avoid future syntax errors.</simpara></note>
+      </section>
+      <section xml:id="built-in-functions.numerical">
+        <title>Numerical Functions</title>
+        
+        <para>
+          KL has support for many of the <quote>standard library</quote> numerical functions from C.  Each of these functions has a version that takes a parameter or parameters of type <code>Float32</code>, and another that takes a parameter or parameters of type <code>Float64</code>.  The one that is called is chosen using polymorphism best-match rules; see <xref linkend="polymorphism" />.
+        </para>
+        
+        <section  xml:id="built-in-functions.numerical.trig">
+          <title>Trigonometric Functions</title>
+          <variablelist>
+            <varlistentry xml:id="built-in-functions.numerical.trig.sin">
+              <term><code>sin(x)</code></term>
+              <listitem><simpara>Returns the sine of the argument <code>x</code>.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.trig.cos">
+              <term><code>cos(x)</code></term>
+              <listitem><simpara>Returns the cosine of the argument <code>x</code>.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.trig.tan">
+              <term><code>tan(x)</code></term>
+              <listitem><simpara>Returns the tangent of the argument <code>x</code>.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.trig.asin">
+              <term><code>asin(x)</code></term>
+              <listitem><simpara>Returns the arcsine of the argument <code>x</code>.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.trig.acos">
+              <term><code>acos(x)</code></term>
+              <listitem><simpara>Returns the arccosine of the argument <code>x</code>.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.trig.atan">
+              <term><code>atan(x)</code></term>
+              <listitem><simpara>Returns the arctangent of the argument <code>x</code>.  <code>atan(x)</code> doesn't work for large <code>x</code> and can only return values in the range <inlineequation><mathphrase>(-&pi;/2,&pi;/2]</mathphrase></inlineequation>; use the <code>atan2</code> function instead when possible.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.trig.atan2">
+              <term><code>atan2(y, x)</code></term>
+              <listitem><para>Returns the arctangent of the ratio <inlineequation><mathphrase>y/x</mathphrase></inlineequation>; the result is in the range  <inlineequation><mathphrase>(-&pi;,&pi;]</mathphrase></inlineequation>.</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </section>
+        
+        <section  xml:id="built-in-functions.numerical.exp">
+          <title>Exponential and Logarithmic Functions</title>
+          <variablelist>
+            <varlistentry xml:id="built-in-functions.numerical.exp.pow">
+              <term><code>pow(x, y)</code></term>
+              <listitem><para>Returns the value of <inlineequation><mathphrase>x<superscript>y</superscript></mathphrase></inlineequation>.</para></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.exp.exp">
+              <term><code>exp(x)</code></term>
+              <listitem><simpara>Returns the value of <inlineequation><mathphrase>e<superscript>y</superscript></mathphrase></inlineequation> where e is the base of the natural logarithm (2.7182818...).</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.exp.log">
+              <term><code>log(x)</code></term>
+              <listitem><simpara>Returns the natural logarithm of <code>x</code>.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.exp.log10">
+              <term><code>log10(x)</code></term>
+              <listitem><simpara>Returns the common (base 10) logarithm of <code>x</code>.</simpara></listitem>
+            </varlistentry>
+          </variablelist>
+        </section>
+        
+        <section  xml:id="built-in-functions.numerical.nt">
+          <title>Non-Transcendental Functions</title>
+          <variablelist>
+            <varlistentry xml:id="built-in-functions.numerical.nt.abs">
+              <term><code>abs(x)</code></term>
+              <listitem><para>Returns the absolute value of <code>x</code>.</para></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.nt.round">
+              <term><code>round(x)</code></term>
+              <listitem><simpara>Returns the value of <code>x</code> rounded to the nearest whole (fractional part of zero) floating-point number.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.nt.floor">
+              <term><code>floor(x)</code></term>
+              <listitem><simpara>Returns the greatest whole floating-point number less than or equal to <code>x</code>.</simpara></listitem>
+            </varlistentry>
+            <varlistentry xml:id="built-in-functions.numerical.nt.ceil">
+              <term><code>ceil(x)</code></term>
+              <listitem><simpara>Returns the smallest whole floating-point number greater than or equal to <code>x</code>.</simpara></listitem>
+            </varlistentry>
+          </variablelist>
+        </section>
+      </section>
     </section>
-
-    <section>
+    <section xml:id="polymorphism">
       <title>Function Polymorphism</title>
       
       <para>
@@ -1524,15 +1897,15 @@ operator entry() {
         When a function call is made in KL source, if there are multiple functions with the same name then the KL compiler uses a best-match system to determine which function to call.  Exact parameter type matches are always prioritized over type casts.  If the compiler is unable to choose a unique best match then an error will be reported showing the ambiguity.
       </para>
 
-      <example>
+      <example xml:id="polymorphism.ex">
         <title>Function polymorphism</title>
         <programlisting language="KL"><![CDATA[
 function display(Integer a) {
-  report "integer value is " + a;
+  report("integer value is " + a);
 }
 
 function display(String s) {
-  report "string value is '" + s + "'";
+  report("string value is '" + s + "'");
 }
 
 operator entry() {
@@ -1546,15 +1919,16 @@ operator entry() {
   display(byte);
 }
         ]]></programlisting>
+      </example>
+      <informalfigure xml:id="polymorphism.ex.out">
         <simpara>Output:</simpara>
         <screen><![CDATA[
 integer value is 42
 string value is 'hello'
 integer value is 64
         ]]></screen>
-      </example>
+      </informalfigure>
     </section>
-
     <section xml:id="operators">
       <title>Operators</title>
       
@@ -1562,7 +1936,7 @@ integer value is 64
         The <code>operator</code> keyword in KL is used to mark functions that are to be used as entry points into KL from the Fabric dependency graph.  Operators are declared in the same way as functions except that they must not return a value.  Fabric does special type-checking to ensure that operators are bound properly to nodes in a Fabric dependency graph.
       </para>
 
-      <example>
+      <example xml:id="operators.ex">
         <title>Operator definition</title>
         <programlisting language="KL"><![CDATA[
 operator addElements(io Float32 lhs, io Float32 rhs, io Float32 result) {
@@ -1571,15 +1945,14 @@ operator addElements(io Float32 lhs, io Float32 rhs, io Float32 result) {
         ]]></programlisting>
       </example>
     </section>
-
-    <section>
+    <section xml:id="constructors">
       <title>Constructors</title>
       
       <para>
         A <glossterm>constructor</glossterm> for a user-defined type is a function that initializes a value with the given the type from other values.
       </para>
       
-      <section>
+      <section xml:id="constructors.declaration">
         <title>Constructor Declarations</title>
         
         <para>
@@ -1590,7 +1963,7 @@ operator addElements(io Float32 lhs, io Float32 rhs, io Float32 result) {
           Within the body of a constructor definition, the value being initialized is referred to with the <code>this</code> keyword; its members are accessed using the <code>.</code> operator.  In this context, <code>this</code> is always read-write, ie. its members can be modified.
         </para>
 
-        <example>
+        <example xml:id="constructors.declaration.ex">
           <title>Constructor declarations</title>
           <programlisting language="KL"><![CDATA[
 struct Complex32 {
@@ -1616,16 +1989,15 @@ function Complex32(Float32 x, Float32 y) {
 }
 
 operator entry() {
-  report Complex32();
-  report Complex32(3.141);
-  report Complex32(3.141, 2.718);
+  report(Complex32());
+  report(Complex32(3.141));
+  report(Complex32(3.141, 2.718));
 }
           ]]></programlisting>
         </example>
         
-        <simpara>Output:</simpara>
-        
-        <informalfigure>
+        <informalfigure xml:id="constructors.declaration.ex.out">
+          <simpara>Output:</simpara>
           <screen><![CDATA[
 {re:0,im:0}
 {re:3.141,im:0}
@@ -1634,92 +2006,136 @@ operator entry() {
         </informalfigure>
       </section>
       
-      <section>
+      <section xml:id="constructors.invocation">
         <title>Constructor Invocation</title>
         
         <para>
           Constructors are invoked in one of several ways:
           
           <itemizedlist>
-            <listitem><para>
-              If a variable is declared without any initialization, the <glossterm>empty constructor</glossterm> (ie. the constructor that takes no parameters) is invoked to initialize the variable.  This is referred to as <glossterm>naked initialization</glossterm>.
+            <listitem xml:id="constructors.invocation.naked">
+              <para>
+                If a variable is declared without any initialization, the <glossterm>empty constructor</glossterm> (ie. the constructor that takes no parameters) is invoked to initialize the variable.  This is referred to as <glossterm>naked initialization</glossterm>.
               
-              <example>
-                <title>Constructor invocation using naked initialization</title>
-                <programlisting language="KL"><![CDATA[
-struct MyType {
-  Integer n;
-  Float32 x;
-};
+                <example xml:id="constructors.invocation.naked.ex">
+                  <title>Constructor invocation using naked initialization</title>
+                  <programlisting language="KL"><![CDATA[
+  struct MyType {
+    Integer n;
+    Float32 x;
+  };
 
-// The empty constructor
-function MyType() {
-  this.n = 42;
-  this.x = 3.141;
-}
+  // The empty constructor
+  function MyType() {
+    this.n = 42;
+    this.x = 3.141;
+  }
 
-operator entry() {
-  MyType myType; // invokes the empty constructor
-  report myType;
-}
-                ]]></programlisting>
-                <simpara>Output:</simpara>
-                <screen><![CDATA[
-{n:42,x:3.141}
-                ]]></screen>
-              </example>
-            </para></listitem>
-            
-            <listitem><para>
-              If a variable is assigned to as part of its declaration, a single-parameter constructor is invoked.  This is referred to as <glossterm>assignment initialization</glossterm>.  If there isn't an exact match for the type of the value assigned, best-match polymorphism rules are used to choose the constructor to invoke.
+  operator entry() {
+    MyType myType; // invokes the empty constructor
+    report(myType);
+  }
+                  ]]></programlisting>
+                </example>
+                <informalfigure xml:id="constructors.invocation.naked.ex.out">
+                  <simpara>Output:</simpara>
+                  <screen><![CDATA[
+  {n:42,x:3.141}
+                  ]]></screen>
+                </informalfigure>
+              </para>
+            </listitem>
+            <listitem xml:id="constructors.invocation.assignment">
+              <para>
+                If a variable is assigned to as part of its declaration, a single-parameter constructor is invoked.  This is referred to as <glossterm>assignment initialization</glossterm>.  If there isn't an exact match for the type of the value assigned, best-match polymorphism rules are used to choose the constructor to invoke.
               
-              <example>
-                <title>Constructor invocation using assignment initialization</title>
-                <programlisting language="KL"><![CDATA[
-struct MyType {
-  String string;
-};
+                <example xml:id="constructors.invocation.assignment.ex">
+                  <title>Constructor invocation using assignment initialization</title>
+                  <programlisting language="KL"><![CDATA[
+  struct MyType {
+    String string;
+  };
 
-// Construct from a string
-function MyType(String string) {
-  this.string = "The string was '" + string + "'";
-}
+  // Construct from a string
+  function MyType(String string) {
+    this.string = "The string was '" + string + "'";
+  }
 
-// Construct from a scalar
-function MyType(Float64 float64) {
-  this.string = "The float64 was " + float64;
-}
+  // Construct from a scalar
+  function MyType(Float64 float64) {
+    this.string = "The float64 was " + float64;
+  }
 
-operator entry() {
-  // Construct MyType from String value
-  MyType myTypeFromString = "foo";
-  report myTypeFromString;
+  operator entry() {
+    // Construct MyType from String value
+    MyType myTypeFromString = "foo";
+    report(myTypeFromString);
   
-  // Construct MyType from Float64 value
-  MyType myTypeFromFloat64 = 2.718;
-  report myTypeFromFloat64;
+    // Construct MyType from Float64 value
+    MyType myTypeFromFloat64 = 2.718;
+    report(myTypeFromFloat64);
   
-  // There is no constructor that takes a Boolean but
-  // there is a cast from Boolean to String
-  MyType myTypeFromBoolean = true;
-  report myTypeFromBoolean;
-}
-                ]]></programlisting>
-                <simpara>Output:</simpara>
-                <screen><![CDATA[
-{string:"The string was 'foo'"}
-{string:"The float64 was 2.718"}
-{string:"The string was 'true'"}
-                ]]></screen>
-              </example>
-            </para></listitem>
-            
-            <listitem><para>
-              If a variable is <quote>called</quote> (ie. using function call syntax) as part of its declaration, the constructor taking the given arguments is invoked.  This is referred to as <glossterm>invocation initialization</glossterm>.  If there isn't an exact match for the arguments passed to the call, best-match polymorphism rules are used to choose the constructor to invoke.
+    // There is no constructor that takes a Boolean but
+    // there is a cast from Boolean to String
+    MyType myTypeFromBoolean = true;
+    report(myTypeFromBoolean);
+  }
+                  ]]></programlisting>
+                </example>
+                <informalfigure xml:id="constructors.invocation.assignment.ex.out">
+                  <simpara>Output:</simpara>
+                  <screen><![CDATA[
+  {string:"The string was 'foo'"}
+  {string:"The float64 was 2.718"}
+  {string:"The string was 'true'"}
+                  ]]></screen>
+                </informalfigure>
+              </para>
+            </listitem>
+            <listitem xml:id="constructors.invocation.call">
+              <para>
+                If a variable is <quote>called</quote> (ie. using function call syntax) as part of its declaration, the constructor taking the given arguments is invoked.  This is referred to as <glossterm>invocation initialization</glossterm>.  If there isn't an exact match for the arguments passed to the call, best-match polymorphism rules are used to choose the constructor to invoke.
               
-              <example>
-                <title>Constructor invocation using invocation initialization</title>
-                <programlisting language="KL"><![CDATA[
+                <example xml:id="constructors.invocation.call.ex">
+                  <title>Constructor invocation using invocation initialization</title>
+                  <programlisting language="KL"><![CDATA[
+  struct Vec2 {
+    Float64 x;
+    Float64 y;
+  };
+
+  // Construct from two scalars
+  function Vec2(Float64 x, Float64 y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  operator entry() {
+    Vec2 vec2FromFloat64s(3.141, 2.718);
+    report(vec2FromFloat64s);
+    Vec2 vec2FromIntegers(42, -7);  // Uses best-match polymorphism to convert Integer to Float64
+    report(vec2FromIntegers);
+  }
+                  ]]></programlisting>
+                </example>
+                <informalfigure xml:id="constructors.invocation.call.ex.out">
+                  <simpara>Output:</simpara>
+                  <screen><![CDATA[
+  {x:3.141,y:2.718}
+  {x:42,y:-7}
+                  ]]></screen>
+                </informalfigure>
+              </para>
+            </listitem>
+            <listitem xml:id="constructors.invocation.temp">
+              <para>
+                If a function call is performed where the name of the function is the name of the type, the constructor taking the given arguments is invoked to create a temporary value of the named type.  If there isn't an exact match for the arguments passed to the call, best-match polymorphism rules are used to choose the constructor to invoke.
+              
+                <note><para>KL does not distinguish between construction and casting.  Casting a value to a different type is the same as constructing a temporary value of the given type and initializing it, using the appropriate constructor, from the given value.</para></note>
+              
+                <example xml:id="constructors.invocation.temp.ex">
+                  <title>Constructor invocation using temporary value</title>
+                  <programlisting language="KL"><![CDATA[
 struct Vec2 {
   Float64 x;
   Float64 y;
@@ -1732,65 +2148,32 @@ function Vec2(Float64 x, Float64 y) {
 }
 
 operator entry() {
-  Vec2 vec2FromFloat64s(3.141, 2.718);
-  report vec2FromFloat64s;
-  Vec2 vec2FromIntegers(42, -7);  // Uses best-match polymorphism to convert Integer to Float64
-  report vec2FromIntegers;
+  report(Vec2(3.141, 2.718));
+  report(Vec2(42, -7));  // Uses best-match polymorphism to convert Integer to Float64
 }
-                ]]></programlisting>
-                <simpara>Output:</simpara>
-                <screen><![CDATA[
+                  ]]></programlisting>
+                </example>
+                <informalfigure xml:id="constructors.invocation.temp.ex.out">
+                  <simpara>Output:</simpara>
+                  <screen><![CDATA[
 {x:3.141,y:2.718}
 {x:42,y:-7}
-                ]]></screen>
-              </example>
-            </para></listitem>
-
-            
-            <listitem><para>
-              If a function call is performed where the name of the function is the name of the type, the constructor taking the given arguments is invoked to create a temporary value of the named type.  If there isn't an exact match for the arguments passed to the call, best-match polymorphism rules are used to choose the constructor to invoke.
-              
-              <note><para>Note that KL does not distinguish between construction and casting.  Casting a value to a different type is the same as constructing a temporary value of the given type and initializing it, using the appropriate constructor, from the given value.</para></note>
-              
-              <example>
-                <title>Constructor invocation using temporary value</title>
-                <programlisting language="KL"><![CDATA[
-struct Vec2 {
-  Float64 x;
-  Float64 y;
-};
-
-// Construct from two scalars
-function Vec2(Float64 x, Float64 y) {
-  this.x = x;
-  this.y = y;
-}
-
-operator entry() {
-  report Vec2(3.141, 2.718);
-  report Vec2(42, -7);  // Uses best-match polymorphism to convert Integer to Float64
-}
-                ]]></programlisting>
-                <simpara>Output:</simpara>
-                <screen><![CDATA[
-{x:3.141,y:2.718}
-{x:42,y:-7}
-                ]]></screen>
-              </example>
-            </para></listitem>
+                  ]]></screen>
+                </informalfigure>
+              </para>
+            </listitem>
           </itemizedlist>
         </para>
       </section>
     </section>
-    
-    <section>
+    <section xml:id="destructors">
       <title>Destructors</title>
       
       <para>
         A destructor is a function that is called when a variable goes out of scope and its resources are freed.  Destructors are declared by prepending <code>~</code> in front of the name of the type and using it as a function.  Destructors cannot take any parameters or return values.  The destructor is called before the value is freed so that its members are still accessible.  In the body of the destructor the value is referred to using the <code>this</code> keyword; the value is input-ouput, ie. it can be modified in the destructor.
       </para>
       
-      <example>
+      <example xml:id="destructors.ex">
         <title>Destructor</title>
         <programlisting language="KL"><![CDATA[
 struct MyType {
@@ -1812,21 +2195,29 @@ operator entry() {
   MyType myType;
 }
         ]]></programlisting>
+      </example>
+      <informalfigure xml:id="destructors.ex.out">
         <simpara>Output:</simpara>
         <screen><![CDATA[
 Creating MyType: this.s = foo
 Destroying MyType: this.s = foo
         ]]></screen>
-      </example>
+      </informalfigure>
     </section>
-
-    <section>
+    <section xml:id="methods">
       <title>Methods</title>
 
       <para>
-        If <code><replaceable>Type</replaceable></code> is a structure or alias, then a <glossterm>method</glossterm> can be added to the type using the following syntax:
+        A <glossterm>method</glossterm> is a function that operates on a user-defined structure.  It uses a slightly different (and more suggestive) syntax than plain function calls for the case that the function call is strongly tied to a value whose type is a user-defined structure.
+      </para>
+      
+      <section xml:id="method-defs">
+        <title>Method Definitions</title>
         
-        <programlisting language="KL">
+        <para>
+          If <code><replaceable>Type</replaceable></code> is a structure or alias, then a method named <code><replaceable>methodName</replaceable></code> can be added to the type using the following syntax:
+        
+          <programlisting language="KL">
 // A method that returns a value
 function <replaceable>ReturnType</replaceable> <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<replaceable>parameter list</replaceable>) {
   <replaceable>method body</replaceable>
@@ -1836,13 +2227,17 @@ function <replaceable>ReturnType</replaceable> <replaceable>Type</replaceable>.<
 function <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<replaceable>parameter list</replaceable>) {
   <replaceable>method body</replaceable>
 }
-        </programlisting>
+          </programlisting>
         
-        Within the method body, <code>this</code> refers to the value on which the method is called.  <code>this</code> is read-only if the method returns a value and is read-write if the method does not return a value.
+          Within the method body, <code>this</code> refers to the value on which the method is called.  <code>this</code> is read-only if the method returns a value and is read-write if the method does not return a value.
         
-        <note><para>A future version of Fabric will allow the read-only versus read-write status of <code>this</code> to be explicitly specified.</para></note>
-      </para>
+          <note><para>A future version of Fabric will allow the read-only versus read-write status of <code>this</code> to be explicitly specified.</para></note>
+        </para>
+      </section>
       
+      <section xml:id="method-calls">
+        <title>Method Invocation</title>
+
       <para>
         If <code><replaceable>value</replaceable></code> is a value of type <code><replaceable>Type</replaceable></code> then the method <code><replaceable>methodName</replaceable></code> can be invoked on <code><replaceable>value</replaceable></code> using the expression <code><replaceable>value</replaceable>.<replaceable>methodName</replaceable>(<replaceable>argument list</replaceable>)</code>.  If a method takes no parameters, then it is optional to use parentheses when calling it.
       </para>
@@ -1851,7 +2246,7 @@ function <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<
         Just as their can be multiple functions with the same name, a given type can have multiple methods with the same name.  When deciding which method to invoke, the usual best-match rules apply.
       </para>
 
-      <example>
+      <example xml:id="methods.ex">
         <title>Method definition and invocation</title>
         <programlisting language="KL"><![CDATA[
 struct Type {
@@ -1873,28 +2268,30 @@ operator entry() {
   report t.desc;
 }
         ]]></programlisting>
+      </example>
+      <informalfigure xml:id="methods.ex.out">
         <simpara>Output:</simpara>
         <screen><![CDATA[
 a:1; b:3.14
 a:1; b:3.14
         ]]></screen>
-      </example>
+      </informalfigure>
+      </section>
     </section>
-
-    <section>
+    <section xml:id="op-overloads">
       <title>Overloaded Operators</title>
       
       <para>
         KL allows overloading of binary and assignment operators for custom types (ie. specified through <code>struct</code>).
       </para>
         
-      <section>
+      <section xml:id="op-overloads.binop">
         <title>Binary Operator Overloads</title>
       
         <para>
           Binary operators can be overloaded using the following syntax:
       
-          <example>
+          <example xml:id="op-overloads.binop.ex">
             <title>Binary operator overload</title>
             <programlisting language="KL"><![CDATA[
 struct Type {
@@ -1915,13 +2312,15 @@ operator entry() {
   Type t3 = t1 + t2; report t3;
 }
             ]]></programlisting>
+          </example>
+          <informalfigure xml:id="op-overloads.binop.ex.out">
             <simpara>Output:</simpara>
             <screen><![CDATA[
 {a:42,b:3.14}
 {a:7,b:2.72}
 {a:49,b:5.86}
             ]]></screen>
-          </example>
+          </informalfigure>
 
           Any of the binary arithmetic (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> and <code>%</code>), bitwise (<code>|</code>, <code>&amp;</code>, <code>^</code>, <code>&lt;&lt;</code> and <code>&gt;&gt;</code>) and comparison (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code> and <code>&gt;=</code>) operators can be overloaded.
         </para>
@@ -1936,7 +2335,7 @@ operator entry() {
         </para>
       </section>
     
-      <section>
+      <section xml:id="op-overloads.assop">
         <title>Compound Assignment Overloads</title>
       
         <para>
@@ -1946,7 +2345,7 @@ operator entry() {
         <para>
           However, it is also possible to provide an overload for any of the compound assignment operators using the following syntax:
 
-          <example>
+          <example xml:id="op-overloads.assop.ex">
             <title>Compound assignment overload</title>
             <programlisting language="KL"><![CDATA[
 struct Type {
@@ -1965,13 +2364,15 @@ operator entry() {
   t1 += t2; report "t1 is now " + t1;
 }
             ]]></programlisting>
+          </example>
+          <informalfigure xml:id="op-overloads.assop.ex.out">
             <simpara>Output:</simpara>
             <screen><![CDATA[
 t1 is {a:42,b:3.14}
 t2 is {a:7,b:2.72}
 t1 is now {a:49,b:5.86}
             ]]></screen>
-          </example>
+          </informalfigure>
         </para>
       
         <para>
@@ -1984,5 +2385,368 @@ t1 is now {a:49,b:5.86}
         </para>
       </section>
     </section>
+    <section xml:id="global-constants">
+      <title>Global Constants</title>
+    
+      <para>
+        A <glossterm>global constant</glossterm> in KL is a global declaration of the form:
+      
+        <programlisting>const <replaceable>Type</replaceable> <replaceable>name</replaceable> = <replaceable>value</replaceable>;</programlisting>
+      
+        <code><replaceable>Type</replaceable></code> must be an integer or floating-point type; <code><replaceable>name</replaceable></code> must be an identifier; and <code><replaceable>value</replaceable></code> must be constant of the appropriate type.
+      </para>
+      
+      <para>
+        It is a compile-time error to try to do any of the following:
+        
+        <itemizedlist>
+          <listitem><para>assign to a global constant</para></listitem>
+          <listitem><para>pass a global constant to a function as an input-output parameter</para></listitem>
+          <listitem><para>declare a global constant with the same name as a function, operator or another global constant</para></listitem>
+        </itemizedlist>
+      </para>
+    
+      <example xml:id="global-constants.ex">
+        <title>Global constants</title>
+        <programlisting language="KL"><![CDATA[
+const Size twoToTheSixteen = 65536;
+const Float64 pi = 3.14159365358979;
+
+operator entry() {
+  report("twoToTheSixteen = " + twoToTheSixteen);
+  report("pi = " + pi);
+}
+        ]]></programlisting>
+      </example>
+      <informalfigure xml:id="global-constants.ex.out">
+        <simpara>Output:</simpara>
+        <screen><![CDATA[
+twoToTheSixteen = 65536
+pi = 3.14159365358979
+        ]]></screen>
+      </informalfigure>
+    </section>
+    <section xml:id="use">
+      <title>Importing Functionality With <code>require</code></title>
+    
+      <para>
+        Through integration with Fabric, it is possible for derived KL types and/or Fabric extensions to provide KL code that is defined externally to the current source file.  To use these types and code within the current source file, the <code>require</code> statement is provided; it is similar to the <code>import</code> statement in Python.
+      </para>
+      
+      <para>
+        The <code>require</code> statement should be followed by the name of the registered type or extension.  For example, to include the functionality provided by the extension named <quote>Math</quote> and the registered type named <quote>RegType</quote>, the program should start with:
+        
+        <programlisting><![CDATA[
+require Math, RegType;
+        ]]></programlisting>
+        
+        Any <code>require</code> statements must appear at the top of the KL program that uses the associated functionality.  You can have as many <code>require</code> statements as you would like.
+      </para>
+    </section>
+  </chapter>
+  <chapter xml:id="ops-exprs">
+    <title>Operators and Expressions</title>
+    
+    <para>
+      This chapter explains the possible operators and resulting expressions in KL.  Generally, KL has the same operator and expression syntax as JavaScript in C, and in particular follows exactly the same precedence and associativity rules.
+    </para>
+    
+    <section xml:id="ops">
+      <title>Operators</title>
+      
+      <para>
+        KL supports the same basic set of operators as JavaScript and C.  This operations are broadly categorized as <link linkend="arithmetic-ops">arithmetic operators</link>, <link linkend="logical-ops">logical operators</link> and <link linkend="bitwise-ops">bitwise operators</link>.
+      </para>
+      
+      <section xml:id="arithmetic-ops">
+        <title>Arithmetic Operators</title>
+      
+        <section xml:id="unary-plus-minus-ops">
+          <title>Unary Plus and Minus</title>
+          
+          <para>
+            When <code>+</code> or <code>-</code> appears in front of an integer or floating-point expression without an expression to the left they are referred to as as the <glossterm>unary plus</glossterm> and <glossterm>unary minus</glossterm> operators.  The unary plus operator doesn't do anything to the value it operates on, but the unary minus operator returns the value that, when added to the original, produces zero (for unsigned integer expressions); for signed integer and floating-point expressions, this is value of the expression with its sign reversed.
+          </para>
+          
+          <note><para>
+            It is currently not possible to overload the unary plus and minus operators; this will be fixed in a future version of Fabric.
+          </para></note>
+        </section>
+        <section xml:id="inc-dec-ops">
+          <title>Increment and Decrement Operators</title>
+
+          <para>
+            The <code>++</code> (increment) and <code>--</code> (decrement) operators can be used to add one to or subtract one from a variable.  These operators have the following properties:
+        
+            <itemizedlist>
+              <listitem><para>
+                The operators only work on variables or input-output parameters; then cannot operate on constants or input parameters.  This is because they change the value of the expression.
+              </para></listitem>
+              <listitem><para>
+                They only operate on integer values.
+              </para></listitem>
+              <listitem><para>
+                Each operator can appear either <emphasis>precede</emphasis> or <emphasis>follow</emphasis> the variable it operates on.  When it precedes the variable, the value of the expression is the value of the variable <emphasis>after</emphasis> incrementing; this is referred to as a <emphasis>prefix</emphasis> increment (or decrement).  When it follows the variable, the result is the value of the variable <emphasis>before</emphasis> incrementing; this is referred to as a <emphasis>postfix</emphasis> increment (or decrement).
+              </para></listitem>
+              <listitem><para>
+                They cannot be overloaded.
+              </para></listitem>
+            </itemizedlist>
+          </para>
+        </section>
+      </section>
+      <section xml:id="logical-ops">
+        <title>Logical Operators</title>
+    
+        <section xml:id="logical-not">
+          <title>Logical Not</title>
+          
+          <para>
+            When <code>!</code> (exclamation mark) appears in front of an expression it inverts the logical value of expression; more specifically, it constructs a new <code>Boolean</code> value from the expression and then inverts its logical value.  Therefore, logical not can be applied to any expression that has a <code>Boolean</code> constructor that takes a single parameter whose types is the type of the expression.
+          </para>
+          
+          <note><para>
+            It is not possible to overload the logical not operator.  However, you can <quote>enable</quote> it for custom types (structures) by creating a <code>Boolean</code> constructor with a single parameter whose type is the structure.
+          </para></note>
+        </section>
+      </section>
+      <section xml:id="bitwise-ops">
+        <title>Bitwise Operators</title>
+    
+        <section xml:id="bitwise-not">
+          <title>Bitwise Not</title>
+          
+          <para>
+            When <code>~</code> (tilde) appears in front of an expression of integer type, the result is the integer value with its bits inverted.  It can also be applied to an expression of type <code>Boolean</code>, in which case the logical value is inverted.
+          </para>
+          
+          <note><para>
+            The bitwise not operator cannot be applied to floating-point expressions.
+          </para></note>
+        </section>
+      </section>
+    </section>
+    <section xml:id="exprs">
+      <title>Expressions</title>
+      
+      <para>
+        This section categorizes all of the expression types available in KL.  The expression types are organized into groups; each operation within a group has the same precedence as the other operations in the group, and the groups are listed in order of highest to lowest precedence.
+      </para>
+      
+      <section xml:id="primary-exprs">
+        <title>Primary Expressions</title>
+        
+        <para>
+          Primary expressions are the expressions from which more complex expressions are derived.  The primary expressions are:
+          
+          <itemizedlist>
+            <listitem><para>Symbols that refer to variables, function arguments or global constants.  The type of the expression is the type of the entity referred to.  Examples: <code>foo</code>, <code>myParam</code>, <code>mathPI</code>.  See FIXME as well as <xref linkend="scope" /> for how symbol names are resolved.</para></listitem>
+            <listitem><para>Boolean, integer, floating-point and string constants.  The type of the expression is the type of the constant.  Examples: <code>true</code>, <code>42</code>, <code>3.14159</code>.  See <xref linkend="constants" />.</para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      <section xml:id="postfix-exprs">
+        <title>Postfix Expressions</title>
+        
+        <para>
+          Postfix expressions operate on the expression to the left, and associate left-to-right.  The postfix expressions are:
+          
+          <itemizedlist>
+            <listitem><para>Function invocations: <code><replaceable>function</replaceable>(<replaceable>args</replaceable>)</code>.  See <xref linkend="function-calls" />.</para></listitem>
+            <listitem><para>Array and dictionary indexing operations: <code><replaceable>expr</replaceable>[<replaceable>expr</replaceable>]</code>.  See <xref linkend="arrays" /> and <xref linkend="dicts" />.</para></listitem>
+            <listitem><para>Structure member access: <code><replaceable>expr</replaceable>.<replaceable>member</replaceable></code>.  See <xref linkend="structs" />.</para></listitem>
+            <listitem><para>
+              Method invocations: <code><replaceable>expr</replaceable>.<replaceable>method</replaceable>(<replaceable>args</replaceable>)</code>.  See <xref linkend="method-calls" />.
+            </para></listitem>
+            <listitem><para>Postfix increment and decrement: <code><replaceable>expr</replaceable>++</code>, <code><replaceable>expr</replaceable>--</code>.  See <xref linkend="inc-dec-ops" />.</para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      <section xml:id="prefix-exprs">
+        <title>Prefix Expressions</title>
+        
+        <para>
+          Prefix expressions operator on the expression to the right, and associated right-to-left.  The prefix expressions are:
+          
+          <itemizedlist>
+            <listitem><para>
+              The unary plus and minus operators: <code>+<replaceable>expr</replaceable></code> and <code>-<replaceable>expr</replaceable></code>.  See <xref linkend="unary-plus-minus-ops" />.
+            </para></listitem>
+            <listitem><para>
+              The prefix increment and decrement operators: <code>++<replaceable>expr</replaceable></code> and <code>--<replaceable>expr</replaceable></code>.  See <xref linkend="inc-dec-ops" />.
+            </para></listitem>
+            <listitem><para>
+              The logical not operator: <code>!<replaceable>expr</replaceable></code>.  See <xref linkend="logical-not" />.
+            </para></listitem>
+            <listitem><para>
+              The bitwise not operator: <code><replaceable>expr</replaceable></code>.  See <xref linkend="bitwise-not" />.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    </section>
+    <section xml:id="order-of-ops">
+      <title>Controlling Order of Operations</title>
+      
+      <para>
+        The order of operations can be explicitly controlled by putting <code>(</code> and <code>)</code> (parentheses) around expressions.
+      </para>
+      
+      <example>
+        <title>Controlling Order of Operations</title>
+        <programlisting language="KL"><![CDATA[
+operator entry() {
+  report( (2 * 3) + 5 );
+  report( 2 * (3 + 5) );
+}
+        ]]></programlisting>
+      </example>
+      <informalfigure>
+        <simpara>Output:</simpara>
+        <screen><![CDATA[
+11
+16
+        ]]></screen>
+      </informalfigure>
+    </section>
+    <section xml:id="scope">
+      <title>Scoping Rules</title>
+    
+      <para>
+        The term <glossterm>scope</glossterm> in programming languages refers to the parts of a program in which variables, constants and functions are visible; the rules that govern how scopes work are referred to as <glossterm>scoping rules</glossterm>.  Scopes are also responsible for managing the <quote>lifecycle</quote> of variables; in the case of KL, this refers to when destructors are called for structure values.
+      </para>
+    
+      <section xml:id="scope.types">
+        <title>Types of Scopes</title>
+      
+        <para>
+          In KL, there are four kinds scopes: the global scope, function scopes, compound statement scopes and temporary scopes.  Scopes <glossterm>nest</glossterm> inside each other; when a KL program refers to a variable by name, the compiler determines which variable is being referred to by searching from the current innermost scope outwards through the nested scopes to the outermost scope (which is always the global scope).  Like C, KL is a statically-scoped language, meaning that the exactly variable that is being referred to is resolved at compile time (and not at run time).
+        </para>
+  
+        <section xml:id="scope.global">
+          <title>The Global Scope</title>
+    
+          <para>
+            The global scope is the top-level scope of a KL program.  The symbols that are visible in the global scope are global constants as well as functions and operators.  The global scope is always the outermost scope at any point in a KL program.
+          </para>
+        </section>
+        <section xml:id="scope.function">
+          <title>Function Scope</title>
+    
+          <para>
+            Whenever a function or operator is defined, a function scope is created that is nested inside the global scope.  The arguments to the function are provided within the function scope.  Within the function scope, a function definition also creates a compound statement scope corresponding to the compound statement that constitutes the body of the function.
+          </para>
+        </section>
+        <section xml:id="scope.compound-statement">
+          <title>Compound Statement Scope</title>
+    
+          <para>
+            Any time that a <code>{</code> followed by zero or more statements followed by <code>}</code> is used to introduce a compound statement, a new <glossterm>compound statement scope</glossterm> is introduced.  Compound statement scopes are nested inside function scopes (when they correspond to the compound statement that constitutes the body of a function) or inside other compound statement scopes.
+          </para>
+    
+          <para>
+            When control reaches the end of a compound statement (by executing the last statement or via the <code>return</code>, <code>break</code> or <code>continue</code> statements), any structure values that have corresponding destructors will have those destructors executed.
+          </para>
+    
+          <para>
+            Note that declaring a loop index variable inside a loop statement is a special case of a compound statement scope.  In the case that the loop body is a compound statement, the corresponding compound statement scope is nested inside the loop's compound statement scope.
+          </para>
+        </section>
+        <section xml:id="scope.temporary">
+          <title>Temporary Scope</title>
+    
+          <para>
+            Any time that a constructor is directly invoked to create a temporary value (see <xref linkend="constructors.invocation.call" />), a scope is created to contain the temporary value.  The scope encloses the surrounding expression of the temporary value; this means that when the surrounding expression is finished execution, the temporary value's destructor, if it exists, is executed.
+          </para>
+        </section>
+      </section>
+
+      <section xml:id="scope.example">
+        <title>Nested Scopes Example</title>
+      
+        <para>
+          For a precise understanding of the nesting of KL scopes, study the following example carefully!
+        </para>
+  
+        <example xml:id="scope.ex">
+          <title>Nested scopes</title>
+          <programlisting language="KL"><![CDATA[
+struct T {
+  String s;
+};
+
+function T(String s) {
+  this.s = s;
+  report("created T; s = " + this.s);
+}
+
+function ~T() {
+  report("destroying T; s = " + this.s);
+}
+
+function foo(T t) {
+  report("start of foo; t is now " + t);
+  T t("fooT");
+  report("declared t in foo; t is now " + t);
+  for (Index i=0; i<3; ++i) {
+    report("top of loop body; t is now " + t);
+    T t("loopT:" + i);
+    report("declared t in loop; t is now " + t);
+  }
+  report("after loop; t is now " + t);
+}
+
+const Float32 t = 2.75;
+
+operator entry() {
+  report("top of entry; t is now " + t);
+  T t("entryT");
+  report("declared t in entry; t is now " + t);
+  foo(t);
+  report("came back from foo; t is now " + t);
+}
+          ]]></programlisting>
+        </example>
+        <informalfigure>
+          <simpara>Output:</simpara>
+          <screen><![CDATA[
+top of entry; t is now 2.75
+created T; s = entryT
+declared t in entry; t is now {s:"entryT"}
+start of foo; t is now {s:"entryT"}
+created T; s = fooT
+declared t in foo; t is now {s:"fooT"}
+top of loop body; t is now {s:"fooT"}
+created T; s = loopT:0
+declared t in loop; t is now {s:"loopT:0"}
+destroying T; s = loopT:0
+top of loop body; t is now {s:"fooT"}
+created T; s = loopT:1
+declared t in loop; t is now {s:"loopT:1"}
+destroying T; s = loopT:1
+top of loop body; t is now {s:"fooT"}
+created T; s = loopT:2
+declared t in loop; t is now {s:"loopT:2"}
+destroying T; s = loopT:2
+after loop; t is now {s:"fooT"}
+destroying T; s = fooT
+came back from foo; t is now {s:"entryT"}
+destroying T; s = entryT
+          ]]></screen>
+        </informalfigure>
+      </section>
+    </section>
+  </chapter>
+  <chapter xml:id="statements">
+    <title>Statements</title>
+    
+    <para>TBD</para>
+  </chapter>
+  <chapter xml:id="map-reduce">
+    <title>Map-Reduce</title>
+    
+    <para>
+      TBD
+    </para>
   </chapter>
 </book>

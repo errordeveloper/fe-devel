@@ -8,7 +8,7 @@ fabricClient = fabric.createClient()
 op = fabricClient.DependencyGraph.createOperator("op")
 op.setEntryFunctionName("load")
 op.setSourceCode('\
-use FabricPNG;\n\
+require FabricPNG;\n\
 \n\
 struct RGBA\n\
 {\n\

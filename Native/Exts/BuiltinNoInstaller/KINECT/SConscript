@@ -2,7 +2,7 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName', 'buildOS', 'buildArch' )
+Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName', 'buildOS', 'buildArch', 'FABRIC_VERSION', 'distDir', 'generateDistZip', 'agplLicenseFile' )
 
 import os
 import os.path
@@ -10,6 +10,9 @@ import os.path
 # only do this for windows
 if buildOS != 'Windows':
     Return()
+
+kinectPackageName = "FabricEngine-KinectExt-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
+kinectPackageDir = distDir.Dir(kinectPackageName)
     
 kinectPluginEnv = extsEnv.Clone()
 
@@ -32,10 +35,33 @@ if not os.path.exists(kinectDllPath):
 kinectPluginEnv.Append(CPPPATH = [kinectInclude])
 kinectPluginEnv.Append(LIBS = [kinectLib])
 kinectSources = Glob('*.cpp')
-kinectPlugin = kinectPluginEnv.SharedLibrary( ExtSLName('FabricKINECT'), kinectSources ),
+kinectPlugin = kinectPluginEnv.SharedLibrary( ExtSLName('FabricKINECT'), kinectSources )
+if buildOS == 'Windows':
+  kinectPlugin = kinectPlugin[0]
 kinectManifest = kinectPluginEnv.File('FabricKINECT.fpm.json'),
 kinectKL = kinectPluginEnv.File('FabricKINECT.kl'),
-kinectDLL = kinectPluginEnv.File(kinectDllPath),
-kinectFiles = [kinectManifest, kinectPlugin, kinectKL, kinectDLL]
+kinectExtFiles = [kinectManifest, kinectPlugin, kinectKL]
+Export( 'kinectExtFiles' )
 
-Return( 'kinectFiles' )
+kinectInstallerFiles = [
+  Install(
+    kinectPackageDir,
+    [kinectPluginEnv.File("README.txt"), agplLicenseFile]
+  ),
+  Install(
+    kinectPackageDir.Dir('Exts'),
+    kinectExtFiles
+  )
+  ]
+
+installerEnv = kinectPluginEnv.Clone()
+generateDistZip( installerEnv )
+installerEnv.Append( DISTZIP_ROOTDIR = kinectPackageDir )
+kinectInstaller = installerEnv.DistZip(
+  distDir.File(kinectPackageName+".zip"),
+  kinectInstallerFiles
+)
+Alias( 'kinectInstaller', kinectInstaller )
+Export( 'kinectInstaller' )
+
+Return( 'kinectExtFiles' )

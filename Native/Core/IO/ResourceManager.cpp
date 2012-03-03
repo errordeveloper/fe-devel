@@ -188,7 +188,6 @@ namespace Fabric
 
       RC::Handle<ResourceManager> manager( requestInfo->m_manager.makeStrong() );
       FilesInUseMap::iterator it = manager->m_filesInUse.insert( std::make_pair( fileName, fopen( fileName, "rb" ) ) );
-      it->second = fopen( fileName, "rb" );
       if( it->second == NULL )
       {
         manager->m_filesInUse.erase( it );

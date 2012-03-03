@@ -36,10 +36,6 @@ desc = {
 fabricClient.RT.registerType( 'Foobar4', desc )
 node = fabricClient.DG.createNode( 'node1' )
 node.addMember( 'myFoo3', 'Foobar4' )
-
-# issue 180, remove this flush when fixed
-fabricClient.flush()
-
 data = node.getData( 'myFoo3', 0 )
 print 'Foobar4: have x = ' + str( data.x ) + ', y = ' + str( data.y )
 

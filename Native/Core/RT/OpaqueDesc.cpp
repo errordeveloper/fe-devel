@@ -10,8 +10,16 @@ namespace Fabric
 {
   namespace RT
   {
-    OpaqueDesc::OpaqueDesc( std::string const &name, RC::ConstHandle<OpaqueImpl> const &opaqueImpl )
-      : Desc( name, opaqueImpl )
+    OpaqueDesc::OpaqueDesc(
+      std::string const &userNameBase,
+      std::string const &userNameArraySuffix,
+      RC::ConstHandle<OpaqueImpl> const &opaqueImpl
+      )
+      : Desc(
+        userNameBase,
+        userNameArraySuffix,
+        opaqueImpl
+        )
       , m_opaqueImpl( opaqueImpl )
     {
     }

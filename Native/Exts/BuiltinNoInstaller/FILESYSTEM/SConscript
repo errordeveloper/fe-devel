@@ -2,13 +2,49 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-Import( 'extsEnv', 'fileSystemFlags', 'ExtSLName' )
+Import( 'extsEnv', 'fileSystemFlags', 'ExtSLName', 'buildOS', 'buildArch', 'FABRIC_VERSION', 'distDir', 'generateDistZip', 'agplLicenseFile' )
+
+fileSystemPackageName = "FabricEngine-FileSystemExt-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
+fileSystemPackageDir = distDir.Dir(fileSystemPackageName)
 
 fileSystemPluginEnv = extsEnv.Clone()
 fileSystemPluginEnv.MergeFlags( fileSystemFlags )
-fileSystemPlugin = fileSystemPluginEnv.SharedLibrary( ExtSLName('FabricFILESYSTEM'), Glob('*.cpp') ),
+fileSystemPlugin = fileSystemPluginEnv.SharedLibrary( ExtSLName('FabricFILESYSTEM'), Glob('*.cpp') )
+if buildOS == 'Windows':
+  fileSystemPlugin = fileSystemPlugin[0]
 fileSystemManifest = fileSystemPluginEnv.File('FabricFILESYSTEM.fpm.json'),
 fileSystemKL = fileSystemPluginEnv.File('FabricFILESYSTEM.kl'),
-fileSystemFiles = [fileSystemManifest, fileSystemPlugin, fileSystemKL]
+fileSystemExtFiles = [fileSystemManifest, fileSystemPlugin, fileSystemKL]
+Export( 'fileSystemExtFiles' )
 
-Return( 'fileSystemFiles' )
+fileSystemInstallerFiles = [
+  Install(
+    fileSystemPackageDir,
+    [fileSystemPluginEnv.File("README.txt"), agplLicenseFile]
+  ),
+  Install(
+    fileSystemPackageDir.Dir('Exts'),
+    fileSystemExtFiles
+  )
+  ]
+
+if buildOS == 'Windows':
+  installerEnv = fileSystemPluginEnv.Clone()
+  generateDistZip( installerEnv )
+  installerEnv.Append( DISTZIP_ROOTDIR = fileSystemPackageDir )
+  fileSystemInstaller = installerEnv.DistZip(
+    distDir.File(fileSystemPackageName+".zip"),
+    fileSystemInstallerFiles
+  )
+else:
+  fileSystemInstaller = extsEnv.Command(
+    distDir.File(fileSystemPackageName+".tar.bz2"),
+    fileSystemInstallerFiles,
+    [
+      [ "tar", "-C", distDir, "-jcf", "$TARGET", fileSystemPackageName ]
+    ]
+  )
+Alias( 'fileSystemInstaller', fileSystemInstaller )
+Export( 'fileSystemInstaller' )
+
+Return( 'fileSystemExtFiles' )

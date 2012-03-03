@@ -8,7 +8,7 @@ fabricClient = fabric.createClient()
 op = fabricClient.DependencyGraph.createOperator("op")
 op.setEntryFunctionName("load")
 op.setSourceCode('\
-use FabricHDR;\n\
+require FabricHDR;\n\
 \n\
 struct Color\n\
 {\n\

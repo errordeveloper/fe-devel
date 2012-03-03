@@ -20,8 +20,8 @@ namespace Fabric
       encoder.appendJSON( m_json );
     }
     
-    void Global::collectUses( UseNameToLocationMap &uses ) const
+    void Global::collectRequires( RequireNameToLocationMap &uses ) const
     {
     }
-  };
-};
+  }
+}

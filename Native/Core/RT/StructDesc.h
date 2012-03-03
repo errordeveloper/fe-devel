@@ -37,14 +37,18 @@ namespace Fabric
 
     protected:
     
-      StructDesc( std::string const &name, RC::ConstHandle<StructImpl> const &structImpl );
+      StructDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<StructImpl> const &structImpl
+        );
  
     private:
       
       RC::ConstHandle<StructImpl> m_structImpl;
       mutable RC::Handle<RC::Object> m_prototype;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_STRUCT_DESC_H

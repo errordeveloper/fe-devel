@@ -1,0 +1,54 @@
+cache.getCount() = 10
+Should run generator
+cache.produce(0) = 0
+cache.produce(1) = 1
+cache.produce(2) = 1.41421353817
+cache.produce(3) = 1.73205077648
+cache.produce(4) = 2
+cache.produce(5) = 2.23606801033
+cache.produce(6) = 2.44948983192
+cache.produce(7) = 2.64575123787
+cache.produce(8) = 2.82842707634
+cache.produce(9) = 3
+Should not run generator (cached)
+cache.produce(0) = 0
+cache.produce(1) = 1
+cache.produce(2) = 1.41421353817
+cache.produce(3) = 1.73205077648
+cache.produce(4) = 2
+cache.produce(5) = 2.23606801033
+cache.produce(6) = 2.44948983192
+cache.produce(7) = 2.64575123787
+cache.produce(8) = 2.82842707634
+cache.produce(9) = 3
+Should run generator
+cache.produce(0) = 0
+cache.produce(1) = 1
+cache.produce(2) = 1.41421353817
+cache.produce(3) = 1.73205077648
+cache.produce(4) = 2
+cache.produce(5) = 2.23606801033
+cache.produce(6) = 2.44948983192
+cache.produce(7) = 2.64575123787
+cache.produce(8) = 2.82842707634
+cache.produce(9) = 3
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator
+[FABRIC] [MT] Running generator

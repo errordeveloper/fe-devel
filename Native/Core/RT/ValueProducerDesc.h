@@ -26,14 +26,19 @@ namespace Fabric
       
     protected:
     
-      ValueProducerDesc( std::string const &name, RC::ConstHandle<ValueProducerImpl> const &valueProducerImpl, RC::ConstHandle<RT::Desc> const &valueDesc );
+      ValueProducerDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<ValueProducerImpl> const &valueProducerImpl,
+        RC::ConstHandle<RT::Desc> const &valueDesc
+        );
     
     private:
     
       RC::ConstHandle<ValueProducerImpl> m_valueProducerImpl;
       RC::ConstHandle<Desc> m_valueDesc;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_VALUE_PRODUCER_DESC_H

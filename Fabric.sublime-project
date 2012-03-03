@@ -1,0 +1,20 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+  "settings":
+  {
+      "tab_size": 2
+  },
+  "build_systems":
+  [
+      {
+          "name": "Fabric",
+					"cmd": ["$project_path/Util/fabric-build-debug.sh"],
+					"file_regex": "^(.+):([0-9]+):() (.*)$"
+      }
+  ]
+}

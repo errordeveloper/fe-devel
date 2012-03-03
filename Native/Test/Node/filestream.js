@@ -10,9 +10,9 @@ node.setData("path", "./test.txt");
 
 var op = F.DG.createOperator("writeReadStringArray");
 op.setSourceCode(
-  'use FabricFILESTREAM;\n'+
-  'use FabricFileStream;\n'+
-  'use FabricFILESYSTEM;\n'+
+  'require FabricFILESTREAM;\n'+
+  'require FabricFileStream;\n'+
+  'require FabricFILESYSTEM;\n'+
   '\n'+
   'operator writeReadStringArray(\n'+
   ' io String path,\n'+

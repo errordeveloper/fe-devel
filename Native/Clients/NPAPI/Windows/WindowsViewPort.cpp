@@ -262,6 +262,7 @@ namespace Fabric
       RC::Handle<DG::Event> dgRedrawEvent = getRedrawEvent();
       if ( dgRedrawEvent )
       {
+        pushOGLContext();
         try
         {
           dgRedrawEvent->fire();
@@ -274,6 +275,7 @@ namespace Fabric
         {
           FABRIC_LOG( "redrawEvent: unknown exception thrown" );
         }
+        popOGLContext();
       }
       drawWatermark( m_windowWidth, m_windowHeight );
     }
@@ -305,8 +307,10 @@ namespace Fabric
         throw Exception( "Couldn't set OGL format" );
 
       m_hGLRC = ::wglCreateContext( m_hDC );
-      if( !::wglMakeCurrent( m_hDC, m_hGLRC ) )
-        throw Exception( "Couldn't activate OGL context" );
+
+      //Test GL context validity
+      pushOGLContext();
+      popOGLContext();
     }
 
     void WindowsViewPort::termOGLContext( )
@@ -329,23 +333,33 @@ namespace Fabric
       
     void WindowsViewPort::pushOGLContext()
     {
-      m_wglStack.push_back( WGLDCAndContext( ::wglGetCurrentDC(), ::wglGetCurrentContext() ) );
-      
+      //WGLDCAndContext prevContext( ::wglGetCurrentDC(), ::wglGetCurrentContext() );
       if ( m_hDC && m_hGLRC )
       {
-        BOOL wglMakeCurrentResult = ::wglMakeCurrent( m_hDC, m_hGLRC );
-        FABRIC_ASSERT( wglMakeCurrentResult );
+        if( ::wglMakeCurrent( m_hDC, m_hGLRC ) == FALSE )
+          throw Exception( "Viewport error: unable to set OGL context" );
       }
+      //m_wglStack.push_back( prevContext );
     }
     
     void WindowsViewPort::popOGLContext()
     {
-      FABRIC_ASSERT( !m_wglStack.empty() );
+      //[JeromeCG 20120229] Don't restore previous context (workaround what I think is a Windows OGL threading bug).
+      //                    Anyway, each viewport context is set current before anything happens.
+      //                    For some reason, in samples with heavy rendering (eg Medical Imaging), setting the previous
+      //                    context right after the redraw, even if glFinish() is called, might cause a crash. I suspect
+      //                    this might be a OGL thread synchronization issue (on Windows, OGL has a worker thread).
+      //                    Note1: I validated that all operators were executed while a valid context was active,
+      //                    and we still had that crash for that sample.
+      //                    Note2: the crash happens too when prevContext.second != NULL 
+      //
+      //FABRIC_ASSERT( !m_wglStack.empty() );
+      //WGLDCAndContext prevContext( m_wglStack.back() );
+      //m_wglStack.pop_back();
+      //glFinish();
 
-      BOOL wglMakeCurrentResult = ::wglMakeCurrent( m_wglStack.back().first, m_wglStack.back().second );
-      FABRIC_ASSERT( wglMakeCurrentResult );
-
-      m_wglStack.pop_back();
+      //if( ::wglMakeCurrent( prevContext.first, prevContext.second ) == FALSE )
+      //  throw Exception( "Viewport error: unable to restore previous OGL context" );
     }
 
     std::string WindowsViewPort::queryUserFilePath( bool existingFile, std::string const &title, std::string const &defaultFilename, std::string const &extension )

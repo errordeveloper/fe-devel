@@ -1,0 +1,5 @@
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+RT.registerType: members: member name and type must be strings

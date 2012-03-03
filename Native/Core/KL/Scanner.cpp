@@ -464,6 +464,8 @@ namespace Fabric
         case 7:
           if ( string == "default" )
             return createToken( TOKEN_DEFAULT, sourceRange );
+          if ( string == "require" )
+            return createToken( TOKEN_REQUIRE, sourceRange );
           break;
         
         case 8:

@@ -6,7 +6,7 @@
 # with the MIME type application/x-chrome-extension
 
 import os
-Import( 'baseEnv', 'buildOS', 'buildArch', 'FABRIC_VERSION', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'installerExtFiles', 'distDir' )
+Import( 'baseEnv', 'buildOS', 'buildArch', 'FABRIC_VERSION', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'browserExtFiles', 'distDir' )
 
 installerName = 'FabricEngine-ChromeExtension-' + buildOS + '-' + buildArch + '-' + FABRIC_VERSION
 
@@ -57,7 +57,7 @@ if buildOS == "Darwin":
 
 installedFiles.append( Install(
   chromeExtensionDir,
-  installerExtFiles
+  browserExtFiles
 ) )
 
 pemFile = archDistDir.Dir('Chrome').File('private-key.pem')

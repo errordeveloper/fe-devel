@@ -37,7 +37,8 @@ namespace Fabric
     protected:
     
       DictDesc(
-        std::string const &name,
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
         RC::ConstHandle<DictImpl> const &dictImpl,
         RC::ConstHandle<ComparableDesc> const &keyDesc,
         RC::ConstHandle<Desc> const &valueDesc
@@ -48,8 +49,8 @@ namespace Fabric
       RC::ConstHandle<DictImpl> m_dictImpl;
       RC::ConstHandle<ComparableDesc> m_keyDesc;
       RC::ConstHandle<Desc> m_valueDesc;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_DICT_DESC_H

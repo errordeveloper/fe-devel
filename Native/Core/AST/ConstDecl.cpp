@@ -78,7 +78,8 @@ namespace Fabric
       RC::ConstHandle<CG::ByteAdapter> byteAdapter = manager->getByteAdapter();
       RC::ConstHandle<CG::IntegerAdapter> integerAdapter = manager->getIntegerAdapter();
       RC::ConstHandle<CG::SizeAdapter> sizeAdapter = manager->getSizeAdapter();
-      RC::ConstHandle<CG::FloatAdapter> scalarAdapter = manager->getFloat32Adapter();
+      RC::ConstHandle<CG::FloatAdapter> float32Adapter = manager->getFloat32Adapter();
+      RC::ConstHandle<CG::FloatAdapter> float64Adapter = manager->getFloat64Adapter();
       
       CG::ExprValue exprValue( moduleBuilder.getContext() );
       if ( adapter->isEquivalentTo( byteAdapter ) )
@@ -105,9 +106,11 @@ namespace Fabric
         size_t value = size_t(uint64Value);
         exprValue = CG::ExprValue( sizeAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), sizeAdapter->llvmConst( moduleBuilder.getContext(), value ) );
       }
-      else if ( adapter->isEquivalentTo( scalarAdapter ) )
-        exprValue = CG::ExprValue( scalarAdapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), scalarAdapter->llvmConst( moduleBuilder.getContext(), Util::parseDouble( m_value ) ) );
-      else throw CG::Error( getLocation(), "constant declaration type must be Byte, Integer, Size or Float32" );
+      else if ( adapter->isEquivalentTo( float32Adapter ) )
+        exprValue = CG::ExprValue( float32Adapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), float32Adapter->llvmConst( moduleBuilder.getContext(), Util::parseDouble( m_value ) ) );
+      else if ( adapter->isEquivalentTo( float64Adapter ) )
+        exprValue = CG::ExprValue( float64Adapter, CG::USAGE_RVALUE, moduleBuilder.getContext(), float64Adapter->llvmConst( moduleBuilder.getContext(), Util::parseDouble( m_value ) ) );
+      else throw CG::Error( getLocation(), "constant declaration type must be Byte, Integer, Size, Float32 or Float64" );
         
       if ( scope.has( m_name ) )
         throw CG::Error( getLocation(), "symbol " + _(m_name) + " already exists" );

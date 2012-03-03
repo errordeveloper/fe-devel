@@ -14,7 +14,9 @@
 <xsl:import href="fo.xml" />
 
 <!-- graphics for the alerts, tips, cautions, warnings, notes, etc. Build your own or turn this off! -->
+<xsl:param name="admon.textlabel" select="0"></xsl:param>
 <xsl:param name="admon.graphics" select="1" />
+<xsl:param name="admon.graphics.extension">.png</xsl:param>
 
 
 <!--programlisting stuff -->
@@ -25,7 +27,8 @@
 
 <!-- section numbering and depth -->
 <xsl:param name="section.autolabel" select="1"></xsl:param>
-<xsl:param name="section.autolabel.max.depth">1</xsl:param>
+<xsl:param name="section.autolabel.max.depth">4</xsl:param>
+<xsl:param name="section.label.includes.component.label">1</xsl:param>
 
 
 <!-- xref -->
@@ -56,7 +59,7 @@
      
      <!-- change how cross-references look -->
      <l:context name="xref">
-       <l:template name="page.citation" text=" on page %p"/>
+       <l:template name="page.citation" text="(page %p)"/>
      </l:context>
      
    </l:l10n>
@@ -82,7 +85,7 @@ reference toc,title
 set       toc,title
 </xsl:param>
 
-<xsl:param name="toc.section.depth">1</xsl:param>
+<xsl:param name="toc.section.depth">2</xsl:param>
 
 <!-- fonts -->
 <xsl:param name="body.font.master">10</xsl:param>
@@ -161,13 +164,16 @@ set       toc,title
 
 
 <xsl:attribute-set name="admonition.properties">
-  <xsl:attribute name="border">0.5pt solid black</xsl:attribute>
-  <xsl:attribute name="background-color">#ffffee</xsl:attribute>
-  <xsl:attribute name="padding">0.1in</xsl:attribute>
+  <xsl:attribute name="border">none</xsl:attribute>
+  <xsl:attribute name="padding">0</xsl:attribute>
 </xsl:attribute-set>
 
-
-
+<xsl:attribute-set name="admonition.title.properties">
+  <xsl:attribute name="font-size">14pt</xsl:attribute>
+  <xsl:attribute name="font-weight">bold</xsl:attribute>
+  <xsl:attribute name="hyphenate">false</xsl:attribute>
+  <xsl:attribute name="keep-with-next.within-column">always</xsl:attribute>
+</xsl:attribute-set>
 
 <!-- border and shade to screen and programlisting -->
 
@@ -207,85 +213,46 @@ set       toc,title
 
 <!-- Header Layout -->
 
-<!-- left and right 50%, no middle  -->
 <xsl:param name="header.column.widths">1 0 1</xsl:param>
-
-<!-- footer content - copyright on the left, page on the right. Single-sided -->
 <xsl:template name="header.content">  
   <xsl:param name="pageclass" select="''"/>
   <xsl:param name="sequence" select="''"/>
   <xsl:param name="position" select="''"/>
   <xsl:param name="gentext-key" select="''"/>
   <fo:block>
-  
-  
-  <xsl:choose>
+    <xsl:choose>
       <xsl:when test="$position = 'right'">
-
+        <xsl:apply-templates select="." mode="object.title.markup"/>
       </xsl:when>
       <xsl:when test="$position = 'left'">
-
-          <xsl:apply-templates select="." mode="titleabbrev.markup"/>
+        <xsl:value-of select="ancestor-or-self::d:book/d:info/d:title"/>
       </xsl:when>
-      <!--
-              <xsl:when test="$position = 'center'">
-               <fo:external-graphic content-height="1.2cm">
-                  <xsl:attribute name="src">
-                    <xsl:call-template name="fo-external-image">
-                      <xsl:with-param name="filename" select="$header.image.filename"/>
-                    </xsl:call-template>
-                  </xsl:attribute>
-               </fo:external-graphic>
-               </xsl:when>
-            -->
-              
-  </xsl:choose>
-  
+    </xsl:choose>
   </fo:block>
 </xsl:template>
 
 
-
-
 <!-- Footer Layout -->
 
-<!-- left and right 50%, no middle  -->
 <xsl:param name="footer.column.widths">1 0 1</xsl:param>
-
-<!-- footer content - copyright on the left, page on the right. Single-sided -->
 <xsl:template name="footer.content">  
   <xsl:param name="pageclass" select="''"/>
   <xsl:param name="sequence" select="''"/>
   <xsl:param name="position" select="''"/>
   <xsl:param name="gentext-key" select="''"/>
   <fo:block>
-  
-  
-  <xsl:choose>
+    <xsl:choose>
       <xsl:when test="$position = 'right'">
         <fo:page-number/>  
       </xsl:when>
       <xsl:when test="$position = 'left'">
-          <xsl:text>Copyright </xsl:text>
-          <!-- use xpath to grab the year - remember to prefix each node with d: -->
-          <xsl:value-of select="ancestor-or-self::d:article/d:info/d:copyright/d:year"/>
-          <xsl:text> </xsl:text>
-          <xsl:value-of select="ancestor-or-self::d:article/d:info/d:copyright/d:holder"/>
+        <xsl:text>Copyright </xsl:text>
+        <!-- use xpath to grab the year - remember to prefix each node with d: -->
+        <xsl:value-of select="ancestor-or-self::d:book/d:info/d:copyright/d:year"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="ancestor-or-self::d:book/d:info/d:copyright/d:holder"/>
       </xsl:when>
-      <!--
-              <xsl:when test="$position = 'center'">
-               <fo:external-graphic content-height="1.2cm">
-                  <xsl:attribute name="src">
-                    <xsl:call-template name="fo-external-image">
-                      <xsl:with-param name="filename" select="$header.image.filename"/>
-                    </xsl:call-template>
-                  </xsl:attribute>
-               </fo:external-graphic>
-               </xsl:when>
-            -->
-              
-  </xsl:choose>
-  
+    </xsl:choose>
   </fo:block>
 </xsl:template>
 

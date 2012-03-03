@@ -2,15 +2,15 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
+#include <Fabric/EDK/EDK.h>
 #include <Fabric/Clients/CLI/Client.h>
 #include <Fabric/Core/DG/Context.h>
 #include <Fabric/Base/JSON/Encoder.h>
-#include <Fabric/EDK/EDK.h>
 #include <Fabric/Core/IO/Helpers.h>
 #include <Fabric/Core/IO/Manager.h>
 #include <Fabric/Core/IO/ResourceManager.h>
-#include <Fabric/Core/IO/FileHandleManager.h>
-#include <Fabric/Core/IO/FileHandleResourceProvider.h>
+#include <Fabric/Core/IO/SimpleFileHandleManager.h>
+#include <Fabric/Core/IO/FileResourceProvider.h>
 #include <Fabric/Core/Plug/Manager.h>
 #include <Fabric/Core/CG/Manager.h>
 #include <Fabric/Core/DG/Context.h>
@@ -114,9 +114,10 @@ namespace Fabric
   
     protected:
     
-      IOManager( IO::ScheduleAsyncCallbackFunc scheduleFunc, void *scheduleFuncUserData ) : IO::Manager( scheduleFunc, scheduleFuncUserData )
+      IOManager( IO::ScheduleAsyncCallbackFunc scheduleFunc, void *scheduleFuncUserData ) : IO::Manager( IO::SimpleFileHandleManager::Create(), scheduleFunc, scheduleFuncUserData )
       {
-        getResourceManager()->registerProvider( RC::Handle<IO::ResourceProvider>::StaticCast( TestSynchronousFileResourceProvider::Create() ), true );
+        getResourceManager()->registerProvider( RC::Handle<IO::ResourceProvider>::StaticCast( TestSynchronousFileResourceProvider::Create() ), false );
+        getResourceManager()->registerProvider( RC::Handle<IO::ResourceProvider>::StaticCast( IO::FileResourceProvider::Create( true ) ), true );
       }
     };
     

@@ -159,6 +159,18 @@ namespace Fabric
           basicBlockBuilder->CreateRet( rValue );
         }
       }
+      
+      {
+        UniOpBuilder functionBuilder( moduleBuilder, this, UNI_OP_NEG, this, USAGE_RVALUE );
+        if ( buildFunctions )
+        {
+          llvm::Value *rValue = functionBuilder[0];
+          BasicBlockBuilder basicBlockBuilder( functionBuilder );
+          basicBlockBuilder->SetInsertPoint( functionBuilder.createBasicBlock( "entry" ) );
+          llvm::Value *negRValue = basicBlockBuilder->CreateNeg( rValue );
+          basicBlockBuilder->CreateRet( negRValue );
+        }
+      }
              
       {
         UniOpBuilder functionBuilder( moduleBuilder, this, UNI_OP_BIT_NOT, this, USAGE_RVALUE );

@@ -21,8 +21,16 @@ namespace Fabric
       
     protected:
     
-      FloatDesc( std::string const &name, RC::ConstHandle<FloatImpl> const &floatImpl )
-        : NumericDesc( name, floatImpl )
+      FloatDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<FloatImpl> const &floatImpl
+        )
+        : NumericDesc(
+          userNameBase,
+          userNameArraySuffix,
+          floatImpl
+          )
         , m_floatImpl( floatImpl )
       {
       }
@@ -57,8 +65,16 @@ namespace Fabric
       
     protected:
     
-      FloatDescT( std::string const &name, RC::ConstHandle< FloatImplT<T> > const &floatImpl )
-        : FloatDesc( name, floatImpl )
+      FloatDescT(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle< FloatImplT<T> > const &floatImpl
+        )
+        : FloatDesc(
+          userNameBase,
+          userNameArraySuffix,
+          floatImpl
+          )
         , m_floatImpl( floatImpl )
       {
       }
@@ -74,8 +90,16 @@ namespace Fabric
       
     protected:
     
-      Float32Desc( std::string const &name, RC::ConstHandle<Float32Impl> const &float32Impl )
-        : FloatDescT<float>( name, float32Impl )
+      Float32Desc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<Float32Impl> const &float32Impl
+        )
+        : FloatDescT<float>(
+          userNameBase,
+          userNameArraySuffix,
+          float32Impl
+          )
       {
       }
     };
@@ -86,8 +110,16 @@ namespace Fabric
       
     protected:
     
-      Float64Desc( std::string const &name, RC::ConstHandle<Float64Impl> const &float64Impl )
-        : FloatDescT<double>( name, float64Impl )
+      Float64Desc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<Float64Impl> const &float64Impl
+        )
+        : FloatDescT<double>(
+          userNameBase,
+          userNameArraySuffix,
+          float64Impl
+          )
       {
       }
     };

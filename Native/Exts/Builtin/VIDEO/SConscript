@@ -7,7 +7,9 @@ import os.path
 
 videoPluginEnv = extsEnv.Clone()
 videoPluginEnv.MergeFlags( ffmpegFlags )
-videoPlugin = videoPluginEnv.SharedLibrary( ExtSLName('FabricVIDEO'), Glob('*.cpp') ),
+videoPlugin = videoPluginEnv.SharedLibrary( ExtSLName('FabricVIDEO'), Glob('*.cpp') )
+if buildOS == 'Windows':
+  videoPlugin = videoPlugin[0]
 videoManifest = videoPluginEnv.File('FabricVIDEO.fpm.json'),
 videoKL = videoPluginEnv.File('FabricVIDEO.kl'),
 videoFiles = [videoManifest, videoPlugin, videoKL]

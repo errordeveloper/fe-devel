@@ -6,7 +6,6 @@
 #include <Fabric/Core/IO/Manager.h>
 #include <Fabric/Core/IO/ResourceManager.h>
 #include <Fabric/Core/IO/FileHandleManager.h>
-#include <Fabric/Core/IO/FileHandleResourceProvider.h>
 #include <Fabric/Core/Plug/Manager.h>
 #include <Fabric/Core/CG/Manager.h>
 

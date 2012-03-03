@@ -24,13 +24,17 @@ namespace Fabric
       
     protected:
     
-      OpaqueDesc( std::string const &name, RC::ConstHandle<OpaqueImpl> const &opaqueImpl );
+      OpaqueDesc(
+        std::string const &userNameBase,
+        std::string const &userNameArraySuffix,
+        RC::ConstHandle<OpaqueImpl> const &opaqueImpl
+        );
       
     private:
     
       RC::ConstHandle<OpaqueImpl> m_opaqueImpl;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_OPAQUE_DESC_H

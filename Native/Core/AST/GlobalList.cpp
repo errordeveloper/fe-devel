@@ -56,14 +56,14 @@ namespace Fabric
         m_after->appendJSON( jsonArrayEncoder, includeLocation );
     }
     
-    void GlobalList::collectUses( UseNameToLocationMap &uses ) const
+    void GlobalList::collectRequires( RequireNameToLocationMap &requires ) const
     {
       if ( m_before )
-        m_before->collectUses( uses );
+        m_before->collectRequires( requires );
       if ( m_global )
-        m_global->collectUses( uses );
+        m_global->collectRequires( requires );
       if ( m_after )
-        m_after->collectUses( uses );
+        m_after->collectRequires( requires );
     }
     
     void GlobalList::registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const
@@ -113,5 +113,5 @@ namespace Fabric
       if ( m_after )
         m_after->collectFunctionBases( result );
     }
-  };
-};
+  }
+}

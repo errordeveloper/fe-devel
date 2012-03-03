@@ -30,7 +30,7 @@ namespace Fabric
     class Destructor;
     class FunctionBase;
     class Global;
-    class UseNameToLocationMap;
+    class RequireNameToLocationMap;
     
     class GlobalList : public RC::Object
     {
@@ -43,7 +43,7 @@ namespace Fabric
       Util::SimpleString toJSON( bool includeLocation ) const;
       void encodeJSON( bool includeLocation, JSON::Encoder &jg ) const;
 
-      void collectUses( UseNameToLocationMap &uses ) const;
+      void collectRequires( RequireNameToLocationMap &uses ) const;
       void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
       void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctions ) const;
       void collectFunctionBases( std::vector< RC::ConstHandle<AST::FunctionBase> > &result ) const;
@@ -60,7 +60,7 @@ namespace Fabric
       RC::ConstHandle<Global> m_global;
       RC::ConstHandle<GlobalList> m_after;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_AST_GLOBAL_LIST_H

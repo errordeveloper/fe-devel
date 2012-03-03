@@ -85,17 +85,20 @@ namespace Fabric
         m_orderedSOLibHandles.push_back( soLibHandle );
       }
 
-      void *resolvedFabricEDKInitFunction = 0;
-      for ( size_t i=0; i<m_orderedSOLibHandles.size(); ++i )
+      if ( !m_orderedSOLibHandles.empty() )
       {
-        resolvedFabricEDKInitFunction = SOLibResolve( m_orderedSOLibHandles[i], "FabricEDKInit" );
-        if ( resolvedFabricEDKInitFunction )
-          break;
-      }
-      if ( !resolvedFabricEDKInitFunction )
-        throw Exception( "error: extension doesn't implement function FabricEDKInit through macro IMPLEMENT_FABRIC_EDK_ENTRIES" );
+        void *resolvedFabricEDKInitFunction = 0;
+        for ( size_t i=0; i<m_orderedSOLibHandles.size(); ++i )
+        {
+          resolvedFabricEDKInitFunction = SOLibResolve( m_orderedSOLibHandles[i], "FabricEDKInit" );
+          if ( resolvedFabricEDKInitFunction )
+            break;
+        }
+        if ( !resolvedFabricEDKInitFunction )
+          throw Exception( "error: extension doesn't implement function FabricEDKInit through macro IMPLEMENT_FABRIC_EDK_ENTRIES" );
 
-      ( *( FabricEDKInitPtr )resolvedFabricEDKInitFunction )( callbacks );
+        ( *( FabricEDKInitPtr )resolvedFabricEDKInitFunction )( callbacks );
+      }
       
       for ( size_t i=0; i<m_orderedSOLibHandles.size(); ++i )
       {

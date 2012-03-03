@@ -3,6 +3,8 @@
  */
 
 #include <Fabric/Clients/Python/IOManager.h>
+#include <Fabric/Core/IO/SimpleFileHandleManager.h>
+#include <Fabric/Core/IO/FileResourceProvider.h>
 
 #include <fstream>
 #include <string>
@@ -104,14 +106,10 @@ namespace Fabric
         IO::ScheduleAsyncCallbackFunc scheduleFunc,
         void *scheduleFuncUserData
         )
-        : IO::Manager( scheduleFunc, scheduleFuncUserData )
+        : IO::Manager( IO::SimpleFileHandleManager::Create(), scheduleFunc, scheduleFuncUserData )
     {
-      getResourceManager()->registerProvider(
-          RC::Handle<IO::ResourceProvider>::StaticCast(
-            TestSynchronousFileResourceProvider::Create()
-            ),
-          true
-          );
+      getResourceManager()->registerProvider( RC::Handle<IO::ResourceProvider>::StaticCast( IO::FileResourceProvider::Create( true ) ), true );
+      getResourceManager()->registerProvider( RC::Handle<IO::ResourceProvider>::StaticCast( TestSynchronousFileResourceProvider::Create() ), false );
     }
   };
 };

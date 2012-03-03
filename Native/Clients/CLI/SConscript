@@ -13,6 +13,7 @@ if buildOS == 'Darwin':
 
 extraObjects = []
 
+cliLibraryName = 'Fabric.node'
 if buildOS == 'Windows':
     Import( 'getoptFlags' )
     cliEnv.MergeFlags( getoptFlags )
@@ -20,8 +21,10 @@ if buildOS == 'Windows':
         '/IMPLIB:${TARGET.dir}/fabric_cmd.lib',
         '/STACK:4194304'
     ] )
+    cliEnv.Append( LIBS = [ 'User32', 'advapi32' ] )
+    cliLibraryName = 'Fabric.dll'
 
-cliLoadableModule = cliEnv.LoadableModule( 'Fabric.node', [Glob('*.cpp'),buildObject,extraObjects] )
+cliLoadableModule = cliEnv.LoadableModule( cliLibraryName, [Glob('*.cpp'),buildObject,extraObjects] )
 
 fabricNodeModuleDistDir = archDistDir.Dir('NodeModule')
 fabricNodePackage = cliEnv.Command(
@@ -32,7 +35,7 @@ fabricNodePackage = cliEnv.Command(
   ])
 Export('fabricNodePackage')
 fabricNodeAddOn = cliEnv.Command(
-  fabricNodeModuleDistDir.File('Fabric.node'),
+  fabricNodeModuleDistDir.File( cliLibraryName ),
   cliLoadableModule,
   [
     Copy( "$TARGET", "$SOURCE" )

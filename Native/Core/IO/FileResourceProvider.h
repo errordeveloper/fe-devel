@@ -17,13 +17,14 @@ namespace Fabric
     public:
       REPORT_RC_LEAKS
 
-      static RC::Handle<FileResourceProvider> Create();
+      static RC::Handle<FileResourceProvider> Create( bool acceptUnformattedLocalPaths );
 
       virtual char const * getUrlScheme() const;
       virtual void get( char const *url, bool getAsFile, void* userData );
 
     private:
-      FileResourceProvider();
+      FileResourceProvider( bool acceptUnformattedLocalPaths );
+      bool m_acceptUnformattedLocalPaths;
     };
   };
 };

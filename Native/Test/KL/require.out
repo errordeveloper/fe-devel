@@ -1,0 +1,4 @@
+require.kl:7:9: error: no registered type or extension named 'AnotherUnknownPlugin'
+require.kl:6:24: error: no registered type or extension named 'AnotherUnknownType'
+require.kl:6:9: error: no registered type or extension named 'UnknownPlugin'
+require.kl:5:9: error: no registered type or extension named 'UnknownType'
