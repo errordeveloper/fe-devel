@@ -6,6 +6,7 @@ import fabric
 
 myvars = {}
 myvars['completed'] = 0
+myvars['queued'] = 0
 
 def launchTest( fabricClient ):
   o = fabricClient.DG.createOperator("o"+str(testIndex))
@@ -22,13 +23,21 @@ def launchTest( fabricClient ):
   n.bindings.append(b)
 
   def complete():
-    myvars['completed'] = myvars['completed'] + 1
-    print "completed " + str(myvars['completed'])
+    myvars['completed'] += 1
+    myvars['queued'] -= 1
+    if myvars['queued'] < 1:
+      print 'All queued tasks completed'
+    #print "completed " + str(myvars['completed'])
     fabricClient.close()
 
   n.evaluateAsync( complete )
 
+queued = 0
 for testIndex in range( 0, 64 ):
   launchTest( fabric.createClient() )
-  print("queued "+str(testIndex))
+  queued += 1
+  myvars['queued'] += 1
+  #print "queued " + str(testIndex)
+
+print("TOTAL queued: "+str( queued ) )
 

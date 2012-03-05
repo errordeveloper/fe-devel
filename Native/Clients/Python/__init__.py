@@ -208,7 +208,7 @@ class _ASYNCTHREAD( threading.Thread ):
       arg = n[ 'arg' ]
     client._route( n[ 'src' ], n[ 'cmd' ], arg )
 
-  def _runScheduledCallbacks( self, client ):
+  def __runScheduledCallbacks( self, client ):
     self.__clib.runScheduledCallbacks( client.getClientPtr() )
 
   def __setJSONNotifyCallback( self, client, callback ):
