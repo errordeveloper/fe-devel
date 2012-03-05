@@ -2,12 +2,13 @@
 #  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
 #
 
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
 def printErrors( obj ):
   if len( obj.getErrors() ) > 0:
-    print obj.getName() + ': errors: ' + fabric.stringify( obj.getErrors() )
+    print obj.getName() + ': errors: ' + fabrictest.stringify( obj.getErrors() )
 
 parentOp = fabricClient.DependencyGraph.createOperator( "parentOp" )
 parentOp.setEntryFunctionName('entry')

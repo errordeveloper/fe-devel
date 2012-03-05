@@ -10,145 +10,268 @@ import collections
 import atexit
 import Queue
 import signal
+import threading
 
-# FIXME Windows
-if os.name == 'posix':
-  _fabric = ctypes.CDLL( os.path.dirname( __file__ ) + '/libFabricPython.so' )
-else:
-  _fabric = ctypes.CDLL( os.path.dirname( __file__ ) + '/FabricPython.dll' )
+def debug( string ):
+  print threading.currentThread().name + ': ' + string
 
-# FIXME Windows
-_caughtSIGINT = False
-def _handleSIGINT( signum, frame ):
-  global _caughtSIGINT
-  _caughtSIGINT = True
-signal.signal( signal.SIGINT, _handleSIGINT )
+def synchronized( lockname ):
+  def wrap( function ):
+    def syncFunction( self, *args, **kw ):
+      lock = getattr( self, lockname )
+      lock.acquire()
+      try:
+        return function( self, *args, **kw )
+      finally:
+        lock.release()
+    return syncFunction
+  return wrap
 
-# catch uncaught exceptions so that we don't wait on threads 
-_uncaughtException = False
-_oldExceptHook = sys.excepthook
-def _excepthook( type, value, traceback):
-  global _uncaughtException
-  _uncaughtException = True
-  _oldExceptHook( type, value, traceback )
-sys.excepthook = _excepthook
+class _FABRIC:
+  _NOTIFYCALLBACK = ctypes.CFUNCTYPE( None, ctypes.c_char_p )
 
-# prevent exit until all our threads complete
-_clients = []
-def _waitForClose():
-  # FIXME this will run in a tight loop while waiting
-  while not _uncaughtException and not _caughtSIGINT and len( _clients ) > 0:
-    for c in _clients:
-      c.running()
-atexit.register( _waitForClose )
+  def __init__( self ):
+    # FIXME Windows
+    self.__caughtSIGINT = False
+    def __handleSIGINT( signum, frame ):
+      self.__handleSIGINT( signum, frame )
+    signal.signal( signal.SIGINT, __handleSIGINT )
+    
+    # catch uncaught exceptions so that we don't wait on threads 
+    self.__uncaughtException = False
+    self.__oldExceptHook = sys.excepthook
+    def __excepthook( type, value, traceback):
+      self._handleUncaughtException( type, value, traceback )
+      self.actionQueue.put( None )
+    sys.excepthook = __excepthook
 
-# declare explicit prototypes for all the external library calls
-_fabric.identify.argtypes = []
-_fabric.createClient.argtypes = [
-  ctypes.c_void_p
-]
-_fabric.jsonExec.argtypes = [
-  ctypes.c_void_p,
-  ctypes.c_char_p,
-  ctypes.c_size_t,
-  ctypes.c_void_p
-]
-_fabric.runScheduledCallbacks.argtypes = [
-  ctypes.c_void_p
-]
-_fabric.freeClient.argtypes = [
-  ctypes.c_void_p
-]
-_fabric.freeString.argtypes = [
-  ctypes.c_void_p,
-  ctypes.c_char_p
-]
-_NOTIFYCALLBACK = ctypes.CFUNCTYPE( None, ctypes.c_char_p )
-_fabric.setJSONNotifyCallback.argtypes = [
-  ctypes.c_void_p,
-  _NOTIFYCALLBACK
-]
+    self.__gcId = 0
 
-# print app and version information
-_fabric.identify()
+    # FIXME merge with shouldExit
+    self.createdOneClient = False
 
-def createClient():
-  return _INTERFACE( _fabric )
+    self.clients = []
+    self.actionQueue = Queue.Queue()
+    self.__asyncThread = _ASYNCTHREAD( self )
+    self.__asyncThread.start()
 
-# used in unit tests
-def stringify( obj ):
-  return json.dumps( _normalizeForUnitTests( _typeToDict( obj ) ) )
+    # FIXME join thread
+    atexit.register( self.__joinThread )
 
-# global for tracking GC ids for core objects
-_gcId = 0
-def _getNextGCId():
-  global _gcId
-  _gcId = _gcId + 1
-  return _gcId
+  def __handleSIGINT( self, signum, frame ):
+    self.__caughtSIGINT = True
+    print 'got sigint'
+    self.actionQueue.put( None )
 
-# for unit tests only, make floats use same precision across different
-# versions of python which have different repr() implementations and
-# change dicts to sorted lists so ordering doesn't change
-def _normalizeForUnitTests( obj ):
-  if type( obj ) is list:
-    objlist = []
-    for elem in obj:
-      objlist.append( _normalizeForUnitTests( elem ) )
-    return objlist
-  elif type( obj ) is dict:
-    objdictlist = []
-    for member in obj:
-      elemobj = {}
-      elemobj[ member ] = _normalizeForUnitTests( obj[ member ] )
-      objdictlist.append( elemobj )
-    objdictlist.sort()
-    return objdictlist
-  elif type( obj ) is float:
-    return format( obj, '.3f' )
-  else:
-    return obj
+  def _handleUncaughtException( self, type, value, traceback ):    
+    self.__uncaughtException = True
+    self.__oldExceptHook( type, value, traceback )
 
-# take a python class and convert its members down to a hierarchy of
-# dictionaries, ignoring methods
-def _typeToDict( obj ):
-  if type( obj ) is list:
-    objlist = []
-    for elem in obj:
-      objlist.append( _typeToDict( elem ) )
-    return objlist
+  def _signalAllClients( self ):
+    for client in self.clients:
+      client.dataEvent.set()
 
-  elif not hasattr( obj, '__dict__' ):
-    return obj
+  def __joinThread( self ):
+    self.__asyncThread.join()
 
-  else:
-    objdict = {}
-    for member in vars( obj ):
-      attr = getattr( obj, member )
-      objdict[ member ] = _typeToDict( attr )
-    return objdict
+  def _shouldExit( self ):
+    return self.__uncaughtException or self.__caughtSIGINT
+
+  def createClient( self ):
+    interface = _INTERFACE( self )
+    self.clients.append( interface._client )
+    self.createdOneClient = True
+    return interface
+
+  def getNextGCId():
+    self.__gcId = self.__gcId + 1
+    return self.__gcId
+
+class _ACTIONITEM:
+  # immediately wake the Client
+  SIGNAL = 'signal'
+
+  # when received, schedule a signal (ensures that all notifications in the 
+  # queue are processed before signalling Client)
+  DEFERRED_SIGNAL = 'deferredSignal'
+
+  EXECUTE = 'execute'
+  NOTIFY = 'notify'
+  SET_JSON_NOTIFY_CALLBACK = 'setJsonNotifyCallback'
+  RUN_SCHEDULED_CALLBACKS = 'runScheduledCallbacks'
+  CREATE_CLIENT = 'createClient'
+  FREE_CLIENT = 'freeClient'
+
+  def __init__( self, client = None, action = None, data = None ):
+    self.client = client
+    self.action = action
+    self.data = data
+
+class _ASYNCTHREAD( threading.Thread ):
+  def __init__( self, fabric ):
+    super( _ASYNCTHREAD, self ).__init__()
+    self.__fabric = fabric
+
+  def __clientsRunning( self ):
+    for client in self.__fabric.clients:
+      if client.running():
+        return True
+    return False
+
+  def run( self ):
+    try:
+      self.__threadMain()
+    except Exception:
+      type, value, traceback = sys.exc_info()
+      self.__fabric._handleUncaughtException( type, value, traceback )
+      self.__fabric._signalAllClients()
+
+  def __threadMain( self ):
+    if os.name == 'posix':
+      self.__clib = ctypes.CDLL( os.path.dirname( __file__ ) + '/libFabricPython.so' )
+    else:
+      self.__clib = ctypes.CDLL( os.path.dirname( __file__ ) + '/FabricPython.dll' )
+
+    # declare explicit prototypes for all the external library calls
+    self.__clib.identify.argtypes = []
+    self.__clib.createClient.argtypes = [
+      ctypes.c_void_p
+    ]
+    self.__clib.jsonExec.argtypes = [
+      ctypes.c_void_p,
+      ctypes.c_char_p,
+      ctypes.c_size_t,
+      ctypes.c_void_p
+    ]
+    self.__clib.runScheduledCallbacks.argtypes = [
+      ctypes.c_void_p
+    ]
+    self.__clib.freeClient.argtypes = [
+      ctypes.c_void_p
+    ]
+    self.__clib.freeString.argtypes = [
+      ctypes.c_void_p,
+      ctypes.c_char_p
+    ]
+    self.__clib.setJSONNotifyCallback.argtypes = [
+      ctypes.c_void_p,
+      _FABRIC._NOTIFYCALLBACK
+    ]
+
+    self.__clib.identify()
+
+    while ( not self.__fabric.createdOneClient or self.__clientsRunning() or not self.__fabric.actionQueue.empty() ) and not self.__fabric._shouldExit():
+      q = self.__fabric.actionQueue.get()
+      #if q is not None:
+      #  print 'PROCESSING ACTION: '+q.action
+
+      # FIXME check if client is closed
+
+      if q == None:
+        pass
+      elif q.action == _ACTIONITEM.EXECUTE:
+        self.__executeCommands( q.client, q.data )
+      elif q.action == _ACTIONITEM.NOTIFY:
+        #print 'PROCESSING DATA: '+json.dumps(_typeToDict((q.data)))
+        self.__processNotification( q.client, q.data )
+      elif q.action == _ACTIONITEM.SET_JSON_NOTIFY_CALLBACK:
+        self.__setJSONNotifyCallback( q.client, q.data )
+      elif q.action == _ACTIONITEM.RUN_SCHEDULED_CALLBACKS:
+        self.__runScheduledCallbacks( q.client )
+      elif q.action == _ACTIONITEM.CREATE_CLIENT:
+        self.__createClient( q.client )
+      elif q.action == _ACTIONITEM.FREE_CLIENT:
+        self.__freeClient( q.client )
+      elif q.action == _ACTIONITEM.SIGNAL:
+        self.__signalClient( q.client )
+      elif q.action == _ACTIONITEM.DEFERRED_SIGNAL:
+        self.__fabric.actionQueue.put( _ACTIONITEM( q.client, _ACTIONITEM.SIGNAL ) )
+      else:
+        raise Exception( 'unrecognized action: "' + q.action + '"' )
+
+      self.__fabric.actionQueue.task_done()
+
+  def __freeClient( self, client ):
+    self.__clib.freeClient( client.getClientPtr() )
+
+  def __createClient( self, client ):
+    result = ctypes.c_void_p()
+    self.__clib.createClient( ctypes.pointer( result ) )
+    client.asyncData = result
+
+  def __signalClient( self, client ):
+    client.dataEvent.set()
+
+  def __processNotification( self, client, n ):
+    arg = None
+    if 'arg' in n:
+      arg = n[ 'arg' ]
+    client._route( n[ 'src' ], n[ 'cmd' ], arg )
+
+  def __runScheduledCallbacks( self, client ):
+    self.__clib.runScheduledCallbacks( client.getClientPtr() )
+
+  def __setJSONNotifyCallback( self, client, callback ):
+    self.__clib.setJSONNotifyCallback( client.getClientPtr(), callback )
+
+  def __executeCommands( self, client, data ):
+    commands = data[ 'commands' ]
+    callbacks = data[ 'callbacks' ]
+    unwinds = data[ 'unwinds' ]
+
+    jsonEncodedResults = ctypes.c_char_p()
+    jsonEncodedCommands = json.dumps( commands )
+    self.__clib.jsonExec(
+      client.getClientPtr(),
+      jsonEncodedCommands,
+      len( jsonEncodedCommands ),
+      ctypes.pointer( jsonEncodedResults )
+    )
+
+    try:
+      results = json.loads( jsonEncodedResults.value )
+    except Exception:
+      client.asyncData = Exception( 'unable to parse JSON results: ' + jsonEncodedResults )
+    self.__clib.freeString( client.getClientPtr(), jsonEncodedResults )
+
+    # FIXME must process notifications before callbacks
+
+    for i in range(len(results)):
+      result = results[i]
+      callback = callbacks[i]
+
+      if ( 'exception' in result ):
+        for j in range( len( unwinds ) - 1, i, -1 ):
+          unwind = unwinds[ j ]
+          if ( unwind is not None ):
+            unwind()
+        # FIXME must process notifications before exception
+        client.asyncData = Exception( 'Fabric core exception: ' + result[ 'exception' ] )
+      elif ( callback is not None ):
+        callback( result[ 'result' ] )
 
 # this is the interface object that gets returned to the user
 class _INTERFACE( object ):
   def __init__( self, fabric ):
-    self.__client = _CLIENT( fabric )
-    self.KLC = self.__client.klc
-    self.MR = self.__client.mr
-    self.RT = self.__client.rt
+    self._client = _CLIENT( fabric )
+    self.KLC = self._client.klc
+    self.MR = self._client.mr
+    self.RT = self._client.rt
     self.RegisteredTypesManager = self.RT
-    self.DG = self.__client.dg
+    self.DG = self._client.dg
     self.DependencyGraph = self.DG
-    self.EX = self.__client.ex
-    self.IO = self.__client.io
-    self.build = self.__client.build
+    self.EX = self._client.ex
+    self.IO = self._client.io
+    self.build = self._client.build
 
   def flush( self ):
-    self.__client.executeQueuedCommands()
+    self._client.executeQueuedCommands()
 
   def close( self ):
-    self.__client.close()
+    self._client.close()
 
   def running( self ):
-    return self.__client.running()
+    return self._client.running()
 
   def waitForClose( self ):
     return self.__client.waitForClose()
@@ -159,7 +282,7 @@ class _INTERFACE( object ):
     def __getMemoryUsage( result ):
       memoryUsage[ '_' ] = result
 
-    self.__client.queueCommand( [], 'getMemoryUsage', None, None, __getMemoryUsage )
+    self._client.queueCommand( [], 'getMemoryUsage', None, None, __getMemoryUsage )
     self.flush()
 
     return memoryUsage[ '_' ]
@@ -167,7 +290,6 @@ class _INTERFACE( object ):
 class _CLIENT( object ):
   def __init__( self, fabric ):
     self.__fabric = fabric
-    self.__fabricClient = self.__createClient()
 
     self.__queuedCommands = []
     self.__queuedUnwinds = []
@@ -185,67 +307,53 @@ class _CLIENT( object ):
     self.__closed = False
     self.__state = {}
 
-    self.__notifications = Queue.Queue()
+    self.lock = threading.RLock()
+    self.dataEvent = threading.Event()
+    self.asyncData = None
+
+    self.__cClientPtr = self.__createFabricClient()
 
     # declare all class variables needed in the notifyCallback above
     # here as the closure remembers the current class members immediately
     self.__registerNotifyCallback()
-    self.__processAllNotifications()
 
-    _clients.append( self )
-
-  def waitForClose( self ):
-    while not _uncaughtException and not _caughtSIGINT and not self.__closed:
-      self.__processOneNotification()
+    # once the notification callback is set, the client will notify us with
+    # all its initial state, we will synchronously wait for this before we
+    # start running client commands
+    self.__queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
+    self.waitForAsyncData()
 
   def running( self ):
-    self.__processAllNotifications()
     return not self.__closed
 
-  def __processAllNotifications( self ):
-    while not self.__notifications.empty():
-      self.__processOneNotification()
-
-  def __processOneNotification( self, timeout = None ):
-    n = None
-    try:
-      n = self.__notifications.get( True, timeout )
-    except Queue.Empty:
-      return
-
-    arg = None
-    if 'arg' in n:
-      arg = n[ 'arg' ]
-    self._route( n[ 'src' ], n[ 'cmd' ], arg )
-    n = self.__notifications.task_done()
+  def __queueAction( self, cmd, data = None ):
+    action = _ACTIONITEM( self, cmd, data )
+    self.__fabric.actionQueue.put( action )
 
   def __runScheduledCallbacks( self ):
-    self.__fabric.runScheduledCallbacks( self.__fabricClient )
+    self.__queueAction( _ACTIONITEM.RUN_SCHEDULED_CALLBACKS )
 
-  def __createClient( self ):
-    result = ctypes.c_void_p()
-    self.__fabric.createClient( ctypes.pointer( result ) )
-    return result
+  # FIXME not needed but need this logic elsewhere
+  def __waitForClose( self ):
+    if not _uncaughtException:
+      while not _caughtSIGINT and (
+          not self.__closed or not self.__notifications.empty()
+        ):
+        # FIXME only using timeout so we can allow a Ctrl-C after
+        # trying to exit without correctly using client.close()
+        self.__processOneNotification( 0.1 )
 
-  def __jsonExec( self, data, length ):
-    result = ctypes.c_char_p()
+  def getClientPtr( self ):
+    return self.__cClientPtr
 
-    if self.__closed:
-      raise Exception( 'Fabric client has already been closed' )
-
-    self.__fabric.jsonExec(
-      self.__fabricClient,
-      data,
-      length,
-      ctypes.pointer( result )
-    )
-
-    return result
+  def __createFabricClient( self ):
+    self.__queueAction( _ACTIONITEM.CREATE_CLIENT )
+    return self.waitForAsyncData()
 
   def close( self ):
-    _clients.remove( self )
     self.__closed = True
-    self.__fabric.freeClient( self.__fabricClient )
+    self.__queueAction( _ACTIONITEM.FREE_CLIENT )
+    # FIXME unlink the fabric client from the FABRIC instance
 
     # these must be explicitly set to None due to circular referencing
     # preventing garbage collection if not
@@ -264,6 +372,15 @@ class _CLIENT( object ):
 
   def getContextID( self ):
     return self.__state.contextID;
+
+  def waitForAsyncData( self ):
+    self.asyncData = None
+    self.dataEvent.clear()
+    self.__queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
+    self.dataEvent.wait()
+    if type( self.asyncData ) is Exception:
+      raise self.asyncData
+    return self.asyncData
 
   def queueCommand( self, dst, cmd, arg = None, unwind = None, callback = None ):
     command = { 'dst': dst, 'cmd': cmd }
@@ -285,30 +402,13 @@ class _CLIENT( object ):
     if len( commands ) < 1:
       return
 
-    jsonEncodedCommands = json.dumps( commands )
-    jsonEncodedResults = self.__jsonExec( jsonEncodedCommands, len( jsonEncodedCommands ) )
-
-    try:
-      results = json.loads( jsonEncodedResults.value )
-    except Exception:
-      raise Exception( 'unable to parse JSON results: ' + jsonEncodedResults )
-    self.__fabric.freeString( self.__fabricClient, jsonEncodedResults )
-
-    self.__processAllNotifications()
-
-    for i in range(len(results)):
-      result = results[i]
-      callback = callbacks[i]
-
-      if ( 'exception' in result ):
-        for j in range( len( unwinds ) - 1, i, -1 ):
-          unwind = unwinds[ j ]
-          if ( unwind is not None ):
-            unwind()
-        self.__processAllNotifications()
-        raise Exception( 'Fabric core exception: ' + result[ 'exception' ] )
-      elif ( callback is not None ):
-        callback( result[ 'result' ] )
+    data = {
+      'commands': commands,
+      'unwinds': unwinds,
+      'callbacks': callbacks
+    }
+    self.__queueAction( _ACTIONITEM.EXECUTE, data )
+    self.waitForAsyncData()
 
   def _handleStateNotification( self, newState ):
     self.__state = {}
@@ -336,6 +436,9 @@ class _CLIENT( object ):
       raise Exception( 'command "' + cmd + '": ' + str( e ) )
 
   def _route( self, src, cmd, arg ):
+    if self.__closed:
+      return
+
     if len(src) == 0:
       self._handle( cmd, arg )
     else:
@@ -365,7 +468,7 @@ class _CLIENT( object ):
       raise Exception( 'unable to parse JSON notifications' )
 
     for i in range( 0, len( notifications ) ):
-      self.__notifications.put( notifications[i] )
+      self.__queueAction( _ACTIONITEM.NOTIFY, notifications[ i ] )
 
   def __getNotifyCallback( self ):
     # use a closure here so that 'self' is maintained without us
@@ -376,11 +479,11 @@ class _CLIENT( object ):
     # this is important, we have to maintain a reference to the CFUNCTYPE
     # ptr and not just return it, otherwise it will be garbage collected
     # and callbacks will fail
-    self.__CFUNCTYPE_notifyCallback = _NOTIFYCALLBACK ( notifyCallback )
+    self.__CFUNCTYPE_notifyCallback = _FABRIC._NOTIFYCALLBACK ( notifyCallback )
     return self.__CFUNCTYPE_notifyCallback
 
   def __registerNotifyCallback( self ):
-    self.__fabric.setJSONNotifyCallback( self.__fabricClient, self.__getNotifyCallback() )
+    self.__queueAction( _ACTIONITEM.SET_JSON_NOTIFY_CALLBACK, self.__getNotifyCallback() )
 
 class _GCOBJECT( object ):
   def __init__( self, nsobj ):
@@ -388,11 +491,11 @@ class _GCOBJECT( object ):
     self.__nextCallbackID = 0
     self.__callbacks = {}
     self._nsobj = nsobj
-    nsobj._getClient().gc.addObject( self )
+    nsobj._client.gc.addObject( self )
 
   def dispose( self ):
     self._gcObjQueueCommand( 'dispose' )
-    self.__nsobj._getClient().gc.disposeObject( self )
+    self.__nsobj._client.gc.disposeObject( self )
     self.__id = None
  
   def _gcObjQueueCommand( self, cmd, arg = None, unwind = None, callback = None ):
@@ -431,11 +534,9 @@ class _GCOBJECT( object ):
 
 class _NAMESPACE( object ):
   def __init__( self, client, name ):
-    self.__client = client
+    self._client = client
     self.__name = name
-
-  def _getClient( self ):
-    return self.__client
+    self.lock = threading.RLock()
 
   def _getName( self ):
     return self.__namespace
@@ -445,13 +546,13 @@ class _NAMESPACE( object ):
       dst = [ self.__name ] + dst
     else:
       dst = [ self.__name ]
-    self.__client.queueCommand( dst, cmd, arg, unwind, callback )
+    self._client.queueCommand( dst, cmd, arg, unwind, callback )
 
   def _queueCommand( self, cmd, arg = None, unwind = None, callback = None ):
     self._objQueueCommand( None, cmd, arg, unwind, callback )
 
   def _executeQueuedCommands( self ):
-    self.__client.executeQueuedCommands()
+    self._client.executeQueuedCommands()
 
 class _DG( _NAMESPACE ):
   def __init__( self, client ):
@@ -464,6 +565,7 @@ class _DG( _NAMESPACE ):
   def _createBindingList( self, dst ):
     return self._BINDINGLIST( self, dst )
 
+  @synchronized('lock')
   def __createNamedObject( self, name, cmd, objType ):
     if name in self._namedObjects:
       raise Exception( 'a NamedObject named "' + name + '" already exists' )
@@ -481,6 +583,8 @@ class _DG( _NAMESPACE ):
     return self.__createNamedObject( name, 'createOperator', self._OPERATOR )
    
   def createNode( self, name ):
+    if threading.currentThread().name == 'Thread-1':
+      raise Exception()
     return self.__createNamedObject( name, 'createNode', self._NODE )
 
   def createResourceLoadNode( self, name ):
@@ -493,11 +597,12 @@ class _DG( _NAMESPACE ):
     return self.__createNamedObject( name, 'createEventHandler', self._EVENTHANDLER )
 
   def getAllNamedObjects( self ):
-    result ={}
+    result = {}
     for namedObjectName in self._namedObjects:
       result[ namedObjectName ] = self._namedObjects[ namedObjectName ]
     return result
 
+  @synchronized('lock')
   def __getOrCreateNamedObject( self, name, type ):
     if name not in self._namedObjects:
       if type == 'Operator':
@@ -512,6 +617,7 @@ class _DG( _NAMESPACE ):
         raise Exception( 'unhandled type "' + type + '"' )
     return self._namedObjects[ name ]
 
+  @synchronized('lock')
   def _handleStateNotification( self, state ):
     self._namedObjects = {}
     for namedObjectName in state:
@@ -789,7 +895,7 @@ class _DG( _NAMESPACE ):
   class _CONTAINER( _NAMEDOBJECT ):
     def __init__( self, dg, name ):
       super( _DG._CONTAINER, self ).__init__( dg, name )
-      self.__rt = dg._getClient().rt
+      self.__rt = dg._client.rt
       self.__members = None
       self.__size = None
       self.__sizeNeedRefresh = True
@@ -1164,7 +1270,7 @@ class _DG( _NAMESPACE ):
       super( _DG._EVENT, self ).__init__( dg, name )
       self.__eventHandlers = None
       self.__typeName = None
-      self.__rt = dg._getClient().rt
+      self.__rt = dg._client.rt
 
     def _patch( self, diff ):
       super( _DG._EVENT, self )._patch( diff )
@@ -1972,4 +2078,28 @@ class _BUILD( _NAMESPACE ):
 
   def getArch( self ):
     return self.__build[ 'arch' ]
+
+_fabric = _FABRIC()
+
+def createClient():
+  return _fabric.createClient()
+
+# take a python class and convert its members down to a hierarchy of
+# dictionaries, ignoring methods
+def _typeToDict( obj ):
+  if type( obj ) is list:
+    objlist = []
+    for elem in obj:
+      objlist.append( _typeToDict( elem ) )
+    return objlist
+
+  elif not hasattr( obj, '__dict__' ):
+    return obj
+
+  else:
+    objdict = {}
+    for member in vars( obj ):
+      attr = getattr( obj, member )
+      objdict[ member ] = _typeToDict( attr )
+    return objdict
 

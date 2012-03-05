@@ -2,6 +2,7 @@
 #  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
 #
 
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -57,6 +58,6 @@ else:
       print( errors[i] )
   else:
     node.evaluate()
-    print(fabric.stringify( node.getData("msaa", 0) ))
+    print(fabrictest.stringify( node.getData("msaa", 0) ))
 
 fabricClient.close()

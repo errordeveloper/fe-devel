@@ -2,6 +2,7 @@
 #  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
 #
 
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -19,7 +20,7 @@ except Exception as e:
 
 
 fileAndFolderHandles = fabricClient.IO.queryUserFileAndFolderHandle(fabricClient.IO.forOpenWithWriteAccess, "dummy title", "txt", "testfile")
-print( 'File and folder handles: ' + fabric.stringify(fileAndFolderHandles));
+print( 'File and folder handles: ' + fabrictest.stringify(fileAndFolderHandles));
 print('User file name: ' + fabricClient.IO.getFileHandleInfo(fileAndFolderHandles['file'])['fileName'])
 
 relativeFileHandle = fabricClient.IO.buildFileHandleFromRelativePath(fileAndFolderHandles['folder'] + '/SubDir/testfile2.txt')
@@ -38,7 +39,7 @@ body = fabricClient.IO.getTextFileContent(relativeFileHandle)
 print('File content with appended text: ' + body)
 
 fileInfo = fabricClient.IO.getFileHandleInfo(relativeFileHandle)
-print('File info: ' + fabric.stringify(fileInfo))
+print('File info: ' + fabrictest.stringify(fileInfo))
 
 node = fabricClient.DependencyGraph.createResourceLoadNode("node")
 

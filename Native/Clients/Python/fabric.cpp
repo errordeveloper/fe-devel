@@ -10,6 +10,7 @@
 
 #include <map>
 #include <time.h>
+#include <llvm/Support/Threading.h>
 
 //#define FABRIC_PYTHON_DEBUG
 
@@ -17,6 +18,26 @@ namespace Fabric
 {
   namespace Python
   {
+    class LLVMInitializer
+    {
+      public:
+        LLVMInitializer()
+        {
+          llvm::llvm_start_multithreaded();
+          if ( !llvm::llvm_is_multithreaded() )
+          {
+            FABRIC_LOG( "LLVM not compiled with multithreading enabled; aborting" );
+            abort();
+          }
+        }
+        
+        ~LLVMInitializer()
+        {
+          llvm::llvm_stop_multithreaded();
+        }
+    };
+    static LLVMInitializer llvmInitializer;
+
     extern "C" FABRIC_CLI_EXPORT void identify()
     {
       FABRIC_LOG( "%s version %s", Fabric::buildName, Fabric::buildFullVersion );

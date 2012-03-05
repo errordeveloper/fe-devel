@@ -2,6 +2,7 @@
 #  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
 #
 
+import fabrictest
 import fabric
 F = fabric.createClient()
 
@@ -20,7 +21,7 @@ operatorInit.setMainThreadOnly(True)
 
 if len( operatorInit.getErrors() ) > 0:
   if len( operatorInit.getDiagnostics() ) > 0:
-    print('operatorInit1: '+fabric.stringify(operatorInit.getDiagnostics()))
+    print('operatorInit1: '+fabrictest.stringify(operatorInit.getDiagnostics()))
 
 bindingInit = F.DG.createBinding()
 bindingInit.setOperator(operatorInit)
@@ -40,7 +41,7 @@ operatorInit2.setMainThreadOnly(True)
 
 if len( operatorInit2.getErrors() ) > 0:
   if len( operatorInit2.getDiagnostics() ) > 0:
-    print('operatorInit2: '+fabric.stringify(operatorInit2.getDiagnostics()))
+    print('operatorInit2: '+fabrictest.stringify(operatorInit2.getDiagnostics()))
 
 bindingInit2 = F.DG.createBinding()
 bindingInit2.setOperator(operatorInit2)

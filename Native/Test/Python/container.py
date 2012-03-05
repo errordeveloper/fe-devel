@@ -2,6 +2,7 @@
 #  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
 #
 
+import fabrictest
 import fabric
 fabricClient = fabric.createClient()
 
@@ -43,7 +44,7 @@ operator op(\n\
 }\n\
 ');
 if len( op.getDiagnostics() ) > 0:
-  print(fabric.stringify(op.getDiagnostics()));
+  print(fabrictest.stringify(op.getDiagnostics()));
 
 opBinding = fabricClient.DG.createBinding();
 opBinding.setOperator(op);
@@ -70,7 +71,7 @@ operator badOp(\n\
 }\n\
 ');
 if len( badOp.getDiagnostics() ) > 0:
-  print(fabric.stringify(badOp.getDiagnostics()));
+  print(fabrictest.stringify(badOp.getDiagnostics()));
 
 badOpBinding = fabricClient.DG.createBinding();
 badOpBinding.setOperator(badOp);
@@ -80,6 +81,6 @@ badOpBinding.setParameterLayout([
 ]);
 node.bindings.append(badOpBinding);
 if len( node.getErrors() ) > 0:
-  print("Bad bindings error: " + fabric.stringify((node.getErrors())));
+  print("Bad bindings error: " + fabrictest.stringify((node.getErrors())));
 
 fabricClient.close();
