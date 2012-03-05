@@ -8,9 +8,10 @@
   <info>
     <title>KL Programming Guide</title>
     <copyright>
-      <year>2012</year>
-      <holder>Fabric Engine Inc.</holder>
+      <year>{{FABRIC_COPYRIGHT_YEARS}}</year>
+      <holder>{{FABRIC_COMPANY_NAME}}</holder>
     </copyright>
+    <releaseinfo>{{FABRIC_NAME}} Version {{FABRIC_VERSION}}</releaseinfo>
   </info>
   
   <chapter xml:id="introduction">

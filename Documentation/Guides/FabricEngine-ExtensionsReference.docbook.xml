@@ -1,0 +1,1153 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:db="http://docbook.org/ns/docbook" version="5.0">
+  <info>
+    <title>Extensions Reference</title>
+    <copyright>
+      <year>{{FABRIC_COPYRIGHT_YEARS}}</year>
+      <holder>{{FABRIC_COMPANY_NAME}}</holder>
+    </copyright>
+    <releaseinfo>{{FABRIC_NAME}} Version {{FABRIC_VERSION}}</releaseinfo>
+  </info>
+  <chapter>
+    <title>Introduction</title>
+    <para>Extensions are additions to Fabric Engine's Kernel Language called KL and provide
+      additional functions and types. Each extension is packaged for a particular use-case, for
+      example the Alembic extension deals with Alembic files. Extensions can be implemented using
+      Fabric Engine's EDK (Extension Developer Kit).</para>
+  </chapter>
+  <chapter>
+    <title>Alembic Extension Guide</title>
+    <para>This extension adds a new type to KL, called the <emphasis role="italic"
+        >AlembicHandle</emphasis>. It is used to load Alembic.IO files. The AlembicHandle
+      represents a file handle to an Alembic file, and can be used to gather data.<table
+        frame="none" colsep="0" rowsep="0">
+        <title>AlembicHandle</title>
+        <tgroup cols="2">
+          <colspec colnum="1" colname="c1" colwidth="349pt"/>
+          <colspec colnum="2" colname="c2" colwidth="300pt"/>
+          <tbody>
+            <row>
+              <entry><emphasis role="bold">Members</emphasis></entry>
+              <entry/>
+            </row>
+            <row>
+              <entry><emphasis role="italic">Data pointer</emphasis></entry>
+              <entry>The private data of the handle.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">Vec2 timeRange</emphasis></entry>
+              <entry>The min and max time of the Alembic file</entry>
+            </row>
+            <row>
+              <entry><emphasis role="bold">Methods</emphasis></entry>
+              <entry/>
+            </row>
+            <row>
+              <entry><emphasis role="italic">loadResource(io FabricResource
+                resource)</emphasis></entry>
+              <entry>Loads the content of a FabricResource onto the AlembicHandle if it doesn't
+                contain any content yet</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">loadFileHandle(io String
+                fileHandle)</emphasis></entry>
+              <entry>Loads the Alembic file from a given FileHandle</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">getIdentifiers(io String
+                identifiers[])</emphasis></entry>
+              <entry>Loads all of the identifiers of the Alembic file. This can be used to
+                determine how many and what kind of objects are stored in the Alembic
+                file.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parseXform(io String identifier, io Scalar time, io
+                  Xfo transform)</emphasis></entry>
+              <entry>Parses a Xform Alembic node at a given time and returns the Fabric Engine
+                Xfo.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parseCamera(io String identifier, io Scalar time, io
+                  Scalar near, io Scalar far, io Scalar fovY)</emphasis></entry>
+              <entry>Parses a Camera Alembic node at a given time and returns near and far
+                clipping, as well as vertical field of view.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parsePolyMeshCount(io String identifier, io Size
+                  count)</emphasis></entry>
+              <entry>Parses a PolyMesh Alembic node and returns the number of vertices of that
+                mesh.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parsePolyMeshUniforms(io String identifier, io
+                  Integer indices[])</emphasis></entry>
+              <entry>Parses a PolyMesh Alembic node and returns the face indices as a triangles
+                list.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parsePolyMeshAttributes(io String identifier, io
+                  Scalar time, io Vec3 vertices&lt;>, io Vec3 normals&lt;>, io Boolean uvsLoaded,
+                  io Vec2 uvs&lt;>)</emphasis></entry>
+              <entry>Parses a PolyMesh Alembic node at a given time and returns the mesh's
+                vertices, normals, and optionally, uvs. All arrays are per vertex data.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parsePointsCount(io String identifier, io Scalar
+                  time, io Size count)</emphasis></entry>
+              <entry>Parses a Points Alembic node at a given time and returns its point
+                count</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parsePointsAttributes(io String identifier, io Scalar
+                  time, io Vec3 positions&lt;>, io Quat orientations&lt;>, io Scalar sizes&lt;>,
+                  io Vec3 scales&lt;>, io Color colors&lt;>)</emphasis></entry>
+              <entry>Parses a Points Alembic node at a given time and returns its positions,
+                orientations, sizes, scales and colors. All arrays are per vertex data.</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parseCurvesCount(io String identifier, io Size
+                  count)</emphasis></entry>
+              <entry>Parses a Curves Alembic node at a given time and returns its vertex
+                count</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parseCurvesUniforms(io String identifier, io Integer
+                  indices[])</emphasis></entry>
+              <entry>Parses a Curves Alembic node and returns its line indices (as a from-to index
+                list)</entry>
+            </row>
+            <row>
+              <entry><emphasis role="italic">parseCurvesAttributes(io String identifier, io Scalar
+                  time, io Vec3 vertices&lt;>, io Scalar sizes&lt;>, io Boolean uvsLoaded, io Vec2
+                  uvs&lt;>, io Color colors&lt;>)</emphasis></entry>
+              <entry>Parses a Curves Alembic node at a given time and returns its vertices, sizes,
+                uvs and colors. All arrays are per vertex data.</entry>
+            </row>
+            <row>
+              <entry/>
+              <entry/>
+            </row>
+          </tbody>
+        </tgroup>
+      </table></para>
+  </chapter>
+  <chapter>
+    <title>Bullet Extension Guide</title>
+    <para>The Bullet Physics extension adds support for physics simulation in KL. It implements
+      all of the core Bullet types, and allows perform raycasting into the bullet scene. For
+      additional information please refer to the Bullet Physics Wiki
+      (http://bulletphysics.org/mediawiki-1.5.8/index.php/Main_Page)</para>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletWorld</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data localData</emphasis></entry>
+            <entry>The private data of the Bullet type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 gravity</emphasis></entry>
+            <entry>The gravity applied during the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size step</emphasis></entry>
+            <entry>The current simulation step of the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size substeps</emphasis></entry>
+            <entry>The number of substeps to perform per simulation step.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Boolean hit</emphasis></entry>
+            <entry>Indicates, after a raycast has been performed, if there is any hit
+              object.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">create(io Boolean success)</emphasis></entry>
+            <entry>Creates the simulation world and returns if successful.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">step(io Scalar timeStep)</emphasis></entry>
+            <entry>Steps through the simulation for a provided timeStep in seconds.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">reset()</emphasis></entry>
+            <entry>Resets the simulation world by moving all rigid and soft bodies to their
+              initial state and setting the simulation's step to 0.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">raycast(io Vec3 from, io Vec3 to, io Boolean
+                filterPassiveObjects, io BulletContact contacts[])</emphasis></entry>
+            <entry>Performs a raycast into the simulation world and returns the hit
+              contacts.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">applyForce(io BulletForce force)</emphasis></entry>
+            <entry>Applies a force to the simulation at the current simulation step.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">getGravity(io Vec3 gravity)</emphasis></entry>
+            <entry>Returns the current gravity of the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">setGravity(io Vec3 gravity)</emphasis></entry>
+            <entry>Sets the gravity of the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">addRigidBody(io BulletRigidBody
+              body)</emphasis></entry>
+            <entry>Adds a rigid body to the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">removeRigidBody(io BulletRigidBody
+              body)</emphasis></entry>
+            <entry>Removes a rigid body from the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">addSoftBody(io BulletSoftBody body)</emphasis></entry>
+            <entry>Adds a soft body to the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">removeSoftBody(io BulletSoftBody
+              body)</emphasis></entry>
+            <entry>Removes a soft body from the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">addConstraint(io BulletConstraint
+                constraint)</emphasis></entry>
+            <entry>Adds a constraint to the simulation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">removeConstraint(io BulletConstraint
+                constraint)</emphasis></entry>
+            <entry>Removes a constraint from the simulation.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletShape</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data localData</emphasis></entry>
+            <entry>The private data of the Bullet type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer type</emphasis></entry>
+            <entry>The type of the shape. The Bullet extension also provides constants for this
+              type. The valid values are: BULLET_BOX_SHAPE, BULLET_CONVEX_HULL_SHAPE,
+              BULLET_SPHERE_SHAPE, BULLET_CAPSULE_SHAPE, BULLET_CONE_SHAPE, BULLET_CYLINDER_SHAPE,
+              BULLET_TRIANGLEMESH_SHAPE, BULLET_GIMPACT_SHAPE, BULLET_PLANE_SHAPE and
+              BULLET_COMPOUND_SHAPE.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String name</emphasis></entry>
+            <entry>The name of the shape. Names have to be unique.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar parameters[]</emphasis></entry>
+            <entry>The parameter for the shape creation. The number of parameters varies for each
+              shape. To determine which parameters should be used create a shape without
+              parameters and read the thrown exception.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 vertices[]</emphasis></entry>
+            <entry>For convex hull, gimpact or triangle mesh this stores the vertices of the
+              shape. For all other shape types it isn't used.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer indices[]</emphasis></entry>
+            <entry>For gimpact or triangle mesh shapes this stores the triangle indices of the
+              shape. For all other shape types it isn't used.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">create(io Boolean success)</emphasis></entry>
+            <entry>Creates the shape and returns if successful.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletRigidBody</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data localData</emphasis></entry>
+            <entry>The private data of the Bullet type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String name</emphasis></entry>
+            <entry>The name of the rigid body. Names have to be unique.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Xfo transform</emphasis></entry>
+            <entry>The initial transform.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar mass</emphasis></entry>
+            <entry>The mass in kilograms. A mass of 0.0 indicates a passive, non-simulated rigid
+              body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar friction</emphasis></entry>
+            <entry>The combined dynamic and static friciton (0.0 to 1.0).</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar restitution</emphasis></entry>
+            <entry>The restitution factor, from 0.0 to 1.0</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">create(io BulletShape shape, io Boolean
+                success)</emphasis></entry>
+            <entry>Creates the rigid body based on its member data and the provided shape, returns
+              if successful.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">setMass(in Scalar mass)</emphasis></entry>
+            <entry>Sets the mass</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Xfo getTransform()</emphasis></entry>
+            <entry>Returns the current simulated transform.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">setTransform(in Xfo transform)</emphasis></entry>
+            <entry>Sets the transform. This only works for passive rigid bodies (mass of
+              0.0)</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 getLinearVelocity()</emphasis></entry>
+            <entry>Returns the current linear velocity</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">setLinearVelocity(in Vec3 velocity)</emphasis></entry>
+            <entry>Sets the linear velocity</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 getAngularVelocity()</emphasis></entry>
+            <entry>Returns the angular velocity (as euler angles in radians)</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">setAngularVelocity(in Vec3 velocity)</emphasis></entry>
+            <entry>Sets the angular velocity (from euler angles in radians)</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletSoftBody</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data localData</emphasis></entry>
+            <entry>The private data of the Bullet type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String name</emphasis></entry>
+            <entry>The name of the soft body. Names have to be unique.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Xfo transform</emphasis></entry>
+            <entry>The initial transform.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer clusters</emphasis></entry>
+            <entry>The cluster count to use for this softbody. When set to zero, the cluster
+              collision algorithm won't be used, and a per vertex spring model will be
+              used.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer constraints</emphasis></entry>
+            <entry>The recursion depth level for bending constraints. Set to 1 there will be a
+              spring between each neighbor vertex, set to 2 introduces springs between neighbors
+              of neighbors etc.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar mass</emphasis></entry>
+            <entry>The mass of the softbody in kilograms.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar stiffness</emphasis></entry>
+            <entry>The linear stiffness factor for the springs (0.0 to 1.0)</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar friction</emphasis></entry>
+            <entry>The dynamic friction of each softbody vertex (0.0 to 1.0)</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar conservation</emphasis></entry>
+            <entry>The volume conservation of the softbody (0.0 to 1.0). This is a very sensitive
+              parameter and use of values higher than 0.1 is not recommended.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar pressure</emphasis></entry>
+            <entry>The internal pressure of the soft body in nm.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar recover</emphasis></entry>
+            <entry>The amount of shape recovery (0.0 to 1.0). If set to 0.5, for example, the
+              shape is blended back to its original shape by 50%.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">create(io Boolean success, io BulletWorld world, io
+                Vec3 positions&lt;>, io Vec3 normals&lt;>, io Integer
+              indices[])</emphasis></entry>
+            <entry>Creates the softbody in a provided simulation world, using the provided
+              positions, normals and indices arrays (triangles). Returns if successful.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">getPosition(in Size index, io Vec3 position, io Vec3
+                normal)</emphasis></entry>
+            <entry>Returns the current position and normal for a given vertex index.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletConstraint</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data localData</emphasis></entry>
+            <entry>The private data of the Bullet type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data bodyLocalDataA</emphasis></entry>
+            <entry>The pointer to the private data of the first attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data bodyLocalDataB</emphasis></entry>
+            <entry>The pointer to the private data of the second attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer type</emphasis></entry>
+            <entry>The type of the constraint. Valid values are 3 (point2point), 4 (hinge) and 7
+              (slider).</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String name</emphasis></entry>
+            <entry>The name of the constraint. Names have to be unique.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Xfo pivotA</emphasis></entry>
+            <entry>The pivot transform in local space for the first attached rigid body</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Xfo pivotB</emphasis></entry>
+            <entry>The pivot transform in local space for the second attached rigid body</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String nameA</emphasis></entry>
+            <entry>The name of the first attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String nameB</emphasis></entry>
+            <entry>The name of the second attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer indexA</emphasis></entry>
+            <entry>The index of the first attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer indexB</emphasis></entry>
+            <entry>The index of the second attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar parameters[]</emphasis></entry>
+            <entry>The parameters for the constraint creation. This member is obsolete and is not
+              being used.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">create(io Boolean result, io BulletRigidBody bodiesA[],
+                io BulletRigidBody bodiesB[])</emphasis></entry>
+            <entry>Creates the constraing based on its <emphasis role="italic">indexA</emphasis>
+              and <emphasis role="italic">indexB</emphasis> members. The private data pointers are
+              set by retreiving them from A and B rigid body arrays. This allows to construct a
+              large number of constraints on lists of rigid bodies.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletForce</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String name</emphasis></entry>
+            <entry>The name of the force. Names have to be unique.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 origin</emphasis></entry>
+            <entry>The point the force is coming from (global space).</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 direction</emphasis></entry>
+            <entry>The direction of the force (global space)</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar radius</emphasis></entry>
+            <entry>The influence radius of the force</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar factor</emphasis></entry>
+            <entry>The force factor in nm.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Boolean useTorque</emphasis></entry>
+            <entry>Determines if the force should apply rotation or only linear velocity.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Boolean useFalloff</emphasis></entry>
+            <entry>If set the force will use a linear falloff inside its radius.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Boolean enabled</emphasis></entry>
+            <entry>If set to false the force will be ignored</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Boolean autoDisable</emphasis></entry>
+            <entry>If set to true the force's <emphasis role="italic">enabled</emphasis> flag will
+              be set once it is applied. This is useful for one-shot forces, based on mouse
+              clicks, for example.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletAnchor</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data localData</emphasis></entry>
+            <entry>The private data of the Bullet type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data rigidBodyLocalData</emphasis></entry>
+            <entry>The pointer to the private data of the attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data softBodyLocalData</emphasis></entry>
+            <entry>The pointer to the private data of the attached soft body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String name</emphasis></entry>
+            <entry>The name of the anchor. Names have to be unique.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer rigidBodyIndex</emphasis></entry>
+            <entry>The index of the attached rigid body.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Integer softBodyNodeIndices[]</emphasis></entry>
+            <entry>The indices of the attached vertices of the soft body mesh.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Boolean disableCollision</emphasis></entry>
+            <entry>Determines if the rigid body and soft body attached to the anchor should
+              intercollide.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">create(io Boolean success, io BulletRigidBody
+                rigidBodies[], io BulletSoftBody softBody)</emphasis></entry>
+            <entry>Creates the constraing based on its <emphasis role="italic"
+                >rigidBodyIndex</emphasis>. The private data pointers are set by retreiving them
+              from the rigid body array resp. the provided soft body. This allows to construct a
+              large number of anchors on a list of rigid bodies. Returns if successful.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>BulletContact</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar fraction</emphasis></entry>
+            <entry>The fraction of the ray</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 normal</emphasis></entry>
+            <entry>The normal of the hit surface position</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar mass</emphasis></entry>
+            <entry>The mass of the collision object's surface position.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 linearVelocity</emphasis></entry>
+            <entry>The linear velocity of the collision object.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Vec3 angularVelocity</emphasis></entry>
+            <entry>The angular velocity of the collision object (euler angles in radians).</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+  <chapter>
+    <title>CIMG Extension Guide</title>
+    <para>The CIMG extension wraps the CIMG C++ image library (http://cimg.sourceforge.net) and
+      provides read and write access to image within Fabric Engine. The extension doesn't provide
+      any types, but KL functions to perform the image IO.</para>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>CIMG Functions</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="italic">FabricCIMGDecode( Data data, Size dataSize, io String
+                ext, io Size imageWidth, io Size imageHeight, io RGBA imagePixels[]
+              )</emphasis></entry>
+            <entry>Decodes an image, stored as an encoded Byte array into its width, height and
+              pixel values. The extention has to be provided to inform CIMG what kind of image is
+              stored in the Byte array.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricCIMGOpenFileHandle( String fileHandle, io String
+                ext, io Size imageWidth, io Size imageHeight, io RGBA imagePixels[]
+              )</emphasis></entry>
+            <entry>Opens an image from a provided FileHandle and reads the image data into the
+              width, height and pixel values. The extention has to be provided to inform CIMG what
+              kind of image is stored in the FileHandle.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricCIMGCreateFromText( String text, io Size
+                imageWidth, io Size imageHeight, io RGBA imagePixels[] ) </emphasis></entry>
+            <entry>Encodes the text provided into a new image resulting in width, height and pixel
+              values. The image uses a fixed text size and is stored as black and white, where
+              white is the text and black is the background.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricCIMGSaveToFileHandle( String fileHandle, Size
+                imageWidth, Size imageHeight, Boolean mirrorVertically, io RGBA imagePixels[]
+                )</emphasis></entry>
+            <entry>Saves a provided image, represented by with, height and pixels into a provided
+              writable FileHandle. If required, the image can be flipped vertically prior to
+              saving.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+  <chapter>
+    <title>LIDAR Extension Guide</title>
+    <para>The LIDAR extension is a wrapper for the liblas library (http://liblas.org/). It
+      provides a type to read the contents of a LIDAR file and use it inside Fabric Engine.</para>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>LidarReader</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data pointer</emphasis></entry>
+            <entry>The private data of the LidarReader type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">String url</emphasis></entry>
+            <entry>The url of the parsed lidar file.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Boolean compressed</emphasis></entry>
+            <entry>After the file is opened this will indicate if it is a compressed file or
+              not.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">loadResource(io FabricResource resource, io String
+                url)</emphasis></entry>
+            <entry>Loads a lidar file stored in memory. The url value is not used in this case,
+              and is just cosmetic.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">loadFileHandle(in String handle)</emphasis></entry>
+            <entry>Loads a lidar file stored in a readable FIleHandle.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">getCount(io Size count)</emphasis></entry>
+            <entry>Returs the number of points in the lidar file.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">getPoints(io Vec3 positions&lt;>, io Color
+                colors&lt;>)</emphasis></entry>
+            <entry>Returns all of the point positions and colors inside the lidar file. If the
+              lidar file doesn't contain any colors, they will be all black.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+  <chapter>
+    <title>Math Extension Guide</title>
+    <para>The Math extension provides additional Math features to KL. Currently it only contains a
+      pseudo random number generator.</para>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>Math Functions</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="italic">Integer mathRandomInteger( in Size id, in Size offset
+                )</emphasis></entry>
+            <entry>Returns the random integer number id with a provided random offset. The offset
+              can be understood as the seed, while the id is the index of the random number in the
+              sequence. The range is the full integer range.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar mathRandomScalar( in Size id, in Size offset
+                )</emphasis></entry>
+            <entry>Returns the random scalar number id with a provided random offset. The offset
+              can be understood as the seed, while the id is the index of the random number in the
+              sequence. The range is the full scalar range.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+  <chapter>
+    <title>OBJ Extension Guide</title>
+    <para>The OBJ extension provides an OBJ parser to Fabric Engine. It is implemented as a simple
+      type storing the handle to the parser, and KL functions allowing to query the parser.</para>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>OBJDataHandle</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data handle</emphasis></entry>
+            <entry>The private data of the OBJDataHandle type.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>OBJ Functions</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="italic">FabricOBJDecode( Data objData, Size objDataSize,
+                Boolean splitByObjects, Boolean splitByGroups, Boolean splitByMaterials, io
+                OBJDataHandle handle )</emphasis></entry>
+            <entry>Parses an OBJ file stored in memory as a Data pointer of a given size.
+              splitByObjects determines if objects should be merged or represented as separate
+              objects, splitByGroups determines is shading groups should be split into separate
+              objects or not, and splitByMaterial determines if per face shading should be
+              resulting in separate objects or not.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJOpenFileHandle( String fileHandle, Boolean
+                splitByObjects, Boolean splitByGroups, Boolean splitByMaterials, io OBJDataHandle
+                handle )</emphasis></entry>
+            <entry>Parses an OBJ file stored in a readable FileHandle. splitByObjects determines
+              if objects should be merged or represented as separate objects, splitByGroups
+              determines is shading groups should be split into separate objects or not, and
+              splitByMaterial determines if per face shading should be resulting in separate
+              objects or not.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJIsHandleValid( OBJDataHandle handle, io
+                Boolean valid )</emphasis></entry>
+            <entry>Checks if a provided OBJDataHandle is valid.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJFreeParsedData( io OBJDataHandle handle
+                )</emphasis></entry>
+            <entry>Frees the parsed data from memory. This is useful if the parser is no longer
+              required.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJHadErrors( OBJDataHandle handle, io Boolean
+                hadErrors )</emphasis></entry>
+            <entry>Checks if the parse contained any errors.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetErrors( OBJDataHandle handle, io String
+                errors[] )</emphasis></entry>
+            <entry>Returns the errors which happened during the parse.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJHasTextureCoords( OBJDataHandle handle, io
+                Boolean hasTextureCoords )</emphasis></entry>
+            <entry>Checks if the parsed OBJ file contains texture coordinates.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetMaterialLibraries( OBJDataHandle handle, io
+                String names[] )</emphasis></entry>
+            <entry>Returns the names of the material libraries contained in the parsed OBJ
+              file.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetMaterialNames( OBJDataHandle handle, io
+                String names[] )</emphasis></entry>
+            <entry>Returns the names of the materials contained in the parsed OBJ file.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetNbEntities( OBJDataHandle handle, io Size
+                nbEntities )</emphasis></entry>
+            <entry>Returns the number of entities in the parsed OBJ file.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityObjectName( OBJDataHandle handle,
+                Integer entity, io String name )</emphasis></entry>
+            <entry>Returns the object name of a given entity.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityGroupName( OBJDataHandle handle,
+                Integer entity, io String name )</emphasis></entry>
+            <entry>Returns the group name of a given entity.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityMaterialName( OBJDataHandle handle,
+                Integer entity, io String name )</emphasis></entry>
+            <entry>Returns the material name of a given entity.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetNbEntityPoints( OBJDataHandle handle,
+                Integer entity, io Size nbPoints )</emphasis></entry>
+            <entry>Returns the number of points for a given entity</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityPoints( OBJDataHandle handle, Integer
+                entity, io Vec3 points[] )</emphasis></entry>
+            <entry>Returns the point positions of a given entity as a variable array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityPointsSliced( OBJDataHandle handle,
+                Integer entity, io Vec3 points&lt;> )</emphasis></entry>
+            <entry>Returns the point positions of a given entity as a sliced array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityNormals( OBJDataHandle handle,
+                Integer entity, io Vec3 normals[] )</emphasis></entry>
+            <entry>Returns the point normals of a given entity as a variable array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityNormalsSliced( OBJDataHandle handle,
+                Integer entity, io Vec3 normals&lt;> )</emphasis></entry>
+            <entry>Returns the point normals of a given entity as a sliced array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityTextureCoords( OBJDataHandle handle,
+                Integer, io Vec2 texCoords[] )</emphasis></entry>
+            <entry>Returns the point texture coordinates of a given entity as a variable
+              array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityTextureCoordsSliced( OBJDataHandle
+                handle, Integer entity, io Vec2 texCoords&lt;> )</emphasis></entry>
+            <entry>Returns the point texture coordinates of a given entity as a sliced
+              array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetNbEntityTriangles( OBJDataHandle handle,
+                Integer entity, io Size nbTriangles )</emphasis></entry>
+            <entry>Returns the number of triangles of a given entity</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityTriangleIndices( OBJDataHandle
+                handle, Integer entity, io Integer triangleIndices[] )</emphasis></entry>
+            <entry>Returns the triangle indices of a given entity as a variable array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityTriangleIndicesSliced( OBJDataHandle
+                handle, Integer entity, io Integer triangleIndices&lt;> )</emphasis></entry>
+            <entry>Returns the triangle indices of a given entity as a sliced array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityTriangleMaterialIndices(
+                OBJDataHandle handle, Integer entity, io Integer triangleIndices[]
+              )</emphasis></entry>
+            <entry>Returns the triangle material indices of a given entity as a variable
+              array</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricOBJGetEntityTriangleMaterialIndicesSliced(
+                OBJDataHandle handle, Integer entity, io Integer triangleIndices&lt;>
+              )</emphasis></entry>
+            <entry>Returns the triangle material indices of a given entity as a sliced
+              array</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+  <chapter>
+    <title>OGL Extension Guide</title>
+    <para>The OGL extension provides all valid OpenGL functions to KL. It acts as a wrapper for
+      Glew (http://glew.sourceforge.net/), essentially. With the OGL extension you can use any
+      OpenGL call inside KL. For example:</para>
+    <programlisting language="JavaScript">use FabricOGL;
+
+glClearColor(1.0, 0.0, 0.0, 1.0);
+glEnable(GL_CULL_FACE);
+glPatchParameteri(GL_PATCH_VERTICES, 3);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);</programlisting>
+    <para>Please see any of the SceneGraph KL files for references of this. All of tehe
+      SceneGraph's rendering has been implemented using this extension.</para>
+  </chapter>
+  <chapter>
+    <title>OPENCV Extension Guide</title>
+    <para>The OpenCV FACE extension is a wrapper for the OpenCV library
+      (http://opencv.willowgarage.com/wiki). Currently only a very small subset of the
+      functionality is exposed, mainly focusing on face detection.</para>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>FaceLocation</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size left</emphasis></entry>
+            <entry>Left x coordinate of the face rectangle</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size right</emphasis></entry>
+            <entry>Right x coordinate of the face rectangle</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size top</emphasis></entry>
+            <entry>Top y coordinate of the face rectangle</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size bottom</emphasis></entry>
+            <entry>Bottom y coordinate of the face rectangle</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>FaceDetector</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data pointer</emphasis></entry>
+            <entry>The private data of the FaceDetector type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="bold">Methods</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">init(in String fileHandle)</emphasis></entry>
+            <entry>Initiates a face detector using a haarcascade xml file. The haarcascade
+              describes the face detection method. Please refer to the OpenCV documentation for
+              more details.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">detectRGB(io RGB pixels[], Size width, Size height,
+                Scalar ratio, Size searchWidth, Size searchHeight, io FaceLocation
+                faces[])</emphasis></entry>
+            <entry>Detect faces in a RGB provided image with pixels, width and height. Ratio is
+              used for the frame to frame move different (1.5 is the default), searchWidth and
+              searchHeight define the minimum size of a face in pixels. Found faces are returned
+              as an array of FaceLocation.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">detectRGBA(io RGBA pixels[], Size width, Size height,
+                Scalar ratio, Size searchWidth, Size searchHeight, io FaceLocation
+                faces[])</emphasis></entry>
+            <entry>Detect faces in a RGBA provided image with pixels, width and height. Ratio is
+              used for the frame to frame move different (1.5 is the default), searchWidth and
+              searchHeight define the minimum size of a face in pixels. Found faces are returned
+              as an array of FaceLocation</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+  <chapter>
+    <title>VIDEO Extension Guide</title>
+    <para>The VIDEO extension is a wrapper for the ffmeg library (http://ffmpeg.org/). It provides
+      a type to read as well as write video. The VIDEO extension currently doesn't support audio
+      streams.</para>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>VideoHandle</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="bold">Members</emphasis></entry>
+            <entry/>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Data pointer</emphasis></entry>
+            <entry>The private data of the VideoHandle type.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size width</emphasis></entry>
+            <entry>The width of the video.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Size height</emphasis></entry>
+            <entry>The height of the video.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar duration</emphasis></entry>
+            <entry>The duration of the video in seconds.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar fps</emphasis></entry>
+            <entry>The framerate of the video (frames per seconds).</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">Scalar time</emphasis></entry>
+            <entry>The current time of the video.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table frame="none" colsep="0" rowsep="0">
+      <title>VIDEO Functions</title>
+      <tgroup cols="2">
+        <colspec colnum="1" colname="c1" colwidth="349pt"/>
+        <colspec colnum="2" colname="c2" colwidth="300pt"/>
+        <tbody>
+          <row>
+            <entry><emphasis role="italic">FabricVIDEOOpenResource( Data resourceData, Size
+                resourceDataSize, io VideoHandle handle )</emphasis></entry>
+            <entry>Opens a video handle for reading from memory. The video is stored as a pointer
+              with a provided size.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricVIDEOOpenFileHandle( String fileHandle, io
+                VideoHandle handle )</emphasis></entry>
+            <entry>Opens a video handle for reading from a readable FileHandle.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricVIDEOCreateFromFileHandle( String file, Size
+                width, Size height, io VideoHandle handle, )</emphasis></entry>
+            <entry>Creates a video handle for writing from a writable FileHandle, with the
+              provided width and height.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricVIDEOFreeHandle( io VideoHandle handle
+                )</emphasis></entry>
+            <entry>Closes the video handle.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricVIDEOSeekTime( io VideoHandle handle, io Scalar
+                time)</emphasis></entry>
+            <entry>Seeks to a provided time in the video. This only works for reading video
+              handles.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricVIDEOGetAllPixels( io VideoHandle handle, io RGB
+                pixels[] )</emphasis></entry>
+            <entry>Returns all RGB pixels of the current video frame. This only works for reading
+              video handles.</entry>
+          </row>
+          <row>
+            <entry><emphasis role="italic">FabricVIDEOWriteAllPixels( io VideoHandle handle, io
+                RGB pixels[] )</emphasis></entry>
+            <entry>Writes the provided RGB pixels as a new frame to the video handle. This only
+              works with writing video handles.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </chapter>
+</book>

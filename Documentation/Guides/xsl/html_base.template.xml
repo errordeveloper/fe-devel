@@ -11,6 +11,6 @@
             extension-element-prefixes="saxon"
          >
            <!-- Import the original FO stylesheet -->
-           <xsl:import href="file:///Users/pzion/docbook/xsl/html/docbook.xsl"/>
-           <xsl:import href="file:///Users/pzion/docbook/xsl/html/highlight.xsl"/>
+           <xsl:import href="{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}}/xsl/xsl/html/docbook.xsl"/>
+           <xsl:import href="{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}}/xsl/xsl/html/highlight.xsl"/>
          </xsl:stylesheet>

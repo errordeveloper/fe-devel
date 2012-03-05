@@ -1,4 +1,4 @@
-import os
+import os, re
 Import('env')
 
 docbookEnv = env.Clone()
@@ -8,6 +8,7 @@ try:
 except:
 	print "Missing environment variable SHORT_ATTENTION_SPAN_DOCBOOK_PATH"
 	sys.exit(1)
+SHORT_ATTENTION_SPAN_DOCBOOK_URI = '/'.join(docbookRoot.split(os.pathsep))
 
 docbookSchema = os.path.join(docbookRoot, 'xsl', 'docbookxi.rng')
 
@@ -20,24 +21,6 @@ saxonClassJars = [
 saxonClassPath = os.pathsep.join(saxonClassJars)
 
 highlighterConfigPath = "file:///" + docbookRoot + "/xsl/highlighting/xslthl-config.xml"
-
-builderPDFFOFromDocbookXML = Builder(
-	action = [[
-		'java', '-Xss1024K', '-Xmx512m',
-		'-cp', saxonClassPath,
- 		'-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl',
-    '-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl',
-    '-Dorg.apache.xerces.xni.parser.XMLParserConfiguration=org.apache.xerces.parsers.XIncludeParserConfiguration',
-    '-Dxslthl.config=' + highlighterConfigPath,
-		'com.icl.saxon.StyleSheet',
-		'-o', '$TARGET',
-		'$SOURCES',
-		'use.extensions=1'
-		]],
-	suffix = '.pdf.fo',
-	src_suffix = '.docbook.xml'
-	)
-docbookEnv.Append( BUILDERS = { 'PDFFOFromDocbookXML': builderPDFFOFromDocbookXML } )
 
 foClassJars = [
   docbookRoot + "/fop/avalon-framework-4.2.0.jar",
@@ -54,48 +37,101 @@ foClassJars = [
   ]
 foClassPath = os.pathsep.join(foClassJars)
 
-builderPDFFromPDFFO = Builder(
-	action = [[
-		'java', '-Xmx512m', '-Xss1024K',
-		'-cp', foClassPath,
-		'org.apache.fop.cli.Main',
-		'-fo', '$SOURCE',
-		'-pdf', '$TARGET'
-		]],
-	suffix = '.pdf',
-	src_suffix = '.pdf.fo'
-	)
-docbookEnv.Append( BUILDERS = { 'PDFFromPDFFO': builderPDFFromPDFFO } )
-
 w3cEntities = docbookEnv.File('w3centities-f.ent')
 
-def Docbook(env, inputDocbookXML):
-	outputPDFs = []
-	env.Depends(inputDocbookXML, w3cEntities)
-	pdfXSL = env.Dir('xsl').File('pdf.xsl')
-	pdffo = env.PDFFOFromDocbookXML([inputDocbookXML, pdfXSL])
-	env.AddPreAction(
-		pdffo,
-		[[
-			'java',
-			'-jar',
-			'-Xmx512m',
-			'-Xss1024K',
-			'-Dorg.apache.xerces.xni.parser.XMLParserConfiguration=org.apache.xerces.parsers.XIncludeParserConfiguration',
-			docbookRoot + '/jars/jing.jar',
-			docbookSchema,
-			"$SOURCE"
-			]]
-		)
-	foXML = env.Dir('xsl').File('fo.xml')
-	notePNG = env.Dir('images').File('note.png')
-	warningPNG = env.Dir('images').File('warning.png')
-	outputPDFs.append(env.PDFFromPDFFO([pdffo, foXML, notePNG, warningPNG]))
-	return outputPDFs
+def Docbook(env, inputDocbookXMLs):
+	validateAction = [[
+		'java',
+		'-jar',
+		'-Xmx512m',
+		'-Xss1024K',
+		'-Dorg.apache.xerces.xni.parser.XMLParserConfiguration=org.apache.xerces.parsers.XIncludeParserConfiguration',
+		docbookRoot + '/jars/jing.jar',
+		docbookSchema,
+		"$SOURCE"
+		]]
+
+	xsltAction = [[
+		'java', '-Xss1024K', '-Xmx512m',
+		'-cp', saxonClassPath,
+ 		'-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl',
+    '-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl',
+    '-Dorg.apache.xerces.xni.parser.XMLParserConfiguration=org.apache.xerces.parsers.XIncludeParserConfiguration',
+    '-Dxslthl.config=' + highlighterConfigPath,
+		'com.icl.saxon.StyleSheet',
+		'-o', '$TARGET',
+		'$SOURCES',
+		'use.extensions=1'
+		]]
+
+	outputs = []
+	for inputDocbookXML in inputDocbookXMLs:
+		inputBasename = re.sub('\.docbook\.xml$', '', str(inputDocbookXML))
+		templatedInputDocbookXML = env.SubstBuildVars(
+			inputBasename + ".temp.docbook.xml",
+			inputDocbookXML
+			)
+		env.Depends(templatedInputDocbookXML, w3cEntities)
+
+		pdfXSL = env.Dir('xsl').File('pdf.xsl')
+		pdfFO = env.Command(
+			inputBasename + ".pdf.fo",
+			[templatedInputDocbookXML, pdfXSL],
+			xsltAction
+			)
+		env.AddPreAction(pdfFO, validateAction)
+		foXML = env.Dir('xsl').File('fo.xml')
+		notePNG = env.Dir('images').File('note.png')
+		warningPNG = env.Dir('images').File('warning.png')
+		outputs.append(env.Command(
+			inputBasename + ".pdf",
+			[pdfFO, foXML, notePNG, warningPNG],
+			[[
+				'java', '-Xmx512m', '-Xss1024K',
+				'-cp', foClassPath,
+				'org.apache.fop.cli.Main',
+				'-fo', '$SOURCE',
+				'-pdf', '$TARGET'
+				]]
+			))
+
+		htmlBaseTemplateXML = env.Dir('xsl').File('html_base.template.xml')
+		htmlBaseXML = env.Command(
+			env.Dir('xsl').File('html_base.xml'),
+			htmlBaseTemplateXML,
+			[['sed', 's,{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}},'+SHORT_ATTENTION_SPAN_DOCBOOK_URI+',', '<$SOURCE', '>$TARGET']]
+			)
+		htmlXSL = env.Dir('xsl').File('html.xsl')
+		env.Depends(htmlXSL, htmlBaseXML)
+		html = env.Command(
+			inputBasename + ".html",
+			[templatedInputDocbookXML, htmlXSL],
+			xsltAction
+			)
+		env.AddPreAction(html, validateAction)
+		outputs.append(html)
+
+		css = env.Command(
+			env.File('style.css'),
+			env.Dir('xsl').File('html.css'),
+			Copy('$TARGET', '$SOURCE')
+			)
+		outputs.append(css)
+	return outputs
 AddMethod(docbookEnv, Docbook)
 
-klpgPDF = Alias('klpgPDF', docbookEnv.Docbook('FabricEngine-KLProgrammingGuide.docbook.xml'))
-iopgPDF = Alias('iopgPDF', docbookEnv.Docbook('FabricEngine-IOProgrammingGuide.docbook.xml'))
-jssgPDF = Alias('jssgPDF', docbookEnv.Docbook('FabricEngine-JSSceneGraphProgrammingGuide.docbook.xml'))
-extsPDF = Alias('extsPDF', docbookEnv.Docbook('FabricEngine-ExtensionReference.docbook.xml'))
-Alias('guides', [klpgPDF, iopgPDF, jssgPDF, extsPDF])
+guides = docbookEnv.Docbook(docbookEnv.Glob('*.docbook.xml'))
+Alias('guides', guides)
+
+if 'uploadDocs' in COMMAND_LINE_TARGETS:
+	remoteHost = 'dist.fabric-engine.com'
+	remoteDir = '/fabric-distribution/' + docbookEnv['FABRIC_VERSION'] + '/docs'
+	uploadDocs = docbookEnv.AlwaysBuild(docbookEnv.Command(
+		'uploadDocs',
+		guides,
+		[
+			['ssh', remoteHost, 'mkdir', '-p', remoteDir],
+			['rsync', '-e', 'ssh', '--progress', '$SOURCES', remoteHost+':'+remoteDir+'/']
+			]
+		))
+	Alias('uploadDocs', uploadDocs)

@@ -4,11 +4,12 @@
   xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:db="http://docbook.org/ns/docbook" version="5.0">
   <info>
-    <title>Fabric Engine JavaScript Scene Graph Programming Guide</title>
+    <title>JavaScript Scene Graph Programming Guide</title>
     <copyright>
-      <year>2012</year>
-      <holder>Fabric Engine Inc.</holder>
+      <year>{{FABRIC_COPYRIGHT_YEARS}}</year>
+      <holder>{{FABRIC_COMPANY_NAME}}</holder>
     </copyright>
+    <releaseinfo>{{FABRIC_NAME}} Version {{FABRIC_VERSION}}</releaseinfo>
   </info>
   <chapter>
     <title>Introduction</title>

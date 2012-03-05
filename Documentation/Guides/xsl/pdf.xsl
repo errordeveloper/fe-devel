@@ -27,7 +27,7 @@
 
 <!-- section numbering and depth -->
 <xsl:param name="section.autolabel" select="1"></xsl:param>
-<xsl:param name="section.autolabel.max.depth">4</xsl:param>
+<xsl:param name="section.autolabel.max.depth">5</xsl:param>
 <xsl:param name="section.label.includes.component.label">1</xsl:param>
 
 
@@ -71,7 +71,7 @@
 /appendix toc,title
 article/appendix  nop
 /article  toc,title
-book      toc,title,figure,table,example,equation
+book      toc,title,figure,example
 /chapter  toc,title
 part      title
 /preface  title
@@ -85,7 +85,7 @@ reference toc,title
 set       toc,title
 </xsl:param>
 
-<xsl:param name="toc.section.depth">2</xsl:param>
+<xsl:param name="toc.section.depth">3</xsl:param>
 
 <!-- fonts -->
 <xsl:param name="body.font.master">10</xsl:param>
@@ -211,9 +211,21 @@ set       toc,title
 -->
 
 
+<xsl:template name="book.titlepage.recto">
+  <xsl:apply-templates mode="book.titlepage.verso.auto.mode" select="d:info/d:title"/>
+  <xsl:apply-templates mode="book.titlepage.verso.auto.mode" select="d:info/d:releaseinfo"/>
+  <xsl:apply-templates mode="book.titlepage.verso.auto.mode" select="d:info/d:copyright"/>
+</xsl:template>
+<xsl:template name="book.titlepage.verso">
+</xsl:template>
+
+<xsl:template name="initial.page.number">auto-odd</xsl:template>
+<xsl:template name="page.number.format">1</xsl:template>
+
 <!-- Header Layout -->
 
 <xsl:param name="header.column.widths">1 0 1</xsl:param>
+<xsl:param name="headers.on.blank.pages" select="1"></xsl:param>
 <xsl:template name="header.content">  
   <xsl:param name="pageclass" select="''"/>
   <xsl:param name="sequence" select="''"/>
@@ -227,6 +239,9 @@ set       toc,title
       <xsl:when test="$sequence = 'even' and $position = 'left'">
         <xsl:value-of select="ancestor-or-self::d:book/d:info/d:title"/>
       </xsl:when>
+      <xsl:when test="($sequence = 'odd' and $position = 'left') or ($sequence = 'even' and $position = 'right')">
+        <xsl:value-of select="ancestor-or-self::d:book/d:info/d:releaseinfo"/>
+      </xsl:when>
     </xsl:choose>
   </fo:block>
 </xsl:template>
@@ -235,6 +250,7 @@ set       toc,title
 <!-- Footer Layout -->
 
 <xsl:param name="footer.column.widths">1 0 1</xsl:param>
+<xsl:param name="footers.on.blank.pages" select="1"></xsl:param>
 <xsl:template name="footer.content">  
   <xsl:param name="pageclass" select="''"/>
   <xsl:param name="sequence" select="''"/>

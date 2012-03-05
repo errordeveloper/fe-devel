@@ -72,4 +72,5 @@ done
 
 rexec ln -snf "$VERSION" "/fabric-distribution/testing" || error
 rexec ln -snf "$DIST_DIR/bin" "/var/www/dist.testing.fabric-engine.com/$VERSION" || error
+rexec ln -snf "$DIST_DIR/bin" "/var/www/documentation.testing.fabric-engine.com/$VERSION" || error
 echo "The upload was SUCCESSFUL."

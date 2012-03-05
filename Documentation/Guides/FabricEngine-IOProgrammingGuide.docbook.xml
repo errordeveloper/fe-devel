@@ -6,11 +6,12 @@
 ]>
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
   <info>
-    <title>Fabric IO Programming Guide</title>
+    <title>IO Programming Guide</title>
     <copyright>
-      <year>2011-2012</year>
-      <holder>Fabric Engine Inc.</holder>
+      <year>{{FABRIC_COPYRIGHT_YEARS}}</year>
+      <holder>{{FABRIC_COMPANY_NAME}}</holder>
     </copyright>
+    <releaseinfo>{{FABRIC_NAME}} Version {{FABRIC_VERSION}}</releaseinfo>
   </info>
 
   <chapter xml:id="fabricio">

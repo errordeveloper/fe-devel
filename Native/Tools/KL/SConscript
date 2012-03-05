@@ -3,7 +3,7 @@
 #
 
 import os.path
-Import( 'coreEnv', 'buildObject', 'buildOS', 'buildArch', 'FABRIC_VERSION', 'archDistDir', 'generateDistZip', 'agplLicenseFile' )
+Import( 'coreEnv', 'buildObject', 'buildOS', 'buildArch', 'archDistDir', 'generateDistZip', 'agplLicenseFile' )
 
 klToolPackageName = "FabricEngine-KLTool-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
 klToolPackageDir = archDistDir.Dir(klToolPackageName)
