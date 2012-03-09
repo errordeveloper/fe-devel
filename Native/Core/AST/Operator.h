@@ -35,6 +35,8 @@ namespace Fabric
 
       virtual bool isOperator() const { return true; }
 
+      virtual void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctionBodies ) const;
+
     protected:
     
       Operator( 
