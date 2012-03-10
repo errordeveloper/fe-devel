@@ -7,6 +7,7 @@
 #include <Fabric/Core/CG/BasicBlockBuilder.h>
 #include <Fabric/Core/CG/FunctionBuilder.h>
 #include <Fabric/Core/CG/ModuleBuilder.h>
+#include <Fabric/Core/CG/SizeAdapter.h>
 #include <Fabric/Core/CG/Manager.h>
 
 #include <llvm/Module.h>
@@ -86,12 +87,53 @@ namespace Fabric
         CG::BasicBlockBuilder bbb( functionBuilder );
 
         llvm::BasicBlock *entryBB = functionBuilder.createBasicBlock( "entry" );
+        llvm::BasicBlock *loopCmpBB = functionBuilder.createBasicBlock( "loopCmp" );
+        llvm::BasicBlock *loopBodyBB = functionBuilder.createBasicBlock( "loopBody" );
+        llvm::BasicBlock *argsLoopCmpBB = functionBuilder.createBasicBlock( "argsLoopCmp" );
+        llvm::BasicBlock *argsLoopBodyBB = functionBuilder.createBasicBlock( "argsLoopBody" );
+        llvm::BasicBlock *argsDoneBB = functionBuilder.createBasicBlock( "argsDone" );
+        llvm::BasicBlock *doneBB = functionBuilder.createBasicBlock( "done" );
 
         bbb->SetInsertPoint( entryBB );
+        RC::ConstHandle<CG::SizeAdapter> sizeAdapter = cgManager->getSizeAdapter();
+        llvm::Value *zeroRValue = sizeAdapter->llvmConst( context, 0 );
+        llvm::Value *oneRValue = sizeAdapter->llvmConst( context, 1 );
+        llvm::Value *numArgsRValue = sizeAdapter->llvmConst( context, numArgs );
 
+        llvm::Value *startRValue = llvm::cast<llvm::Value>( start );
+        llvm::Value *countRValue = llvm::cast<llvm::Value>( count );
+
+        llvm::Value *i = sizeAdapter->llvmAlloca( bbb, "i" );
+        sizeAdapter->llvmAssign( bbb, i, startRValue );
+
+        bbb->SetInsertPoint( loopCmpBB );
+        bbb->CreateCondBr( bbb->CreateICmpULT( sizeAdapter->llvmLValueToRValue( bbb, i ), countRValue ), loopBodyBB, doneBB );
+
+        bbb->SetInsertPoint( loopBodyBB );
+        llvm::Value *nexti = bbb->CreateAdd( i, oneRValue, "nexti" );
+        sizeAdapter->llvmAssign( bbb, i, sizeAdapter->llvmLValueToRValue( bbb, nexti ) );
+
+        llvm::Value *j = sizeAdapter->llvmAlloca( bbb, "j" );
+        sizeAdapter->llvmAssign( bbb, j, zeroRValue );
+        bbb->CreateBr( argsLoopCmpBB );
+
+        bbb->SetInsertPoint( argsLoopCmpBB );
+        bbb->CreateCondBr( bbb->CreateICmpULT( sizeAdapter->llvmLValueToRValue( bbb, j ), numArgsRValue ), argsLoopBodyBB, argsDoneBB );
+
+        bbb->SetInsertPoint( argsLoopBodyBB );
+
+        // XXX need cleanup
+        llvm::Value *nextj = bbb->CreateAdd( j, oneRValue, "nextj" );
+        sizeAdapter->llvmAssign( bbb, j, sizeAdapter->llvmLValueToRValue( bbb, nextj ) );
         llvm::Function *realOp = llvm::cast<llvm::Function>( moduleBuilder->getFunction( getSymbolName( cgManager ) ) );
-        bbb->CreateCall( realOp, NULL );
+        //bbb->CreateCall( realOp, NULL );
 
+        bbb->CreateBr( argsLoopCmpBB );
+
+        bbb->SetInsertPoint( argsDoneBB );
+        bbb->CreateBr( loopCmpBB );
+
+        bbb->SetInsertPoint( doneBB );
         bbb->CreateRetVoid();
       }
     }
