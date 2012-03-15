@@ -3524,14 +3524,858 @@ operator entry() {
 
           <itemizedlist>
             <listitem><para>
-              They can be assigned to variables of the same type; however, there must be an exact match for <code><replaceable>ValueType</replaceable></code>; in otherwords, <code>ValueProducer&lt;<replaceable>ValueType1</replaceable>&gt;</code> and <code>ValueProducer&lt;<replaceable>ValueType2</replaceable>&gt;</code> are the same time if and only if <code><replaceable>ValueType1</replaceable></code> and <code><replaceable>ValueType2</replaceable></code> are the same type.
+              They can be assigned to variables of the same type; however, there must be an exact match for <code><replaceable>ValueType</replaceable></code>.  In other words, <code>ValueProducer&lt;<replaceable>ValueType1</replaceable>&gt;</code> and <code>ValueProducer&lt;<replaceable>ValueType2</replaceable>&gt;</code> are the same time if and only if <code><replaceable>ValueType1</replaceable></code> and <code><replaceable>ValueType2</replaceable></code> are the same type.
             </para></listitem>
 
             <listitem><para>
-              They support a single method <code>produce()</code> that returns a value of type <code><replaceable>ValueType</replaceable></code>
+              They support a method <programlisting>function <replaceable>ValueType</replaceable> ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;.produce();</programlisting> that produces the value producer's value.
+            </para></listitem>
+
+            <listitem><para>
+              They support a method <programlisting>function ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;.flush();</programlisting> that recursively flushes any caches connected to the value producer.
             </para></listitem>
           </itemizedlist>
         </para>
+      </section>
+
+      <section xml:id="array-producer">
+        <title>The <code>ArrayProducer&lt;<replaceable>...</replaceable>&gt;</code> Type</title>
+
+        <para>
+          Given an existing type <code><replaceable>ElementType</replaceable></code>, the type <code>ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;</code> is a map-reduce array producer that produces values of type <code><replaceable>ElementType</replaceable></code>.  Values of type <code>ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;</code> have the following properties:
+
+          <itemizedlist>
+            <listitem><para>
+              They can be assigned to variables of the same type; however, there must be an exact match for <code><replaceable>ElementType</replaceable></code>.  In other words, <code>ArrayProducer&lt;<replaceable>ElementType1</replaceable>&gt;</code> and <code>ArrayProducer&lt;<replaceable>ElementType2</replaceable>&gt;</code> are the same time if and only if <code><replaceable>ElementType1</replaceable></code> and <code><replaceable>ElementType2</replaceable></code> are the same type.
+            </para></listitem>
+
+            <listitem><para>
+              They support a method <programlisting>function Size ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.getCount();</programlisting> that returns the number of elements in the array producer.  Calling <code>produce(<replaceable>i</replaceable>)</code> (below) with <code><replaceable>i</replaceable></code> not less than the result of <code>getCount()</code> will cause an exception to be thrown.
+            </para></listitem>
+
+            <listitem><para>
+              They support a method <programlisting>function <replaceable>ElementType</replaceable> ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.produce(Index <replaceable>i</replaceable>);</programlisting> that produces the array producer's element at index <code><replaceable>i</replaceable></code>.
+            </para></listitem>
+
+            <listitem><para>
+              They support a method <programlisting>function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.flush();</programlisting> that recursively flushes any caches connected to the array producer.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    </section>
+
+    <section xml:id="mr-functions">
+      <title>Map-Reduce Functions</title>
+
+      <para>
+        KL supports several functions to support the creation of new value and array producers from existing producers as well as KL functions and values.
+      </para>
+
+      <section>
+        <title>Value Producer Creation Functions</title>
+
+        <section>
+          <title><code>createConstValue</code></title>
+
+          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createConstValue(<replaceable>expr</replaceable>)</programlisting>
+
+          <para>
+            Creates a value producer with value type <replaceable>ValueType</replaceable> that returns a constant value.  <replaceable>expr</replaceable> must be an expression that evaluates to a value.
+          </para>
+
+          <example>
+            <title><code>createConstValue</code></title>
+            <programlisting language="KL"><![CDATA[
+operator entry() {
+  ValueProducer<Integer> vp = createConstValue( 42 );
+  report(vp);
+  report(vp.produce());
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[]
+ValueProducer<Integer>
+42
+            ]]></screen>
+          </informalfigure>
+        </section>
+
+        <section>
+          <title><code>createValueGenerator</code></title>
+
+          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueGenerator(<replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
+
+          <para>
+            Creates a value producer with value type <replaceable>ValueType</replaceable> that calls the operator named <code><replaceable>operatorName</replaceable></code> to generate the value.
+
+            <itemizedlist>
+              <listitem>
+                <para>
+                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
+                </para>
+              </listitem>
+
+              <listitem>
+                <para>
+                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value);</programlisting>
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+
+          <example>
+            <title><code>createValueGenerator</code></title>
+            <programlisting language="KL"><![CDATA[
+operator gen1(io String output) {
+  output = "Hello!";
+}
+
+operator gen2(io String output, String shared) {
+  output = "Hello, " + shared;
+}
+
+operator entry() {
+  ValueProducer<String> vp1 = createValueGenerator(gen1);
+  report("vp1 = " + vp1);
+  report("vp1.produce() = " + vp1.produce());
+
+  ValueProducer<String> vp2 = createValueGenerator(gen2, vp1);
+  report("vp2 = " + vp2);
+  report("vp2.produce() = " + vp2.produce());
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[]
+vp1 = ValueProducer<String>
+vp1.produce() = Hello!
+vp2 = ValueProducer<String>
+vp2.produce() = Hello, Hello!
+            ]]></screen>
+          </informalfigure>
+        </section>
+
+        <section>
+          <title><code>createValueTransform</code></title>
+
+          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueTransform(ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;, <replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
+
+          <para>
+            Creates a value producer with value type <replaceable>ValueType</replaceable> that calls the operator named <code><replaceable>operatorName</replaceable></code> to transform the result of another value producer of the same type.
+
+            <itemizedlist>
+              <listitem>
+                <para>
+                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
+                </para>
+              </listitem>
+
+              <listitem>
+                <para>
+                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value);</programlisting>
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+
+          <example>
+            <title><code>createValueTransform</code></title>
+            <programlisting language="KL"><![CDATA[
+operator multByTwo(
+  io Integer value
+  )
+{
+  value *= 2;
+}
+
+operator multByShared(
+  io Integer value,
+  Integer shared
+  )
+{
+  value *= shared;
+}
+
+operator entry() {
+  ValueProducer<Integer> vp;
+  
+  vp = createValueTransform(
+    createConstValue( 42 ),
+    multByTwo
+    );
+  report(vp);
+  report(vp.produce());
+
+  vp = createValueTransform(
+    createConstValue( 2 ),
+    multByShared,
+    createConstValue( 3 )
+    );
+  report(vp);
+  report(vp.produce());
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[]
+ValueProducer<Integer>
+84
+ValueProducer<Integer>
+6
+            ]]></screen>
+          </informalfigure>
+        </section>
+
+        <section>
+          <title><code>createValueMap</code></title>
+
+          <programlisting>ValueProducer&lt;<replaceable>OutputValueType</replaceable>&gt; createValueMap(ValueProducer&lt;<replaceable>InputValueType</replaceable>&gt;, <replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
+
+          <para>
+            Creates a value producer with value type <replaceable>OutputValueType</replaceable> that calls the operator named <code><replaceable>operatorName</replaceable></code> to map the result of another value producer of type <code>ValueProducer&lt;<replaceable>InputValueType</replaceable>&gt;</code>.
+
+            <itemizedlist>
+              <listitem>
+                <para>
+                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(<replaceable>InputValueType</replaceable> inputValue, io <replaceable>OutputValueType</replaceable> outputValue, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
+                </para>
+              </listitem>
+
+              <listitem>
+                <para>
+                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operatorName(<replaceable>InputValueType</replaceable> inputValue, io <replaceable>OutputValueType</replaceable> outputValue);</programlisting>
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+
+          <example>
+            <title><code>createValueMap</code></title>
+            <programlisting language="KL"><![CDATA[
+operator multByPi(
+  Integer input,
+  io Scalar output
+  )
+{
+  output = 3.14 * input;
+}
+
+operator multByShared(
+  Integer input,
+  io Scalar output,
+  Scalar shared
+  )
+{
+  output = input * shared;
+}
+
+operator entry() {
+  ValueProducer<Scalar> vp;
+  
+  vp = createValueMap(
+    createConstValue( 42 ),
+    multByPi
+    );
+  report(vp);
+  report(vp.produce());
+
+  vp = createValueMap(
+    createConstValue( 2 ),
+    multByShared,
+    createConstValue( Scalar(2.71) )
+    );
+  report(vp);
+  report(vp.produce());
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[]
+ValueProducer<Scalar>
+131.88
+ValueProducer<Scalar>
+5.42
+            ]]></screen>
+          </informalfigure>
+        </section>
+
+        <section>
+          <title><code>createValueCache</code></title>
+
+          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueCache(ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;)</programlisting>
+
+          <para>
+            Creates a value producer with value type <replaceable>ValueType</replaceable> that caches the result of another value producer of the same type.  For more information on producer caches, see the Fabric Engine Map-Reduce Programming Guide.
+          </para>
+
+          <example>
+            <title><code>createValueCache</code></title>
+            <programlisting language="KL"><![CDATA[
+operator valueGen(
+  io Scalar output
+  )
+{
+  output = 2.71;
+  report("Generating output = " + output);
+}
+
+operator entry() {
+  ValueProducer<Scalar> vp = createValueCache(createValueGenerator(valueGen));
+  report("vp.produce() = " + vp.produce());
+  report("vp.produce() = " + vp.produce());
+  report("calling vp.flush()");
+  vp.flush();
+  report("vp.produce() = " + vp.produce());
+  report("vp.produce() = " + vp.produce());
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[]
+Generating output = 2.71
+vp.produce() = 2.71
+vp.produce() = 2.71
+calling vp.flush()
+Generating output = 2.71
+vp.produce() = 2.71
+vp.produce() = 2.71
+            ]]></screen>
+          </informalfigure>
+        </section>
+      </section>
+
+      <section>
+        <title>Array Producer Creation Functions</title>
+
+        <section>
+          <title><code>createConstArray</code></title>
+
+          <programlisting>ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createConstArray(<replaceable>arrayExpr</replaceable>)</programlisting>
+
+          <para>
+            Creates a constant array producer.  <replaceable>arrayExpr</replaceable> must be an expression that evaluates to an array (variable-size, fixed-size or sliced) whose element type is <replaceable>ElementType</replaceable>.  The array is <quote>frozen</quote> in the resulting array producer; that is, if the aray used in the call to <code>createConstArray</code> is later changed, the result of  <code>createConstArray</code> will not change.
+          </para>
+ 
+          <example>
+            <title><code>createConstArray</code></title>
+            <programlisting language="KL"><![CDATA[
+operator entry() {
+  Integer a[]; a.push(42); a.push(17); a.push(52); a.push(871);
+  ArrayProducer<Integer> ap = createConstArray(a);
+  report(ap);
+  report(ap.getCount());
+  report(ap.produce(2));
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+ArrayProducer<Integer>
+4
+52
+            ]]></screen>
+          </informalfigure>
+       </section>
+
+        <section>
+          <title><code>createArrayGenerator</code></title>
+
+          <para>
+            <code>createArrayGenerator</code> has one of the following <quote>prototypes</quote>:
+
+            <programlisting>
+function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayGenerator(
+  ValueProducer&lt;Size&gt; countProducer,
+  <replaceable>operatorName</replaceable>
+  )
+
+function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayGenerator(
+  ValueProducer&lt;Size&gt; countProducer,
+  <replaceable>operatorName</replaceable>,
+  ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt; sharedValueProducer
+  )
+            </programlisting>
+          </para>
+
+          <para>
+            <code>createArrayGenerator</code> creates an array producer with element type <replaceable>ElementType</replaceable> that calls the operator named <code><replaceable>operatorName</replaceable></code> to generate the elements of the array.
+          </para>
+
+          <para>
+            If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue,
+  Size index,
+  Size count,
+  <replaceable>SharedValueType</replaceable> sharedValue
+  );
+            </programlisting>
+
+            Otherwise, it must name an operator with any of the following prototypes:
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue,
+  Size index,
+  Size count
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue,
+  Size index
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue
+  );
+            </programlisting>
+          </para>
+ 
+          <example>
+            <title><code>createArrayGenerator</code></title>
+            <programlisting language="KL"><![CDATA[
+operator generator(
+  io Float32 value,
+  Size index,
+  Size count,
+  Float32 shared
+  )
+{
+  report "generator: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  value = shared*index;
+}
+
+operator entry() {
+  ValueProducer<Size> cvg = createConstValue(Size(10));
+  ArrayProducer<Float32> ag4 = createArrayGenerator(cvg, generator, createConstValue(Float32(3.141)));
+  report(ag4);
+  report(ag4.getCount());
+  for (Size i=0; i<10; ++i)
+    report(ag4.produce(i));
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+ArrayProducer<Float32>
+10
+generator: value=0 index=0 count=10 shared=3.141
+0
+generator: value=0 index=1 count=10 shared=3.141
+3.141
+generator: value=0 index=2 count=10 shared=3.141
+6.282
+generator: value=0 index=3 count=10 shared=3.141
+9.423
+generator: value=0 index=4 count=10 shared=3.141
+12.564
+generator: value=0 index=5 count=10 shared=3.141
+15.705
+generator: value=0 index=6 count=10 shared=3.141
+18.846
+generator: value=0 index=7 count=10 shared=3.141
+21.987
+generator: value=0 index=8 count=10 shared=3.141
+25.128
+generator: value=0 index=9 count=10 shared=3.141
+28.269
+            ]]></screen>
+          </informalfigure>
+        </section>
+
+        <section>
+          <title><code>createArrayTransform</code></title>
+
+          <para>
+            <code>createArrayTransform</code> has one of the following <quote>prototypes</quote>:
+
+            <programlisting>
+function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayTransform(
+  ArrayProducer&lt;ElementType&gt; inputArrayProducer,
+  <replaceable>operatorName</replaceable>
+  )
+
+function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayTransform(
+  ArrayProducer&lt;ElementType&gt; inputArrayProducer,
+  <replaceable>operatorName</replaceable>,
+  ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt; sharedValueProducer
+  )
+            </programlisting>
+          </para>
+
+          <para>
+            <code>createArrayTransform</code> creates an array producer with element type <replaceable>ElementType</replaceable> that transforms <code>inputArrayProducer</code> by calling the operator named <code><replaceable>operatorName</replaceable></code> to transform the individual elements.
+          </para>
+
+          <para>
+            If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue,
+  Size index,
+  Size count,
+  <replaceable>SharedValueType</replaceable> sharedValue
+  );
+            </programlisting>
+
+            Otherwise, it must name an operator with any of the following prototypes:
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue,
+  Size index,
+  Size count
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue,
+  Size index
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  io <replaceable>ElementType</replaceable> elementValue
+  );
+            </programlisting>
+          </para>
+ 
+          <example>
+            <title><code>createArrayTransform</code></title>
+            <programlisting language="KL"><![CDATA[
+operator transform(
+  io Float32 value,
+  Size index,
+  Size count,
+  Float32 shared
+  )
+{
+  report "transform: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  value *= shared * (index + 1);
+}
+
+operator entry() {
+  Float32 inputArray[]; inputArray.push(5.6); inputArray.push(-3.4); inputArray.push(1.4142);
+  ArrayProducer<Float32> inputArrayProducer = createConstArray(inputArray);
+  ArrayProducer<Float32> transformedArrayProducer = createArrayTransform(inputArrayProducer, transform, createConstValue(Float32(2.56)));
+  report(transformedArrayProducer);
+  report(transformedArrayProducer.getCount());
+  Size transformedArrayProducerCount = transformedArrayProducer.getCount();
+  for (Index i=0; i<transformedArrayProducerCount; ++i)
+    report(transformedArrayProducer.produce(i));
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+ArrayProducer<Float32>
+3
+transform: value=5.6 index=0 count=3 shared=2.56
+14.336
+transform: value=-3.4 index=1 count=3 shared=2.56
+-17.408
+transform: value=1.4142 index=2 count=3 shared=2.56
+10.86106
+            ]]></screen>
+          </informalfigure>
+        </section>
+
+        <section>
+          <title><code>createArrayMap</code></title>
+
+          <para>
+            <code>createArrayMap</code> has one of the following <quote>prototypes</quote>:
+
+            <programlisting>
+function ArrayProducer&lt;<replaceable>OutputElementType</replaceable>&gt; createArrayMap(
+  ArrayProducer&lt;InputElementType&gt; inputArrayProducer,
+  <replaceable>operatorName</replaceable>
+  )
+
+function ArrayProducer&lt;<replaceable>OutputElementType</replaceable>&gt; createArrayMap(
+  ArrayProducer&lt;InputElementType&gt; inputArrayProducer,
+  <replaceable>operatorName</replaceable>,
+  ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt; sharedValueProducer
+  )
+            </programlisting>
+          </para>
+
+          <para>
+            <code>createArrayMap</code> creates an array producer with element type <code><replaceable>OutputElementType</replaceable></code> that maps <code>inputArrayProducer</code> of a potentially different element type <code><replaceable>InputElementType</replaceable></code> by calling the operator named <code><replaceable>operatorName</replaceable></code> to map the individual elements.
+          </para>
+
+          <para>
+            If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputElementType</replaceable> outputElementValue,
+  Size index,
+  Size count,
+  <replaceable>SharedValueType</replaceable> sharedValue
+  );
+            </programlisting>
+
+            Otherwise, it must name an operator with any of the following prototypes:
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputElementType</replaceable> outputElementValue,
+  Size index,
+  Size count
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputElementType</replaceable> outputElementValue,
+  Size index
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputElementType</replaceable> outputElementValue
+  );
+            </programlisting>
+          </para>
+ 
+          <example>
+            <title><code>createArrayMap</code></title>
+            <programlisting language="KL"><![CDATA[
+operator map(
+  Float32 inputValue,
+  io String outputValue,
+  Size index,
+  Size count,
+  Float32 shared
+  )
+{
+  report "map: inputValue=" + inputValue + " index=" + index + " count=" + count + " shared=" + shared;
+  Float32 float32Value = inputValue * shared * (index + 1);
+  if (abs(float32Value) < 1.0)
+    outputValue = "small";
+  else if (abs(float32Value) < 10.0)
+    outputValue = "medium";
+  else if (abs(float32Value) < 100.0)
+    outputValue = "large";
+  else
+    outputValue = "x-large";
+}
+
+operator entry() {
+  Float32 inputArray[]; inputArray.push(5.6); inputArray.push(-0.034); inputArray.push(1.4142);
+  ArrayProducer<Float32> inputArrayProducer = createConstArray(inputArray);
+  ArrayProducer<String> mappedArrayProducer = createArrayMap(inputArrayProducer, map, createConstValue(Float32(2.56)));
+  report(mappedArrayProducer);
+  report(mappedArrayProducer.getCount());
+  Size mappedArrayProducerCount = mappedArrayProducer.getCount();
+  for (Index i=0; i<mappedArrayProducerCount; ++i)
+    report(mappedArrayProducer.produce(i));
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+ArrayProducer<String>
+3
+map: inputValue=5.6 index=0 count=3 shared=2.56
+large
+map: inputValue=-0.034 index=1 count=3 shared=2.56
+small
+map: inputValue=1.4142 index=2 count=3 shared=2.56
+large
+            ]]></screen>
+          </informalfigure>
+        </section>
+
+        <section>
+          <title><code>createArrayCache</code></title>
+
+          <programlisting>ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayCache(ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;)</programlisting>
+
+          <para>
+            Creates an array producer with array type <replaceable>ElementType</replaceable> that caches the result of another array producer of the same type.  For more information on producer caches, see the Fabric Engine Map-Reduce Programming Guide.
+          </para>
+
+          <example>
+            <title><code>createArrayCache</code></title>
+            <programlisting language="KL"><![CDATA[
+operator elementGen(
+  io Scalar output,
+  Size index
+  )
+{
+  output = 2.71 * index;
+  report("Generating output = " + output);
+}
+
+operator entry() {
+  ArrayProducer<Scalar> ap = createArrayCache(
+    createArrayGenerator(
+      createConstValue(Size(4)),
+      elementGen
+      )
+    );
+  report("ap.produce(2) = " + ap.produce(2));
+  report("ap.produce(2) = " + ap.produce(2));
+  report("calling ap.flush()");
+  ap.flush();
+  report("ap.produce(2) = " + ap.produce(2));
+  report("ap.produce(2) = " + ap.produce(2));
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+Generating output = 5.42
+ap.produce(2) = 5.42
+ap.produce(2) = 5.42
+calling ap.flush()
+Generating output = 5.42
+ap.produce(2) = 5.42
+ap.produce(2) = 5.42
+            ]]></screen>
+          </informalfigure>
+        </section>
+      </section>
+
+      <section>
+        <title>Reduce Creation Functions</title>
+
+        <section>
+          <title><code>createReduce</code></title>
+
+          <para>
+            <code>createReduce</code> has one of the following <quote>prototypes</quote>:
+
+            <programlisting>
+function ValueProducer&lt;<replaceable>OutputValueType</replaceable>&gt; createReduce(
+  ArrayProducer&lt;InputElementType&gt; inputArrayProducer,
+  <replaceable>operatorName</replaceable>
+  )
+
+function ValueProducer&lt;<replaceable>OutputValueType</replaceable>&gt; createReduce(
+  ArrayProducer&lt;InputElementType&gt; inputArrayProducer,
+  <replaceable>operatorName</replaceable>,
+  ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt; sharedValueProducer
+  )
+            </programlisting>
+          </para>
+
+          <para>
+            <code>createReduce</code> creates a value producer with value type <code><replaceable>OutputValueType</replaceable></code> that reduces <code>inputArrayProducer</code> by calling the operator named <code><replaceable>operatorName</replaceable></code> to contribute the individual elements to the reduction.
+          </para>
+
+          <para>
+            If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputValueType</replaceable> outputValue,
+  Size index,
+  Size count,
+  <replaceable>SharedValueType</replaceable> sharedValue
+  );
+            </programlisting>
+
+            Otherwise, it must name an operator with any of the following prototypes:
+
+            <programlisting>
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputValueType</replaceable> outputValue,
+  Size index,
+  Size count
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputValueType</replaceable> outputValue,
+  Size index
+  );
+
+operator <replaceable>operatorName</replaceable>(
+  <replaceable>InputElementType</replaceable> inputElementValue,
+  io <replaceable>OutputValueType</replaceable> outputValue
+  );
+            </programlisting>
+          </para>
+ 
+          <example>
+            <title><code>createReduce</code></title>
+            <programlisting language="KL"><![CDATA[
+operator generator(
+  io Integer outputValue,
+  Size index
+  )
+{
+  outputValue = index + 1;
+}
+
+operator reduce(
+  Integer inputValue,
+  io Integer outputValue
+  )
+{
+  report("reduce: inputValue=" + inputValue);
+  outputValue += inputValue;
+}
+
+operator entry() {
+  ValueProducer<Integer> sum = createReduce(
+    createArrayGenerator(
+      createConstValue(Size(10)),
+      generator
+      ),
+    reduce
+    );
+  report("sum.produce() = " + sum.produce());
+}
+            ]]></programlisting>
+          </example>
+
+          <informalfigure>
+            <simpara>Output:</simpara>
+            <screen><![CDATA[
+reduce: inputValue=1
+reduce: inputValue=2
+reduce: inputValue=3
+reduce: inputValue=4
+reduce: inputValue=5
+reduce: inputValue=6
+reduce: inputValue=7
+reduce: inputValue=8
+reduce: inputValue=9
+reduce: inputValue=10
+sum.produce() = 55
+            ]]></screen>
+          </informalfigure>
+        </section>
       </section>
     </section>
   </chapter>

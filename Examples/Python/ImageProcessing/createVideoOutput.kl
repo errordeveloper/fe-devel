@@ -1,0 +1,11 @@
+use FabricVIDEO;
+use FabricFILESYSTEM;
+
+operator createVideoOutput(io VideoHandle video, io String filePath, io VideoHandle input) {
+  if(!video.pointer) {
+    FabricFileHandleWrapper wrapper;
+    wrapper.setAbsolutePath(filePath);
+    FabricVIDEOCreateFromFileHandle(wrapper.getHandle(), input.width, input.height, video);
+    report("Created output video handle, resolution "+video.width+"x"+video.height+".");
+  }
+}

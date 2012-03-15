@@ -1,0 +1,8 @@
+use FabricVIDEO;
+
+operator seekVideoFile(io VideoHandle video, io RGB pixels[], io Scalar time) {
+  if(video.pointer) {
+    FabricVIDEOSeekTime(video,time);
+    FabricVIDEOGetAllPixels(video,pixels);
+  }
+}

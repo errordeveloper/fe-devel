@@ -6,53 +6,9 @@ import os
 Import( 'coreEnv', 'licensesFlags', 'buildOS' )
 
 quoteCString = coreEnv.File('quote-c-string.sed')
-
-uglifyjsOption = '-o'
-if buildOS == 'Darwin' or buildOS == 'Linux':
-  uglifyjsBin = os.environ['HOME'] + '/node_modules/uglify-js/bin/uglifyjs'
-  if not os.path.exists( uglifyjsBin ):
-    uglifyjsBin = 'uglifyjs'
-
-  uglifiedWrappers = coreEnv.Command(
-    'FABRIC.Wrappers.uglified.js',
-    'FABRIC.Wrappers.js',
-    [[
-      uglifyjsBin,
-      uglifyjsOption, '$TARGET',
-      '$SOURCE'
-    ]]
-  )
-elif buildOS == 'Windows':
-  nodeJSPath = os.environ['NODEJS_PATH'];
-  if(nodeJSPath == ''):
-    print('ERROR: environment variable NODEJS_PATH is not set, please set it to the path to node.exe')
-  uglifyjsBin = 'node.exe'
-  uglifyjsModule = nodeJSPath + '\\node_modules\\uglify-js\\bin\\uglifyjs'
-  uglifiedWrappers = coreEnv.Command(
-    'FABRIC.Wrappers.uglified.js',
-    'FABRIC.Wrappers.js',
-    [[
-      uglifyjsBin, uglifyjsModule,
-      uglifyjsOption, '$TARGET',
-      '$SOURCE'
-    ]]
-  )
-
-moreUglifiedWrappers = coreEnv.Command(
-  'FABRIC.Wrappers.more.uglified.js',
-  uglifiedWrappers,
-  [[
-    'sed',
-    '-e', 's/queueCommand/qc_/g',
-    '-e', 's/handleStateNotification/hsn_/g',
-    '-e', 's/patch/p_/g',
-    '$SOURCE',
-    '>$TARGET'
-  ]]
-)  
 wrappersINC = coreEnv.Command(
   'FABRIC.Wrappers.js.inc',
-  [moreUglifiedWrappers,quoteCString],
+  ['FABRIC.Wrappers.js', quoteCString],
   [[ 'sed', '-f', quoteCString.path, '$SOURCE', '>$TARGET' ]]
 )
 

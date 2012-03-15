@@ -117,6 +117,12 @@ def _typeToDict( obj ):
       objlist.append( _typeToDict( elem ) )
     return objlist
 
+  elif type( obj ) is dict:
+    objdict = {}
+    for member in obj:
+      objdict[ member ] = _typeToDict( obj[ member ] )
+    return objdict
+
   elif not hasattr( obj, '__dict__' ):
     return obj
 
@@ -621,14 +627,14 @@ class _DG( _NAMESPACE ):
     def getOperator( self, index ):
       if self.__bindings is None:
         self._dg._executeQueuedCommands()
-      return self.__bindings[ index ].getOperator()
+      return self.__bindings[ index ]['operator']
       
     def append( self, binding ):
       operatorName = None
       try:
         operatorName = binding.getOperator().getName()
       except Exception:
-        raise 'operator: not an operator'
+        raise Exception('operator: not an operator')
   
       oldBindings = self.__bindings
       self.__bindings = None
@@ -646,7 +652,7 @@ class _DG( _NAMESPACE ):
       try:
         operatorName = binding.getOperator().getName()
       except Exception:
-        raise 'operator: not an operator'
+        raise Exception('operator: not an operator')
   
       if type( beforeIndex ) is not int:
         raise Exception( 'beforeIndex: must be an integer' )
@@ -840,12 +846,13 @@ class _DG( _NAMESPACE ):
 
       arg = { 'name': memberName, 'type': memberType }
       if defaultValue is not None:
-        arg[ 'defaultValue' ] = defaultValue
+        arg[ 'defaultValue' ] = _typeToDict( defaultValue )
 
       self.__members[ memberName ] = arg
 
       def __unwind():
-        del self.__members[ memberName ]
+        if memberName in self.__members:
+          del self.__members[ memberName ]
 
       self._nObjQueueCommand( 'addMember', arg, __unwind )
 
@@ -951,7 +958,7 @@ class _DG( _NAMESPACE ):
       return data[ '_' ]
 
     def setBulkData( self, data ):
-      self._nObjQueueCommand( 'setBulkData', data )
+      self._nObjQueueCommand( 'setBulkData', _typeToDict( data ) )
 
     def getSliceBulkData( self, index ):
       if type( index ) is not int:
@@ -1179,8 +1186,8 @@ class _DG( _NAMESPACE ):
       return 'Event'
 
     def appendEventHandler( self, eventHandler ):
-      self._nObjQueueCommand( 'appendEventHandler', eventHandler.getName() )
       self.__eventHandlers = None
+      self._nObjQueueCommand( 'appendEventHandler', eventHandler.getName() )
 
     def getEventHandlers( self ):
       if self.__eventHandlers is None:

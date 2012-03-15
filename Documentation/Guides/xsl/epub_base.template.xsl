@@ -9,8 +9,8 @@
              xmlns:d="http://docbook.org/ns/docbook"
           >
             <!-- Import the original EPUB stylesheets -->
-            <xsl:import href="file:///Users/pzion/docbook/xsl/epub/docbook.xsl"/>
-            <xsl:import href="file:///Users/pzion/docbook/xsl/xhtml-1_1/highlight.xsl"/>
+            <xsl:import href="{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}}/xsl/epub/docbook.xsl"/>
+            <xsl:import href="{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}}/xsl/xhtml-1_1/highlight.xsl"/>
       
             <!-- FOP -->
    

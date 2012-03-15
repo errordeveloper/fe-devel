@@ -12,8 +12,8 @@ namespace Fabric
 {
   namespace NPAPI
   {
-    static const size_t watermarkWidth = 369;
-    static const size_t watermarkHeight = 128;
+    static const size_t watermarkWidth = 465;
+    static const size_t watermarkHeight = 80;
     extern uint8_t watermarkData[watermarkWidth*watermarkHeight*4];
   };
 };

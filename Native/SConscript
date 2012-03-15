@@ -3,27 +3,9 @@
 #
 
 import os, platform, posixpath, glob, sys
-Import('env', 'buildDir', 'distDir')
+Import('env', 'buildDir', 'distDir', 'buildOS', 'buildArch', 'buildType')
 
-try:
-  buildOS = os.environ['FABRIC_BUILD_OS']
-  Export( 'buildOS' );
-  buildArch = os.environ['FABRIC_BUILD_ARCH']
-  Export( 'buildArch' )
-  buildType = os.environ['FABRIC_BUILD_TYPE']
-  Export( 'buildType' )
-except:
-  print "Must source fabric-build-env.sh first"
-  sys.exit(1)
-
-path = os.environ['PATH']+os.pathsep+os.path.join('Native', 'ThirdParty', 'bin', buildOS)
-nativeEnv = env.Clone(
-  ENV={ 'PATH': path },
-  FABRIC_BUILD_OS=buildOS,
-  FABRIC_BUILD_ARCH=buildArch,
-  FABRIC_BUILD_TYPE=buildType,
-  TARGET_ARCH = buildArch
-  )
+nativeEnv = env.Clone()
 
 template = Builder( action = "\
   sed \
@@ -48,7 +30,7 @@ FABRIC_VERSION = nativeEnv['FABRIC_VERSION']
 Export('FABRIC_VERSION')
 
 if buildOS == 'Windows':
-  env['ENV']['TMP'] = os.environ['TMP']
+  nativeEnv['ENV']['TMP'] = os.environ['TMP']
 
 if buildOS == 'Darwin':
   #env.Replace( CC = 'gcc-4.2' )
