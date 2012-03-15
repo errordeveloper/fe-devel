@@ -1,56 +1,74 @@
 import os, re
-Import('env')
+Import('env', 'distDir', 'buildOS' )
 
 docbookEnv = env.Clone()
 
 try:
 	docbookRoot = os.environ['SHORT_ATTENTION_SPAN_DOCBOOK_PATH']
+	if buildOS == 'Windows':
+		docbookRoot = docbookRoot.replace('"', '')
 except:
 	print "Missing environment variable SHORT_ATTENTION_SPAN_DOCBOOK_PATH"
 	sys.exit(1)
 SHORT_ATTENTION_SPAN_DOCBOOK_URI = '/'.join(docbookRoot.split(os.pathsep))
+if buildOS == 'Windows':
+	SHORT_ATTENTION_SPAN_DOCBOOK_URI = "file:///" + docbookRoot.replace('\\', '/')
 
 docbookSchema = os.path.join(docbookRoot, 'xsl', 'docbookxi.rng')
 
 saxonClassJars = [
-	docbookRoot + "/jars/xercesImpl-2.7.1.jar",
-  docbookRoot + "/xsl/extensions/saxon65.jar",
-  docbookRoot + "/jars/saxon.jar",
-  docbookRoot + "/jars/xslthl-2.0.1.jar"
+	docbookRoot + os.path.normpath( "/jars/xercesImpl-2.7.1.jar" ),
+  docbookRoot + os.path.normpath( "/xsl/extensions/saxon65.jar" ),
+  docbookRoot + os.path.normpath( "/jars/saxon.jar" ),
+  docbookRoot + os.path.normpath( "/jars/xslthl-2.0.1.jar" )
 	]
 saxonClassPath = os.pathsep.join(saxonClassJars)
 
 highlighterConfigPath = "file:///" + docbookRoot + "/xsl/highlighting/xslthl-config.xml"
 
+images = docbookEnv.Glob('images/*.png')
+images.extend( docbookEnv.Glob('images/JSSceneGraph/*.png') )
+
 foClassJars = [
-  docbookRoot + "/fop/avalon-framework-4.2.0.jar",
-  docbookRoot + "/jars/batik-all-1.7.jar",
-  docbookRoot + "/jars/commons-io-1.3.1.jar",
-  docbookRoot + "/jars/commons-logging-1.0.4.jar",
-  docbookRoot + "/jars/fop-hyph.jar",
-  docbookRoot + "/jars/fop.jar",
-  docbookRoot + "/jars/serializer-2.7.0.jar",
-  docbookRoot + "/jars/xalan-2.7.0.jar",
-  docbookRoot + "/jars/xercesImpl-2.7.1.jar",
-  docbookRoot + "/jars/xml-apis-1.3.04.jar",
-  docbookRoot + "/jars/xmlgraphics-commons-1.4.jar"
+  docbookRoot + os.path.normpath( "/fop/avalon-framework-4.2.0.jar" ),
+  docbookRoot + os.path.normpath( "/jars/batik-all-1.7.jar" ),
+  docbookRoot + os.path.normpath( "/jars/commons-io-1.3.1.jar" ),
+  docbookRoot + os.path.normpath( "/jars/commons-logging-1.0.4.jar" ),
+  docbookRoot + os.path.normpath( "/jars/fop-hyph.jar" ),
+  docbookRoot + os.path.normpath( "/jars/fop.jar" ),
+  docbookRoot + os.path.normpath( "/jars/serializer-2.7.0.jar" ),
+  docbookRoot + os.path.normpath( "/jars/xalan-2.7.0.jar" ),
+  docbookRoot + os.path.normpath( "/jars/xercesImpl-2.7.1.jar" ),
+  docbookRoot + os.path.normpath( "/jars/xml-apis-1.3.04.jar" ),
+  docbookRoot + os.path.normpath( "/jars/xmlgraphics-commons-1.4.jar" )
   ]
 foClassPath = os.pathsep.join(foClassJars)
 
 w3cEntities = docbookEnv.File('w3centities-f.ent')
 
 def Docbook(env, inputDocbookXMLs):
+	validateProgram = docbookRoot + os.path.normpath( '/jars/jing.jar' )
+	if not os.path.isfile(validateProgram):
+		try:
+			jingPath = os.environ['JING_PATH']
+			validateProgram = jingPath + os.path.normpath( '/jing.jar' )
+		except:
+			pass
+
+	if not os.path.isfile(validateProgram):
+		print "XML validation skipped (" + validateProgram + " was not found or JING_PATH was not defined)"
+
 	validateAction = [[
 		'java',
 		'-jar',
 		'-Xmx512m',
 		'-Xss1024K',
 		'-Dorg.apache.xerces.xni.parser.XMLParserConfiguration=org.apache.xerces.parsers.XIncludeParserConfiguration',
-		docbookRoot + '/jars/jing.jar',
+		validateProgram,
 		docbookSchema,
 		"$SOURCE"
 		]]
-
+		
 	xsltAction = [[
 		'java', '-Xss1024K', '-Xmx512m',
 		'-cp', saxonClassPath,
@@ -64,11 +82,11 @@ def Docbook(env, inputDocbookXMLs):
 		'use.extensions=1'
 		]]
 
-	outputs = []
+	outputs = [htmlCSS]
 	for inputDocbookXML in inputDocbookXMLs:
 		inputBasename = re.sub('\.docbook\.xml$', '', str(inputDocbookXML))
 		templatedInputDocbookXML = env.SubstBuildVars(
-			inputBasename + ".temp.docbook.xml",
+			inputBasename + ".docbook.xml.temp",
 			inputDocbookXML
 			)
 		env.Depends(templatedInputDocbookXML, w3cEntities)
@@ -79,13 +97,18 @@ def Docbook(env, inputDocbookXMLs):
 			[templatedInputDocbookXML, pdfXSL],
 			xsltAction
 			)
-		env.AddPreAction(pdfFO, validateAction)
-		foXML = env.Dir('xsl').File('fo.xml')
-		notePNG = env.Dir('images').File('note.png')
-		warningPNG = env.Dir('images').File('warning.png')
+		if os.path.isfile(validateProgram):
+			env.AddPreAction(pdfFO, validateAction)
+		foTemplateXML = env.Dir('xsl').File('fo.template.xml')
+		foXML = env.Command(
+			env.Dir('xsl').File('fo.xml'),
+			foTemplateXML,
+			[['sed', 's,\{\{SHORT_ATTENTION_SPAN_DOCBOOK_URI\}\},'+SHORT_ATTENTION_SPAN_DOCBOOK_URI+',', '<$SOURCE', '>$TARGET']]
+			)
+		env.Depends(pdfFO, foXML)
 		outputs.append(env.Command(
 			inputBasename + ".pdf",
-			[pdfFO, foXML, notePNG, warningPNG],
+			[pdfFO, foXML] + images,
 			[[
 				'java', '-Xmx512m', '-Xss1024K',
 				'-cp', foClassPath,
@@ -99,7 +122,7 @@ def Docbook(env, inputDocbookXMLs):
 		htmlBaseXML = env.Command(
 			env.Dir('xsl').File('html_base.xml'),
 			htmlBaseTemplateXML,
-			[['sed', 's,{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}},'+SHORT_ATTENTION_SPAN_DOCBOOK_URI+',', '<$SOURCE', '>$TARGET']]
+			[['sed', 's,\{\{SHORT_ATTENTION_SPAN_DOCBOOK_URI\}\},'+SHORT_ATTENTION_SPAN_DOCBOOK_URI+',', '<$SOURCE', '>$TARGET']]
 			)
 		htmlXSL = env.Dir('xsl').File('html.xsl')
 		env.Depends(htmlXSL, htmlBaseXML)
@@ -108,30 +131,70 @@ def Docbook(env, inputDocbookXMLs):
 			[templatedInputDocbookXML, htmlXSL],
 			xsltAction
 			)
-		env.AddPreAction(html, validateAction)
+		if os.path.isfile(validateProgram):
+			env.AddPreAction(html, validateAction)
 		outputs.append(html)
 
-		css = env.Command(
-			env.File('style.css'),
-			env.Dir('xsl').File('html.css'),
-			Copy('$TARGET', '$SOURCE')
-			)
-		outputs.append(css)
 	return outputs
 AddMethod(docbookEnv, Docbook)
 
-guides = docbookEnv.Docbook(docbookEnv.Glob('*.docbook.xml'))
+if buildOS == 'Windows':
+	try:
+		hamlPath = os.environ['HAML_PATH']
+	except:
+		print "Missing environment variable HAML_PATH (should point to a folder containing file 'haml'"
+		sys.exit(1)
+	hamlCommand = ['ruby', os.path.join(hamlPath, 'haml')]
+else:
+	hamlCommand = ['haml']
+
+docbookEnv.Append(BUILDERS = {
+  'HAMLtoXML': Builder(
+  	action = [hamlCommand + ['--style', 'ugly', '$SOURCE', '$TARGET']],
+		suffix = '.docbook.xml',
+		src_suffix = '.docbook.haml'
+  )})
+
+htmlCSS = env.Command(
+	env.File('style.css'),
+	env.Dir('xsl').File('html.css'),
+	Copy('$TARGET', '$SOURCE')
+	)
+
+docsDistDir = distDir.Dir('docs')
+hamlFilesXml = []
+for hamlFile in docbookEnv.Glob('*.docbook.haml'):
+  hamlFilesXml += docbookEnv.HAMLtoXML(hamlFile)
+
+guides = [
+	docbookEnv.Install(
+		docsDistDir,
+		[
+			docbookEnv.Docbook(docbookEnv.Glob('*.docbook.xml') + hamlFilesXml),
+			htmlCSS
+			]
+		)
+	]
+
+for img in images:
+	guides.extend(
+		docbookEnv.Install(
+			docsDistDir.Dir( str(img.get_dir()) ),
+			img
+			)
+		)
+
 Alias('guides', guides)
 
 if 'uploadDocs' in COMMAND_LINE_TARGETS:
 	remoteHost = 'dist.fabric-engine.com'
-	remoteDir = '/fabric-distribution/' + docbookEnv['FABRIC_VERSION'] + '/docs'
+	remoteDir = '/fabric-distribution/' + docbookEnv['FABRIC_VERSION']
 	uploadDocs = docbookEnv.AlwaysBuild(docbookEnv.Command(
 		'uploadDocs',
 		guides,
 		[
 			['ssh', remoteHost, 'mkdir', '-p', remoteDir],
-			['rsync', '-e', 'ssh', '--progress', '$SOURCES', remoteHost+':'+remoteDir+'/']
+			['rsync', '-e', 'ssh', '--progress', '--recursive', str(docsDistDir), remoteHost+':'+remoteDir+'/']
 			]
 		))
 	Alias('uploadDocs', uploadDocs)

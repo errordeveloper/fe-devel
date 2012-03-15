@@ -1,0 +1,42 @@
+use FabricCIMG;
+use FabricFILESYSTEM;
+
+operator openWaterMark(
+    io String filePath,
+    io String clientText,
+    io Size width,
+    io Size height,
+    io RGBA pixels[]
+    ) {
+
+  if(pixels.size() == 0) {
+    FabricFileHandleWrapper wrapper;
+    wrapper.setAbsolutePath(filePath);
+    FabricCIMGOpenFileHandle(wrapper.getHandle(), width, height, pixels);
+    report("Loaded Watermark image, resolution "+width+"x"+height+".");
+    
+    Size textWidth;
+    Size textHeight;
+    RGBA textPixels[];
+    FabricCIMGCreateFromText(clientText,textWidth,textHeight,textPixels);
+    report("Created client text image, resolution "+textWidth+"x"+textHeight+".");
+    Size centerWidth = (width - textWidth) * 0.5;
+    Size centerHeight = 190;
+
+    if (textHeight<height && textWidth<width) {
+      for(Size textX=0;textX<textWidth;textX++) {
+        Size x = centerWidth + textX;
+        for(Size textY=0;textY<textHeight;textY++) {
+          Size y = centerHeight + textY;
+          Size index = y * width + x;
+          Size textIndex = textY * textWidth + textX;
+          pixels[index] = textPixels[textIndex];
+        }
+      }
+      report("Copied client text into watermark image.");
+    }
+    else {
+      report("Watermark image too small to copy client text!");
+    }
+  }
+}

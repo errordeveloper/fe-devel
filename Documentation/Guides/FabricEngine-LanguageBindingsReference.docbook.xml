@@ -1,0 +1,1211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!DOCTYPE book [
+<!ENTITY % allent SYSTEM "w3centities-f.ent">
+%allent;
+]>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+  <info>
+    <title>Fabric Engine Language Bindings Reference</title>
+    <copyright>
+      <year>{{FABRIC_COPYRIGHT_YEARS}}</year>
+      <holder>{{FABRIC_COMPANY_NAME}}</holder>
+    </copyright>
+    <releaseinfo>{{FABRIC_NAME}} Version {{FABRIC_VERSION}}</releaseinfo>
+  </info>
+  
+  <chapter xml:id="introduction">
+    <title>Introduction</title>
+
+    <para>
+      This document outlines the installation and use of the language bindings that Fabric supports. Currently bindings exist for JavaScript using Node.js on Mac OS X and Linux, and for Python on Windows, Mac OS X, and Linux. Both Node.js and Python bindings are implemented as modules.
+    </para>
+
+    <para>
+      The rest of this document outlines instructions on how to install each module, a tutorial for each language to get you up-and-running, and links to reference documentation. The last section also outlines how to install and use the Fabric Extensions with the bindings for your chosen language.
+    </para>
+
+    <para>
+      This document focuses only on installing and configuring the specific language bindings, for a detailed reference on Fabric itself and the KL language please see the other relevant documentation.
+    </para>
+
+  </chapter>
+
+  <chapter xml:id="nodejs">
+    <title>Node.js Module</title>
+    
+    <section xml:id="nodejs.platforms">
+      <title>Supported Platforms</title>
+
+      <para>
+        The Fabric Engine module for Node.js currently runs on:
+
+        <itemizedlist>
+          <listitem><para>Mac OS X running on Intel processors, version 10.6 ("Snow Leopard") or later</para></listitem>
+          <listitem><para>32-bit and 64-bit Linux. We do our development on Ubuntu 10.04 and above but it should work with any modern distribution</para></listitem>
+        </itemizedlist>
+      </para>
+
+    </section>
+
+    <section xml:id="nodejs.installation">
+      <title>Installation</title>
+
+      <section xml:id="nodejs.installation.getnode">
+        <title>Step Zero: Get Node.js</title>
+          <para>
+            The first thing you'll need to do is install Node.js if you haven't already. We currently support the 0.6.x series of Node, although the module may work with later versions as well. Node.js may be available through your package manager but you'll need to make sure that it's at least version 0.6.x. Otherwise it can be installed from here: <link xlink:href="http://nodejs.org/"><uri>Node.js</uri></link>
+          </para>
+      </section>
+
+      <section xml:id="nodejs.installation.download">
+        <title>Step One: Download</title>
+          <para>
+            From the <link xlink:href="http://dist.fabric-engine.com/latest/"><uri>Fabric distributions page</uri></link>, download the version of the Node.js module that applies for your operating system.
+          </para>
+
+          <para>
+            For Linux, choose the file based on whether you are running a 32-bit or 64-bit operating system. If you're not sure which version to download, run <command>uname -m</command> which will report either <prompt>i686</prompt> or <prompt>x86_64</prompt>.
+
+            <itemizedlist>
+              <listitem><para>
+                <filename>FabricEngine-NodeModule-Linux-i686-VERSION.tar.bz2</filename>
+              </para></listitem>
+              <listitem><para>
+                <filename>FabricEngine-NodeModule-Linux-x86_64-VERSION.tar.bz2</filename>
+              </para></listitem>
+            </itemizedlist>
+          </para>
+
+          <para>
+            For Mac OS X choose:
+            <itemizedlist>
+              <listitem><para>
+                <filename>FabricEngine-NodeModule-Darwin-universal-VERSION.tar.bz2</filename>
+              </para></listitem>
+            </itemizedlist>
+          </para>
+      </section>
+
+      <section xml:id="nodejs.installation.install">
+        <title>Step Two: Install</title>
+
+        <para>
+          Unpack the module by running <command>tar jxf FabricEngine-NodeModule-XXX.tar.bz2</command> from a command line.
+        </para>
+
+        <para>
+          Create the directory <filename>~/node_modules</filename>. Next, inside the module that you just unpacked there should be a subfolder called <filename>node_modules</filename> with a subfolder of its own called <filename>Fabric</filename>. Move this <filename>Fabric</filename> folder to <filename>~/node_modules</filename>. You can also create a symlink if it makes more sense for your setup.
+        </para>
+      </section>
+
+      <section xml:id="nodejs.installation.test">
+        <title>Step Three: Test</title>
+
+        <para>
+          Now we will test that the installation works. Run <command>node</command> from a command line and execute the command <code>require('Fabric').createClient().build.getName();</code>. You should see something like this:
+
+          <informalfigure xml:id="nodejs.installation.test.output">
+            <screen><![CDATA[
+user@host~$ node
+> require('Fabric').createClient().build.getName();
+[FABRIC] Fabric Engine version 1.0.22-release
+'Fabric Engine'
+> 
+            ]]></screen>
+          </informalfigure>
+
+          This confirms that the Fabric Engine Node.js module is installed and working. You can press <command>Ctrl-C</command> or run <code>process.exit();</code> to exit.
+        </para>
+      </section>
+
+      <section xml:id="nodejs.installation.exts">
+        <title>(Optional) Step Four: Install Extensions</title>
+        <para>To install the optional Fabric extensions, see <xref linkend="extensions"/>.</para>
+      </section>
+    </section>
+
+    <section xml:id="nodejs.tutorial">
+      <title>Getting Started with Fabric Engine on Node.js</title>
+
+      <para>
+        This is a tutorial intended to help get you started with using the Fabric Engine Node.js module. It assumes that you've already installed the Fabric Engine Node.js module as specified above.
+      </para>
+
+      <para>
+        All of the examples in this tutorial are provided in the <link xlink:href="https://github.com/fabric-engine/PublicDev/"><uri>Fabric Engine PublicDev github repository</uri></link> under <filename>Examples/Node</filename>. The filenames given in this tutorial refer to the filenames within a checkout of this repository.
+      </para>
+
+      <section xml:id="nodejs.tutorial.conventions">
+        <title>Conventions</title>
+
+        <para>
+          We will be showing some examples of direct command-line usage, e.g.:
+            
+          <informalfigure>
+            <screen><![CDATA[
+host~ user$ node
+> FC = require('Fabric').createClient();
+[FABRIC] Fabric Engine version 1.0.22-release
+{ build: 
+ { isExpired: [Function],
+...
+close: [Function],
+getMemoryUsage: [Function] }
+> 
+            ]]></screen>
+          </informalfigure>
+
+          In general, we may omit the Fabric Engine startup messages (prefixed by <prompt>[FABRIC]</prompt>) from example output. In cases when it's obvious, we may also omit the startup of Node.js and the creation of the Fabric Engine client:
+          
+          <informalfigure>
+            <screen><![CDATA[
+> FC.build.getFullVersion();
+'1.0.22-release'
+> 
+            ]]></screen>
+          </informalfigure>
+        </para>
+
+        <para>
+          In other examples, we will be working with JavaScript sources files that will be run directly:
+        </para>
+
+        <example>
+          <title>
+            <filename>Examples/Node/Tutorial/trivialHTTPServer.js</filename>
+          </title>
+          <programlisting language="javascript">
+            <![CDATA[
+var fabric = require('Fabric');
+var http = require('http');
+
+http.createServer(function (req, res) {
+(function (fabricClient) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end(fabricClient.build.getName() + " version " + fabricClient.build.getFullVersion() + "\n");
+  fabricClient.close();
+})(fabric.createClient());
+}).listen(1337, "127.0.0.1");
+
+console.log('Server running at http://127.0.0.1:1337/');
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          We will then generally show the output of running the command directly:
+
+          <informalfigure>
+            <screen><![CDATA[
+host:Tutorial user$ node trivialHTTPServer.js 
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            ]]></screen>
+          </informalfigure>
+
+          In cases of using a server (as in the example above), we will also show examples of accessing the server, generally using <command>curl</command> or some other command line tool:
+
+          <informalfigure>
+            <screen><![CDATA[
+host~ user$ curl http://127.0.0.1:1337/
+Fabric Engine version 1.0.22-release
+host~ user$
+            ]]></screen>
+          </informalfigure>
+        </para>
+      </section>
+
+      <section xml:id="nodejs.tutorial.application">
+        <title>A Standalone Node.js Application</title>
+
+        <para>
+          Generally, Node.js is used to create server-type applications that accept incoming requests and produce responses. Fabric integrates well with this type of application, but we will start by creating a standalone Node.js application that instead simply computes and prints a result; think of it as a kind of "Hello, world!" for using Fabric Engine with Node.js.
+        </para>
+
+        <para>
+          Since Fabric Engine augments an existing platform (in this case Node.js) to perform heavy-duty computation, the simplest meaningful Fabric Engine examples are still fairly complex. The examples here should be fairly obvious if you read through the code and the comments, be we encourage you to refer to the Fabric Engine Core Programming Guide and the Fabric Engine KL Programming Guide for more detail as to what's possible with the Fabric Engine core and the KL programming language.
+        </para>
+
+        <para>
+          Our first example will compute the sum of the first N terms of the series <prompt>1/1 + 1/4 + 1/9+....</prompt> by computing all of the terms in parallel and them summing the results. This provides a simple example of using Fabric Engine for a parallel computation.
+        </para>
+
+        <para>
+          First, the source code for the Node.js source file:
+        </para>
+
+        <example>
+          <?dbfo keep-together="auto" ?>
+          <title>
+            <filename>Examples/Node/Tutorial/Series/Series-Display.js</filename>
+          </title>
+          <programlisting language="javascript">
+            <![CDATA[
+var fabricClient = require('Fabric').createClient();
+var fs = require('fs');
+
+// Take the number of terms to compute on the command
+// line; default to 10
+
+var numTerms = parseInt(process.argv[2]) || 10;
+
+// Create the operator that computes the value for
+// each term of the series
+
+var computeTermOp = fabricClient.DG.createOperator("computeTermOp");
+computeTermOp.setSourceCode('computeTerm.kl', fs.readFileSync('computeTerm.kl', 'utf8'));
+computeTermOp.setEntryFunctionName('computeTerm');
+
+// Create the binding that binds the computeTermOp to the
+// terms node.  A binding binds the members of the node
+// to the arguments to the operator
+
+var computeTermBinding = fabricClient.DG.createBinding();
+computeTermBinding.setOperator(computeTermOp);
+computeTermBinding.setParameterLayout([
+"self.index",   // self.index is special: the index of the
+                // slice being operated on
+"self.result"
+]);
+
+// Create the node that holds the terms in the series.
+// The number of terms is the "count" of the node,
+// ie. the SIMD multiplicity
+
+var termsNode = fabricClient.DG.createNode("termsNode");
+termsNode.setCount(numTerms);
+termsNode.addMember("result", "Scalar");
+termsNode.bindings.append(computeTermBinding);
+
+// Create the operator that sums the terms of the series
+
+var sumTermsOp = fabricClient.DG.createOperator("sumTermsOp");
+sumTermsOp.setSourceCode('sumTerms.kl', fs.readFileSync('sumTerms.kl', 'utf8'));
+sumTermsOp.setEntryFunctionName('sumTerms');
+
+// Create the binding that binds sumTermsOp to the members of
+// sumNode
+
+var sumTermsBinding = fabricClient.DG.createBinding();
+sumTermsBinding.setOperator(sumTermsOp);
+sumTermsBinding.setParameterLayout([
+"terms.count",      // terms.count is special: the slice count of
+                    // the dependency called "terms"
+"terms.result<>",   // the <> syntax specifies that we want to bind
+                    // to all the slices at once
+"self.result" 
+]);
+
+// Create the node to hold the result, add termsNode as a
+// dependency and append the binding for sumTermsOp
+
+var sumNode = fabricClient.DG.createNode("sumNode");
+sumNode.addMember("result", "Scalar");
+sumNode.setDependency(termsNode, "terms");
+sumNode.bindings.append(sumTermsBinding);
+
+// Evaluate the sumNode (which evalutes its dependecy, the
+// termsNode, first) and then print the result.
+
+sumNode.evaluate();
+console.log(sumNode.getData('result', 0));
+
+// Close the Fabric Engine client.  If the client isn't closed
+// then Node.js will keep this script alive!
+
+fabricClient.close();
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          Before we can do anything with the Fabric Core, we need to call <code>require('Fabric')</code>. The result of the require statement is an object that allows you to create Fabric Core client connections by calling its <code>createClient()</code> method.
+        </para>
+
+        <note><para>
+          <emphasis>Important note:</emphasis> As of this writing, it is not safe to perform multiple computations on the same client connection at the same time. As such, it is highly recommended for request server architectures (which we will demonstrate below) that one client connection is created per server request!
+        </para></note>
+
+        <para>
+          Once we've created the client connection, we use it to build a dependency graph. We load the operator source code from external files (whose contents are given below), create the operators and bindings, set the number of terms, perform the evaluation and print the result. Once we are done we close the client connection to tell the Fabric Engine core that we are done using it.
+        </para>
+
+        <note><para>
+          <emphasis>Important note:</emphasis> If you do not close a client connection the Node.js script will never exit. This is the same as for other connections in Node.js such as request connections accepted by the HTTP server.
+        </para></note>
+
+        <para>
+          The source code for the two operators follow:
+        </para>
+       
+        <example>  
+          <title>
+            <filename>Examples/Node/Tutorial/Series/computeTerm.kl</filename>
+          </title>
+          <programlisting language="KL">
+            <![CDATA[
+operator computeTerm(
+  Size index,
+  io Scalar result
+  )
+{
+  result = 1.0 / (Scalar(index+1) * Scalar(index+1));
+}
+            ]]>
+          </programlisting>
+        </example>
+       
+        <example>  
+          <title>
+            <filename>Examples/Node/Tutorial/Series/sumTerms.kl</filename>
+          </title>
+          <programlisting language="KL">
+            <![CDATA[
+operator sumTerms(
+  Size numTerms,
+  io Scalar terms<>,
+  io Scalar result
+  )
+{
+  result = 0.0;
+  for (Size i=0; i<numTerms; ++i)
+    result += terms[i];
+}
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          And the output from running the program to request the first 1000 terms of the series:
+
+          <informalfigure>
+            <screen><![CDATA[
+host:Series user$ node Series-Display.js 1000
+[FABRIC] Fabric Engine version 1.0.22-release
+1.643934845924377
+host:Series user$ 
+            ]]></screen>
+          </informalfigure>
+        </para>
+      </section>
+
+      <section xml:id="nodejs.tutorial.http">
+        <title>An HTTP Server Using Fabric Engine</title>
+
+        <para>
+          We now modify our series computation example to show how it is easily transformed into an HTTP server for the same result.
+        </para>
+
+        <para>
+          The key modification that is made to the program that demonstrates Fabric Engine's power when used in conjunction with Node.js is that we request that the computation be performed asynchronously. To do so, we replace the call to <code>sumNode.evalute()</code> with a call to <code>sumNode.evaluateAync(...)</code>, passing a callback function that gets executed when the computation is finished. While the computation is being performed by Fabric Engine, control returns to Node.js which will continue to service other incoming HTTP requests. Fabric Engine provides generic, high-performance, parallel computation as an asynchronous service, similar to an asynchronous web service or database query, to Node.js.
+        </para>
+
+        <para>
+          The other modifications that are made are:
+
+          <itemizedlist>
+            <listitem><para>
+              We will use a standard HTTP server and pass the number of terms to compute as the GET variable <code>n</code>
+            </para></listitem>
+            <listitem><para>
+              In order to server multiple requests at once, we will create one Fabric Engine client connection per incoming HTTP request
+            </para></listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          The actual "meat" of the computation is exactly as before. The source code is:
+        </para>
+
+        <example>
+          <?dbfo keep-together="auto" ?>
+          <title>
+            <filename>Examples/Node/Tutorial/Series/Series-HTTP.js</filename>
+          </title>
+          <programlisting language="javascript">
+            <![CDATA[
+var fabric = require('Fabric');
+var fs = require('fs');
+var http = require('http');
+var url = require('url');
+
+// Create the HTTP server
+http.createServer(function (req, res) {
+
+// Take the number of terms to compute from the 'n' GET
+// parameter; default to 10
+var numTerms = parseInt(url.parse(req.url, true).query['n']) || 10;
+
+// Ensure that each request has its own client
+// connection and local scope using the usual JavaScript trick
+(function (fabricClient) {
+
+  // Create the operator that computes the value for
+  // each term of the series
+
+  var computeTermOp = fabricClient.DG.createOperator("computeTermOp");
+  computeTermOp.setSourceCode('computeTerm.kl', fs.readFileSync('computeTerm.kl', 'utf8'));
+  computeTermOp.setEntryFunctionName('computeTerm');
+
+  // Create the binding that binds the computeTermOp to the
+  // terms node.  A binding binds the members of the node
+  // to the arguments to the operator
+
+  var computeTermBinding = fabricClient.DG.createBinding();
+  computeTermBinding.setOperator(computeTermOp);
+  computeTermBinding.setParameterLayout([
+    "self.index",   // self.index is special: the index of the
+                    // slice being operated on
+    "self.result"
+  ]);
+
+  // Create the node that holds the terms in the series.
+  // The number of terms is the "count" of the node,
+  // ie. the SIMD multiplicity
+
+  var termsNode = fabricClient.DG.createNode("termsNode");
+  termsNode.setCount(numTerms);
+  termsNode.addMember("result", "Scalar");
+  termsNode.bindings.append(computeTermBinding);
+
+  // Create the operator that sums the terms of the series
+
+  var sumTermsOp = fabricClient.DG.createOperator("sumTermsOp");
+  sumTermsOp.setSourceCode('sumTerms.kl', fs.readFileSync('sumTerms.kl', 'utf8'));
+  sumTermsOp.setEntryFunctionName('sumTerms');
+
+  // Create the binding that binds sumTermsOp to the members of
+  // sumNode
+
+  var sumTermsBinding = fabricClient.DG.createBinding();
+  sumTermsBinding.setOperator(sumTermsOp);
+  sumTermsBinding.setParameterLayout([
+    "terms.count",      // terms.count is special: the slice count of
+                        // the dependency called "terms"
+    "terms.result<>",   // the <> syntax specifies that we want to bind
+                        // to all the slices at once
+    "self.result" 
+  ]);
+
+  // Create the node to hold the result, add termsNode as a
+  // dependency and append the binding for sumTermsOp
+
+  var sumNode = fabricClient.DG.createNode("sumNode");
+  sumNode.addMember("result", "Scalar");
+  sumNode.setDependency(termsNode, "terms");
+  sumNode.bindings.append(sumTermsBinding);
+
+  // Evaluate the sumNode asynchronously.  The given
+  // callback is issue when the computation is done.
+
+  sumNode.evaluateAsync(function () {
+
+    // Return the result as the HTTP content
+
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end(sumNode.getData('result', 0) + "\n");
+
+    // Close the Fabric Engine client.  If the client isn't closed
+    // then Node.js will keep this script alive!
+
+    fabricClient.close();
+  });
+
+})(fabric.createClient());
+
+}).listen(1337, "127.0.0.1");
+
+console.log('Server running at http://127.0.0.1:1337/');
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          The code for the operators is exactly as before. When run, the HTTP server starts:
+
+          <informalfigure>
+            <screen><![CDATA[
+host:Series user$ node Series-HTTP.js 
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            ]]></screen>
+          </informalfigure>
+        </para>
+
+        <para>
+          From another command line, we can request computation, passing the number of terms as the <code>n</code> query parameter:
+
+          <informalfigure>
+            <screen><![CDATA[
+host:~ user$ curl http://127.0.0.1:1337/?n=1000
+1.643934845924377
+host:~ user$ 
+            ]]></screen>
+          </informalfigure>
+        </para>
+      </section>
+
+      <section xml:id="nodejs.tutorial.features">
+        <title>Supported and Unsupported Features of Fabric Engine Node.js Module</title>
+
+        <para>
+          Fabric Engine was originally developed as a browser plug-in that could be used to render high-end 3D effects inside of normal web pages. Many of the features that are available in the context of high-end browser 3D are not available or available different when Fabric Engine is being used as a Node.js module.
+        </para>
+
+        <para>
+          Features that are not supported or that are partially supported:
+
+          <itemizedlist>
+            <listitem><para>
+              OpenGL viewports are not supported. It is expected that some sort of off-line rendering support will be made available in a future version of the Node.js module.
+            </para></listitem>
+            <listitem><para>
+              ResourceLoadNodes are available but can only load URLs that use the <code>file:</code> method for local file access. A future version of the Node.js module will add support for access to remote URLs using the <code>http:</code> method.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+
+      <section xml:id="nodejs.tutorial.wheretogo">
+        <title>Where to Go from Here</title>
+
+        <para>
+          You have learned the basics of how to use Fabric Engine with Node.js and how to use it for asynchronous computation as a Node.js service. As mentioned above, much more information can be obtained by reading the Fabric Engine Core Programming Guide and the Fabric Engine KL Programming Guide. You can find a few more examples of the use of Fabric Engine with Node.js in our <link xlink:href="https://github.com/fabric-engine/Benchmarks"><uri>benchmark repository</uri></link>. And finally, you can learn about using Fabric Engine for in-browser high-end 3D effects by learning about the Fabric JavaScript scene graph.
+        </para>
+      </section>
+    </section>
+  </chapter>
+
+  <chapter xml:id="python">
+    <title>Python Module</title>
+    
+    <section xml:id="python.platforms">
+      <title>Supported Platforms</title>
+
+      <para>
+        The Fabric Engine module for Python currently runs on:
+
+        <itemizedlist>
+          <listitem><para>Windows Vista or Windows 7</para></listitem>
+          <listitem><para>Mac OS X running on Intel processors, version 10.6 ("Snow Leopard") or later</para></listitem>
+          <listitem><para>32-bit and 64-bit Linux. We do our development on Ubuntu 10.04 and above but it should work with any modern distribution</para></listitem>
+        </itemizedlist>
+
+        We target Python version 2.6.x or later, but may work with older versions of Python as well.
+      </para>
+
+    </section>
+
+    <section xml:id="python.installation">
+      <title>Installation</title>
+
+      <section xml:id="python.installation.download">
+        <title>Step One: Download</title>
+          <para>
+            From the <link xlink:href="http://dist.fabric-engine.com/latest/"><uri>Fabric distributions page</uri></link>, download the version of the Node.js module that applies for your operating system.
+          </para>
+
+          <para>
+            For Linux, choose the file based on whether you are running a 32-bit or 64-bit operating system. If you're not sure which version to download, run <command>uname -m</command> which will report either <prompt>i686</prompt> or <prompt>x86_64</prompt>.
+
+            <itemizedlist>
+              <listitem><para>
+                <filename>FabricEngine-PythonModule-Linux-i686-VERSION.tar.bz2</filename>
+              </para></listitem>
+              <listitem><para>
+                <filename>FabricEngine-PythonModule-Linux-x86_64-VERSION.tar.bz2</filename>
+              </para></listitem>
+            </itemizedlist>
+          </para>
+
+          <para>
+            For Mac OS X choose:
+            <itemizedlist>
+              <listitem><para>
+                <filename>FabricEngine-PythonModule-Darwin-universal-VERSION.tar.bz2</filename>
+              </para></listitem>
+            </itemizedlist>
+          </para>
+
+          <para>
+            For Windows choose:
+            <itemizedlist>
+              <listitem><para>
+                <filename>FabricEngine-PythonModule-Windows-x86-VERSION.zip</filename>
+              </para></listitem>
+            </itemizedlist>
+          </para>
+      </section>
+
+      <section xml:id="python.installation.install">
+        <title>Step Two: Install</title>
+
+        <para>
+          On Mac OS X and Linux, unpack the module by running <command>tar jxf FabricEngine-PythonModule-XXX.tar.bz2</command> from a command line. On Windows, simply double-click the .zip file to unpack it.
+        </para>
+
+        <para>
+          The module can be installed anywhere you would normally install Python modules on your system. If you do not already have a location where you normally install Python modules you can create one. Assuming that your local user is called <filename>myuser</filename>, the recommended paths to create are as follows:
+        </para>
+
+        <para>
+          <itemizedlist>
+            <listitem><para>Windows: <filename>c:\Users\myuser\python_modules</filename></para></listitem>
+            <listitem><para>Mac OS X: <filename>/Users/myuser/python_modules</filename></para></listitem>
+            <listitem><para>Linux: <filename>/home/myuser/python_modules</filename></para></listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          Next, inside the module that you just unpacked there should be a subfolder called <filename>python_modules</filename> with a subfolder of its own called <filename>fabric</filename>. Move this <filename>fabric</filename> folder to the folder you created above. In Mac OS X or Linux you can also create a symlink if it makes more sense for your setup.
+        </para>
+
+        <para>
+          If you created a new folder above you will also need to set an environment variable to tell Python where to look. On Mac OS X or Linux this can be done by running <command>export PYTHONPATH=~/python_modules</command>. You may want to add this to your <filename>~/.bashrc</filename> or <filename>~/.bash_profile</filename> as well.
+        </para>
+
+        <para>
+          Under Windows you'll want to set it as a permanent environment variable by going to Control Panel -> System -> Advanced System Settings -> Advanced -> Environment Variables. Create a new variable called <prompt>PYTHONPATH</prompt> and set it to <filename>c:\Users\myuser\python_modules</filename>.
+        </para>
+      </section>
+
+      <section xml:id="python.installation.test">
+        <title>Step Three: Test</title>
+
+        <para>
+          Now we will test that the installation works. Run <command>python</command> from a command line and try this:
+
+          <informalfigure xml:id="python.installation.test.output">
+            <screen><![CDATA[
+user@host~$ python
+Python 2.7.2+ (default, Jan 21 2012, 23:31:34) 
+[GCC 4.6.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import fabric
+[FABRIC] Fabric Engine version 1.0.22-release
+>>> fabric.createClient().build.getName()
+[FABRIC] Searching extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Searching extension directory '/usr/lib/fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/usr/lib/fabric/Exts'
+u'Fabric Engine'
+>>> 
+            ]]></screen>
+          </informalfigure>
+
+          This confirms that the Fabric Engine Python module is installed and working. You can press <command>Ctrl-D</command> and then <command>Ctrl-C</command> to exit.
+        </para>
+      </section>
+
+      <section xml:id="python.installation.exts">
+        <title>(Optional) Step Four: Install Extensions</title>
+        <para>To install the optional Fabric extensions, see <xref linkend="extensions"/>.</para>
+      </section>
+    </section>
+
+    <section xml:id="python.tutorial">
+      <title>Getting Started with Fabric Engine on Python</title>
+
+      <para>
+        This is a tutorial intended to help get you started with using the Fabric Engine Python module. It assumes that you've already installed the Fabric Engine Python module as described above.
+      </para>
+
+      <para>
+        All of the examples in this tutorial are provided in the <link xlink:href="https://github.com/fabric-engine/PublicDev/"><uri>Fabric Engine PublicDev github repository</uri></link> under <filename>Examples/Python</filename>. The filenames given in this tutorial refer to the filenames within a checkout of this repository.
+      </para>
+
+      <section xml:id="python.tutorial.conventions">
+        <title>Conventions</title>
+
+        <para>
+          We will be showing some examples of direct command-line usage, e.g.:
+          
+          <informalfigure>
+            <screen><![CDATA[
+user@host~$ python
+Python 2.7.2+ (default, Jan 21 2012, 23:31:34) 
+[GCC 4.6.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import fabric
+[FABRIC] Fabric Engine version 1.0.22-release
+>>> client = fabric.createClient()
+[FABRIC] Searching extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Searching extension directory '/usr/lib/fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/usr/lib/fabric/Exts'
+>>>
+            ]]></screen>
+          </informalfigure>
+        </para>
+
+        <para>
+          In general, we may omit the Fabric Engine startup messages (prefixed by <prompt>[FABRIC]</prompt>) from example output. In cases when it's obvious, we may also omit the Python startup and the creation of the Fabric Engine client:
+
+          <informalfigure>
+            <screen><![CDATA[
+>>> client.build.getFullVersion()
+u'1.0.22-release'
+>>> 
+            ]]></screen>
+          </informalfigure>
+        </para>
+
+        <para>
+          In other examples, we will be working with Python sources files that will be run directly:
+        </para>
+
+        <example>
+          <title><filename>Examples/Python/Tutorial/trivialHTTPServer.py</filename></title>
+          <programlisting language="python">
+            <![CDATA[
+import fabric
+import BaseHTTPServer
+
+class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
+  def do_GET( self ):
+    client = fabric.createClient()
+    self.send_response( 200 )
+    self.send_header( 'Content-type', 'text/plain' )
+    self.end_headers()
+    self.wfile.write( client.build.getName() + ' version ' + client.build.getFullVersion() + '\n' )
+    client.close()
+
+port = 1337
+httpd = BaseHTTPServer.HTTPServer( ('', port), FabricHandler )
+print('Server running at http://127.0.0.1:' + str(port) + '/')
+httpd.serve_forever()
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          We will then generally show the output of running the command directly:
+
+          <informalfigure>
+            <screen><![CDATA[
+user@host~$ python trivialHTTPServer.py 
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            ]]></screen>
+          </informalfigure>
+        </para>
+
+        <para>
+          In cases of using a server (as in the example above), we will also show examples of accessing the server, generally using <command>curl</command> or some other command line tool:
+
+          <informalfigure>
+            <screen><![CDATA[
+andrew@variable:~$ curl http://127.0.0.1:1337/
+Fabric Engine version 1.0.22-release
+andrew@variable:~$ 
+            ]]></screen>
+          </informalfigure>
+        </para>
+      </section>
+
+      <section xml:id="python.tutorial.application">
+        <title>A Standalone Python Application</title>
+
+        <para>
+          We will start by creating a standalone Python application that simply computes and prints a result; think of it as a kind of "Hello, world!" for using Fabric Engine with Python.
+        </para>
+
+        <para>
+          Since Fabric Engine augments an existing platform (in this case Python) to perform heavy-duty computation, the simplest meaningful Fabric Engine examples are still fairly complex. The examples here should be fairly obvious if you read through the code and the comments, and we encourage you to refer to the Fabric Engine Core Programming Guide and the Fabric Engine KL Programming Guide for more detail as to what's possible with the Fabric Engine core and the KL programming language.
+        </para>
+
+        <para>
+          Our first example will compute the sum of the first N terms of the series <code>1/1 + 1/4 + 1/9+....</code> by computing all of the terms in parallel and them summing the results. This provides a simple example of using Fabric Engine for a parallel computation.
+        </para>
+
+        <para>
+          First, the source code for the Python source file:
+        </para>
+
+        <example>
+          <?dbfo keep-together="auto" ?>
+          <title><filename>Examples/Python/Tutorial/Series/Series-Display.py</filename></title>
+          <programlisting language="python">
+            <![CDATA[
+import fabric
+import sys
+
+fabricClient = fabric.createClient()
+
+# Take the number of terms to compute on the command
+# line default to 10
+
+numTerms = 10
+if len( sys.argv ) > 1:
+  numTerms = int( sys.argv[1] )
+
+# Create the operator that computes the value for
+# each term of the series
+
+computeTermOp = fabricClient.DG.createOperator("computeTermOp")
+computeTermOp.setSourceCode('computeTerm.kl', open('computeTerm.kl').read())
+computeTermOp.setEntryFunctionName('computeTerm')
+
+# Create the binding that binds the computeTermOp to the
+# terms node.  A binding binds the members of the node
+# to the arguments to the operator
+
+computeTermBinding = fabricClient.DG.createBinding()
+computeTermBinding.setOperator(computeTermOp)
+computeTermBinding.setParameterLayout([
+  "self.index",   # self.index is special: the index of the
+                  # slice being operated on
+  "self.result"
+])
+
+# Create the node that holds the terms in the series.
+# The number of terms is the "count" of the node,
+# ie. the SIMD multiplicity
+
+termsNode = fabricClient.DG.createNode("termsNode")
+termsNode.setCount(numTerms)
+termsNode.addMember("result", "Scalar")
+termsNode.bindings.append(computeTermBinding)
+
+# Create the operator that sums the terms of the series
+
+sumTermsOp = fabricClient.DG.createOperator("sumTermsOp")
+sumTermsOp.setSourceCode('sumTerms.kl', open('sumTerms.kl').read())
+sumTermsOp.setEntryFunctionName('sumTerms')
+
+# Create the binding that binds sumTermsOp to the members of
+# sumNode
+
+sumTermsBinding = fabricClient.DG.createBinding()
+sumTermsBinding.setOperator(sumTermsOp)
+sumTermsBinding.setParameterLayout([
+  "terms.count",      # terms.count is special: the slice count of
+                      # the dependency called "terms"
+  "terms.result<>",   # the <> syntax specifies that we want to bind
+                      # to all the slices at once
+  "self.result" 
+])
+
+# Create the node to hold the result, add termsNode as a
+# dependency and append the binding for sumTermsOp
+
+sumNode = fabricClient.DG.createNode("sumNode")
+sumNode.addMember("result", "Scalar")
+sumNode.setDependency(termsNode, "terms")
+sumNode.bindings.append(sumTermsBinding)
+
+# Evaluate the sumNode (which evalutes its dependecy, the
+# termsNode, first) and then print the result.
+
+sumNode.evaluate()
+print(sumNode.getData('result', 0))
+
+# Close the Fabric Engine client.  If the client isn't closed
+# then the Python module will keep this script alive!
+
+fabricClient.close()
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          Before we can do anything with the Fabric Core, we need to call <code>import fabric</code>. The result of the import statement is an object that allows you to create Fabric Core client connections by calling its <code>createClient()</code> method.
+        </para>
+
+        <note><para>
+          <emphasis>Important Note:</emphasis> As of this writing, it is not safe to perform multiple computations on the same client connection at the same time. As such, it is highly recommended for request server architectures (which we will demonstrate below) that one client connection is created per server request!
+        </para></note>
+
+        <para>
+          Once we've created the client connection, we use it to build a dependency graph. We load the operator source code from external files (whose contents are given below), create the operators and bindings, set the number of terms, perform the evaluation and print the result. Once we are done we close the client connection to tell the Fabric Engine core that we are done using it.
+        </para>
+
+        <note><para>
+          <emphasis>Important Note:</emphasis> If you do not close a client connection the Python script will never exit. For testing you can use Ctrl-C to close a Python script where you forgot to close the Fabric client but you should always make sure that the client is correctly closed in production scripts.
+        </para></note>
+
+        <para>
+          The source code for the two operators follow:
+        </para>
+
+        <example>
+          <title><filename>Examples/Python/Tutorial/Series/computeTerm.kl</filename></title>
+          <programlisting language="KL">
+            <![CDATA[
+operator computeTerm(
+  Size index,
+  io Scalar result
+  )
+{
+  result = 1.0 / (Scalar(index+1) * Scalar(index+1));
+}
+            ]]>
+          </programlisting>
+        </example>
+
+        <example>
+          <title><filename>Examples/Python/Tutorial/Series/sumTerms.kl</filename></title>
+          <programlisting language="KL">
+            <![CDATA[
+operator sumTerms(
+  Size numTerms,
+  io Scalar terms<>,
+  io Scalar result
+  )
+{
+  result = 0.0;
+  for (Size i=0; i<numTerms; ++i)
+    result += terms[i];
+}
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          And the output from running the program to request the first 1000 terms of the series:
+
+          <informalfigure>
+            <screen><![CDATA[
+user@host~$ python Series-Display.py 1000
+[FABRIC] Fabric Engine version 1.0.22-release
+1.64393484592
+user@host~$
+            ]]></screen>
+          </informalfigure>
+        </para>
+      </section>
+
+      <section xml:id="python.tutorial.http">
+        <title>An HTTP Server Using Fabric Engine</title>
+
+        <para>
+          We now modify our series computation example to show how it is easily transformed into an HTTP server for the same result.
+        </para>
+
+        <para>
+          The key modification that is made to the program that demonstrates Fabric Engine's ability to perform the computation asynchronously. To do so, we replace the call to <code>sumNode.evalute()</code> with a call to <code>sumNode.evaluateAync(...)</code>, passing a callback function that gets executed when the computation is finished. While the computation is being performed by Fabric Engine, control returns to Python which will continue to service other incoming HTTP requests. Fabric Engine provides generic, high-performance, parallel computation as an asynchronous service, similar to an asynchronous web service or database query.
+        </para>
+
+        <para>
+          The other modifications that are made are:
+
+          <itemizedlist>
+            <listitem><para>
+              We will use the Python BaseHTTPServer and pass the number of terms to compute as the GET variable <code>n</code>
+            </para></listitem>
+            <listitem><para>
+              In order to server multiple requests at once, we will create one Fabric Engine client connection per incoming HTTP request
+            </para></listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          The actual "meat" of the computation is exactly as before. The source code is:
+        </para>
+
+        <example>
+          <?dbfo keep-together="auto" ?>
+          <title><filename>Examples/Python/Tutorials/Series/Series-HTTP.py</filename></title>
+          <programlisting language="python">
+            <![CDATA[
+import fabric
+import BaseHTTPServer
+import sys
+import urlparse
+
+class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
+  def do_GET( self ):
+
+    query = urlparse.parse_qs(urlparse.urlparse(self.path).query)
+    numTerms = 10
+    if 'n' in query:
+      numTerms = int( query[ 'n' ][ 0 ] )
+
+    fabricClient = fabric.createClient()
+
+    # Create the operator that computes the value for
+    # each term of the series
+
+    computeTermOp = fabricClient.DG.createOperator("computeTermOp")
+    computeTermOp.setSourceCode('computeTerm.kl', open('computeTerm.kl').read())
+    computeTermOp.setEntryFunctionName('computeTerm')
+
+    # Create the binding that binds the computeTermOp to the
+    # terms node.  A binding binds the members of the node
+    # to the arguments to the operator
+
+    computeTermBinding = fabricClient.DG.createBinding()
+    computeTermBinding.setOperator(computeTermOp)
+    computeTermBinding.setParameterLayout([
+      "self.index",   # self.index is special: the index of the
+                      # slice being operated on
+      "self.result"
+    ])
+
+    # Create the node that holds the terms in the series.
+    # The number of terms is the "count" of the node,
+    # ie. the SIMD multiplicity
+
+    termsNode = fabricClient.DG.createNode("termsNode")
+    termsNode.setCount(numTerms)
+    termsNode.addMember("result", "Scalar")
+    termsNode.bindings.append(computeTermBinding)
+
+    # Create the operator that sums the terms of the series
+
+    sumTermsOp = fabricClient.DG.createOperator("sumTermsOp")
+    sumTermsOp.setSourceCode('sumTerms.kl', open('sumTerms.kl').read())
+    sumTermsOp.setEntryFunctionName('sumTerms')
+
+    # Create the binding that binds sumTermsOp to the members of
+    # sumNode
+
+    sumTermsBinding = fabricClient.DG.createBinding()
+    sumTermsBinding.setOperator(sumTermsOp)
+    sumTermsBinding.setParameterLayout([
+      "terms.count",      # terms.count is special: the slice count of
+                          # the dependency called "terms"
+      "terms.result<>",   # the <> syntax specifies that we want to bind
+                          # to all the slices at once
+      "self.result" 
+    ])
+
+    # Create the node to hold the result, add termsNode as a
+    # dependency and append the binding for sumTermsOp
+
+    sumNode = fabricClient.DG.createNode("sumNode")
+    sumNode.addMember("result", "Scalar")
+    sumNode.setDependency(termsNode, "terms")
+    sumNode.bindings.append(sumTermsBinding)
+
+    def callback():
+      # Return the result as the HTTP content
+
+      self.send_response( 200 )
+      self.send_header( 'Content-type', 'text/plain' )
+      self.end_headers()
+      self.wfile.write( str(sumNode.getData('result', 0)) + '\n' )
+
+      # Close the Fabric Engine client.  If the client isn't closed
+      # then the Fabric Python client will keep this script alive!
+
+      fabricClient.close()
+
+    # Evaluate the sumNode asynchronously.  The given
+    # callback is issue when the computation is done.
+
+    sumNode.evaluateAsync( callback )
+
+# Create the HTTP server
+port = 1337
+httpd = BaseHTTPServer.HTTPServer( ('', port), FabricHandler )
+print('Server running at http://127.0.0.1:' + str(port) + '/')
+httpd.serve_forever()
+            ]]>
+          </programlisting>
+        </example>
+
+        <para>
+          The code for the operators is exactly as before. When run, the HTTP server starts:
+
+          <informalfigure>
+            <screen><![CDATA[
+user@host~$ python Series-HTTP.py
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            ]]></screen>
+          </informalfigure>
+        </para>
+
+        <para>
+          From another command line, we can request computation, passing the number of terms as the <code>n</code> query parameter:
+
+          <informalfigure>
+            <screen><![CDATA[
+user@host~$ curl http://127.0.0.1:1337/?n=1000
+1.64393484592
+user@host~$
+            ]]></screen>
+          </informalfigure>
+        </para>
+      </section>
+
+      <section xml:id="python.tutorial.features">
+        <title>Supported and Unsupported Features of Fabric Engine Python Module</title>
+
+        <para>
+          Fabric Engine was originally developed as a browser plug-in that could be used to render high-end 3D effects inside of normal web pages. Many of the features that are available in the context of high-end browser 3D are not yet available or available differently when Fabric Engine is being used as a Python module.
+        </para>
+
+        <para>
+          Features that are not supported or that are partially supported:
+
+          <itemizedlist>
+            <listitem><para>
+              OpenGL viewports are not yet supported. It is expected that some sort of off-line rendering support and the possibility of creating a viewport will be made available in a future version of the Python module.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+
+      <section xml:id="python.tutorial.wheretogo">
+        <title>Where to Go from Here</title>
+
+        <para>
+          You have learned the basics of how to use Fabric Engine with Python and how to use it for asynchronous computation. As mentioned above, much more information can be obtained by reading the Fabric Engine Core Programming Guide and the Fabric Engine KL Programming Guide. You can find a few more examples of the use of Fabric Engine with Node.js in our <link xlink:href="https://github.com/fabric-engine/Benchmarks"><uri>benchmark repository</uri></link>. And finally, you can learn about using Fabric Engine for in-browser high-end 3D effects by learning about the Fabric JavaScript scene graph.
+        </para>
+      </section>
+
+    </section>
+  </chapter>
+
+  <chapter xml:id="extensions">
+    <title>Fabric Extensions</title>
+    <para>
+      Each module should also contain the Fabric Extensions. These are optional but expose additional functionality within Fabric and KL. To install the Extensions, look for a subfolder called <filename>Exts</filename> under the archive for your module that you downloaded and unpacked. The contents of this folder should be copied to a specific location depending on your operating system:
+
+      <itemizedlist>
+        <listitem><para>Windows: <filename>c:\Users\myuser\AppData\Roaming\Fabric\Exts</filename></para></listitem>
+        <listitem><para>Mac OS X: <filename>/Users/myuser/Library/Fabric/Exts</filename></para></listitem>
+        <listitem><para>Linux: <filename>/home/myuser/.fabric/Exts</filename></para></listitem>
+      </itemizedlist>
+
+      This folder may not exist and will need to be created (including any missing parent folders) if not.
+    </para>
+
+    <para>
+      After copying the files into the folder specified you can verify that they are seen by Fabric by running the command as specified in the Test section for your module. After the <code>createClient()</code> call, you should now see output that looks something like this:
+
+      <informalfigure xml:id="extensions.output">
+        <screen><![CDATA[
+>>> fabric.createClient()
+[FABRIC] Searching extension directory '/home/user/.fabric/Exts'
+[FABRIC] [FabricTEEM] Extension registered
+[FABRIC] [FabricOGL] Extension registered
+[FABRIC] [FabricMath] Extension registered
+[FABRIC] [FabricFILESTREAM] Extension registered
+[FABRIC] [FabricLIDAR] Extension registered
+[FABRIC] [FabricOBJ] Extension registered
+[FABRIC] [TimeSample] Extension registered
+[FABRIC] [FabricHDR] Extension registered
+[FABRIC] [FabricPNG] Extension registered
+[FABRIC] [FabricVIDEO] Extension registered
+[FABRIC] [FabricBULLET] Extension registered
+[FABRIC] [ExceptSample] Extension registered
+[FABRIC] [FabricFILESYSTEM] Extension registered
+[FABRIC] [FabricALEMBIC] Extension registered
+[FABRIC] [FabricCIMG] Extension registered
+[FABRIC] [FabricTGA] Extension registered
+[FABRIC] [FabricEXR] Extension registered
+[FABRIC] Searching extension directory '/usr/lib/fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/usr/lib/fabric/Exts'
+>>> 
+        ]]></screen>
+      </informalfigure>
+
+      If your output is similar to that then the extensions have been successfully installed.
+    </para>
+  </chapter>
+    
+</book>

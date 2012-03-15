@@ -113,11 +113,11 @@ FABRIC.require(["SG/SceneGraph",
         value: (1.0-(doneWeight/totalWeight))*100
       });
       if (nbRemaining===0) {
-        viewport.redraw();
         var errors = scene.getErrors();
         if (errors.length > 0) {
           throw (errors.toString());
         }
+        $('#loadingDialog').dialog('close');
         scene.animation.play();
         return true;
       }

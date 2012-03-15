@@ -21,6 +21,17 @@ FABRIC_CACHE_GENERATION='19'
 
 import os, platform, posixpath, glob, sys
 
+try:
+  buildOS = os.environ['FABRIC_BUILD_OS']
+  Export( 'buildOS' );
+  buildArch = os.environ['FABRIC_BUILD_ARCH']
+  Export( 'buildArch' )
+  buildType = os.environ['FABRIC_BUILD_TYPE']
+  Export( 'buildType' )
+except:
+  print "Must source fabric-build-env.sh first"
+  sys.exit(1)
+
 CacheDir( '.sconscache' )
 
 SetOption('num_jobs', int(os.environ.get('FABRIC_BUILD_JOBS', 1)))
@@ -31,6 +42,7 @@ FABRIC_BASE_VERSION = FABRIC_VERSION_MAJ + '.' + FABRIC_VERSION_MIN + '.' + FABR
 FABRIC_VERSION = FABRIC_BASE_VERSION + FABRIC_VERSION_SUFFIX
 
 env = Environment(
+  ENV = { 'PATH': os.environ['PATH'] },
   FABRIC_NAME = FABRIC_NAME,
   FABRIC_COMPANY_NAME = FABRIC_COMPANY_NAME,
   FABRIC_DESC = FABRIC_DESC,
@@ -43,7 +55,13 @@ env = Environment(
   FABRIC_CACHE_GENERATION = FABRIC_CACHE_GENERATION,
   FABRIC_COPYRIGHT = FABRIC_COPYRIGHT,
   FABRIC_BASE_VERSION = FABRIC_BASE_VERSION,
-  FABRIC_VERSION = FABRIC_VERSION
+  FABRIC_VERSION = FABRIC_VERSION,
+  FABRIC_BUILD_OS=buildOS,
+  FABRIC_BUILD_ARCH=buildArch,
+  FABRIC_BUILD_TYPE=buildType,
+  # TARGET_ARCH must be set when the Environment() is created in order
+  # to pull in correct x86 vs x64 paths on Windows
+  TARGET_ARCH = buildArch
   )
 
 env.Append(BUILDERS = {

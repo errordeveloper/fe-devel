@@ -675,6 +675,6 @@ Other file content: Test file body with appended content
           The FabricFILESYSTEM extension enables to browse and modify the local file system's folders. Because it enables an easy access to the local file system, this extension is not considered secure, and as such is not part of the Fabric browser plug-in, but can be downloaded and installed separately. See the FabricFILESYSTEM reference guide for more details about the provided functions.
         </para>
       </section>
-      </section>
+    </section>
   </chapter>
 </book>

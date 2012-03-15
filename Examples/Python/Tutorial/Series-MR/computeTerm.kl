@@ -1,0 +1,7 @@
+operator computeTerm(
+  io Scalar result,
+  Size index
+  )
+{
+  result = 1.0 / (Scalar(index+1) * Scalar(index+1));
+}
