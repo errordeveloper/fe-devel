@@ -142,10 +142,7 @@ namespace Fabric
       virtual void jsonNotify( std::vector<std::string> const &srcs, char const *cmdData, size_t cmdLength, Util::SimpleString const *arg = 0 );
       void unregisterClient( Client *client );
       
-      static std::string const &GetWrapFabricClientJSSource()
-      {
-        return s_wrapFabricClientJSSource;
-      }
+      static std::string const &GetWrapFabricClientJSSource();
       
       static EDK::Callbacks GetCallbackStruct();
 
@@ -201,9 +198,7 @@ namespace Fabric
       Util::SimpleString *m_pendingNotificationsJSON;
       JSON::Encoder *m_pendingNotificationsEncoder;
       JSON::ArrayEncoder *m_pendingNotificationsArrayEncoder;
-      
-      static std::string const s_wrapFabricClientJSSource;
-      
+     
       GC::Container m_gcContainer;
       MR::Interface m_mrInterface;
       KLC::Interface m_klcInterface;

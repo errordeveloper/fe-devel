@@ -1,0 +1,11 @@
+use FabricVIDEO;
+use FabricFILESYSTEM;
+
+operator openVideoFile(io String filePath, io VideoHandle video) {
+  if(!video.pointer) {
+    FabricFileHandleWrapper wrapper;
+    wrapper.setAbsolutePath(filePath);
+    FabricVIDEOOpenFileHandle(wrapper.getHandle(), video);
+    report("Loaded video handle, resolution "+video.width+"x"+video.height+".");
+  }
+}

@@ -38,3 +38,11 @@ Linux: ~/.fabric/Exts
 
 Note that you will need to restart any browsers running 
 Fabric for the extension to be loaded.
+
+Additional Information
+----------------------
+
+Additional information on the FileSystem Extension can be found online
+in the Developer Install Guide:
+
+http://documentation.fabric-engine.com/latest/FabricEngine-DeveloperInstallGuide.html

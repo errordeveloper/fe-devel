@@ -649,9 +649,17 @@ namespace Fabric
       }
     }
     
-    std::string const Context::s_wrapFabricClientJSSource(
+    std::string const &Context::GetWrapFabricClientJSSource()
+    {
+      static std::string s_wrapFabricClientJSSource;
+      if ( s_wrapFabricClientJSSource.empty() )
+      {
+        s_wrapFabricClientJSSource = 
 #include <Fabric/Core/DG/FABRIC.Wrappers.js.inc>
-);
+        ;
+      }
+      return s_wrapFabricClientJSSource;
+    }
 
     static void throwException( size_t length, char const *data )
     {

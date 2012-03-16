@@ -1,0 +1,7 @@
+use FabricVIDEO;
+
+operator writeVideoFrame(io VideoHandle video, io RGB pixels[], io Scalar time) {
+  if(video.pointer) {
+    FabricVIDEOWriteAllPixels(video,pixels);
+  }
+}

@@ -55,5 +55,4 @@ if sampleExtFiles:
 Export( 'browserExtFiles' )
 Export( 'extFiles' )
 
-Install( fabricExtsDistDir, extFiles )
-Alias( 'exts', extFiles )
+Alias( 'exts', Install( fabricExtsDistDir, extFiles ) )

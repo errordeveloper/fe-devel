@@ -42,7 +42,7 @@ fabricNodeAddOn = nodeEnv.Command(
   ])
 Export('fabricNodeAddOn')
 
-Alias('node', [fabricNodePackage, fabricNodeAddOn])
+Alias('node', [fabricNodePackage, fabricNodeAddOn, 'exts'])
 
 nodeModuleReadMe = nodeEnv.File('README.txt')
 Export('nodeModuleReadMe')

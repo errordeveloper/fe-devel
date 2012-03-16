@@ -27,7 +27,7 @@
 
 <!-- section numbering and depth -->
 <xsl:param name="section.autolabel" select="1"></xsl:param>
-<xsl:param name="section.autolabel.max.depth">4</xsl:param>
+<xsl:param name="section.autolabel.max.depth">5</xsl:param>
 <xsl:param name="section.label.includes.component.label">1</xsl:param>
 
 
@@ -71,7 +71,7 @@
 /appendix toc,title
 article/appendix  nop
 /article  toc,title
-book      toc,title,figure,table,example,equation
+book      toc,title,figure,example
 /chapter  toc,title
 part      title
 /preface  title
@@ -85,7 +85,7 @@ reference toc,title
 set       toc,title
 </xsl:param>
 
-<xsl:param name="toc.section.depth">2</xsl:param>
+<xsl:param name="toc.section.depth">3</xsl:param>
 
 <!-- fonts -->
 <xsl:param name="body.font.master">10</xsl:param>
@@ -106,7 +106,7 @@ set       toc,title
 <xsl:param name="region.after.extent">0.35in</xsl:param>
 <xsl:param name="page.margin.bottom">0.50in</xsl:param>
 <xsl:param name="body.margin.bottom">0.65in</xsl:param>
-<xsl:param name="double.sided">0</xsl:param>
+<xsl:param name="double.sided">1</xsl:param>
 <xsl:param name="body.start.indent">1pc</xsl:param>
 <xsl:param name="body.end.indent">1pc</xsl:param>
 
@@ -159,7 +159,7 @@ set       toc,title
     <xsl:attribute name="wrap-option">wrap</xsl:attribute>
     <xsl:attribute name="hyphenation-character">\</xsl:attribute>
     <xsl:attribute name="font-size">8pt</xsl:attribute>
-    <xsl:attribute name="keep-together.within-column">always</xsl:attribute>
+    <xsl:attribute name="keep-together.within-column">auto</xsl:attribute>
 </xsl:attribute-set>
 
 
@@ -178,7 +178,6 @@ set       toc,title
 <!-- border and shade to screen and programlisting -->
 
 <xsl:param name="shade.verbatim" select="1"/>
-
 <xsl:attribute-set name="shade.verbatim.style">
   <xsl:attribute name="background-color">#eeeeee</xsl:attribute>
   <xsl:attribute name="border-width">0.5pt</xsl:attribute>
@@ -186,7 +185,6 @@ set       toc,title
   <xsl:attribute name="border-color">#575757</xsl:attribute>
   <xsl:attribute name="padding">3pt</xsl:attribute>
   <xsl:attribute name="margin-left">2pt</xsl:attribute>
-  
 </xsl:attribute-set>
 
 
@@ -211,9 +209,21 @@ set       toc,title
 -->
 
 
+<xsl:template name="book.titlepage.recto">
+  <xsl:apply-templates mode="book.titlepage.verso.auto.mode" select="d:info/d:title"/>
+  <xsl:apply-templates mode="book.titlepage.verso.auto.mode" select="d:info/d:releaseinfo"/>
+  <xsl:apply-templates mode="book.titlepage.verso.auto.mode" select="d:info/d:copyright"/>
+</xsl:template>
+<xsl:template name="book.titlepage.verso">
+</xsl:template>
+
+<xsl:template name="initial.page.number">auto-odd</xsl:template>
+<xsl:template name="page.number.format">1</xsl:template>
+
 <!-- Header Layout -->
 
 <xsl:param name="header.column.widths">1 0 1</xsl:param>
+<xsl:param name="headers.on.blank.pages" select="1"></xsl:param>
 <xsl:template name="header.content">  
   <xsl:param name="pageclass" select="''"/>
   <xsl:param name="sequence" select="''"/>
@@ -221,11 +231,14 @@ set       toc,title
   <xsl:param name="gentext-key" select="''"/>
   <fo:block>
     <xsl:choose>
-      <xsl:when test="$position = 'right'">
+      <xsl:when test="$sequence = 'odd' and $position = 'right'">
         <xsl:apply-templates select="." mode="object.title.markup"/>
       </xsl:when>
-      <xsl:when test="$position = 'left'">
+      <xsl:when test="$sequence = 'even' and $position = 'left'">
         <xsl:value-of select="ancestor-or-self::d:book/d:info/d:title"/>
+      </xsl:when>
+      <xsl:when test="($sequence = 'odd' and $position = 'left') or ($sequence = 'even' and $position = 'right')">
+        <xsl:value-of select="ancestor-or-self::d:book/d:info/d:releaseinfo"/>
       </xsl:when>
     </xsl:choose>
   </fo:block>
@@ -235,6 +248,7 @@ set       toc,title
 <!-- Footer Layout -->
 
 <xsl:param name="footer.column.widths">1 0 1</xsl:param>
+<xsl:param name="footers.on.blank.pages" select="1"></xsl:param>
 <xsl:template name="footer.content">  
   <xsl:param name="pageclass" select="''"/>
   <xsl:param name="sequence" select="''"/>
@@ -242,10 +256,10 @@ set       toc,title
   <xsl:param name="gentext-key" select="''"/>
   <fo:block>
     <xsl:choose>
-      <xsl:when test="$position = 'right'">
+      <xsl:when test="($sequence = 'even' and $position = 'left') or ($sequence = 'odd' and $position = 'right')">
         <fo:page-number/>  
       </xsl:when>
-      <xsl:when test="$position = 'left'">
+      <xsl:when test="($sequence = 'odd' and $position = 'left') or ($sequence = 'even' and $position = 'right')">
         <xsl:text>Copyright </xsl:text>
         <!-- use xpath to grab the year - remember to prefix each node with d: -->
         <xsl:value-of select="ancestor-or-self::d:book/d:info/d:copyright/d:year"/>
