@@ -114,11 +114,11 @@ namespace Fabric
     void NamedObject::destroy()
     {
       RC::Handle<NamedObject> ensureWeLive( this );
-      Context::NamedObjectMap &namedObjectMap = context->getNamedObjectRegistry();
+      Context::NamedObjectMap &namedObjectMap = m_context->getNamedObjectRegistry();
       Context::NamedObjectMap::iterator it = namedObjectMap.find( getName() );
       if( it != namedObjectMap.end() )
         namedObjectMap.erase( it );
-      jsonNotify( "destroy", 7, "" );
+      jsonNotify( "destroy", 7 );
     }
   };
 };

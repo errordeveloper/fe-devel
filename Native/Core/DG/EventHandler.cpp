@@ -95,8 +95,11 @@ namespace Fabric
 
     void EventHandler::clearDependencies()
     {
-      for( ParentEventHandlers::it = m_parentEventHandlers.begin(); it != m_parentEventHandlers.end(); ++it )
-        EventHandler::removeChildEventHandler( this );
+      while( !m_parentEventHandlers.empty() )
+      {
+        EventHandler* parent = *(m_parentEventHandlers.begin());
+        parent->removeChildEventHandler( this );
+      }
 
       while ( !m_bindings.empty() )
       {
@@ -120,16 +123,6 @@ namespace Fabric
       m_preDescendBindings->removeOwner( this );
     }
 
-    void EventHandler::destroy()
-    {
-      while( !m_members.empty() )
-      {
-        std::string name = m_members.begin()->first;
-        removeMember( name );
-      }
-      NamedObject::destroy();
-    }
-      
     void EventHandler::addEvent( Event *event )
     {
       FABRIC_VERIFY( m_events.insert( event ).second );

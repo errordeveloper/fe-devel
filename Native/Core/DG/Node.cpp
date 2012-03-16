@@ -65,16 +65,16 @@ namespace Fabric
       m_bindingList->removeOwner( this );
     }
 
-    virtual void destroy()
+    void Node::destroy()
     {
       while( !m_eventHandlers.empty() )
       {
         EventHandler *eventHandler = *(m_eventHandlers.begin());
         EventHandler::Bindings const &bindings = eventHandler->getScopes();
 
-        for ( EventHandlers::Bindings::const_iterator it=bindings.begin(); it!=bindings.end(); ++it )
+        for ( EventHandler::Bindings::const_iterator it=bindings.begin(); it!=bindings.end(); ++it )
         {
-          if( it->second == this )
+          if( it->second == RC::Handle<Node>(this) )
           {
             std::string scopeName = it->first;
             eventHandler->removeScope( scopeName );
@@ -93,11 +93,11 @@ namespace Fabric
       while( !m_dependents.empty() )
       {
         Node *node = *(m_dependents.begin());
-        Dependencies const &dependencies = eventHandler->getDependencies();
+        Dependencies const &dependencies = node->getDependencies();
 
         for ( Dependencies::const_iterator it=dependencies.begin(); it!=dependencies.end(); ++it )
         {
-          if( it->second == this )
+          if( it->second == RC::Handle<Node>(this) )
           {
             std::string dependencyName = it->first;
             node->removeDependency( dependencyName );
