@@ -34,4 +34,5 @@ fi
 
 rexec ln "$LN_FLAGS" "$VERSION" "/fabric-distribution/stable" || error "If you are sure you want to replace the existing stable version, use the -f flag"
 rexec ln "$LN_FLAGS" "$DIST_DIR/bin" "/var/www/dist.stable.fabric-engine.com/$VERSION" || error
+rexec ln "$LN_FLAGS" "$DIST_DIR/bin" "/var/www/documentation.stable.fabric-engine.com/$VERSION" || error
 echo "Version $VERSION is now the STABLE version"

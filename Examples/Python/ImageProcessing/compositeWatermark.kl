@@ -1,0 +1,79 @@
+struct sharedDataType {
+  Size width;
+  Size height;
+  RGBA markPixels[];
+  Size markWidth;
+  Size markHeight;
+  Size offsetWidth;
+  Size offsetHeight;
+};
+
+function Byte clampByte(Scalar s) {
+  if(s < 0.0) return Byte(0);
+  if(s > 255.0) return Byte(255);
+  return Byte(s);
+}
+
+operator transformPixel(io RGB pixel, Size index, Size count, sharedDataType sharedData) {
+  Size x = index % sharedData.width;
+  Size y = (index - x) / sharedData.width;
+  if(x < sharedData.offsetWidth || y < sharedData.offsetHeight)
+     return;
+  x -= sharedData.offsetWidth;
+  y -= sharedData.offsetHeight;
+  if(x >= sharedData.markWidth || y >= sharedData.markHeight)
+    return;
+  Size markIndex = x + y * sharedData.markWidth;
+  Scalar alpha = Scalar(sharedData.markPixels[markIndex].r);
+  pixel.r = clampByte(Scalar(pixel.r) + alpha * 0.33);
+  pixel.g = clampByte(Scalar(pixel.g) + alpha * 0.33);
+  pixel.b = clampByte(Scalar(pixel.b) + alpha * 0.33);
+}
+
+operator compositeWatermark(
+  io VideoHandle outputVideo,
+  io VideoHandle inputVideo,
+  io RGB inputPixels[],
+  io RGB outputPixels[],
+  io RGBA waterMarkPixels[],
+  io Size waterMarkWidth,
+  io Size waterMarkHeight,
+  io Scalar offsetWidth,
+  io Scalar offsetHeight,
+  io Scalar directionWidth,
+  io Scalar directionHeight
+) {
+  if(!inputVideo.pointer || !outputVideo.pointer || !waterMarkPixels.size())
+    return;
+
+  offsetWidth += directionWidth;
+  offsetHeight += directionHeight;
+  if(offsetWidth < 0.0) {
+    directionWidth *= -1.0;
+    offsetWidth = 0.0;
+  } else if(Size(offsetWidth) >= inputVideo.width - waterMarkWidth) {
+    directionWidth *= -1.0;
+    offsetWidth = Scalar(inputVideo.width - waterMarkWidth - 1);
+  }
+  if(offsetHeight < 0.0) {
+    directionHeight *= -1.0;
+    offsetHeight = 0.0;
+  } else if(Size(offsetHeight) >= inputVideo.height - waterMarkHeight) {
+    directionHeight *= -1.0;
+    offsetHeight = Scalar(inputVideo.height - waterMarkHeight - 1);
+  }
+
+  sharedDataType sharedData;
+  sharedData.width = inputVideo.width;
+  sharedData.height = inputVideo.height;
+  sharedData.markPixels = waterMarkPixels;
+  sharedData.markWidth = waterMarkWidth;
+  sharedData.markHeight = waterMarkHeight;
+  sharedData.offsetWidth = Size(offsetWidth);
+  sharedData.offsetHeight = Size(offsetHeight);
+  ValueProducer<sharedDataType> sharedDataProducer = createConstValue(sharedData);
+
+  ArrayProducer<RGB> pixelsProducer = createConstArray(inputPixels);
+  ArrayProducer<RGB> compositeProducer = createArrayTransform(pixelsProducer, transformPixel,sharedDataProducer);
+  outputPixels = compositeProducer.produce();
+}

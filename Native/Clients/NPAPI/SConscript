@@ -9,7 +9,9 @@ npapiSources = [
   buildObject
 ]
 
-SConscript(
+npapiTarget = SConscript(
   dirs=[buildOS],
   exports=['npapiSources']
   )
+
+Alias('npapi', [npapiTarget, 'exts'])

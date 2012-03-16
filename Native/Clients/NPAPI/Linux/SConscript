@@ -26,4 +26,5 @@ npapiSources.append( Glob('*.cpp') )
 npapiPluginName = 'FabricPlugin'
 npapiPlugin = npapiEnv.LoadableModule( 'FabricPlugin', npapiSources )
 
-Alias( 'npapi', Install( npapiDistDir, npapiPlugin ) )
+npapiTarget = Install( npapiDistDir, npapiPlugin )
+Return('npapiTarget')

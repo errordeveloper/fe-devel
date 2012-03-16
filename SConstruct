@@ -2,14 +2,88 @@
 # Copyright 2010-2011 Fabric Engine Inc. All rights reserved.
 #
 
+# [pzion 20110726] !!!!!!!!!!!!!!!!!!!!
+# When you change the version number,
+# don't forget to consider the expiry
+# and cache generation!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+FABRIC_NAME='Fabric Engine'
+FABRIC_COMPANY_NAME='Fabric Engine Inc.'
+FABRIC_DESC='High Performance Computing for the Web'
+FABRIC_COPYRIGHT_YEARS='2010-2012'
+FABRIC_URL="http://fabric-engine.com"
+FABRIC_VERSION_MAJ='1'
+FABRIC_VERSION_MIN='0'
+FABRIC_VERSION_REV='22'
+FABRIC_VERSION_SUFFIX='-release'
+FABRIC_CACHE_GENERATION='19'
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 import os, platform, posixpath, glob, sys
+
+try:
+  buildOS = os.environ['FABRIC_BUILD_OS']
+  Export( 'buildOS' );
+  buildArch = os.environ['FABRIC_BUILD_ARCH']
+  Export( 'buildArch' )
+  buildType = os.environ['FABRIC_BUILD_TYPE']
+  Export( 'buildType' )
+except:
+  print "Must source fabric-build-env.sh first"
+  sys.exit(1)
 
 CacheDir( '.sconscache' )
 
 SetOption('num_jobs', int(os.environ.get('FABRIC_BUILD_JOBS', 1)))
 print "Running with -j" + str(GetOption('num_jobs'))
 
-env = Environment()
+FABRIC_COPYRIGHT='Copyright ' + FABRIC_COPYRIGHT_YEARS + ' ' + FABRIC_COMPANY_NAME + '  All rights reserved.'
+FABRIC_BASE_VERSION = FABRIC_VERSION_MAJ + '.' + FABRIC_VERSION_MIN + '.' + FABRIC_VERSION_REV
+FABRIC_VERSION = FABRIC_BASE_VERSION + FABRIC_VERSION_SUFFIX
+
+env = Environment(
+  ENV = { 'PATH': os.environ['PATH'] },
+  FABRIC_NAME = FABRIC_NAME,
+  FABRIC_COMPANY_NAME = FABRIC_COMPANY_NAME,
+  FABRIC_DESC = FABRIC_DESC,
+  FABRIC_COPYRIGHT_YEARS = FABRIC_COPYRIGHT_YEARS,
+  FABRIC_URL = FABRIC_URL,
+  FABRIC_VERSION_MAJ = FABRIC_VERSION_MAJ,
+  FABRIC_VERSION_MIN = FABRIC_VERSION_MIN,
+  FABRIC_VERSION_REV = FABRIC_VERSION_REV,
+  FABRIC_VERSION_SUFFIX = FABRIC_VERSION_SUFFIX,
+  FABRIC_CACHE_GENERATION = FABRIC_CACHE_GENERATION,
+  FABRIC_COPYRIGHT = FABRIC_COPYRIGHT,
+  FABRIC_BASE_VERSION = FABRIC_BASE_VERSION,
+  FABRIC_VERSION = FABRIC_VERSION,
+  FABRIC_BUILD_OS=buildOS,
+  FABRIC_BUILD_ARCH=buildArch,
+  FABRIC_BUILD_TYPE=buildType,
+  # TARGET_ARCH must be set when the Environment() is created in order
+  # to pull in correct x86 vs x64 paths on Windows
+  TARGET_ARCH = buildArch
+  )
+
+env.Append(BUILDERS = {
+  'SubstBuildVars': Builder( action = "\
+    sed \
+      -e 's/{{FABRIC_COMPANY_NAME}}/"+FABRIC_COMPANY_NAME+"/g' \
+      -e 's/{{FABRIC_NAME}}/"+FABRIC_NAME+"/g' \
+      -e 's/{{FABRIC_DESC}}/"+FABRIC_DESC+"/g' \
+      -e 's/{{FABRIC_COPYRIGHT_YEARS}}/"+FABRIC_COPYRIGHT_YEARS+"/g' \
+      -e 's/{{FABRIC_COPYRIGHT}}/"+FABRIC_COPYRIGHT+"/g' \
+      -e 's,{{FABRIC_URL}},"+FABRIC_URL+",g' \
+      -e 's/{{FABRIC_VERSION_MAJ}}/"+FABRIC_VERSION_MAJ+"/g' \
+      -e 's/{{FABRIC_VERSION_MIN}}/"+FABRIC_VERSION_MIN+"/g' \
+      -e 's/{{FABRIC_VERSION_REV}}/"+FABRIC_VERSION_REV+"/g' \
+      -e 's/{{FABRIC_VERSION_SUFFIX}}/"+FABRIC_VERSION_SUFFIX+"/g' \
+      -e 's/{{FABRIC_VERSION}}/"+FABRIC_VERSION+"/g' \
+      -e 's/{{FABRIC_CACHE_GENERATION}}/"+FABRIC_CACHE_GENERATION+"/g' \
+      -e 's/{{FABRIC_BASE_VERSION}}/"+FABRIC_BASE_VERSION+"/g' \
+      -e 's/{{FABRIC_VERSION}}/"+FABRIC_VERSION+"/g' \
+    <$SOURCE >$TARGET \
+  " )
+  })
 
 buildDir = '#build'
 Export('buildDir')
@@ -29,6 +103,7 @@ nativeTargets = [
   ['cliClients', 'All command-line clients'],
   ['cli', 'All command-line clients and tools'],
   ['npapi', 'The NPAPI plugin browser client'],
+  ['exts', 'All the extensions'],
   ['all', 'All clients and tools (command-line and browser)'],
   ['dist', 'Build packages for distribution'],
   ['upload', 'Upload distribution packages to dist.fabric-engine.com']
@@ -41,7 +116,8 @@ for nativeTarget in nativeTargets:
 docsTargets = [
   ['klpgPDF', 'KLPG in PDF form'],
   ['iopgPDF', 'IOPG in PDF form'],
-  ['guides', 'All guides']
+  ['guides', 'All guides'],
+  ['uploadDocs', 'Upload built documentation to dist.fabric-engine.com']
   ]
 for docsTarget in docsTargets:
   if docsTarget[0] in COMMAND_LINE_TARGETS:

@@ -6,7 +6,7 @@
 # with the MIME type application/x-xpinstall
 
 import os
-Import( 'baseEnv', 'buildOS', 'buildArch', 'FABRIC_BASE_VERSION', 'FABRIC_VERSION', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'generateDistZip', 'browserExtFiles', 'generateDistZip' )
+Import( 'baseEnv', 'buildOS', 'buildArch', 'FABRIC_VERSION', 'archDistDir', 'fabricExtsDistDir', 'npapiDistDir', 'generateDistZip', 'browserExtFiles', 'generateDistZip' )
 
 installerName = 'FabricEngine-FirefoxExtension-' + buildOS + '-' + buildArch + '-' + FABRIC_VERSION
 

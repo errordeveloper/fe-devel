@@ -41,7 +41,8 @@ Command(
     Copy( "$TARGET", "$SOURCE" )
   ])
 
-Alias( 'npapi', [
+npapiTarget = [
   npapiPluginBundlePlist,
   npapiPluginBundleBinary,
-] )
+]
+Return('npapiTarget')
