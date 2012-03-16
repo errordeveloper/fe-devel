@@ -47,6 +47,7 @@ namespace Fabric
     protected:
     
       NamedObject( std::string const &friendlyName, RC::Handle<Context> const &context );
+      virtual void destroy();
       
       void jsonNotify( char const *cmdData, size_t cmdLength, Util::SimpleString const *argJSON = 0 ) const;
       void jsonNotifyDelta( Util::SimpleString const &deltaJSON ) const;

@@ -65,6 +65,50 @@ namespace Fabric
       m_bindingList->removeOwner( this );
     }
 
+    virtual void destroy()
+    {
+      while( !m_eventHandlers.empty() )
+      {
+        EventHandler *eventHandler = *(m_eventHandlers.begin());
+        EventHandler::Bindings const &bindings = eventHandler->getScopes();
+
+        for ( EventHandlers::Bindings::const_iterator it=bindings.begin(); it!=bindings.end(); ++it )
+        {
+          if( it->second == this )
+          {
+            std::string scopeName = it->first;
+            eventHandler->removeScope( scopeName );
+            break;//"it" has been invalidated
+          }
+        }
+      }
+      m_bindingList->clear();
+
+      while( !m_dependencies.empty() )
+      {
+        std::string dependencyName = m_dependencies.begin()->first;
+        removeDependency( dependencyName );
+      }
+
+      while( !m_dependents.empty() )
+      {
+        Node *node = *(m_dependents.begin());
+        Dependencies const &dependencies = eventHandler->getDependencies();
+
+        for ( Dependencies::const_iterator it=dependencies.begin(); it!=dependencies.end(); ++it )
+        {
+          if( it->second == this )
+          {
+            std::string dependencyName = it->first;
+            node->removeDependency( dependencyName );
+            break;//"it" has been invalidated
+          }
+        }
+      }
+
+      Container::destroy();
+    }
+
     bool Node::isDirty() const {
       return m_dirty;
     }

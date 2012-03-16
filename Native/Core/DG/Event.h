@@ -71,6 +71,7 @@ namespace Fabric
     
       Event( std::string const &name, RC::Handle<Context> const &context );
       ~Event();
+      virtual void destroy();
       
       virtual void setOutOfDate();
     
@@ -92,7 +93,9 @@ namespace Fabric
       void collectErrors( Scope *scope );
 
     private:
-    
+
+      void clearEventHandlers();
+
       Context *m_context;
     
       EventHandlers m_eventHandlers;

@@ -57,6 +57,14 @@ namespace Fabric
       releaseFile();
     }
 
+    virtual void destroy()
+    {
+      if( m_resourceManagerWeak && m_inProgress )
+        m_resourceManagerWeak.makeStrong()->cancelRequests( this );
+      releaseFile();
+      return Node::destroy();
+    }
+
     void ResourceLoadNode::releaseFile()
     {
       if( m_resourceManagerWeak && !m_file.empty() )

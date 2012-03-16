@@ -110,5 +110,15 @@ namespace Fabric
     {
       jg.makeInteger( 0 );
     }
+
+    void NamedObject::destroy()
+    {
+      RC::Handle<NamedObject> ensureWeLive( this );
+      Context::NamedObjectMap &namedObjectMap = context->getNamedObjectRegistry();
+      Context::NamedObjectMap::iterator it = namedObjectMap.find( getName() );
+      if( it != namedObjectMap.end() )
+        namedObjectMap.erase( it );
+      jsonNotify( "destroy", 7, "" );
+    }
   };
 };

@@ -70,15 +70,26 @@ namespace Fabric
     
     Event::~Event()
     {
+      clearEventHandlers();
+      delete m_runState;
+    }
+      
+    void Event::destroy()
+    {
+      clearEventHandlers();
+      Container::destroy();
+    }
+
+    void Event::clearEventHandlers()
+    {
       for ( size_t i=0; i<m_eventHandlers.size(); ++i )
       {
         RC::Handle<EventHandler> const &eventHandler = m_eventHandlers[i];
         eventHandler->removeEvent( this );
       }
-
-      delete m_runState;
+      m_eventHandlers.clear();
     }
-      
+
     void Event::setOutOfDate()
     {
     }

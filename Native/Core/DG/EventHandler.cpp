@@ -83,7 +83,21 @@ namespace Fabric
       delete m_runState;
       
       FABRIC_ASSERT( m_events.empty() );
-      
+      FABRIC_ASSERT( m_parentEventHandlers.empty() );
+      clearDependencies();
+    }
+
+    void EventHandler::destroy()
+    {
+      clearDependencies();
+      Container::destroy();
+    }
+
+    void EventHandler::clearDependencies()
+    {
+      for( ParentEventHandlers::it = m_parentEventHandlers.begin(); it != m_parentEventHandlers.end(); ++it )
+        EventHandler::removeChildEventHandler( this );
+
       while ( !m_bindings.empty() )
       {
         Util::UnorderedMap< std::string, RC::Handle<Node> >::iterator it = m_bindings.begin();
@@ -96,8 +110,6 @@ namespace Fabric
         node->m_eventHandlers.erase( jt );
       }
       
-      FABRIC_ASSERT( m_parentEventHandlers.empty() );
-      
       for ( size_t i=0; i<m_childEventHandlers.size(); ++i )
       {
         RC::Handle<EventHandler> const &childEventHandler = m_childEventHandlers[i];
@@ -106,6 +118,16 @@ namespace Fabric
       
       m_postDescendBindings->removeOwner( this );
       m_preDescendBindings->removeOwner( this );
+    }
+
+    void EventHandler::destroy()
+    {
+      while( !m_members.empty() )
+      {
+        std::string name = m_members.begin()->first;
+        removeMember( name );
+      }
+      NamedObject::destroy();
     }
       
     void EventHandler::addEvent( Event *event )

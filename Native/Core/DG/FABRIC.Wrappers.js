@@ -390,6 +390,20 @@ function (originalFabricClient, logCallback, debugLogCallback) {
         delete result.name;
       };
 
+      result.detach = function() {
+        var value = {
+          entry: DG.namedObjects[name],
+          name: result.name
+        }
+        result.destroy();
+        return value;
+      };
+
+      result.reattach = function(value) {
+        DG.namedObjects[value.name] = value.entry;
+        result.name = value.name;
+      };
+
       result.handle = function(cmd, arg) {
         switch (cmd) {
           case 'delta':
@@ -550,6 +564,15 @@ function (originalFabricClient, logCallback, debugLogCallback) {
         else {
           parentHandleNotification(cmd, arg);
         }
+      };
+
+      result.pub.destroy = function() {
+        var name = result.name;
+        var value = result.detach();
+        //Don't call result.queueCommand as it needs result.name (removed by detach)
+        DG.queueCommand([name], 'destroy', function() {
+          result.reattach( value );
+        });
       };
 
       result.pub.getCount = function() {

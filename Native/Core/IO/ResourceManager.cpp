@@ -46,7 +46,8 @@ namespace Fabric
         //Note: we don't delete the PendingRequestInfo* structs as there might be some pending async calls; leak instead of crash in this exceptional race condition.
         //[JeromeCG 20111221] Calling onFailure here is unsafe; might try to fire back a notif in the DG context... Commenting out until a good solution...
         //requestInfo->m_client->onFailure( ("Resource request for \"" + requestInfo->m_url + "\" failed because of termination").c_str(), requestInfo->m_clientUserData );
-        requestInfo->m_client->release();
+        if(requestInfo->m_client)
+          requestInfo->m_client->release();
         m_pendingRequests.pop_front();
       }
     }
@@ -119,11 +120,26 @@ namespace Fabric
       }
     }
 
+    void ResourceManager::cancelRequests( ResourceClient* client )
+    {
+      //For now, keep it simple: don't really cancel the request, but at least release the client reference.
+      for( std::list< void* >::iterator it = m_pendingRequests.begin(); it != m_pendingRequests.end(); ++it )
+      {
+        PendingRequestInfo* requestInfo = (PendingRequestInfo*)(*it);
+        if( requestInfo->m_client == client )
+        {
+          requestInfo->m_client->release();
+          requestInfo->m_client = 0;
+        }
+      }
+    }
+
     void ResourceManager::onCompletedRequest( void *userData )
     {
       PendingRequestInfo* requestInfo = (PendingRequestInfo*)userData;
       m_pendingRequests.erase( requestInfo->m_pendingRequestsListIter );
-      requestInfo->m_client->release();
+      if(requestInfo->m_client)
+        requestInfo->m_client->release();
       delete requestInfo;
     }
 
@@ -144,7 +160,8 @@ namespace Fabric
 
       try
       {
-        requestInfo->m_client->onProgress( mimeType, done, total, requestInfo->m_clientUserData );
+        if(requestInfo->m_client)
+          requestInfo->m_client->onProgress( mimeType, done, total, requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
@@ -168,7 +185,8 @@ namespace Fabric
       RC::Handle<ResourceManager> keepAlive( requestInfo->m_manager.makeStrong() );
       try
       {
-        requestInfo->m_client->onData( offset, size, data, requestInfo->m_clientUserData );
+        if(requestInfo->m_client)
+          requestInfo->m_client->onData( offset, size, data, requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
@@ -196,7 +214,8 @@ namespace Fabric
 
       try
       {
-        requestInfo->m_client->onFile( fileName, requestInfo->m_clientUserData );
+        if(requestInfo->m_client)
+          requestInfo->m_client->onFile( fileName, requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
@@ -219,7 +238,8 @@ namespace Fabric
       RC::Handle<ResourceManager> keepAlive( requestInfo->m_manager.makeStrong() );
       try
       {
-        requestInfo->m_client->onFailure( ( "Error while processing request for URL \"" + requestInfo->m_url + "\": " + errorDesc).c_str(), requestInfo->m_clientUserData );
+        if(requestInfo->m_client)
+          requestInfo->m_client->onFailure( ( "Error while processing request for URL \"" + requestInfo->m_url + "\": " + errorDesc).c_str(), requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
