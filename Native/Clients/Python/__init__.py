@@ -101,6 +101,7 @@ class _ACTIONITEM:
   RUN_SCHEDULED_CALLBACKS = 'runScheduledCallbacks'
   CREATE_CLIENT = 'createClient'
   FREE_CLIENT = 'freeClient'
+  RUN_CALLBACK = 'runCallback'
 
   def __init__( self, client = None, action = None, data = None ):
     self.client = client
@@ -190,6 +191,8 @@ class _ASYNCTHREAD( threading.Thread ):
       self.__signalClient( q.client )
     elif q.action == _ACTIONITEM.DEFERRED_SIGNAL:
       self.fabric.actionQueue.put( _ACTIONITEM( q.client, _ACTIONITEM.SIGNAL ) )
+    elif q.action == _ACTIONITEM.RUN_CALLBACK:
+      self.__runCallback( q.data )
     else:
       raise Exception( 'unrecognized action: "' + q.action + '"' )
 
@@ -219,6 +222,11 @@ class _ASYNCTHREAD( threading.Thread ):
 
   def __setJSONNotifyCallback( self, client, callback ):
     self.__clib.setJSONNotifyCallback( client.getClientPtr(), callback )
+
+  def __runCallback( self, data ):
+    callback = data[ 'callback' ]
+    arg = data[ 'arg' ]
+    callback( arg )
 
   def __executeCommands( self, client, data ):
     commands = data[ 'commands' ]
@@ -326,7 +334,7 @@ class _CLIENT:
     # once the notification callback is set, the client will notify us with
     # all its initial state, we will synchronously wait for this before we
     # start running client commands
-    self.__queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
+    self.queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
     self.waitForAsyncData()
 
   def running( self ):
@@ -341,7 +349,7 @@ class _CLIENT:
   def __processOneNotification( self, timeout = None ):
     self.fabric.asyncThread.executeNextAction( timeout )
 
-  def __queueAction( self, cmd, data = None, forceQueue = False ):
+  def queueAction( self, cmd, data = None, forceQueue = False ):
     action = _ACTIONITEM( self, cmd, data )
     if self.fabric.asyncThread.shouldQueue() or forceQueue:
       self.fabric.actionQueue.put( action )
@@ -349,7 +357,7 @@ class _CLIENT:
       self.fabric.asyncThread.executeAction( action )
 
   def __runScheduledCallbacks( self ):
-    self.__queueAction( _ACTIONITEM.RUN_SCHEDULED_CALLBACKS )
+    self.queueAction( _ACTIONITEM.RUN_SCHEDULED_CALLBACKS )
 
   def waitForClose( self ):
     if self.fabric.async:
@@ -365,12 +373,12 @@ class _CLIENT:
     return self.__cClientPtr
 
   def __createFabricClient( self ):
-    self.__queueAction( _ACTIONITEM.CREATE_CLIENT )
+    self.queueAction( _ACTIONITEM.CREATE_CLIENT )
     return self.waitForAsyncData()
 
   def close( self ):
     self.__closed = True
-    self.__queueAction( _ACTIONITEM.FREE_CLIENT )
+    self.queueAction( _ACTIONITEM.FREE_CLIENT )
 
     # wake up the client if it's waiting for close
     self.dataEvent.set()
@@ -400,7 +408,7 @@ class _CLIENT:
     if self.fabric.asyncThread.shouldQueue():
       self.asyncData = None
       self.dataEvent.clear()
-      self.__queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
+      self.queueAction( _ACTIONITEM.DEFERRED_SIGNAL )
       self.dataEvent.wait()
 
     if type( self.asyncData ) is Exception:
@@ -432,7 +440,7 @@ class _CLIENT:
       'unwinds': unwinds,
       'callbacks': callbacks
     }
-    self.__queueAction( _ACTIONITEM.EXECUTE, data )
+    self.queueAction( _ACTIONITEM.EXECUTE, data )
     self.waitForAsyncData()
 
   def _handleStateNotification( self, newState ):
@@ -495,7 +503,7 @@ class _CLIENT:
     for i in range( 0, len( notifications ) ):
       # always force notifications to queue, we never run these synchronously
       # otherwise we can run into recursive calls in and out of core
-      self.__queueAction( _ACTIONITEM.NOTIFY, notifications[ i ], True )
+      self.queueAction( _ACTIONITEM.NOTIFY, notifications[ i ] )
 
   def __getNotifyCallback( self ):
     # use a closure here so that 'self' is maintained without us
@@ -510,7 +518,7 @@ class _CLIENT:
     return self.__CFUNCTYPE_notifyCallback
 
   def __registerNotifyCallback( self ):
-    self.__queueAction( _ACTIONITEM.SET_JSON_NOTIFY_CALLBACK, self.__getNotifyCallback() )
+    self.queueAction( _ACTIONITEM.SET_JSON_NOTIFY_CALLBACK, self.__getNotifyCallback() )
 
 class _GCOBJECT( object ):
   def __init__( self, nsobj ):
@@ -548,7 +556,10 @@ class _GCOBJECT( object ):
   def _route( self, src, cmd, arg ):
     callback = self.__callbacks[ arg[ 'serial' ] ]
     del self.__callbacks[ arg[ 'serial' ] ]
-    callback( arg[ 'result' ] )
+    self._nsobj._client.queueAction( _ACTIONITEM.RUN_CALLBACK, {
+      'callback': callback,
+      'arg': arg[ 'result' ]
+    }, True )
 
   def getID( self ):
     return self.__id
@@ -1274,13 +1285,22 @@ class _DG( _NAMESPACE ):
     def _handle( self, cmd, arg ):
       if cmd == 'resourceLoadSuccess':
         for i in range( 0, len( self.__onloadSuccessCallbacks ) ):
-          self.__onloadSuccessCallbacks[ i ]( self )
+          self._dg._client.queueAction( _ACTIONITEM.RUN_CALLBACK, {
+            'callback': self.__onloadSuccessCallbacks[ i ],
+            'arg': self
+          }, True )
       elif cmd == 'resourceLoadProgress':
         for i in range( 0, len( self.__onloadProgressCallbacks ) ):
-          self.__onloadProgressCallbacks[ i ]( self, arg )
+          self._dg._client.queueAction( _ACTIONITEM.RUN_CALLBACK, {
+            'callback': self.__onloadProgressCallbacks[ i ],
+            'arg': self
+          }, True )
       elif cmd == 'resourceLoadFailure':
         for i in range( 0, len( self.__onloadFailureCallbacks ) ):
-          self.__onloadFailureCallbacks[ i ]( self )
+          self._dg._client.queueAction( _ACTIONITEM.RUN_CALLBACK, {
+            'callback': self.__onloadFailureCallbacks[ i ],
+            'arg': self
+          }, True )
       else:
         super( _DG._RESOURCELOADNODE, self )._handle( cmd, arg )
 
