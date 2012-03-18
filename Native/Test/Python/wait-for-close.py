@@ -3,6 +3,7 @@
 #
 
 import fabric
+import time
 
 fabricClient = fabric.createClient()
 
@@ -16,6 +17,8 @@ ap = fabricClient.MR.createArrayGenerator(
   )
 
 def callback1( result ):
+  # this may get called too fast unless we pause here
+  time.sleep(1)
   print 'closing...'
   fabricClient.close()
 
