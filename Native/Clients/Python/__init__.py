@@ -565,6 +565,18 @@ class _DG( _NAMESPACE ):
       del self._dg._namedObjects[ self.__name ]
       self.__name = None
   
+    def _detach( self ):
+      value = {
+        'entry': self._dg._namedObjects[ self.__name ],
+        'name': self.__name
+      }
+      _destroy( self );
+      return value;
+
+    def _reattach( self, value ):
+      self._dg._namedObjects[ value.name ] = value.entry;
+      self.__name = value.name;
+
     def _handle( self, cmd, arg ):
       if cmd == 'delta':
         self._patch( arg )
@@ -816,6 +828,14 @@ class _DG( _NAMESPACE ):
         # FIXME invalidate cache here, see pzion comment in node.js
       else:
         super( _DG._CONTAINER, self )._handle( cmd, arg )
+
+    def destroy( self ):
+      oldName = self.__name
+      oldValue = self._detach()
+      def __unwind():
+        self._reattach( oldValue )
+      //Don't call self._nObjQueueCommand as it needs self.__name (removed by detach)
+      self._dg._objQueueCommand( [ self.__name ], 'destroy', None, __unwind )
 
     def getCount( self ):
       if self.__sizeNeedRefresh:

@@ -570,7 +570,7 @@ function (originalFabricClient, logCallback, debugLogCallback) {
         var name = result.name;
         var value = result.detach();
         //Don't call result.queueCommand as it needs result.name (removed by detach)
-        DG.queueCommand([name], 'destroy', function() {
+        DG.queueCommand([name], 'destroy', undefined, function() {
           result.reattach( value );
         });
       };
