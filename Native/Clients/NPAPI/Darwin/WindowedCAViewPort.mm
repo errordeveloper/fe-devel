@@ -106,14 +106,15 @@ namespace Fabric
   Fabric::NPAPI::ContextToCGLContextMap::const_iterator it = Fabric::NPAPI::s_contextToCGLContextMap.find( context );
   if ( it == Fabric::NPAPI::s_contextToCGLContextMap.end() )
   {
-    CGLContextObj cglContextObj = [super copyCGLContextForPixelFormat:pixelFormat];
-    CGLRetainContext( cglContextObj );
+    CGLContextObj cglContextObj = [super copyCGLContextForPixelFormat:pixelFormat];//New context is implicitely retained
+    CGLRetainContext( cglContextObj );//Additional retain until erased from s_contextToCGLContextMap
     it = Fabric::NPAPI::s_contextToCGLContextMap.insert( Fabric::NPAPI::ContextToCGLContextMap::value_type( context, cglContextObj ) ).first;
   }
-
-  CGLContextObj ctx = it->second;
-  CGLRetainContext( ctx );
-  return ctx;  
+  else
+  {
+    CGLRetainContext( it->second );//Explicitely retain to balance with releaseCGLContext
+  }
+  return it->second;  
 }
 
 -(void) releaseCGLContext:(CGLContextObj)ctx
@@ -281,9 +282,6 @@ namespace Fabric
       {
         case NPPVpluginCoreAnimationLayer:
           *((CALayer **)value) = m_npCAOpenGLLayer;
-          // [pzion 20110303] We shouldn't need to retain this here, but we crash
-          // in Safari if we don't.
-          [m_npCAOpenGLLayer retain];
           return NPERR_NO_ERROR;
 
         default:

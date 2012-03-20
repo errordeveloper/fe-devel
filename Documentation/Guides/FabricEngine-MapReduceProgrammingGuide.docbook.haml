@@ -30,7 +30,7 @@
           Dependency graphs cannot be created or modified from within KL itself.
 
     %para
-      To solve these problems, Fabric provides a separate model of parallel programming called "Map-Reduce" that is inspired by models of parallelism provided by functional programming languages and commercial MapReduce frameworks for large-scale computing. The map-reduce functionality is available both within KL and from JavaScript, it is simple to use, provides highly-parallel performance and incurs a minimal memory overhead.
+      To solve these problems, Fabric provides a separate model of parallel programming called "Map-Reduce" that is inspired by models of parallelism provided by functional programming languages and commercial MapReduce frameworks for large-scale computing. The map-reduce functionality is available both within KL and from the host language such as JavaScript or Python. It is simple to use, provides highly-parallel performance and incurs a minimal memory overhead.
 
     %section
       %title Background
@@ -66,7 +66,7 @@
       %title Concepts
 
       %para
-        Map-reduce in Fabric has a more generic and powerful implementation that arises from a core set of concepts and operations. The traditional map-reduce case is then just a specific case of what can be done with the Fabric map-reduce framework. All of the concepts and operations are available both within KL programs and are accessible using the JavaScript interface to the Fabric core.
+        Map-reduce in Fabric has a more generic and powerful implementation that arises from a core set of concepts and operations. The traditional map-reduce case is then just a specific case of what can be done with the Fabric map-reduce framework. All of the concepts and operations are available both within KL programs and are accessible using the host language interface to the Fabric core.
 
       %section
         %title Producers
@@ -228,7 +228,7 @@
     %title KL Implementation
 
     %para
-      As mentioned previously, the map-reduce model is available both directly in KL and directly from JavaScript. Using the map-reduce model directly from within KL allows for simple multithreading directly from within KL itself, without the need to create structures within JavaScript.
+      As mentioned previously, the map-reduce model is available both directly in KL and directly from JavaScript or Python. Using the map-reduce model directly from within KL allows for simple multithreading directly from within KL itself, without the need to create structures within the host language.
 
     %section
       %title KL Constant Producers

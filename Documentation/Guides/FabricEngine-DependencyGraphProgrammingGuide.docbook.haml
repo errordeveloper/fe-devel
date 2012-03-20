@@ -16,10 +16,10 @@
     %title Introduction
 
     %para
-      Fabric Engine is a platform for enabling high-performance computing inside of dynamic languages, running from both the command line and in the browser.  A Fabric Engine application can enable its high-performance components by creating and manipulating dependency graphs and assciated event graphs using the dynamic language interface that Fabric Engine provides.  In many cases, such as through use of Fabric's JavaScript or Python scene graph, this work is done by a higher-level framework that provides specific functionality to applications; however, in some cases it may be necessary to work directly with the core of Fabric Engine to extend these frameworks, create new frameworks, or to lower level computation.
+      Fabric Engine is a platform for enabling high-performance computing inside of dynamic languages, running from both the command line and in the browser.  A Fabric Engine application can enable its high-performance components by creating and manipulating dependency graphs and associated event graphs using the dynamic language interface that Fabric Engine provides.  In many cases, such as through use of Fabric's JavaScript or Python scene graph, this work is done by a higher-level framework that provides specific functionality to applications; however, in some cases it may be necessary to work directly with the core of Fabric Engine to extend these frameworks, create new frameworks, or to do lower level computation.
 
     %para
-      This document explains the concepts that are central Fabric Engine's dependency graph model of parallel computation, and explains in detail how to work directly with this model of Fabric Engine.
+      This document explains the concepts that are central to Fabric Engine's dependency graph model of parallel computation, and explains in detail how to work directly with this model of Fabric Engine.
 
     %section
       %title Playing with the Fabric Engine Core
@@ -44,7 +44,8 @@
         %para
           Follow the instructions at
           %uri
-            %link(xlink:href='http://documentation.fabric-engine.com/latest/FabricEngine-LanguageBindingsReference.pdf')
+            %link(xlink:href='http://documentation.fabric-engine.com/latest/FabricEngine-LanguageBindingsReference.pdf' condition='pdf')
+            %link(xlink:href='http://documentation.fabric-engine.com/latest/FabricEngine-LanguageBindingsReference.html' condition='html')
           to install the Fabric Engine Node.js and/or Python module on your system and use Fabric Engine from the command line.
     %section
       %title Examples
@@ -142,7 +143,10 @@
           %term members
           %listitem
             %para
-              An object containing the members to be contained in the type.  The key names are the member names for the type and the key values are the names of already-registered types or built-in KL types (see the <link xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.pdf">KL Programming Guide</link> for more information on atomic types).
+              An object containing the members to be contained in the type.  The key names are the member names for the type and the key values are the names of already-registered types or built-in KL types (see the
+              <link condition="pdf" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.pdf">KL Programming Guide</link>
+              <link condition="html" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.html">KL Programming Guide</link>
+              for more information on atomic types).
               %note
                 %para
                   It is possible to append brackets to obtain variable- or fixed-length arrays as members, eg. <code>Scalar[2][2]</code>, <code>Scalar[][]</code> and <code>Scalar[2][][4]</code>.
@@ -290,7 +294,7 @@
         %simpara Python:
         %screen<
           :preserve
-            >>> node = FABRIC.DG.createNode('verticies')
+            >>> node = FABRIC.DG.createNode('vertices')
             >>> 
 
       %para
@@ -315,7 +319,7 @@
       %title Node Members
 
       %para      
-        A Node has zero or more <glossterm>members</glossterm>.  Each member has a name (a non-empty string), a type (refered to as the name of a registered type), and, optionally, a default value.  Members can be added to nodes with the <code>addMember</code> method and an object with details of all the members can be retrieved with the <code>getMembers</code> method.
+        A Node has zero or more <glossterm>members</glossterm>.  Each member has a name (a non-empty string), a type (referred to as the name of a registered type), and, optionally, a default value.  Members can be added to nodes with the <code>addMember</code> method and an object with details of all the members can be retrieved with the <code>getMembers</code> method.
 
       %example
         %title Adding and getting node members
@@ -427,7 +431,7 @@
             %para You cannot create a dependency loop between Nodes, ie. you cannot have Node A dependent on Node B at the same time as Node B is dependent on Node A.
 
       %para
-        Dependencies are added using the <code>addDependency</code> method, and dependencies of a node are retrieved using the <code>getDependencies</code> method.
+        Dependencies are added using the <code>setDependency</code> method, and dependencies of a node are retrieved using the <code>getDependencies</code> method.
 
       %example
         %title Node dependencies
@@ -555,7 +559,7 @@
     %title Event Graphs, Events and EventHandlers
 
     %para
-      Fabric provides a method of traversing the Nodes in the dependency graph through objects called Events and EventHandlers.  An Event can be fired, which will then fire a list of EventHandlers; each EventHandler has a list of child EventHandlers which are visited in turn, and each EventHandler has a list of *pre-descend operators* that are executed before the child EventHandlers are visited and a list of *post-descend operators* that are executed after the child EventHandlers are visit.  Each event handler can also bind to Nodes in the dependency graph to access from its Operators.  A typical use of Events and EventHandlers is for OpenGL rendering.  When an OpenGL viewport is created, a "redraw Event" is associated with it; this event is automatically fired whenever the viewport needs to be redrawn.  The EventHandlers that "chain" off of the redraw Event can then issue OpenGL calls to draw the viewport contents.
+      Fabric provides a method of traversing the Nodes in the dependency graph through objects called Events and EventHandlers.  An Event can be fired, which will then fire a list of EventHandlers; each EventHandler has a list of child EventHandlers which are visited in turn, and each EventHandler has a list of <glossterm>pre-descend operators</glossterm> that are executed before the child EventHandlers are visited and a list of <glossterm>post-descend operators</glossterm> that are executed after the child EventHandlers are visit.  Each event handler can also bind to Nodes in the dependency graph to access from its Operators.  A typical use of Events and EventHandlers is for OpenGL rendering.  When an OpenGL viewport is created, a "redraw Event" is associated with it; this event is automatically fired whenever the viewport needs to be redrawn.  The EventHandlers that "chain" off of the redraw Event can then issue OpenGL calls to draw the viewport contents.
 
     %section
       %title Event Creation
@@ -1032,7 +1036,10 @@
       %title Setting the Operator Entry Point
 
       %para
-        In addition to source code, an operator needs an entry point, which is the name of the KL operator (see the <link xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.pdf">KL Programming Guide</link>) in the source code that should be called when the operator is invoked.  Note that this <emphasis>must</emphasis> be an KL operator and not a KL function.  The entry point is specified by calling the <code>setEntryFunctionName</code> method.  By specifying the source code and entry point separately, it is possible to have multiple possible entry points into the same source code.
+        In addition to source code, an operator needs an entry point, which is the name of the KL operator (see the
+        <link condition="pdf" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.pdf">KL Programming Guide</link>
+        <link condition="html" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.html">KL Programming Guide</link>
+        ) in the source code that should be called when the operator is invoked.  Note that this <emphasis>must</emphasis> be an KL operator and not a KL function.  The entry point is specified by calling the <code>setEntryFunctionName</code> method.  By specifying the source code and entry point separately, it is possible to have multiple possible entry points into the same source code.
 
       %example
         :plain
