@@ -145,7 +145,7 @@ namespace Fabric
           data += allocSize;
         }
       }
-      elementDesc->disposeDatas( datas, count, allocSize );
+      elementDesc->disposeDatas( count, datas, allocSize );
     }
     
     struct ProduceJSONAsyncCallbackData_0

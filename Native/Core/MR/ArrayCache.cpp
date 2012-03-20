@@ -55,7 +55,8 @@ namespace Fabric
       {
         Util::Mutex::Lock mutexLock( m_mutex );
         size_t allocSize = m_inputElementDesc->getAllocSize();
-        m_inputElementDesc->disposeDatas( &m_cacheData[0], m_cacheData.size() / allocSize, allocSize );
+        size_t count = m_cacheData.size() / allocSize;
+        m_inputElementDesc->disposeDatas( count, &m_cacheData[0], allocSize );
         m_cacheData.resize(0);
         m_cacheDataExists.resize(0);
         m_cacheCountExists = false;
