@@ -22,7 +22,7 @@
     <title>Alembic Extension Guide</title>
     <para>This extension adds a new type to KL, called the <emphasis role="italic"
         >AlembicHandle</emphasis>. It is used to load Alembic.IO files. The AlembicHandle
-      represents a file handle to an Alembic file, and can be used to gather data.<table
+      represents a file handle to an Alembic file, and can be used to retrieve data.<table
         frame="none" colsep="0" rowsep="0">
         <title>AlembicHandle</title>
         <tgroup cols="2">
@@ -1411,13 +1411,13 @@
     <para>The OGL extension provides all valid OpenGL functions to KL. It acts as a wrapper for
       Glew (http://glew.sourceforge.net/), essentially. With the OGL extension you can use any
       OpenGL call inside KL. For example:</para>
-    <programlisting language="JavaScript">use FabricOGL;
+    <programlisting language="kl">use FabricOGL;
 
 glClearColor(1.0, 0.0, 0.0, 1.0);
 glEnable(GL_CULL_FACE);
 glPatchParameteri(GL_PATCH_VERTICES, 3);
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);</programlisting>
-    <para>Please see any of the SceneGraph KL files for references of this. All of tehe
+    <para>Please see any of the SceneGraph KL files for references of this. All of the
       SceneGraph's rendering has been implemented using this extension.</para>
   </chapter>
   <chapter>

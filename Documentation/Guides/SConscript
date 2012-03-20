@@ -69,7 +69,7 @@ def Docbook(env, inputDocbookXMLs):
 		"$SOURCE"
 		]]
 		
-	xsltAction = [[
+	xsltAction = [
 		'java', '-Xss1024K', '-Xmx512m',
 		'-cp', saxonClassPath,
  		'-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl',
@@ -80,7 +80,7 @@ def Docbook(env, inputDocbookXMLs):
 		'-o', '$TARGET',
 		'$SOURCES',
 		'use.extensions=1'
-		]]
+		]
 
 	outputs = [htmlCSS]
 	for inputDocbookXML in inputDocbookXMLs:
@@ -95,7 +95,7 @@ def Docbook(env, inputDocbookXMLs):
 		pdfFO = env.Command(
 			inputBasename + ".pdf.fo",
 			[templatedInputDocbookXML, pdfXSL],
-			xsltAction
+			[xsltAction + ['profile.condition="pdf"']]
 			)
 		if os.path.isfile(validateProgram):
 			env.AddPreAction(pdfFO, validateAction)
@@ -129,7 +129,7 @@ def Docbook(env, inputDocbookXMLs):
 		html = env.Command(
 			inputBasename + ".html",
 			[templatedInputDocbookXML, htmlXSL],
-			xsltAction
+			[xsltAction + ['profile.condition="html"']]
 			)
 		if os.path.isfile(validateProgram):
 			env.AddPreAction(html, validateAction)
@@ -194,7 +194,7 @@ if 'uploadDocs' in COMMAND_LINE_TARGETS:
 		guides,
 		[
 			['ssh', remoteHost, 'mkdir', '-p', remoteDir],
-			['rsync', '-e', 'ssh', '--progress', '--recursive', str(docsDistDir), remoteHost+':'+remoteDir+'/']
+			['rsync', '-e', 'ssh', '--progress', '--recursive', '--delete', str(docsDistDir), remoteHost+':'+remoteDir+'/']
 			]
 		))
 	Alias('uploadDocs', uploadDocs)
