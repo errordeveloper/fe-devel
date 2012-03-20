@@ -47,7 +47,9 @@ namespace Fabric
       RC::Handle<CG::Context> context = moduleBuilder.getContext();
       RC::Handle<CG::Manager> cgManager = moduleBuilder.getManager();
 
-      size_t numArgs = getParams( cgManager )->size();
+      RC::ConstHandle<ParamVector> params = getParams( cgManager );
+      CG::AdapterVector paramAdapters = params->getAdapters( cgManager );
+      size_t numArgs = params->size();
       std::vector<llvm::Type const *> argTypes;
       llvm::Type const *int64Type = llvm::Type::getInt64Ty( context->getLLVMContext() );
       llvm::Type const *ptrType = llvm::Type::getInt8PtrTy( context->getLLVMContext() );
@@ -55,8 +57,8 @@ namespace Fabric
       llvm::Type const *int64ArrayType = llvm::ArrayType::get( int64Type, numArgs );
       argTypes.push_back( int64Type ); // start
       argTypes.push_back( int64Type ); // count
-      argTypes.push_back( ptrArrayType ); // bases
-      argTypes.push_back( int64ArrayType ); // strides
+      argTypes.push_back( llvm::PointerType::getUnqual( ptrArrayType ) ); // bases
+      argTypes.push_back( llvm::PointerType::getUnqual( int64ArrayType ) ); // strides
 
       llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
 
@@ -70,28 +72,21 @@ namespace Fabric
         llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 1 );
 
         func = llvm::cast<llvm::Function>( moduleBuilder->getOrInsertFunction( name, funcType, attrListPtr ) );
-        //func->setLinkage( llvm::GlobalValue::PrivateLinkage );
 
         CG::FunctionBuilder functionBuilder( moduleBuilder, funcType, func );
         llvm::Argument *start = functionBuilder[0];
         start->setName( "start" );
-        //arg1->addAttr( llvm::Attribute::NoCapture );
         llvm::Argument *count = functionBuilder[1];
         count->setName( "count" );
-        //arg2->addAttr( llvm::Attribute::NoCapture );
         llvm::Argument *bases = functionBuilder[2];
         bases->setName( "bases" );
         llvm::Argument *strides = functionBuilder[3];
         strides->setName( "strides" );
 
         CG::BasicBlockBuilder bbb( functionBuilder );
-
         llvm::BasicBlock *entryBB = functionBuilder.createBasicBlock( "entry" );
         llvm::BasicBlock *loopCmpBB = functionBuilder.createBasicBlock( "loopCmp" );
         llvm::BasicBlock *loopBodyBB = functionBuilder.createBasicBlock( "loopBody" );
-        llvm::BasicBlock *argsLoopCmpBB = functionBuilder.createBasicBlock( "argsLoopCmp" );
-        llvm::BasicBlock *argsLoopBodyBB = functionBuilder.createBasicBlock( "argsLoopBody" );
-        llvm::BasicBlock *argsDoneBB = functionBuilder.createBasicBlock( "argsDone" );
         llvm::BasicBlock *doneBB = functionBuilder.createBasicBlock( "done" );
 
         bbb->SetInsertPoint( entryBB );
@@ -107,16 +102,6 @@ namespace Fabric
 
         llvm::Value *endRValue = bbb->CreateAdd( startRValue, countRValue, "endRValue" );
 
-        llvm::Value *i = sizeAdapter->llvmAlloca( bbb, "i" );
-        sizeAdapter->llvmAssign( bbb, i, startRValue );
-
-        bbb->SetInsertPoint( loopCmpBB );
-        bbb->CreateCondBr( bbb->CreateICmpULT( sizeAdapter->llvmLValueToRValue( bbb, i ), countRValue ), loopBodyBB, doneBB );
-
-        bbb->SetInsertPoint( loopBodyBB );
-        llvm::Value *nexti = bbb->CreateAdd( i, oneRValue, "nexti" );
-        sizeAdapter->llvmAssign( bbb, i, sizeAdapter->llvmLValueToRValue( bbb, nexti ) );
-
         /*
         for (int index=start; index<start+count; index++)
         {
@@ -124,43 +109,58 @@ namespace Fabric
           {
             args.push( bases[argIndex] + index*strides[argIndex] );
           }
+          bbb->CreateCall( realOp, args );
         }
-        //bbb->CreateCall( realOp, NULL );
         */
 
         llvm::Value *indexLValue = sizeAdapter->llvmAlloca( bbb, "indexLValue" );
         sizeAdapter->llvmAssign( bbb, indexLValue, startRValue );
-        bbb->CreateBr( argsLoopCmpBB );
+        bbb->CreateBr( loopCmpBB );
 
-        bbb->SetInsertPoint( argsLoopCmpBB );
-        bbb->CreateCondBr( bbb->CreateICmpULT( sizeAdapter->llvmLValueToRValue( bbb, indexLValue ), endRValue ), argsLoopBodyBB, argsDoneBB );
+        bbb->SetInsertPoint( loopCmpBB );
+        bbb->CreateCondBr( bbb->CreateICmpULT( sizeAdapter->llvmLValueToRValue( bbb, indexLValue ), endRValue ), loopBodyBB, doneBB );
 
-        bbb->SetInsertPoint( argsLoopBodyBB );
+        bbb->SetInsertPoint( loopBodyBB );
 
-        // XXX need cleanup
-        llvm::Value *nextIndexLValue = bbb->CreateAdd( indexLValue, oneRValue, "nextIndexLValue" );
-        sizeAdapter->llvmAssign( bbb, indexLValue, sizeAdapter->llvmLValueToRValue( bbb, nextIndexLValue ) );
+        // XXX indexLValue should be an rValue
         llvm::Function *realOp = llvm::cast<llvm::Function>( moduleBuilder->getFunction( getSymbolName( cgManager ) ) );
         std::vector<llvm::Value *>args;
         for (int argIndex=0; argIndex<numArgs; argIndex++)
         {
           // bases[argIndex] + index*strides[argIndex]
           llvm::Value *argIndexRValue = sizeAdapter->llvmConst( context, argIndex );
-          llvm::Value *argBaseLValue = bbb->CreateGEP( basesLValue, argIndexRValue );
-          llvm::Value *argBaseArrayLValue = bbb->CreateLoad( argBaseLValue );
-          llvm::Value *strideLValue = bbb->CreateGEP( stridesLValue, argIndexRValue );
+          std::vector<llvm::Value *> argArrayIdx;
+          argArrayIdx.push_back( zeroRValue );
+          argArrayIdx.push_back( argIndexRValue );
+
+          llvm::Value *argBaseLValue = bbb->CreateGEP( basesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argBaseLValue" );
+          llvm::Value *argStrideLValue = bbb->CreateGEP( stridesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argStrideLValue" );
+
+          llvm::Value *argBaseData = bbb->CreateLoad( argBaseLValue, "argBaseData" );
           llvm::Value *stepRValue = bbb->CreateMul(
-            sizeAdapter->llvmLValueToRValue( bbb, strideLValue ),
-            sizeAdapter->llvmLValueToRValue( bbb, indexLValue )
+            sizeAdapter->llvmLValueToRValue( bbb, argStrideLValue ),
+            sizeAdapter->llvmLValueToRValue( bbb, indexLValue ),
+            "stepRValue"
           );
-          llvm::Value *argLValue = bbb->CreateAdd( argBaseArrayLValue, stepRValue, "argLValue" );
-          args.push_back( argLValue );
+
+          llvm::Value *argLValue = bbb->CreateGEP( argBaseData, stepRValue, "argLValue" );
+          llvm::Value *typedDataLValue = bbb->CreatePointerCast(
+            argLValue,
+            llvm::PointerType::getUnqual(
+              paramAdapters[argIndex]->llvmRawType( context )
+            ),
+            "typedDataLValue"
+          );
+          args.push_back( bbb->CreateLoad( typedDataLValue, "typedDataRValue" ) );
         }
         bbb->CreateCall( realOp, args.begin(), args.end() );
 
-        bbb->CreateBr( argsLoopCmpBB );
-
-        bbb->SetInsertPoint( argsDoneBB );
+        llvm::Value *nextIndexRValue = bbb->CreateAdd(
+          sizeAdapter->llvmLValueToRValue( bbb, indexLValue ),
+          oneRValue,
+          "nextIndexLValue"
+        );
+        sizeAdapter->llvmAssign( bbb, indexLValue,  nextIndexRValue );
         bbb->CreateBr( loopCmpBB );
 
         bbb->SetInsertPoint( doneBB );
