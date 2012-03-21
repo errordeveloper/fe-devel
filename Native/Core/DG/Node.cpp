@@ -67,14 +67,14 @@ namespace Fabric
 
     void Node::destroy()
     {
-      while( !m_eventHandlers.empty() )
+      while ( !m_eventHandlers.empty() )
       {
         EventHandler *eventHandler = *(m_eventHandlers.begin());
         EventHandler::Bindings const &bindings = eventHandler->getScopes();
 
         for ( EventHandler::Bindings::const_iterator it=bindings.begin(); it!=bindings.end(); ++it )
         {
-          if( it->second == RC::Handle<Node>(this) )
+          if ( it->second == RC::Handle<Node>(this) )
           {
             std::string scopeName = it->first;
             eventHandler->removeScope( scopeName );
@@ -84,20 +84,20 @@ namespace Fabric
       }
       m_bindingList->clear();
 
-      while( !m_dependencies.empty() )
+      while ( !m_dependencies.empty() )
       {
         std::string dependencyName = m_dependencies.begin()->first;
         removeDependency( dependencyName );
       }
 
-      while( !m_dependents.empty() )
+      while ( !m_dependents.empty() )
       {
         Node *node = *(m_dependents.begin());
         Dependencies const &dependencies = node->getDependencies();
 
         for ( Dependencies::const_iterator it=dependencies.begin(); it!=dependencies.end(); ++it )
         {
-          if( it->second == RC::Handle<Node>(this) )
+          if ( it->second == RC::Handle<Node>(this) )
           {
             std::string dependencyName = it->first;
             node->removeDependency( dependencyName );
@@ -235,7 +235,7 @@ namespace Fabric
     
     void Node::addScopeList( RC::Handle<BindingList> const &opList )
     {
-      if( opList.isNull() )
+      if ( opList.isNull() )
         throw Exception( "no operator list given" );
       
       if ( m_bindingList )
@@ -322,7 +322,7 @@ namespace Fabric
 
           size_t oldCount = size();
           opParallelCall->executeParallel( m_context->getLogCollector(), m_context, binding->getMainThreadOnly() );
-          if( oldCount != size() )
+          if ( oldCount != size() )
           {
             for ( size_t j=0; j<numBindings; ++j )
               m_runState->m_evaluateParallelCallsPerOperator[j] = 0;
@@ -386,13 +386,13 @@ namespace Fabric
     
     void Node::propagateMarkForRecompileImpl( unsigned generation )
     {
-      for( Dependencies::const_iterator it=m_dependencies.begin(); it!=m_dependencies.end(); ++it )
+      for ( Dependencies::const_iterator it=m_dependencies.begin(); it!=m_dependencies.end(); ++it )
       {
         RC::Handle<Node> const &dependency = it->second;
         dependency->markForRecompile( generation );
       }
       
-      for( Dependents::const_iterator it=m_dependents.begin(); it!=m_dependents.end(); ++it )
+      for ( Dependents::const_iterator it=m_dependents.begin(); it!=m_dependents.end(); ++it )
       {
         RC::Handle<Node> const &dependent = *it;
         dependent->markForRecompile( generation );
@@ -411,7 +411,7 @@ namespace Fabric
       // to refresh our direct dependents becaue they are the only 
       // compiled objects which can currently have handles to our
       // member data
-      for( Dependents::const_iterator it=m_dependents.begin(); it!=m_dependents.end(); ++it )
+      for ( Dependents::const_iterator it=m_dependents.begin(); it!=m_dependents.end(); ++it )
       {
         RC::Handle<Node> const &dependent = *it;
         dependent->markForRefresh( generation );
@@ -451,7 +451,7 @@ namespace Fabric
         m_runState->canEvaluate = getErrors().empty();
         if ( m_runState->canEvaluate )
         {
-          for( Dependencies::const_iterator it=m_dependencies.begin(); it!=m_dependencies.end(); ++it )
+          for ( Dependencies::const_iterator it=m_dependencies.begin(); it!=m_dependencies.end(); ++it )
           {
             RC::Handle<Node> const &dependency = it->second;
             if ( !dependency->canExecute() )

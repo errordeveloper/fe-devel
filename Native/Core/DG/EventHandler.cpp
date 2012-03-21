@@ -43,7 +43,7 @@ namespace Fabric
       }
       
       SelectedNodeList *selectedNodes = (SelectedNodeList*)userdata;
-      if(m_selectParallelCall && selectedNodes )
+      if ( m_selectParallelCall && selectedNodes )
       {
         m_selectParallelCall->executeSerial( m_context );
         if ( m_shouldSelect ){
@@ -92,7 +92,7 @@ namespace Fabric
     void EventHandler::destroy()
     {
       //First, explicitely remove childrenEventHandlers (sends notifications)
-      while( !m_childEventHandlers.empty() )
+      while ( !m_childEventHandlers.empty() )
       {
         RC::Handle<EventHandler> child = *(m_childEventHandlers.begin());
         removeChildEventHandler( child );
@@ -103,13 +103,13 @@ namespace Fabric
 
     void EventHandler::clearDependencies()
     {
-      while( !m_parentEventHandlers.empty() )
+      while ( !m_parentEventHandlers.empty() )
       {
         EventHandler* parent = *(m_parentEventHandlers.begin());
         parent->removeChildEventHandler( this );
       }
 
-      while( !m_events.empty() )
+      while ( !m_events.empty() )
       {
         Event* event = *(m_events.begin());
         event->removeEventHandler( this );
@@ -299,7 +299,7 @@ namespace Fabric
     
     void EventHandler::setPreDescendBindingList( RC::Handle<BindingList> opList )
     {
-      if( opList.isNull() )
+      if ( opList.isNull() )
         throw Exception( "no operator list given" );
       
       m_preDescendBindings->removeOwner( this );
@@ -309,7 +309,7 @@ namespace Fabric
     
     void EventHandler::setPostDescendBindingList( RC::Handle<BindingList> opList )
     {
-      if( opList.isNull() )
+      if ( opList.isNull() )
         throw Exception( "no operator list given" );
       
       m_postDescendBindings->removeOwner( this );

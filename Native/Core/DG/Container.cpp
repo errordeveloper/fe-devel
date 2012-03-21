@@ -131,7 +131,7 @@ namespace Fabric
     
     Container::~Container()
     {
-      if( m_rtContainerData )
+      if ( m_rtContainerData )
       {
         RC::ConstHandle<RT::ContainerDesc> desc = m_context->getRTManager()->getContainerDesc();
         desc->disposeData( m_rtContainerData );
@@ -141,7 +141,7 @@ namespace Fabric
 
     void Container::destroy()
     {
-      while( !m_members.empty() )
+      while ( !m_members.empty() )
       {
         std::string name = m_members.begin()->first;
         removeMember( name );
@@ -215,7 +215,7 @@ namespace Fabric
 
     void *Container::getRTContainerData()
     {
-      if( !m_rtContainerData )
+      if ( !m_rtContainerData )
       {
         RC::ConstHandle<RT::ContainerDesc> desc = m_context->getRTManager()->getContainerDesc();
       
@@ -1056,7 +1056,7 @@ namespace Fabric
       FabricResourceWrapper resource( m_context->getRTManager(), (void*)member->getImmutableElementData( 0 ) );
 
       std::string dataExternalLocation = resource.getDataExternalLocation();
-      if( dataExternalLocation.empty() )
+      if ( dataExternalLocation.empty() )
         m_context->getIOManager()->getFileHandleManager()->putFile( handle, resource.getDataSize(), resource.getDataPtr(), false );
       else
         m_context->getIOManager()->getFileHandleManager()->copyFile( dataExternalLocation, handle );

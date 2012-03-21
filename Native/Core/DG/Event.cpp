@@ -118,12 +118,12 @@ namespace Fabric
         throw Exception( "event handler is null" );
 
       EventHandlers::iterator it;
-      for( it = m_eventHandlers.begin(); it != m_eventHandlers.end(); ++it )
+      for ( it = m_eventHandlers.begin(); it != m_eventHandlers.end(); ++it )
       {
-        if( *it == eventHandler )
+        if ( *it == eventHandler )
           break;
       }
-      if( it == m_eventHandlers.end() )
+      if ( it == m_eventHandlers.end() )
         throw Exception( "event handler not found" );
 
       (*it)->removeEvent( this );
@@ -158,9 +158,8 @@ namespace Fabric
     
     void Event::select( SelectedNodeList &selectedNodes ) const
     {
-      if(!m_selectorType){
+      if ( !m_selectorType )
         throw Exception( "select type not defined" );
-      }
       PrepareForExecution( m_context );
       fire( 0, &selectedNodes );
     }
