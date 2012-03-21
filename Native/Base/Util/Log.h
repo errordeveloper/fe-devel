@@ -37,7 +37,7 @@ void FABRIC_WRITE_CSTR( char const *data, size_t length );
 inline void FABRIC_LOG_CSTR( char const *data, char const* header = "[FABRIC] " )
 {
   char buf[LOG_MAXBUFLENGTH+1];
-  int length = snprintf(buf, LOG_MAXBUFLENGTH, "%s %s\n", header, data);
+  int length = snprintf(buf, LOG_MAXBUFLENGTH, "%s%s\n", header, data);
   if ( length > LOG_MAXBUFLENGTH )
     length = LOG_MAXBUFLENGTH;
   buf[length] = '\0';
