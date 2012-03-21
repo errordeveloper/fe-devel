@@ -30,6 +30,7 @@ namespace Fabric
         std::string const &returnTypeName,
         std::string const &thisTypeName,
         std::string const &methodName,
+        CG::Usage thisUsage,
         RC::ConstHandle<ParamVector> const &params,
         std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body
@@ -47,6 +48,7 @@ namespace Fabric
         std::string const &returnTypeName,
         std::string const &thisTypeName,
         std::string const &methodName,
+        CG::Usage thisUsage,
         RC::ConstHandle<ParamVector> const &params,
         std::string const *symbolName,
         RC::ConstHandle<CompoundStatement> const &body

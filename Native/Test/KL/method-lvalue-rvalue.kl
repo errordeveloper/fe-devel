@@ -1,0 +1,45 @@
+struct Vec2 {
+  Float64 x;
+  Float64 y;
+};
+
+function Vec2(in Float64 x, in Float64 y) {
+  this.x = x;
+  this.y = y;
+}
+
+function Vec2.getComponents?(io Float64 x, io Float64 y) {
+  x = this.x;
+  y = this.y;
+}
+
+function Float64 Vec2.normSq() {
+  return this.x*this.x + this.y*this.y;
+}
+
+function Float64 Vec2.norm() {
+  return sqrt(this.normSq());
+}
+
+function Vec2./=(in Float64 value) {
+  this.x /= value;
+  this.y /= value;
+}
+
+function Float64 Vec2.normalizeAndReturnOldNorm!() {
+  Float64 oldNorm = this.norm();
+  this /= oldNorm;
+  return oldNorm;
+}
+
+operator entry() {
+  Vec2 vec2(3.14, 2.71);
+
+  Float64 x, y;
+  vec2.getComponents(x, y);
+  report("vec2.getComponents: x=" + x + ", y=" + y);
+
+  report("vec2.normalizeAndReturnOldNorm returned " + vec2.normalizeAndReturnOldNorm());
+  report("vec2 is now " + vec2);
+}
+

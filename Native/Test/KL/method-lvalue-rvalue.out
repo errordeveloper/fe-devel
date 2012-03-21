@@ -1,0 +1,3 @@
+vec2.getComponents: x=3.14, y=2.71
+vec2.normalizeAndReturnOldNorm returned 4.147734321289154
+vec2 is now {x:0.7570398093926274,y:0.6533687526923632}

@@ -21,12 +21,13 @@ namespace Fabric
       std::string const &returnTypeName,
       std::string const &thisTypeName,
       std::string const &methodName,
+      CG::Usage thisUsage,
       RC::ConstHandle<ParamVector> const &params,
       std::string const *symbolName,
       RC::ConstHandle<CompoundStatement> const &body
       )
     {
-      return new MethodOpImpl( location, returnTypeName, thisTypeName, methodName, params, symbolName, body );
+      return new MethodOpImpl( location, returnTypeName, thisTypeName, methodName, thisUsage, params, symbolName, body );
     }
     
     MethodOpImpl::MethodOpImpl(
@@ -34,6 +35,7 @@ namespace Fabric
       std::string const &returnTypeName,
       std::string const &thisTypeName,
       std::string const &methodName,
+      CG::Usage thisUsage,
       RC::ConstHandle<ParamVector> const &params,
       std::string const *symbolName,
       RC::ConstHandle<CompoundStatement> const &body
@@ -46,10 +48,12 @@ namespace Fabric
         false
         )
       , m_thisTypeName( thisTypeName )
-      , m_thisUsage( !returnTypeName.empty() ? CG::USAGE_RVALUE : CG::USAGE_LVALUE )
+      , m_thisUsage( thisUsage )
       , m_methodName( methodName )
       , m_params( params )
     {
+      if ( m_thisUsage == CG::USAGE_UNSPECIFIED )
+        m_thisUsage = !returnTypeName.empty() ? CG::USAGE_RVALUE : CG::USAGE_LVALUE;
     }
     
     void MethodOpImpl::appendJSONMembers( JSON::ObjectEncoder const &jsonObjectEncoder, bool includeLocation ) const
