@@ -8,14 +8,22 @@ namespace Fabric
 {
   namespace RT
   {
-    ProducerImpl::ProducerImpl( std::string const &codeName, ImplType type )
-      : Impl( codeName, type )
+    ProducerImpl::ProducerImpl()
     {
     }
-    
-    bool ProducerImpl::isExportable() const
+
+    void ProducerImpl::initialize(
+      std::string const &codeName,
+      ImplType type,
+      size_t allocSize
+      )
     {
-      return false;
+      Impl::initialize(
+        codeName,
+        type,
+        allocSize,
+        0
+        );
     }
   }
 }

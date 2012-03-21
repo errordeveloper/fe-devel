@@ -36,23 +36,16 @@ namespace Fabric
             
     protected:
     
-      ArrayImpl( std::string const &codeName, ImplType implType, RC::ConstHandle<Impl> const &memberImpl )
-        : Impl( codeName, implType )
-        , m_memberImpl( memberImpl )
-        , m_memberIsShallow( memberImpl->isShallow() )
-        , m_memberIsNoAliasSafe( memberImpl->isNoAliasSafe() )
+      ArrayImpl( RC::ConstHandle<Impl> const &memberImpl )
+        : m_memberImpl( memberImpl )
       {
       }
-
-      bool isMemberShallow() const{ return m_memberIsShallow; }
-      bool isMemberNoAliasSafe() const{ return m_memberIsNoAliasSafe; }
       
     private:
     
       RC::ConstHandle<Impl> m_memberImpl;
-      bool m_memberIsShallow, m_memberIsNoAliasSafe;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_ARRAY_IMPL_H

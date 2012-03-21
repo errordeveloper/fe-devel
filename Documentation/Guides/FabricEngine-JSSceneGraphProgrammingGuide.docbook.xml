@@ -13,6 +13,20 @@
   </info>
   <chapter>
     <title>Introduction</title>
+    
+    <section>
+      <title>Installation</title>
+      <para>
+        Installation instructions can be found here: 
+        
+        <link condition="html" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-JSDeveloperInstallGuide.html">
+          <quote>JS Developers Install Guide</quote>
+        </link>
+        <link condition="pdf" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-JSDeveloperInstallGuide.pdf">
+          <quote>JS Developers Install Guide</quote>
+        </link>
+      </para>
+    </section>
     <section>
       <title>What's Fabric Engine's SceneGraph?</title>
       <para>The <emphasis role="bold">SceneGraph</emphasis> is a wrapper for its counterpart, the
@@ -106,7 +120,7 @@
           <emphasis role="italic">.pub</emphasis> member of the private interface. Managers can also
         access private interfaces, allowing them to perform changes to the private data, for
         example.</para>
-      <programlisting language="JavaScript">var sgNode = {
+      <programlisting language="javascript">var sgNode = {
   pub: {
     publicMethod: function () {}
   },
@@ -135,7 +149,7 @@
         SceneGraph. Especially when building custom SceneGraphNodes this can be very helpful. The
         debugger is described in more detail in the section on the Drawing Pipeline Guide in this
         document. You can open the debugger by using executing this code in JavaScript:</para>
-      <programlisting language="JavaScript">FABRIC.displayDebugger();</programlisting>
+      <programlisting language="javascript">FABRIC.displayDebugger();</programlisting>
     </section>
   </chapter>
   <chapter role="">
@@ -153,7 +167,7 @@
           role="bold">RegisteredTypesManager</emphasis>. The manager is only accessible in the scope
         of a SceneGraphNode factory function, but you can access a dictionary of all current types
         by accessing the <emphasis role="bold">RT</emphasis> object:</para>
-      <programlisting language="JavaScript">console.log(FABRIC.RT);</programlisting>
+      <programlisting language="javascript">console.log(FABRIC.RT);</programlisting>
       <para>Types are typically implemented in separate JavaScript files. The ones provided by the
         SceneGraph can be found in the RT directory. The SceneGraph uses a <emphasis role="bold"
           >require</emphasis> framework which ensures that all required scripts are load into the
@@ -168,7 +182,7 @@
         a KL file providing the additional functions, called the <emphasis role="bold"
           >bindings</emphasis>. The content of the JavaScript file looks like this: (the first array
         parameter is the list of requirements. this could include other types, for example.)</para>
-      <programlisting language="JavaScript">FABRIC.define([], function() {
+      <programlisting language="javascript">FABRIC.define([], function() {
 
   // Constructor:
   FABRIC.RT.Address = function(options) {
@@ -205,7 +219,7 @@
 });</programlisting>
       <para>The KL file mentioned in the appendOnCreateContextCallback above, <emphasis role="bold"
           >RT/Address.kl</emphasis> could look like this:</para>
-      <programlisting language="JavaScript">function String Address.getPrintable() {
+      <programlisting language="javascript">function String Address.getPrintable() {
   return this.street + ' ' + this.number + ' in ' + this.zip + ' ' + this.city + ', ' + this.country;
 }</programlisting>
       <para>This will make the <emphasis role="bold">getPrintable</emphasis> method available both
@@ -226,7 +240,7 @@
         </inlinemediaobject></para>
       <para>The SceneGraph's basic transform can represent a global or a hierarchical transform. It
         can be contructed like this:</para>
-      <programlisting language="JavaScript">var globalTransform = scene.constructNode('Transform', {
+      <programlisting language="javascript">var globalTransform = scene.constructNode('Transform', {
   hierarchical: false
 });
 var hierarchicalTransform = scene.constructNode('Transform', {
@@ -241,7 +255,7 @@ var hierarchicalTransform = scene.constructNode('Transform', {
         animation.</para>
       <para>When creating the transform node, you can specify the global or the local transform by
         providing a <emphasis role="bold">FABRIC.RT.Xfo</emphasis>:</para>
-      <programlisting language="JavaScript">var globalTransform = scene.constructNode('Transform', {
+      <programlisting language="javascript">var globalTransform = scene.constructNode('Transform', {
   hierarchical: false,
   globalXfo: new FABRIC.RT.Xfo({
     tr: new FABRIC.RT.Vec3(1.0, 2.0, 3.0)
@@ -255,7 +269,7 @@ var hierarchicalTransform = scene.constructNode('Transform', {
         the SceneGraph provides a specialized transform node called the <emphasis role="bold"
           >AimTransform</emphasis>. It adds an additional option to the factory function, which
         allows you to specify the target position.</para>
-      <programlisting language="JavaScript">var aimTransform = scene.constructNode('AimTransform', {
+      <programlisting language="javascript">var aimTransform = scene.constructNode('AimTransform', {
   globalXfo: new FABRIC.RT.Xfo({
       tr: new FABRIC.RT.Vec3(1.0, 2.0, 3.0)
   }),
@@ -295,7 +309,7 @@ var hierarchicalTransform = scene.constructNode('Transform', {
         time value which is then used to drive an animation evaluation. A single controller can be
         used by many evaluators. The default Animation Controller node is bound to the globals
         SceneGraph node storing the global scene time.</para>
-      <programlisting language="JavaScript">var controller = scene.constructNode('AnimationController', {
+      <programlisting language="javascript">var controller = scene.constructNode('AnimationController', {
   timeRange: new FABRIC.RT.Vec2(0.0, 10.0), // ten seconds
   outOfRange: 1 // looping
 });</programlisting>
@@ -320,7 +334,7 @@ var hierarchicalTransform = scene.constructNode('Transform', {
       <para>The TrackAnimationContainer represents a single animation of multiple tracks. The
         benefit of the TrackAnimationContainer is that tracks are stores in slices, and processing
         on the tracks can happen in a multi-threaded fashion.</para>
-      <programlisting language="JavaScript">var linearkey = function(time, value){ return new FABRIC.RT.LinearKeyframe(time, value); };
+      <programlisting language="javascript">var linearkey = function(time, value){ return new FABRIC.RT.LinearKeyframe(time, value); };
 
 var trackContainer = scene.constructNode('LinearTrackAnimationContainer', {});
 
@@ -354,7 +368,7 @@ trackContainer.addTrack(new FABRIC.RT.LinearKeyframeTrack('tr.z', FABRIC.RT.rgb(
       <para>The CharacterAnimationContainer is used for the character pipeline, and will be
         discussed in more detail in the characters related section of this document. Essentially
         though, this is how you create a CharacterAnimationContainer:</para>
-      <programlisting language="JavaScript">var linearkey = function(time, value){ return new FABRIC.RT.LinearKeyframe(time, value); };
+      <programlisting language="javascript">var linearkey = function(time, value){ return new FABRIC.RT.LinearKeyframe(time, value); };
 
 var characterContainer = scene.constructNode('LinearCharacterAnimationContainer', {});
 
@@ -380,7 +394,7 @@ characterContainer.addTrackSet(walking, [0,1,2]);</programlisting>
         complex types, as as a <emphasis role="bold">Vec3</emphasis> for example, you can bind
         multiple tracks to the same member. In the case of a Vec3 the first track will go to the x
         component, the second track to the y component and so on.</para>
-      <programlisting language="JavaScript">trackContainer.bindNodeMembersToTracks(transform, {
+      <programlisting language="javascript">trackContainer.bindNodeMembersToTracks(transform, {
   'globalXfo.tr': [0, 1, 2] // representing the tracks tr.x, tr.y and tr.z
 }, controller);</programlisting>
       <para>Binding the animation on the target node will create an operator on the target's
@@ -409,18 +423,18 @@ characterContainer.addTrackSet(walking, [0,1,2]);</programlisting>
       </inlinemediaobject></para>
     <para>1. A base geometry type can be constructed, and its geometry data can be populated from
       JavaScript:</para>
-    <programlisting language="JavaScript">var geometryNode = scene.pub.constructNode('Triangles');
+    <programlisting language="javascript">var geometryNode = scene.pub.constructNode('Triangles');
 geometryNode.loadGeometryData({
   positions: [FABRIC.RT.vec3(0, 0, 0), FABRIC.RT.vec3(0, 0, 1.0), FABRIC.RT.vec3(1.0, 0, 0)], 
   indices: [0, 1, 2]
 }); </programlisting>
     <para>2. Geometry can be constructed by loading an external resource file, such as an OBJ file,
       for example:</para>
-    <programlisting language="JavaScript">scene.importAssetFile('Models/cow.obj',{ splitMaterials: true } );</programlisting>
+    <programlisting language="javascript">scene.importAssetFile('Models/cow.obj',{ splitMaterials: true } );</programlisting>
     <para>3. A primitive can be constructed. The primitive constructor assigns geometry generation
       operators which create all of the vertices and other data such as normals based on options on
       the primitive.</para>
-    <programlisting language="JavaScript">var primitiveNode = scene.constructNode('Circle', { radius: 7 });</programlisting>
+    <programlisting language="javascript">var primitiveNode = scene.constructNode('Circle', { radius: 7 });</programlisting>
     <section>
       <title>Anatomy of a Geometry Node</title>
       <para><inlinemediaobject>
@@ -489,7 +503,7 @@ geometryNode.loadGeometryData({
         geometry.</para>
       <para>Since the Attributes node is sliced, deformation can be performed using
         multi-threading.</para>
-      <programlisting language="JavaScript">var geometryCopyNode = scene.constructNode('GeometryDataCopy', {baseGeometryNode: geometryNode} );
+      <programlisting language="javascript">var geometryCopyNode = scene.constructNode('GeometryDataCopy', {baseGeometryNode: geometryNode} );
 geometryCopyNode.addVertexAttributeValue('positions', 'Vec3', { genVBO:true, dynamic:true } );</programlisting>
       <para>Note: The <emphasis role="italic">PerPointDeformation.html</emphasis> sample application
         contains an example of this.</para>
@@ -506,7 +520,7 @@ geometryCopyNode.addVertexAttributeValue('positions', 'Vec3', { genVBO:true, dyn
       <title>The OBJ Parser</title>
       <para>The OBJ file format can store polygonal meshes with UV coordinates as well as basic
         material settings. You can use the OBJ parser like this:</para>
-      <programlisting language="JavaScript">scene.importAssetFile('Models/cow.obj', {splitMaterials: false}, function(assetNodes) {
+      <programlisting language="javascript">scene.importAssetFile('Models/cow.obj', {splitMaterials: false}, function(assetNodes) {
   for(var name in assetNodes) {
     console.log(assetNodes[name]);
   }
@@ -544,7 +558,7 @@ geometryCopyNode.addVertexAttributeValue('positions', 'Vec3', { genVBO:true, dyn
           </listitem>
         </itemizedlist></para>
       <para>The Collada parser can be invoked like this:</para>
-      <programlisting language="JavaScript">scene.importAssetFile('Models/character.dae', {
+      <programlisting language="javascript">scene.importAssetFile('Models/character.dae', {
     constructRigFromHierarchy: true
 }, function(assetNodes) {
   for(var name in assetNodes) {
@@ -595,7 +609,7 @@ geometryCopyNode.addVertexAttributeValue('positions', 'Vec3', { genVBO:true, dyn
         loaded, the <emphasis role="bold">loadSuccess</emphasis> event fires. The sample code below
         shows how to load data from an Alembic resource. For more details on event handling please
         refer to the <emphasis role="bold">Event Guide</emphasis> section of this document.</para>
-      <programlisting language="JavaScript">var alembicLoadNode = scene.constructNode('AlembicLoadNode', {
+      <programlisting language="javascript">var alembicLoadNode = scene.constructNode('AlembicLoadNode', {
   url: 'Models/cow.abc'
 });
 alembicLoadNode.addEventListener('loadSuccess', function(){
@@ -644,7 +658,7 @@ alembicLoadNode.addEventListener('loadSuccess', function(){
         floating point images, while the other formats are stored as byte images. 2d images are
         always stored as RGBA, even if the original image data doesn't contain an alpha
         channel.</para>
-      <programlisting language="JavaScript">var image2D = scene.constructNode('Image2D', {
+      <programlisting language="javascript">var image2D = scene.constructNode('Image2D', {
   url: 'Resources/tomatoes_960_640.png',
   createDgNodes: false
 });</programlisting>
@@ -661,7 +675,7 @@ alembicLoadNode.addEventListener('loadSuccess', function(){
       <para>Currently the SceneGraph only supports loading 3d images of the type <emphasis
           role="bold">NRRD</emphasis>. 3d images are always stored as USHORT with RGBA
         channels.</para>
-      <programlisting language="JavaScript">var image3D = scene.constructNode('Image3D', {
+      <programlisting language="javascript">var image3D = scene.constructNode('Image3D', {
   url: 'Resources/threed_texture.nrrd',
   createDgNodes: false
 });</programlisting>
@@ -682,7 +696,7 @@ alembicLoadNode.addEventListener('loadSuccess', function(){
         from other formats, the SceneGraph's video node supports: <emphasis role="bold"
           >AVI</emphasis>, <emphasis role="bold">MOV</emphasis> and <emphasis role="bold"
           >MP4</emphasis>. </para>
-      <programlisting language="JavaScript">var videoNode = scene.constructNode('Video', {
+      <programlisting language="javascript">var videoNode = scene.constructNode('Video', {
   url: 'Resources/bee_960.mov',
   loop: true
 });</programlisting>
@@ -733,7 +747,7 @@ alembicLoadNode.addEventListener('loadSuccess', function(){
         animation is effected by modifying graph variables such as time, and then manually
         triggering a redraw. The JavaScript mechanism to fire a redraw manually is accessible
         through the <emphasis role="bold">Viewport</emphasis> node.</para>
-      <programlisting language="JavaScript">var viewport = scene.constructNode('Viewport', {
+      <programlisting language="javascript">var viewport = scene.constructNode('Viewport', {
   windowElement: document.getElementById('FabricContainer') // provide the HTML element for the viewport
 });
 // fire a redraw manually
@@ -749,7 +763,7 @@ viewport.redraw();</programlisting>
         Viewport event handler which has an operator attached called <emphasis role="bold"
           >viewPortBeginRender</emphasis>. When viewPortBeginRender is executed, the initial OpenGL
         parameters are set.</para>
-      <programlisting language="JavaScript">operator viewPortBeginRender(io Integer width, io Integer height, io Color backgroundColor) {   
+      <programlisting language="kl">operator viewPortBeginRender(io Integer width, io Integer height, io Color backgroundColor) {   
   glCullFace(GL_BACK);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);   glViewport(0, 0, width, height);
@@ -776,7 +790,7 @@ viewport.redraw();</programlisting>
       <para>Note: To inspect the drawing pipeline you can use the SceneGraph's debugger. Just open
         the <emphasis role="italic">ModelViewer.html</emphasis> sample application, for example,
         open the JavaScript console, and type:</para>
-      <programlisting language="JavaScript">FABRIC.displayDebugger();</programlisting>
+      <programlisting language="javascript">FABRIC.displayDebugger();</programlisting>
     </section>
     <section>
       <title>GLSL Uniforms and Attributes</title>
@@ -886,7 +900,7 @@ viewport.redraw();</programlisting>
       <title>Setting up the Deferred Renderer</title>
       <para>The SceneGraph provides a utility node called the <emphasis role="bold"
           >BasicDeferredRenderer</emphasis>. </para>
-      <programlisting language="JavaScript">var renderer = scene.constructNode('BasicDeferredRenderer', {
+      <programlisting language="javascript">var renderer = scene.constructNode('BasicDeferredRenderer', {
   addDepth: false, // don't add a depth framebuffer
   colorBuffers: [{name: 'diffuseA, nbChannels: 4}, {name: 'diffuseB', nbChannels: 4}]
 });</programlisting>
@@ -895,7 +909,7 @@ viewport.redraw();</programlisting>
         pipeline. You can create <emphasis role="bold">prePassMaterials</emphasis> (for the initial
         draw into framebuffers) or <emphasis role="bold">postPassMaterials</emphasis> (for the
         deferred draw utilizing the framebuffers).</para>
-      <programlisting language="JavaScript">var drawMaterial = renderer.addPrePassMaterial('MyDeferredShader', {});
+      <programlisting language="javascript">var drawMaterial = renderer.addPrePassMaterial('MyDeferredShader', {});
 var compositingMaterial = renderer.addPostPassMaterial('MyCompositingShader', {});</programlisting>
     </section>
     <section>
@@ -905,7 +919,7 @@ var compositingMaterial = renderer.addPostPassMaterial('MyCompositingShader', {}
         accordingly when constructing the deferred renderer node. Prepass deferred shaders replace
         the standard shaders from a non-deferred drawing pipeline. Here's an example of a small
         fragment shader that writes red to the first and blue to the second framebuffer.</para>
-      <programlisting language="JavaScript">void main(){
+      <programlisting language="javascript">void main(){
   gl_FragData[0] = vec4(1.0,0.0,0.0,1.0);
   gl_FragData[1] = vec4(0.0,0.0,1.0,1.0);
 }</programlisting>
@@ -917,7 +931,7 @@ var compositingMaterial = renderer.addPostPassMaterial('MyCompositingShader', {}
         compositing, but they can access all pixels of the framebuffers, since the framebuffers are
         stored as textures on the GPU. Here's an example of a fragment shader which combines both
         diffuse color from the deferred renderer above:</para>
-      <programlisting language="JavaScript">uniform sampler2D u_samplerDiffuseA;
+      <programlisting language="javascript">uniform sampler2D u_samplerDiffuseA;
 uniform sampler2D u_samplerDiffuseB;
 
 void main(){
@@ -944,11 +958,11 @@ void main(){
       <para>To enable events on a SceneGraph node the <emphasis role="bold"
           >addEventHandlingFunctions</emphasis> method has to be called in the constructor of the
         node.</para>
-      <programlisting language="JavaScript">scene.addEventHandlingFunctions(myNodePrivateInterface);</programlisting>
+      <programlisting language="javascript">scene.addEventHandlingFunctions(myNodePrivateInterface);</programlisting>
       <para>Once that's done the node can fire events and receive event callbacks. To attach a
         callback to the node, other nodes resp. the scene script can call the <emphasis role="bold"
           >addEventListener</emphasis> method.</para>
-      <programlisting language="JavaScript">var myCallback = function(evt) {
+      <programlisting language="javascript">var myCallback = function(evt) {
   console.log(evt);
   return 'remove';
 };
@@ -960,10 +974,10 @@ myNodePublicInterface.addEventListener('myEvent', myCallback);</programlisting>
       <para>You can also remove the event callback by calling the <emphasis role="bold"
           >removeEventListener</emphasis> method, which allows to have functions listens to event
         dynamically. So to say you can attach functions and de-attach them again.</para>
-      <programlisting language="JavaScript">myNodePublicInterface.removeEventListener('myEvent', myCallback);</programlisting>
+      <programlisting language="javascript">myNodePublicInterface.removeEventListener('myEvent', myCallback);</programlisting>
       <para>To trigger the event programatically you can call the <emphasis role="bold"
           >fireEvent</emphasis> method on the node. </para>
-      <programlisting language="JavaScript">myNodePublicInterface.fireEvent('myEvent', { data: 'myData' });</programlisting>
+      <programlisting language="javascript">myNodePublicInterface.fireEvent('myEvent', { data: 'myData' });</programlisting>
       <para>This fires all attached event callbacks, and provides the event data to each of the
         callback functions.  This mechasnism is used heavily throughout the SceneGraph.</para>
     </section>
@@ -973,7 +987,7 @@ myNodePublicInterface.addEventListener('myEvent', myCallback);</programlisting>
           role="bold">SceneGraph IO Guide</emphasis> in this document, uses events to dispatch the
         call of event listeners once a resource file is loaded. This mechanism is uses in the
         SceneGraph parsers, but you can also use it for custom scenarios like this:</para>
-      <programlisting language="JavaScript">var resourceLoadNode = scene.constructNode('ResourceLoad', {
+      <programlisting language="javascript">var resourceLoadNode = scene.constructNode('ResourceLoad', {
   url: 'myBinaryFile.bin'
 });
 resourceLoadNode.addEventListener('loadSuccess', function(evt){
@@ -996,7 +1010,7 @@ resourceLoadNode.addEventListener('loadSuccess', function(evt){
       <para>The code snippet below sets up the manager, attaches a callback to it and selects as
         well as deselects a single node. This code is the basis for more complex selection
         management.</para>
-      <programlisting language="JavaScript">// setup manager and attach event callback
+      <programlisting language="javascript">// setup manager and attach event callback
 var selectionMgr = scene.constructManager('SelectionManager');
 selectionMgr.addEventListener('selectionChangesd',function(evt) {
   console.log(evt.selection);
@@ -1020,7 +1034,7 @@ selectionMgr.removeFromSelection(myNode);</programlisting>
       <para>When a SelectableInstance node is hovered, the material on the node changes to the
           <emphasis role="italic">highlighted</emphasis> material. Once the node is selected the
         material changes to the <emphasis role="italic">selected</emphasis> material. </para>
-      <programlisting language="JavaScript">// create the materials
+      <programlisting language="javascript">// create the materials
 var normalMaterial = scene.constructNode('FlatMaterial', { color: FABRIC.RT.rgb(0.0, 0.0, 1.0, 1) });
 var highlightMaterial = scene.constructNode('FlatMaterial', { color: FABRIC.RT.rgb(0.7, 0.7, 0.7, 1) });
 var selectedMaterial = scene.constructNode('FlatMaterial', { color: FABRIC.RT.rgb(1.0, 0.0, 0.0, 1) });
@@ -1056,7 +1070,7 @@ selectionMgr.removeFromSelection(myInstance);</programlisting>
         its construction. The SelectionManipulationManager just takes care of setting up a group
         manipulation, that toggles on and off based on selection changes as well as centers the
         manipulator in the center of the selected objects.</para>
-      <programlisting language="JavaScript">var manipulationMgr = scene.constructManager('SelectionManipulationManager', {
+      <programlisting language="javascript">var manipulationMgr = scene.constructManager('SelectionManipulationManager', {
   selectionManager: selectionMgr,
   manipulators: undefined // here you can specify an array of manipulators to manage
 });</programlisting>
@@ -1090,7 +1104,7 @@ selectionMgr.removeFromSelection(myInstance);</programlisting>
       <para>Manipulators require <emphasis role="bold">RayCasting</emphasis> to be enable in the
         viewport, since it needs to determine which objects are hit below the mouse's position. To
         enable RayCasting, provide the following options when constructing the viewport:</para>
-      <programlisting language="JavaScript">var viewport = scene.constructNode('Viewport', {
+      <programlisting language="javascript">var viewport = scene.constructNode('Viewport', {
   windowElement: document.getElementById('FabricContainer'),
   enableRaycasting: true,
   rayIntersectionThreshold: 0.8
@@ -1100,7 +1114,7 @@ selectionMgr.removeFromSelection(myInstance);</programlisting>
         graph node, but since typically manipulation in 3D affects the transforms of objects, all of
         the provided manipulators in the SceneGraph operate on the <emphasis role="bold"
           >globalXfo</emphasis> member of the transform node.</para>
-      <programlisting language="JavaScript">// create an instance out of geometry, transform and material
+      <programlisting language="javascript">// create an instance out of geometry, transform and material
 var instance = scene.constructNode('Instance', {
   geometryNode: myGeometry,
   transformNode: myTransform,
@@ -1132,7 +1146,7 @@ var manipulator = scene.constructNode('3AxisTranslationManipulator', {
     <para>To undo or redo a transaction, simply call the on the <emphasis role="bold"
         >undo</emphasis> and <emphasis role="bold">redo</emphasis> methods of the  of the
       UndoManager.</para>
-    <programlisting language="JavaScript">// create an undo manager
+    <programlisting language="javascript">// create an undo manager
 var undoMgr = scene.constructManager('UndoManager');
 
 // create a value to be changed
@@ -1169,7 +1183,7 @@ undoMgr.undo();</programlisting>
         in an application, you can optionally provide the UndoManager to the construction options of
         the manipulators, but even if you didn't specify it the first created undomanager will be
         used for manipulation.</para>
-      <programlisting language="JavaScript">// create an undo manager
+      <programlisting language="javascript">// create an undo manager
 var undoMgr = scene.constructManager('UndoManager');
 
 // create a manipulator for the instance node
@@ -1205,7 +1219,7 @@ var manipulator = scene.constructNode('3AxisTranslationManipulator', {
       <para>Since the web socket connection has to be established before message handlers can be
         setup, the constructor also takes in the <emphasis role="bold">onOpenCallBack</emphasis>
         option, which is executed once the connection is up.</para>
-      <programlisting language="JavaScript">// create a web socket manager
+      <programlisting language="javascript">// create a web socket manager
 var websocketMgr = scene.constructManager('WebSocketManager', {
   serverUrl: 'ws.fabric-engine.com',
   contextID: 'myOwnCustomKey',
@@ -1220,7 +1234,7 @@ var websocketMgr = scene.constructManager('WebSocketManager', {
         of the message will fail. Messages contain a name, data as well as an optional recipient. If
         you don't specify the recipient the message will be send to all of the participants of the
         current session.</para>
-      <programlisting language="JavaScript">websocketMgr.sendMessage('askQuestion', { question: 'What\'s your name?' });</programlisting>
+      <programlisting language="javascript">websocketMgr.sendMessage('askQuestion', { question: 'What\'s your name?' });</programlisting>
       <para>The data can contain any JSON compliant struct. The WebSocketManager encodes it and
         decodes it automatically.</para>
     </section>
@@ -1229,7 +1243,7 @@ var websocketMgr = scene.constructManager('WebSocketManager', {
       <para>To receive messages you need to setup callbacks for each message type on the
         WebSocketManager. Reception message callbacks themselves can also send messages again of
         course.</para>
-      <programlisting language="JavaScript">// setup a message callback for the 'askQuestion' message
+      <programlisting language="javascript">// setup a message callback for the 'askQuestion' message
 websocketMgr.addMessageCallBack('askQuestion', function(message) {
   if(message.data.question == 'What\'s your name?') {
     // reply just to the sender of this message
@@ -1264,7 +1278,7 @@ websocketMgr.addMessageCallBack('replyToQuestion', function(message) {
       <title>Creating the Bullet world</title>
       <para>Each simulation requires a world to run in. You may create several worlds, but only
         object within the same world will effect each other.</para>
-      <programlisting language="JavaScript">var world = scene.constructNode('BulletWorldNode');</programlisting>
+      <programlisting language="javascript">var world = scene.constructNode('BulletWorldNode');</programlisting>
       <para>Once the world is set up you can start creating shapes and simulation elements.</para>
     </section>
     <section>
@@ -1273,7 +1287,7 @@ websocketMgr.addMessageCallBack('replyToQuestion', function(message) {
         identified by their name. The name has to be unique, using the same name several times will
         result in an error. You can later use the shapes' names to construct rigid bodies. These are
         the basic shapes you can construct:</para>
-      <programlisting language="JavaScript">world.addShape('myBox', FABRIC.RT.BulletShape.createBox(new FABRIC.RT.Vec3(1.0,1.0,1.0)));
+      <programlisting language="javascript">world.addShape('myBox', FABRIC.RT.BulletShape.createBox(new FABRIC.RT.Vec3(1.0,1.0,1.0)));
 world.addShape('mySphere', FABRIC.RT.BulletShape.createBox(1.0 /* radius */));
 world.addShape('myCylinder', FABRIC.RT.BulletShape.createBox(1.0 /* radius */, 1.0 /* height */));
 world.addPlane('myPlane', FABRIC.RT.BulletShape.createBox(new FABRIC.RT.Vec3(0.0,1.0,0.0)));</programlisting>
@@ -1284,7 +1298,7 @@ world.addPlane('myPlane', FABRIC.RT.BulletShape.createBox(new FABRIC.RT.Vec3(0.0
         are very slow for moving objects, and should be used only for complex ground shapes. GImpact
         shapes provide accurate collision for moving objects which need to support actual shape
         collision (inclusing concave shapes).</para>
-      <programlisting language="JavaScript">var torus = scene.constructNode('Torus'); // this is a triangles node
+      <programlisting language="javascript">var torus = scene.constructNode('Torus'); // this is a triangles node
 world.addShape('myConvexHull',FABRIC.RT.BulletShape.createConvexHull(torus));
 world.addShape('myTriangleMesh',FABRIC.RT.BulletShape.createTriangleMesh(torus));
 world.addShape('myGImpact',FABRIC.RT.BulletShape.createGImpact(torus));</programlisting>
@@ -1297,7 +1311,7 @@ world.addShape('myGImpact',FABRIC.RT.BulletShape.createGImpact(torus));</program
         Fabric Engine will continue to drive the transform of the rigid body, and it will affect the
         Bullet world. If the mass is set to > 0.0 the rigid body is active, and is purely affected
         by the Bullet simulation.</para>
-      <programlisting language="JavaScript">// construct a passive plane
+      <programlisting language="javascript">// construct a passive plane
 world.addRigidBody('ground', new FABRIC.RT.BulletRigidBody({
   mass: 0.0
 }), 'myPlane');
@@ -1324,7 +1338,7 @@ world.addRigidBody('torusRbd1', new FABRIC.RT.BulletRigidBody({
         Bullet world. If the mass is set to > 0.0 the rigid body is active, and is purely affected
         by the Bullet simulation. Also note that you can create multiple rigid bodies using the same
         collision shape.</para>
-      <programlisting language="JavaScript">// create a transform node driven by bullet
+      <programlisting language="javascript">// create a transform node driven by bullet
 var bulletTransform = scene.constructNode('BulletRigidBodyTransform', {
   name: 'torusRbd2',
   bulletWorldNode: world,
@@ -1349,7 +1363,7 @@ var instance = scene.constructNode('Instance', {
         called <emphasis role="bold">Soft Bodies</emphasis>. These bodies contain the shape as well,
         so they don't require a collision shape name for construction. Soft bodies don't use a
         transform, they are applied as a deformation on top of the geometry node.</para>
-      <programlisting language="JavaScript">// create a softbody
+      <programlisting language="javascript">// create a softbody
 var torusSoftBody = world.addSoftBody('torusSbd1',new FABRIC.RT.BulletSoftBody({
   trianglesNode: torus,
   transform: FABRIC.RT.xfo({
@@ -1385,7 +1399,7 @@ var instance = scene.constructNode('Instance', {
         </itemizedlist></para>
       <para>For creating a constraint you need to specify the names of the two bodies to be
         connected as well as the constraint's options.</para>
-      <programlisting language="JavaScript">world.addConstraint('myBallSocket',FABRIC.RT.BulletConstraint.createPoint2Point({
+      <programlisting language="javascript">world.addConstraint('myBallSocket',FABRIC.RT.BulletConstraint.createPoint2Point({
   pivotA: FABRIC.RT.xfo({tr: new FABRIC.RT.Vec3(0,4.0,0)}),
   pivotB: FABRIC.RT.xfo({tr: new FABRIC.RT.Vec3(0,-4.0,0)}),
 }),'torusRbd1','torusRbd2');
@@ -1405,7 +1419,7 @@ world.addConstraint('mySlider',FABRIC.RT.BulletConstraint.createSlider({
       <para>Anchors are connections between rigid bodies and soft bodies. Aside from the names of
         the rigid body and the soft body it is also required to specify an array of point indices on
         the softbody to attach the anchor to.</para>
-      <programlisting language="JavaScript">world.addAnchor('myAnchor',new FABRIC.RT.BulletAnchor({
+      <programlisting language="javascript">world.addAnchor('myAnchor',new FABRIC.RT.BulletAnchor({
   softBodyNodeIndices: [0,1,2,3,4,5]
   }),'torusRbd1','torusSbd1'
 );</programlisting>

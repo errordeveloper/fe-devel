@@ -2,13 +2,16 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-.PHONY: default xcode test
+.PHONY: default cli xcode test
 
 default:
-	$(MAKE) -C Native default
+	scons -k
+
+cli:
+	scons -k cli
 
 xcode:
 	$(MAKE) -C Native xcode
 
-test:
+test: cli
 	$(MAKE) -C Native test

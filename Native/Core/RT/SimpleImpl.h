@@ -17,23 +17,32 @@ namespace Fabric
       REPORT_RC_LEAKS
     
       // Impl
-    
-      virtual void disposeDatasImpl( void *data, size_t count, size_t stride ) const;
       
       virtual bool isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const;
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
-      virtual bool isExportable() const;
     
     protected:
     
-      SimpleImpl( std::string const &codeName, ImplType implType, size_t size )
-        : ComparableImpl( codeName, implType )
+      SimpleImpl()
       {
-        setSize( size );
       }
+
+      void initialize(
+        std::string const &codeName,
+        ImplType type,
+        size_t allocSize
+        )
+      {
+        ComparableImpl::initialize(
+          codeName,
+          type,
+          allocSize,
+          FlagShallow | FlagExportable
+          );
+      }
+    
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_SIMPLE_IMPL_H
