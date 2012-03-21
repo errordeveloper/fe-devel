@@ -5,7 +5,7 @@
 var getSortedKeysString = function( dict ) {
   var keys = [];
   for (var key in dict) {
-    if (dictionary.hasOwnProperty(key))
+    if (dict.hasOwnProperty(key))
       keys.push(key);
   }
   keys.sort();
@@ -37,17 +37,19 @@ fabricClient.flush()
 for ( var dep in dgnode3.getDependencies() )
   console.log( "Node3 initial dependency: " + dep )
 
-for ( var dep in evhan1.getChildEventHandlers() )
-  console.log( "EvHan1 initial child event handler: " + dep.getName() )
+for ( var index in evhan1.getChildEventHandlers() )
+  console.log( "EvHan1 initial child event handler: " + evhan1.getChildEventHandlers()[index].getName() )
 
 for ( var dep in evhan2.getScopes() )
   console.log( "EvHan2 initial dependency: " + dep )
 
-for ( var dep in event2.getEventHandlers() )
-  console.log( "Event2 initial event handlers: " + dep.getName() )
+for ( var index in event2.getEventHandlers() )
+  console.log( "Event2 initial event handlers: " + event2.getEventHandlers()[index].getName() )
 
 console.log( "Initial named objects: " + getSortedKeysString( fabricClient.DependencyGraph.getAllNamedObjects() ) );
 console.log( "Is Node2 valid: " + dgnode2.isValid() );
+
+dgnode2.destroy()
 
 try
 {
@@ -58,7 +60,6 @@ catch(e)
   console.log('Error on modifying a destroyed Node: ' + e);
 }
 
-dgnode2.destroy()
 fabricClient.flush()
 
 console.log( "Is Node2 valid: " + dgnode2.isValid() );
@@ -70,8 +71,8 @@ for ( var dep in dgnode3.getDependencies() )
 for ( var dep in evhan2.getScopes() )
   console.log( "ERROR, scope not cleaned up" );
 
-for ( var dep in evhan1.getChildEventHandlers() )
-  console.log( "EvHan1 child event handler: " + dep.getName() );
+for ( var index in evhan1.getChildEventHandlers() )
+  console.log( "EvHan1 child event handler: " + evhan1.getChildEventHandlers()[index].getName() );
 
 evhan2.destroy();
 fabricClient.flush();

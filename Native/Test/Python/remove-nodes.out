@@ -4,6 +4,7 @@ EvHan2 initial dependency: node2
 Event2 initial event handlers: evhan2
 Initial named objects: ['event1', 'event2', 'evhan1', 'evhan2', 'evhan3', 'node1', 'node2', 'node3']
 Is Node2 valid: True
+Error on modifying a destroyed Node: NamedObject "node2" has been destroyed
 Is Node2 valid: False
 Named objects after deleted Node2: ['event1', 'event2', 'evhan1', 'evhan2', 'evhan3', 'node1', 'node3']
 EvHan1 child event handler: evhan2
