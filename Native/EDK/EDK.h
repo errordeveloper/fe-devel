@@ -8,8 +8,9 @@
 #include <Fabric/Base/Config.h>
 #include <Fabric/Base/Util/Bits.h>
 #include <Fabric/Base/Util/AtomicSize.h>
-#include <Fabric/Base/Exception.h>
 #include <Fabric/EDK/Common.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #if defined(FABRIC_OS_WINDOWS)
 # define FABRIC_EXT_EXPORT extern "C" __declspec(dllexport)
@@ -44,13 +45,35 @@ namespace Fabric
   namespace EDK
   {
     static Callbacks s_callbacks;
-    
+
+    void throwException( size_t length, char const *data );
+
+    inline void log( size_t length, char const *data )
+    {
+      s_callbacks.m_log( length, data );
+    }
+
+    inline void log( char const *cStrFormat, ... )
+    {
+      char cStr[16384];
+      va_list argList;
+      va_start( argList, cStrFormat );
+      int vsnprintfResult = vsnprintf( cStr, 16384, cStrFormat, argList );
+      va_end( argList );
+      if ( vsnprintfResult < 0 )
+      {
+        static const char *malformattedLog = "internal error: malformed log";
+        throwException( strlen( malformattedLog ), malformattedLog );
+      }
+      else log( vsnprintfResult, cStr );
+    }
+
     inline void throwException( size_t length, char const *data )
     {
-      printf("Fabric::EDK::Exception: %s\n",data);
+      log("Fabric::EDK::Exception: %s\n",data);
       s_callbacks.m_throwException( length, data );
     }
-    
+
     inline void throwException( char const *cStrFormat, ... )
     {
       char cStr[4096];

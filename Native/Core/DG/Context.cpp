@@ -674,6 +674,16 @@ namespace Fabric
       return context;
     }
 
+    static void LogEDK( size_t length, char const *data )
+    {
+      char cstr[LOG_MAXBUFLENGTH+1];
+      if( length > LOG_MAXBUFLENGTH )
+        length = LOG_MAXBUFLENGTH;
+      memcpy(cstr, data, length);
+      cstr[length] = '\0';
+      FABRIC_LOG_CSTR( cstr, "[FABRIC EDK] " );
+    }
+
     void FileHandleCreateFromPath( void *stringData, char const *filePathCString, bool folder, bool readOnly )
     {
       RC::ConstHandle<Context> context = GetAndValidateCurrentContext();
@@ -738,6 +748,7 @@ namespace Fabric
       callbacks.m_realloc = realloc;
       callbacks.m_free = free;
       callbacks.m_throwException = throwException;
+      callbacks.m_log = LogEDK;
       callbacks.m_fileHandleCreateFromPath = FileHandleCreateFromPath;
       callbacks.m_fileGetPath = FileGetPath;
       callbacks.m_fileHandleIsValid = FileHandleIsValid;

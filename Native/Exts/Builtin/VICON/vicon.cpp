@@ -23,7 +23,7 @@ FABRIC_PLUGIN_EXPORT void FabricVICONInit(
   bool clientJustConnected = false;
   while( !gClient.IsConnected().Connected && tryCount < maxTries)
   {
-    printf("====== VICON: Connecting to server host '%s', try %d...\n",hostname.data(),(int)(tryCount+1));
+    EDK::log("====== VICON: Connecting to server host '%s', try %d...\n",hostname.data(),(int)(tryCount+1));
     // Multicast connection
     gClient.Connect( hostname.data() );
     clientJustConnected = gClient.IsConnected().Connected;
@@ -63,7 +63,7 @@ FABRIC_PLUGIN_EXPORT void FabricVICONInit(
     int frameResult = gClient.GetFrame().Result;
     while( frameResult != ViconDataStreamSDK::CPP::Result::Success && frameResult != ViconDataStreamSDK::CPP::Result::NoFrame )
     {
-      printf("====== VICON: Receiving first frame...%d\n",(int)frameResult);
+      EDK::log("====== VICON: Receiving first frame...%d\n",(int)frameResult);
       frameResult = gClient.GetFrame().Result;
     }
 
@@ -79,16 +79,16 @@ FABRIC_PLUGIN_EXPORT void FabricVICONInit(
       for( unsigned int markerIndex = 0 ; markerIndex < markerCount ; ++markerIndex )
       {
         std::string markerName = gClient.GetMarkerName( subjectName, markerIndex ).MarkerName;
-        printf("====== VICON: Subject '%s' has marker %d '%s'.\n",subjectName.c_str(),index++,markerName.c_str());
+        EDK::log("====== VICON: Subject '%s' has marker %d '%s'.\n",subjectName.c_str(),index++,markerName.c_str());
       }
     }
-    printf("====== VICON: Labeled markers: %d\n",(int)nbPositions);
+    EDK::log("====== VICON: Labeled markers: %d\n",(int)nbPositions);
     
     unsigned int unlabeledMarkerCount = gClient.GetUnlabeledMarkerCount().MarkerCount;
-    printf("====== VICON: Unlabeled markers: %d\n",(int)unlabeledMarkerCount);
+    EDK::log("====== VICON: Unlabeled markers: %d\n",(int)unlabeledMarkerCount);
     nbPositions += unlabeledMarkerCount;
     
-    printf("====== VICON: Total number of markers %d\n",(int)nbPositions);
+    EDK::log("====== VICON: Total number of markers %d\n",(int)nbPositions);
 
     // sanity check, if no markers, use just one!
     if(nbPositions == 0)

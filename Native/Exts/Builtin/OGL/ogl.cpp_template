@@ -35,11 +35,10 @@ static void _clearError()
 {
   if(!gGlewInitialized){
     if (fglDebuggingEnabled)
-      printf("glewInit();\n");
+      log("glewInit();\n");
     GLenum error = glewInit();
     if(error != GLEW_OK)
     {
-      printf("[Fabric::OGL::glewInit] ERROR: %s\n",(const char*)glewGetErrorString(error));
       throwException("[Fabric::OGL::glewInit] ERROR: %s",(const char*)glewGetErrorString(error));
     }
     gGlewInitialized = true;
@@ -87,7 +86,6 @@ static void _checkError(const char * functionName)
 			}
       glError = glGetError();
     } while ( glError != GL_NO_ERROR );
-    printf( "%s\n", buf );
     throwException( "%s", buf );
   }
 }
@@ -110,7 +108,7 @@ FABRIC_EXT_EXPORT void glGetVersion_wrapper(KL::String & result)
 FABRIC_EXT_EXPORT void glewIsSupported_wrapper(KL::String & token, KL::Boolean & supported)
 {
   _clearError();
-  printf("querying glewSupported: %s\n",token.data());
+  log("querying glewSupported: %s\n",token.data());
   supported = glewIsSupported(token.data());
 }
 

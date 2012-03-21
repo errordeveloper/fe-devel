@@ -89,16 +89,16 @@ public:
       sRegistered = true;
 
 #ifndef _WIN32
-      printf("\n-----------------------------\n");
-      printf("FabricVIDEO supported input formats: ");
+      Fabric::EDK::log("\n-----------------------------\n");
+      Fabric::EDK::log("FabricVIDEO supported input formats: ");
       for(AVInputFormat * fmt = first_iformat; fmt != NULL; fmt = fmt->next)
-        printf("%s, ",fmt->name);
-      printf("\n-----------------------------\n");
+        Fabric::EDK::log("%s, ",fmt->name);
+      Fabric::EDK::log("\n-----------------------------\n");
       
-      printf("FabricVIDEO supported output formats: ");
+      Fabric::EDK::log("FabricVIDEO supported output formats: ");
       for(AVOutputFormat * fmt = first_oformat; fmt != NULL; fmt = fmt->next)
-        printf("%s, ",fmt->name);
-      printf("\n-----------------------------\n\n");
+        Fabric::EDK::log("%s, ",fmt->name);
+      Fabric::EDK::log("\n-----------------------------\n\n");
 #endif
     }
     
