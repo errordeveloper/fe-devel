@@ -10,8 +10,10 @@ if 'dist' in COMMAND_LINE_TARGETS:
   Import( 'klToolInstaller', 'fileSystemInstaller' )
   installers = [klToolInstaller[0], fileSystemInstaller[0]]
   if buildOS == 'Windows':
-    Import( 'kinectInstaller' )
-    installers.append( kinectInstaller[0] )
+    Import( 'kinectBuilt' )
+    if kinectBuilt:
+      Import( 'kinectInstaller' )
+      installers.append( kinectInstaller[0] )
   installers += SConscript( 'Chrome/SConscript' )
   installers += SConscript( 'Firefox/SConscript' )
   installers += SConscript( 'Python/SConscript' )

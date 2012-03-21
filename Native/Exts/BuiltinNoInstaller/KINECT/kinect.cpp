@@ -12,6 +12,7 @@
 
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
+//#define KINECT_TRACE
 
 HANDLE	videoStreamHandle;
 HANDLE	depthStreamHandle;
@@ -75,8 +76,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_Init(
   KinectCamera & camera
 )
 {
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_Init called.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_Init called.");
 #endif
   if(!camera.initiated && camera.localData == NULL)
   {
@@ -140,8 +141,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_Init(
       }
     }
   }
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_Init completed.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_Init completed.");
 #endif
 }
 
@@ -149,8 +150,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_Shutdown(
   KinectCamera & camera
 )
 {
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_Shutdown called.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_Shutdown called.");
 #endif
   if(camera.initiated)
   {
@@ -162,8 +163,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_Shutdown(
       camera.localData = NULL;
     }
   }
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_Shutdown completed.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_Shutdown completed.");
 #endif
 }
 
@@ -172,8 +173,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_Tilt(
   KL::Integer & angle
 )
 {
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_Tilt called.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_Tilt called.");
 #endif
   if(camera.initiated && camera.tiltAngle != angle)
   {
@@ -184,8 +185,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_Tilt(
     if(SUCCEEDED(NuiCameraElevationSetAngle(angle)))
       camera.tiltAngle = angle;
   }
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_Tilt completed.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_Tilt completed.");
 #endif
 }
 
@@ -193,8 +194,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetColorPixels(
   KinectCamera & camera
 )
 {
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetColorPixels called.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetColorPixels called.");
 #endif
   if(camera.initiated && camera.supportsColor && camera.localData != NULL)
   {
@@ -226,8 +227,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetColorPixels(
 	camera.localData->colorFrame = NULL;
     }
   }
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetColorPixels completed.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetColorPixels completed.");
 #endif
 }
 
@@ -235,8 +236,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetDepthPixels(
   KinectCamera & camera
 )
 {
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetDepthPixels called.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetDepthPixels called.");
 #endif
   if(camera.initiated && camera.supportsDepth && camera.localData != NULL)
   {
@@ -268,8 +269,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetDepthPixels(
 	camera.localData->depthFrame = NULL;
     }
   }
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetDepthPixels completed.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetDepthPixels completed.");
 #endif
 }
 
@@ -279,8 +280,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetPoints(
   KL::SlicedArray<KL::Color> & colors
 )
 {
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetPoint called.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetPoint called.");
 #endif
   if(camera.initiated && camera.supportsDepth && camera.supportsColor && camera.localData != NULL)
   {
@@ -315,8 +316,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetPoints(
       }
     }
   }
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetPoint completed.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetPoint completed.");
 #endif
 }
 
@@ -324,8 +325,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetSkeleton(
   KinectCamera & camera
 )
 {
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetSkeleton called.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetSkeleton called.");
 #endif
   if(camera.initiated && camera.supportsSkeleton && camera.localData != NULL)
   {
@@ -369,8 +370,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetSkeleton(
       }
     }
   }
-#ifndef NDEBUG
-  printf("  { FabricKINECT } : FabricKINECT_GetSkeleton completed.\n");
+#ifdef KINECT_TRACE
+  log("  { FabricKINECT } : FabricKINECT_GetSkeleton completed.");
 #endif
 }
 

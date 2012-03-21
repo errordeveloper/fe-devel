@@ -9,7 +9,7 @@
              xmlns:d="http://docbook.org/ns/docbook"
           >
             <!-- Import the original FO stylesheet -->
-            <xsl:import href="{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}}/xsl/fo/docbook.xsl"/>
+            <xsl:import href="{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}}/xsl/fo/profile-docbook.xsl"/>
             <xsl:import href="{{SHORT_ATTENTION_SPAN_DOCBOOK_URI}}/xsl/fo/highlight.xsl"/>
       
             <!-- FOP -->

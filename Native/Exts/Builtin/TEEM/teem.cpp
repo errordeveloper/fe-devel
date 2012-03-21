@@ -64,64 +64,6 @@ void FabricTeemNRRDLoadUShortFromFile(
   imageUShortVoxels.resize( imageWidth * imageHeight * imageDepth * 2 );
   ::memcpy( &(imageUShortVoxels[0]), nin->data, imageUShortVoxels.size() );
 
-/*  
-
-  ////////////////////////////////////////////////////
-  //gradientcompute
-  //From nrrd gage example: http://teem.sourceforge.net/gage/index.html
-
-  gageContext *ctx;
-  gagePerVolume *pvl;
-  const double *grad;
-  double kparm[NRRD_KERNEL_PARMS_NUM];
-  int E;
-
-  if (gageKindVolumeCheck(gageKindScl, nin)) {
-    fprintf(stderr, "didn't get a %s volume:\n%s\n",
-            gageKindScl->name, biffGetDone(GAGE));
-    return 1;
-  }
-
-  //Bicubic kernel params. Not sure what B and C are exactly.
-  kparm[0] = 1.0; // scale parameter, in units of samples
-  kparm[1] = 0.0; // B
-  kparm[2] = 0.5; // C
-
-  ctx = gageContextNew();
-  E = 0;
-  if (!E) E |= !(pvl = gagePerVolumeNew(ctx, nin, gageKindScl));
-  if (!E) E |= gagePerVolumeAttach(ctx, pvl);
-  if (!E) E |= gageKernelSet(ctx, gageKernel00, nrrdKernelBCCubic, kparm);
-  if (!E) E |= gageKernelSet(ctx, gageKernel11, nrrdKernelBCCubicD, kparm);
-  if (!E) E |= gageQueryItemOn(ctx, pvl, gageSclGradVec);
-  if (!E) E |= gageUpdate(ctx);
-  if (E) {
-    fprintf(stderr, "trouble:\n%s\n", biffGetDone(GAGE));
-    return 1;
-  }
-
-  //TODO: here we might want to run gageContextCopy() multiple times in order to compute gradients properly.
-
-  grad = gageAnswerPointer(ctx, pvl, gageSclGradVec);
-
-  float* gradVec = new float[3*size[0]*size[1]*size[2]];
-  float* gradIter = gradVec;
-  for(i = 0; i < size[0]; ++i) {
-    for(j = 0; j < size[1]; ++j) {
-      for(k = 0; k < size[2]; ++k) {
-        if( gageProbe(ctx, i, j, k) )
-          return 1;//err
-        *(gradIter++) = (float)grad[0];
-        *(gradIter++) = (float)grad[1];
-        *(gradIter++) = (float)grad[2];
-      }
-    }
-  }
-
-  ctx = gageContextNix(ctx); 
-  pvl = NULL;
-  delete[] gradVec;
-*/
   nrrdNuke(nin);
 }
 

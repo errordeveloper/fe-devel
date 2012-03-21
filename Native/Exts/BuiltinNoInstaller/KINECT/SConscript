@@ -16,20 +16,25 @@ kinectPackageDir = archDistDir.Dir(kinectPackageName)
     
 kinectPluginEnv = extsEnv.Clone()
 
+kinectBuilt = False
+
 # find the kinect sdk
 kinectInclude = 'C:\\Program Files\\Microsoft SDKs\Kinect\\v1.0 Beta2\\inc'
 if not os.path.exists(kinectInclude):
     print('WARNING: Skipping build of KINECT extension, no KINECT Include Folder found!')
+    Export( 'kinectBuilt' )
     Return()
 
 kinectLib = 'C:\\Program Files\\Microsoft SDKs\\Kinect\\v1.0 Beta2\\lib\\x86\\MSRKinectNUI.lib'
 if not os.path.exists(kinectLib):
     print('WARNING: Skipping build of KINECT extension, no KINECT Object Library found!')
+    Export( 'kinectBuilt' )
     Return()
 
 kinectDllPath = 'C:\\Windows\\system32\\MSRKINECTNUI.DLL'
 if not os.path.exists(kinectDllPath):
     print('WARNING: Skipping build of KINECT extension, no KINECT DLL found!')
+    Export( 'kinectBuilt' )
     Return()
     
 kinectPluginEnv.Append(CPPPATH = [kinectInclude])
@@ -65,3 +70,6 @@ Alias( 'kinectInstaller', kinectInstaller )
 Export( 'kinectInstaller' )
 
 Return( 'kinectExtFiles' )
+
+kinectBuilt = True
+Export( 'kinectBuilt' )

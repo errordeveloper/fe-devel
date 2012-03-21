@@ -57,7 +57,7 @@ namespace Fabric
       void const *getDefaultData() const;
       void setData( void const *value, void *data ) const;
       void disposeData( void *data ) const;
-      void disposeDatas( void *data, size_t count, size_t stride ) const;
+      void disposeDatas( size_t count, void *data, size_t stride ) const;
       std::string descData( void const *data ) const;
       std::string toString( void const *data ) const;
       bool equalsData( void const *lhs, void const *rhs ) const;
@@ -72,6 +72,7 @@ namespace Fabric
       bool isEquivalentTo( RC::ConstHandle< RT::Desc > const &desc ) const;
       bool isShallow() const;
       bool isNoAliasSafe() const;
+      bool isNoAliasUnsafe() const;
       bool isExportable() const;
       
       void jsonDesc( JSON::Encoder &resultEncoder ) const;

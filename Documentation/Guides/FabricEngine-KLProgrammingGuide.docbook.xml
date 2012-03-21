@@ -30,7 +30,7 @@
         </para></listitem>
         
         <listitem><para>
-          KL should be easy to learn for someone who is already familiar with programming in JavaScript.
+          KL should be easy to learn for someone who is already familiar with programming in JavaScript and other scripting languages.
         </para></listitem>
 
         <listitem><para>
@@ -38,7 +38,7 @@
         </para></listitem>
       </itemizedlist>
 
-      As such, KL is a language with a syntax very similar to JavaScript but that is <emphasis>procedural</emphasis>, <emphasis>strongly-typed</emphasis> and with <emphasis>low-level data layouts</emphasis>.  Being <emphasis>procedural</emphasis> means that, unlike JavaScript, functions (or, rather, closures) are not first-class objets that can be passed around in the language; instead, functions are always globally declared.  Being <emphasis>strongly-typed</emphasis> means that, in a KL program, the types of all variables and function parameters is known at compile type, unlike JavaScript where types are only known at runtime.  Having <emphasis>low-level data layouts</emphasis> means that the size of data and the way that it is laid out in memory is guaranteed and controllable by the programmer.
+      As such, KL is a language with a syntax very similar to JavaScript but that is <emphasis>procedural</emphasis>, <emphasis>strongly-typed</emphasis> and with <emphasis>low-level data layouts</emphasis>.  Being <emphasis>procedural</emphasis> means that, unlike JavaScript, functions (or, rather, closures) are not first-class objects that can be passed around in the language; instead, functions are always globally declared.  Being <emphasis>strongly-typed</emphasis> means that, in a KL program, the types of all variables and function parameters are known at compile type, unlike JavaScript where types are only known at runtime.  Having <emphasis>low-level data layouts</emphasis> means that the size of data and the way that it is laid out in memory is guaranteed and controllable by the programmer.
     </para>
     
     <para>
@@ -53,7 +53,7 @@
         
         <example xml:id="introduction.hello-world.ex">
           <title>Hello world</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 operator entry() {
   report("Hello, world!");
 }
@@ -64,17 +64,15 @@ operator entry() {
       
         <informalfigure xml:id="introduction.hello-world.ex.out">
           <screen><![CDATA[
-operator entry() {
-  report("Hello, world!");
-}
+Hello, world!
           ]]></screen>
         </informalfigure>
         
         There's not much to learn from this program, but it does introduce a few concepts:
         
         <itemizedlist>
-          <listitem><para>The <code>entry</code> operator is what is run by the <command>kl</command> tool.  KL distinguishes places in the program that can be called from the outside world&mdash;in this case, the outside world is the <command>kl</command> tool itself.  We discuss more about operators <xref linkend="operators" /></para></listitem>
-          <listitem><para>The <code>report</code> function sends some text to wherever messages go.  In the case of the <command>kl</command> tool, messages go to standard output; when running within a web browser, messages appear on the JavaScript console.</para></listitem>
+          <listitem><para>The <code>entry</code> operator is what is run by the <command>kl</command> tool.  KL distinguishes places in the program that can be called from the outside world&mdash;in this case, the outside world is the <command>kl</command> tool itself.  We discuss more about operators in <xref linkend="operators" /></para></listitem>
+          <listitem><para>The <code>report</code> function sends some text to wherever messages go.  In the case of the <command>kl</command> tool, messages go to standard output; when running within a web browser, messages appear on the JavaScript console; for console applications (in Node.js or Python for example), messages go to standard error.</para></listitem>
           <listitem><para>The text <code>"Hello, world!"</code> is a <glossterm>string constant</glossterm>.  String constants in KL follow almost exactly the same syntax as JavaScript.</para></listitem>
         </itemizedlist>
       </para>
@@ -87,7 +85,7 @@ operator entry() {
 
         <example xml:id="introuction.fibonacci.ex">
           <title>Fibonacci sequence generator</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 /* Recursively compute the Fibonacci sequence.
 ** The first term is returned with n = 0
 */
@@ -145,7 +143,7 @@ operator entry() {
         
         <example xml:id="introuction.mandelbrot.ex">
           <title>Mandelbrot set generator</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 struct Complex32 {
   Float32 re;
   Float32 im;
@@ -270,7 +268,7 @@ operator entry()
           </para></listitem>
           
           <listitem><para>
-            <xref linkend="globals" /> describes how functions and other global declarations are made in KL.  KL includes support for basic functions (also referred to as procedures in other languages), but also support more complex function concepts such as prototypes, methods and overloaded operators.  It also support global constants, as well as a facility to import functionality from external modules.
+            <xref linkend="globals" /> describes how functions and other global declarations are made in KL.  KL includes support for basic functions (also referred to as procedures in other languages), but also support more complex function concepts such as prototypes, methods and overloaded operators.  It also supports global constants, as well as a facility to import functionality from external modules.
           </para></listitem>
           
           <listitem><para>
@@ -278,7 +276,7 @@ operator entry()
           </para></listitem>
 
           <listitem><para>
-            <xref linkend="statements" /> describes the different statements that available for function bodies in KL.
+            <xref linkend="statements" /> describes the different statements that are available for function bodies in KL.
           </para></listitem>
         </itemizedlist>
       </para>
@@ -347,7 +345,7 @@ operator entry()
             
       <example xml:id="syntax.line-continuations.ex">
         <title>Line continuations</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 operator entry() {
   report("\
 This is a really, really long string \
@@ -381,7 +379,7 @@ This is a really, really long string that spans multiple lines.  Note that      
         
         <example xml:id="syntax.comments.block.good.ex">
           <title>Acceptable block comments</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 /* A simple, one-line block comment */
 
 /* This is
@@ -394,7 +392,7 @@ This is a really, really long string that spans multiple lines.  Note that      
 */
 
 operator entry() {
-  /* comment can appear in source code
+  /* comments can appear in source code */
   report("Hello!"); /* pretty much anywhere */
   foo( 32 /*, 53*/ ); /* block comments are a simple way to temporarily remove code */
 }
@@ -403,7 +401,7 @@ operator entry() {
         
         <example xml:id="syntax.comments.block.bad.ex">
           <title>Erroneous block comments</title>
-          <programlisting><![CDATA[
+          <programlisting language="kl"><![CDATA[
 /* KL ends the comment
  * as soon as the first */
  * is seen, so this is
@@ -435,7 +433,7 @@ operator entry() {
         
         <example xml:id="syntax.comments.line.ex">
           <title>Line comments</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 // A simple, one-line line comment
 
 // This is
@@ -511,7 +509,7 @@ operator entry() {
         <para>
           Identifiers are used in KL for variable names, parameter names, function names, constant names, method names and type names.
           
-          <note><para>The built-in base types in KL (eg. <code>Boolean</code>, <code>String</code>, <code>Float32</code>) are not  keywords but rather identifiers.  This is a technical detail that is important in the design of the language grammar but doesn't make much difference in practice; it simply changes certain syntax errors into semantic errors.</para></note>
+          <note><para>The built-in base types in KL (eg. <code>Boolean</code>, <code>String</code>, <code>Float32</code>) are not keywords but rather identifiers.  This is a technical detail that is important in the design of the language grammar but doesn't make much difference in practice; it simply changes certain syntax errors into semantic errors.</para></note>
         </para>
         
         <para>
@@ -599,7 +597,7 @@ operator entry() {
         <title>Constants</title>
         
         <para>
-          A constant is a token that is interpreted as a fixed value of a specific type. KL support five types of constants: boolean constants, integer constants, float-point constants, and string constants.  Each of these are explained below.
+          A constant is a token that is interpreted as a fixed value of a specific type. KL supports five types of constants: boolean constants, integer constants, floating-point constants, and string constants.  Each of these are explained below.
         </para>
         
         <section xml:id="syntax.tokens.constants.boolean">
@@ -611,7 +609,7 @@ operator entry() {
           
           <example xml:id="syntax.tokens.constants.boolean.ex">
             <title>Boolean constants</title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   Float32 value = 1.1;
   Index steps = 0;
@@ -669,7 +667,7 @@ took 3 steps
             
           <example xml:id="syntax.tokens.constants.integer.ex">
             <title>Integer constants</title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   report(0);
   report(1);
@@ -722,7 +720,7 @@ operator entry() {
             
           <example>
             <title>Floating-point constants</title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   report(0.0);
   report(1.4142);
@@ -759,7 +757,7 @@ operator entry() {
               </para></listitem>
             </itemizedlist>
             
-            A <glossterm>string constant escape sequence</glossterm> is one of the following sequences of characters, describing what the sequence is replace by in the string: 
+            A <glossterm>string constant escape sequence</glossterm> is one of the following sequences of characters, describing what the sequence is replaced by in the string: 
             
             <variablelist>
               <varlistentry><term><code>\n</code></term><listitem><simpara>a single newline (ASCII 10) character</simpara></listitem></varlistentry>
@@ -784,7 +782,7 @@ operator entry() {
           
           <example xml:id="syntax.tokens.constants.string.ex">
             <title>String constants</title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   report("double-quoted!");
   report('single-quoted\nwith a newline');
@@ -832,7 +830,7 @@ double-quoted containing "double quotes"
       </para>
       
       <para>
-        A sequence of statements, surrounded by braces (a <code>{</code> and a <code>}</code>), can take the place of a single statement.  This also introduces a nested  scope; for more information, see <xref linkend="scope.compound-statement" />.
+        A sequence of statements, surrounded by braces (a <code>{</code> and a <code>}</code>), can take the place of a single statement.  This also introduces a nested scope; for more information, see <xref linkend="scope.compound-statement" />.
       </para>
     </section>
   </chapter>
@@ -938,7 +936,7 @@ double-quoted containing "double quotes"
         
         <example xml:id="types.base.boolean.ex">
           <title>The <code>Boolean</code> type</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 operator entry() {
   Boolean a = true;
   report(a);
@@ -1006,7 +1004,7 @@ true
         
         <example xml:id="types.base.integers.ex">
           <title>Integer types</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 operator entry() {
   Byte b = 64;
   report(b);
@@ -1069,7 +1067,7 @@ operator entry() {
 
         <example xml:id="types.base.floating-points.ex">
           <title>Floating-point types</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 operator entry() {
   Float32 x = 3.141;
   report(x);
@@ -1123,7 +1121,7 @@ operator entry() {
 
         <example xml:id="types.base.string.ex">
           <title>String type</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 operator entry() {
   String a = "A string";
   report(a);
@@ -1167,7 +1165,7 @@ Another string now includes A string
           Structures are usually defined outside of KL using Fabric's <glossterm>registered type system</glossterm>, but they can also be declared in KL source code itself using the <code>struct</code> keyword:
           
           <informalexample>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 struct NewType {
   Float32 firstMember;
   String secondMember;
@@ -1193,7 +1191,7 @@ struct NewType {
 
         <example xml:id="types.derived.struct.use.ex">
           <title>Structure use</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 struct MyNewType {
   Integer i;
   String s;
@@ -1229,7 +1227,7 @@ function entry() {
                 Arrays are indexed using the <code>[</code>..<code>]</code> operator, exactly as in JavaScript and C.  The indexing of arrays is 0-based, again just as in JavaScript and C.
               
                 <informalexample>
-                  <programlisting language="KL"><![CDATA[
+                  <programlisting language="kl"><![CDATA[
 Size sizes[];    // Declare a variable-size array
 sizes.push(42);  // Push some elements onto the end of the array
 sizes.push(21);
@@ -1244,7 +1242,7 @@ report(sizes[1]); // outputs "21"
               <listitem><para>
                 Array declarations can be nested, and can be co-nested with other array types.
                 <informalexample>
-                  <programlisting language="KL"><![CDATA[
+                  <programlisting language="kl"><![CDATA[
 Integer b[][];  // A variable-size array of variable-size arrays of integers
 Boolean a[2][]; // An array of 2 variable-size arrays of booleans
 String c<>[];   // A sliced array of variable-size 
@@ -1295,7 +1293,7 @@ String c<>[];   // A sliced array of variable-size
         
           <example xml:id="types.derived.arrays.variable.ex">
             <title>Variable-size arrays</title>
-            <programlisting><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   Integer a[];
   report("The array a has size " + a.size + " and value " + a);
@@ -1342,7 +1340,7 @@ The array NOW has size 4 and value [42,84,0,0]
         
           <example xml:id="types.derived.arrays.fixed.ex">
             <title>Fixed-size arrays</title>
-            <programlisting><![CDATA[
+            <programlisting language="kl"><![CDATA[
 function Float32 det(Float32 mat[2][2]) {
   return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
 }
@@ -1380,7 +1378,7 @@ The determinant of [[3.5,-9.2],[-2.1,8.6]] is 10.78
                 Within KL, sliced arrays can only be created using one of two syntaxes, shown in the example below:
                 
                 <informalexample>
-                  <programlisting language="KL"><![CDATA[
+                  <programlisting language="kl"><![CDATA[
 Size sizes<>(8);                // Create a sliced array of 8 elements of type Size
 for (Size i=0; i<8; ++i)
   sizes[i] = i;
@@ -1409,7 +1407,7 @@ report(subSizes.size);          // will output '4'
         
           <example xml:id="types.derived.arrays.sliced.ex">
             <title>Sliced arrays</title>
-            <programlisting><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   String strings<>(8);
   for (Size i=0; i<8; ++i)
@@ -1444,7 +1442,7 @@ strings = ["string 1","string 2","string 3","string 4","string 5","replaced stri
         <para>
           KL supports key-value pair dictionaries.  The type of the key of a dictionary can be any of the KL base types (e.g. <code>Boolean</code>, <code>String</code>, or any integer or floating-point type) and the type of the value can be any type.  Dictionaries are declared by appending <code>[<replaceable>KeyType</replaceable>]</code> to the variable, parameter or member name.  For example:
         
-          <informalexample><programlisting language="KL"><![CDATA[
+          <informalexample><programlisting language="kl"><![CDATA[
 String scalarToString[Float32];     // A Float32-to-String dictionary
 Boolean integerToBoolean[Integer];  // An Integer-to-Boolean dictionary
           ]]></programlisting></informalexample>
@@ -1462,7 +1460,7 @@ Boolean integerToBoolean[Integer];  // An Integer-to-Boolean dictionary
             <listitem><para>
               Dictionaries can be nested, and can be co-nested with array types.  For example:
             
-              <informalexample><programlisting language="KL"><![CDATA[
+              <informalexample><programlisting language="kl"><![CDATA[
 Integer b[String][2]; // An String-to-Fixed-Length-Integer-Array dictionary
 Boolean a[][Integer]; // A variable array of Integer-to-Boolean dictionaries
               ]]></programlisting></informalexample>
@@ -1477,7 +1475,7 @@ Boolean a[][Integer]; // A variable array of Integer-to-Boolean dictionaries
             <listitem><para>
               Dictionaries can be iterated over using JavaScript-like <code>in</code> iteration:
             
-              <informalexample><programlisting language="KL"><![CDATA[
+              <informalexample><programlisting language="kl"><![CDATA[
 String dict[String];
 for (k in dict)
   report("dict[" + k + "] = " + dict[k]);
@@ -1485,7 +1483,7 @@ for (k in dict)
             
               For improved performance, both the key and value can be made available through <code>in</code> iteration.  The value can be assigned to if and only if the dictionary can be assigned to.  For example:
             
-              <informalexample><programlisting language="KL"><![CDATA[
+              <informalexample><programlisting language="kl"><![CDATA[
 String dict[String];
 for (k, v in dict)
   report("dict[" + k + "] = " + v);
@@ -1495,7 +1493,7 @@ for (k, v in dict)
             <listitem><para>
               Insertion order (not sort order!) is the iteration order for dictionaries, just as for JavaScript objects.
 
-              <informalexample><programlisting language="KL"><![CDATA[
+              <informalexample><programlisting language="kl"><![CDATA[
 operator entry() {
   String numbers[Integer];
   numbers[3] = "three";
@@ -1511,7 +1509,7 @@ operator entry() {
 
         <example xml:id="types.derived.dicts.ex">
           <title>Dictionaries</title>
-          <programlisting><![CDATA[
+          <programlisting language="kl"><![CDATA[
 operator entry() {
   Float32 a[String];
   a['pi'] = 3.14;
@@ -1560,7 +1558,7 @@ a['e'] = 2.71
       <para>
         The <code>alias</code> statement can be used to alias a type to make code more readable.  Its syntax is the same as a variable declaration:
         
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 alias Integer Int32;        // Int32 is now an alias for Integer
 alias Float32 float;        // float is now an alias for Float32
 alias Float32 Mat22[2][2];  // Mat22 is now an alias for Float32[2][2], ie. a size-2-array-of-size-2-arrays-of-Float32
@@ -1571,7 +1569,7 @@ alias Float32 Mat22[2][2];  // Mat22 is now an alias for Float32[2][2], ie. a si
       
       <example xml:id="types.aliases.ex">
         <title>Type aliases</title>
-        <programlisting><![CDATA[
+        <programlisting language="kl"><![CDATA[
 alias Float32 Mat22[2][2];
 
 operator entry() {
@@ -1597,7 +1595,7 @@ operator entry() {
       <para>
         Most values in KL have a built-in method called <code>data</code> that returns a value of type <code>Data</code>, and a built-in method called <code>dataSize</code> that returns a value of type <code>Size</code>.  The value returned by the <code>data</code> method is a pointer to the data underlying the value, and the value returned by the <code>dataSize</code> method is the number of bytes the value occupies in memory.  The only values which do not support the <code>data</code> and <code>dataSize</code> methods are dictionaries as well as other derived types that do not lay out their elements or members contiguously in memory.
         
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 Integer integers[];
 report(integers.data);  // OK: integers are contiguous in memory
 String strings[];
@@ -1615,7 +1613,7 @@ report(strings.data);   // ERROR: string data is not contiguous in memory
 
       <example xml:id="types.data.ex">
         <title><code>Data</code> values and the <code>data</code> and <code>dataSize</code> methods</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 operator entry() {
   String s;
   report("s = '" + s + "'");
@@ -1662,7 +1660,7 @@ s.dataSize = 6
 
       <example xml:id="functions.ex">
         <title>Function definitions</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 // Function returning a value and using only
 // input parameters
 
@@ -1688,7 +1686,7 @@ function add(in Float32 lhs, in Float32 rhs, io Float32 result) {
       
       <example xml:id="functions.call.ex">
         <title>Function call</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 function Integer add(Integer lhs, Integer rhs) {
   return lhs + rhs;
 }
@@ -1717,7 +1715,7 @@ operator entry() {
             
             <example xml:id="prototypes.ex">
               <title>Co-recursion using a prototype</title>
-              <programlisting language="KL"><![CDATA[
+              <programlisting language="kl"><![CDATA[
 // Function prototype for 'two', so that 'one' can call it before it is defined
 function two(Integer n);
 
@@ -1757,7 +1755,7 @@ one
             
             <example xml:id="prototypes.external.ex">
               <title>External function</title>
-              <programlisting language="KL"><![CDATA[
+              <programlisting language="kl"><![CDATA[
 // The prototype 'libc_perror' is linked to an external function 'perror'
 function libc_perror(Data cString) = 'perror';
 
@@ -1786,13 +1784,13 @@ operator entry() {
         <title>The <code>report</code> Function</title>
         
         <para>
-          The <code>report</code> function outputs a message to wherever messages are sent from KL; when KL is used from Fabric running in a browser this is to the JavaScript console, whereas when Fabric is used from the command line or when the KL tool is used the output is sent to standard output.  A newline is appended to the message when it is sent.
+          The <code>report</code> function outputs a message to wherever messages are sent from KL; when KL is used from Fabric running in a browser this is to the JavaScript console, whereas when Fabric is used from the command line or when the KL tool is used the output is sent to standard error and standard output respectively.  A newline is appended to the message when it is sent.
         </para>
         
         <para>
           The prototype of the <code>report</code> function is:
           
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 function report(String message);
           ]]></programlisting>
         </para>
@@ -1904,7 +1902,7 @@ function report(String message);
 
       <example xml:id="polymorphism.ex">
         <title>Function polymorphism</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 function display(Integer a) {
   report("integer value is " + a);
 }
@@ -1943,7 +1941,7 @@ integer value is 64
 
       <example xml:id="operators.ex">
         <title>Operator definition</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 operator addElements(io Float32 lhs, io Float32 rhs, io Float32 result) {
   result = lhs + rhs;
 }
@@ -1970,7 +1968,7 @@ operator addElements(io Float32 lhs, io Float32 rhs, io Float32 result) {
 
         <example xml:id="constructors.declaration.ex">
           <title>Constructor declarations</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 struct Complex32 {
   Float32 re;
   Float32 im;
@@ -2024,7 +2022,7 @@ operator entry() {
               
                 <example xml:id="constructors.invocation.naked.ex">
                   <title>Constructor invocation using naked initialization</title>
-                  <programlisting language="KL"><![CDATA[
+                  <programlisting language="kl"><![CDATA[
   struct MyType {
     Integer n;
     Float32 x;
@@ -2056,7 +2054,7 @@ operator entry() {
               
                 <example xml:id="constructors.invocation.assignment.ex">
                   <title>Constructor invocation using assignment initialization</title>
-                  <programlisting language="KL"><![CDATA[
+                  <programlisting language="kl"><![CDATA[
   struct MyType {
     String string;
   };
@@ -2103,7 +2101,7 @@ operator entry() {
               
                 <example xml:id="constructors.invocation.call.ex">
                   <title>Constructor invocation using invocation initialization</title>
-                  <programlisting language="KL"><![CDATA[
+                  <programlisting language="kl"><![CDATA[
   struct Vec2 {
     Float64 x;
     Float64 y;
@@ -2140,7 +2138,7 @@ operator entry() {
               
                 <example xml:id="constructors.invocation.temp.ex">
                   <title>Constructor invocation using temporary value</title>
-                  <programlisting language="KL"><![CDATA[
+                  <programlisting language="kl"><![CDATA[
 struct Vec2 {
   Float64 x;
   Float64 y;
@@ -2180,7 +2178,7 @@ operator entry() {
       
       <example xml:id="destructors.ex">
         <title>Destructor</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 struct MyType {
   String s;
 };
@@ -2222,7 +2220,7 @@ Destroying MyType: this.s = foo
         <para>
           If <code><replaceable>Type</replaceable></code> is a structure or alias, then a method named <code><replaceable>methodName</replaceable></code> can be added to the type using the following syntax:
         
-          <programlisting language="KL">
+          <programlisting language="kl">
 // A method that returns a value
 function <replaceable>ReturnType</replaceable> <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<replaceable>parameter list</replaceable>) {
   <replaceable>method body</replaceable>
@@ -2248,12 +2246,12 @@ function <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<
       </para>
       
       <para>
-        Just as their can be multiple functions with the same name, a given type can have multiple methods with the same name.  When deciding which method to invoke, the usual best-match rules apply.
+        Just as there can be multiple functions with the same name, a given type can have multiple methods with the same name.  When deciding which method to invoke, the usual best-match rules apply.
       </para>
 
       <example xml:id="methods.ex">
         <title>Method definition and invocation</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 struct Type {
   Integer a;
   Float32 b;
@@ -2298,7 +2296,7 @@ a:1; b:3.14
       
           <example xml:id="op-overloads.binop.ex">
             <title>Binary operator overload</title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 struct Type {
   Integer a;
   Float32 b;
@@ -2352,7 +2350,7 @@ operator entry() {
 
           <example xml:id="op-overloads.assop.ex">
             <title>Compound assignment overload</title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 struct Type {
   Integer a;
   Float32 b;
@@ -2396,7 +2394,7 @@ t1 is now {a:49,b:5.86}
       <para>
         A <glossterm>global constant</glossterm> in KL is a global declaration of the form:
       
-        <programlisting>const <replaceable>Type</replaceable> <replaceable>name</replaceable> = <replaceable>value</replaceable>;</programlisting>
+        <programlisting language="kl">const <replaceable>Type</replaceable> <replaceable>name</replaceable> = <replaceable>value</replaceable>;</programlisting>
       
         <code><replaceable>Type</replaceable></code> must be an integer or floating-point type; <code><replaceable>name</replaceable></code> must be an identifier; and <code><replaceable>value</replaceable></code> must be constant of the appropriate type.
       </para>
@@ -2413,7 +2411,7 @@ t1 is now {a:49,b:5.86}
     
       <example xml:id="global-constants.ex">
         <title>Global constants</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 const Size twoToTheSixteen = 65536;
 const Float64 pi = 3.14159365358979;
 
@@ -2441,7 +2439,7 @@ pi = 3.14159365358979
       <para>
         The <code>require</code> statement should be followed by the name of the registered type or extension.  For example, to include the functionality provided by the extension named <quote>Math</quote> and the registered type named <quote>RegType</quote>, the program should start with:
         
-        <programlisting><![CDATA[
+        <programlisting language="kl"><![CDATA[
 require Math, RegType;
         ]]></programlisting>
         
@@ -2453,14 +2451,14 @@ require Math, RegType;
     <title>Operators and Expressions</title>
     
     <para>
-      This chapter explains the possible operators and resulting expressions in KL.  Generally, KL has the same operator and expression syntax as JavaScript in C, and in particular follows exactly the same precedence and associativity rules.
+      This chapter explains the possible operators and resulting expressions in KL.  Generally, KL has the same operator and expression syntax as JavaScript and C, and in particular follows exactly the same precedence and associativity rules.
     </para>
     
     <section xml:id="ops">
       <title>Operators</title>
       
       <para>
-        KL supports the same basic set of operators as JavaScript and C.  This operations are broadly categorized as <link linkend="arithmetic-ops">arithmetic operators</link>, <link linkend="logical-ops">logical operators</link>, <link linkend="bitwise-ops">bitwise operators</link> and <link linkend="ass-ops">assignment operators</link>.
+        KL supports the same basic set of operators as JavaScript and C.  These operations are broadly categorized as <link linkend="arithmetic-ops">arithmetic operators</link>, <link linkend="logical-ops">logical operators</link>, <link linkend="bitwise-ops">bitwise operators</link> and <link linkend="ass-ops">assignment operators</link>.
       </para>
       
       <section xml:id="arithmetic-ops">
@@ -2562,7 +2560,7 @@ require Math, RegType;
           </warning>
           
           <para>
-            It is not possible to overload the logical OR operator.  However, you can <quote>enable</quote> it for custom types (structures) by creating a <code>Boolean</code> constructor with a single parameter whose type is the type of the left operand.
+            It is not possible to overload the logical AND operator.  However, you can <quote>enable</quote> it for custom types (structures) by creating a <code>Boolean</code> constructor with a single parameter whose type is the type of the left operand.
           </para>
         </section>
      
@@ -2580,7 +2578,7 @@ require Math, RegType;
           </warning>
 
           <para>
-            It is not possible to overload the logical AND operator.  However, you can <quote>enable</quote> it for custom types (structures) by creating a <code>Boolean</code> constructor with a single parameter whose type is the type of the left operand.
+            It is not possible to overload the logical OR operator.  However, you can <quote>enable</quote> it for custom types (structures) by creating a <code>Boolean</code> constructor with a single parameter whose type is the type of the left operand.
           </para>
         </section>
       
@@ -2712,7 +2710,7 @@ require Math, RegType;
           <glossterm>Simple expressions</glossterm> are the expressions from which more complex expressions are derived.  The simple expressions are:
           
           <itemizedlist>
-            <listitem><para>Symbols that refer to variables, function arguments or global constants.  The type of the expression is the type of the entity referred to.  Examples: <code>foo</code>, <code>myParam</code>, <code>mathPI</code>.  See FIXME as well as <xref linkend="scope" /> for how symbol names are resolved.</para></listitem>
+            <listitem><para>Symbols that refer to variables, function arguments or global constants.  The type of the expression is the type of the entity referred to.  Examples: <code>foo</code>, <code>myParam</code>, <code>mathPI</code>.  See <xref linkend="scope" /> for how symbol names are resolved.</para></listitem>
             <listitem><para>Boolean, integer, floating-point and string constants.  The type of the expression is the type of the constant.  Examples: <code>true</code>, <code>42</code>, <code>3.14159</code>.  See <xref linkend="constants" />.</para></listitem>
           </itemizedlist>
         </para>
@@ -2934,7 +2932,7 @@ require Math, RegType;
       
       <example>
         <title>Controlling Order of Operations</title>
-        <programlisting language="KL"><![CDATA[
+        <programlisting language="kl"><![CDATA[
 operator entry() {
   report( (2 * 3) + 5 );
   report( 2 * (3 + 5) );
@@ -2960,7 +2958,7 @@ operator entry() {
         <title>Types of Scopes</title>
       
         <para>
-          In KL, there are four kinds scopes: the global scope, function scopes, compound statement scopes and temporary scopes.  Scopes <glossterm>nest</glossterm> inside each other; when a KL program refers to a variable by name, the compiler determines which variable is being referred to by searching from the current innermost scope outwards through the nested scopes to the outermost scope (which is always the global scope).  Like C, KL is a statically-scoped language, meaning that the exactly variable that is being referred to is resolved at compile time (and not at run time).
+          In KL, there are four kinds scopes: the global scope, function scopes, compound statement scopes and temporary scopes.  Scopes <glossterm>nest</glossterm> inside each other; when a KL program refers to a variable by name, the compiler determines which variable is being referred to by searching from the current innermost scope outwards through the nested scopes to the outermost scope (which is always the global scope).  Like C, KL is a statically-scoped language, meaning that the exact variable that is being referred to is resolved at compile time (and not at run time).
         </para>
   
         <section xml:id="scope.global">
@@ -3010,7 +3008,7 @@ operator entry() {
   
         <example xml:id="scope.ex">
           <title>Nested scopes</title>
-          <programlisting language="KL"><![CDATA[
+          <programlisting language="kl"><![CDATA[
 struct T {
   String s;
 };
@@ -3085,7 +3083,7 @@ destroying T; s = entryT
     </para>
 
     <para>
-      The remainer of the chapter describes the different statements that can be used inside KL function defintions.  Statements are divided into two categories: simple statments and complex statements.
+      The remainder of the chapter describes the different statements that can be used inside KL function definitions.  Statements are divided into two categories: simple statements and complex statements.
     </para>
 
     <section xml:id="simple-statements">
@@ -3108,7 +3106,7 @@ destroying T; s = entryT
 
         <example>
           <title>Expression statements</title>
-          <programlisting language="KL">
+          <programlisting language="kl">
             <![CDATA[
 operator entry() {
   // A very useless expression statement:
@@ -3135,7 +3133,7 @@ operator entry() {
 
         <example>
           <title>The empty statement</title>
-          <programlisting language="KL">
+          <programlisting language="kl">
             <![CDATA[
 function foo(io MyType myType) {
   for (; returnsFalseWhenDone(myType); )
@@ -3167,7 +3165,7 @@ function foo(io MyType myType) {
 
         <example>
           <title>Variable declaration statements</title>
-          <programlisting language="KL">
+          <programlisting language="kl">
           <![CDATA[
 operator entry() {
   Scalar a;
@@ -3203,7 +3201,7 @@ operator entry() {
       <title>Complex Statements</title>
 
       <para>
-        A <glossterm>complex statement</glossterm> is statement that groups together and/or conditionaly executes other statements.  Complex statements are built from simple statements, other complex statements, and expressions.
+        A <glossterm>complex statement</glossterm> is a statement that groups together and/or conditionally executes other statements.  Complex statements are built from simple statements, other complex statements, and expressions.
       </para>
 
       <section xml:id="compound-statements">
@@ -3236,7 +3234,7 @@ operator entry() {
 
           <example>
             <title>The <code>if</code> statement</title>
-            <programlisting language="KL">
+            <programlisting language="kl">
               <![CDATA[
 function String desc(Integer n) {
   if (n == 0)
@@ -3260,7 +3258,7 @@ function String desc(Integer n) {
 
           <example>
             <title>The <code>switch</code> statement</title>
-            <programlisting language="KL">
+            <programlisting language="kl">
               <![CDATA[
 function String descNumber(Integer i) {
   switch (i) {
@@ -3301,7 +3299,7 @@ function String descNumber(Integer i) {
 
         <example>
           <title>The <code>return</code> statement</title>
-          <programlisting language="KL">
+          <programlisting language="kl">
             <![CDATA[
 // Function that returns a value
 function String markupName(String name) {
@@ -3351,7 +3349,7 @@ function suffixIndexDesc(io String strings[], Size index) {
 
           <example>
             <title><quote>C-Style</quote> loop</title>
-            <programlisting language="KL">
+            <programlisting language="kl">
               <![CDATA[
 operator entry() {
   for (Index i=0; i<10; ++i)
@@ -3383,7 +3381,7 @@ operator entry() {
 
           <example>
             <title><code>while</code> loop</title>
-            <programlisting language="KL">
+            <programlisting language="kl">
               <![CDATA[
 operator entry() {
   Integer i = 0;
@@ -3418,7 +3416,7 @@ operator entry() {
 
           <example>
             <title><code>do</code>...<code>while</code> loop</title>
-            <programlisting language="KL">
+            <programlisting language="kl">
               <![CDATA[
 operator entry() {
   Integer i=0;
@@ -3444,7 +3442,7 @@ operator entry() {
           <title>Loop Control Statements</title>
 
           <para>
-            Within the body of a loop, the <code>break</code> and <code>continue</code> statements can be used prematuely end the current iteration of the loop as described below.
+            Within the body of a loop, the <code>break</code> and <code>continue</code> statements can be used to prematurely end the current iteration of the loop as described below.
           </para>
 
           <section xml:id="break-statement">
@@ -3456,7 +3454,7 @@ operator entry() {
 
             <example>
               <title>The <code>break</code> statement</title>
-              <programlisting language="KL">
+              <programlisting language="kl">
                 <![CDATA[
 operator entry() {
   // Only loops 5 times
@@ -3479,7 +3477,7 @@ operator entry() {
 
             <example>
               <title>The <code>continue</code> statement</title>
-              <programlisting language="KL">
+              <programlisting language="kl">
                 <![CDATA[
 operator entry() {
   // Only prints 7
@@ -3506,7 +3504,14 @@ operator entry() {
     </para>
 
     <para>
-      This chapter does not attempt to explain the concepts behind and usage of the Fabric Engine map-reduce framework; it serves purely to enumerate the types and functions that are provided in KL to support the framework.  For more information on concepts and usage of the map-reduce framework, refer to the <quote>Map-Reduce Programming Guide</quote>, available at <link xlink:href="http://documentation.fabric-engine.com/latest/"><uri>http://documentation.fabric-engine.com/latest/</uri></link>.
+      This chapter does not attempt to explain the concepts behind and usage of the Fabric Engine map-reduce framework; it serves purely to enumerate the types and functions that are provided in KL to support the framework.  For more information on concepts and usage of the map-reduce framework, refer to the 
+      <link condition="html" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-MapReduceProgrammingGuide.html">
+        <quote>Map-Reduce Programming Guide</quote>
+      </link>
+      <link condition="pdf" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-MapReduceProgrammingGuide.pdf">
+        <quote>Map-Reduce Programming Guide</quote>
+      </link>
+      .
     </para>
 
     <section xml:id="mr-types">
@@ -3524,15 +3529,15 @@ operator entry() {
 
           <itemizedlist>
             <listitem><para>
-              They can be assigned to variables of the same type; however, there must be an exact match for <code><replaceable>ValueType</replaceable></code>.  In other words, <code>ValueProducer&lt;<replaceable>ValueType1</replaceable>&gt;</code> and <code>ValueProducer&lt;<replaceable>ValueType2</replaceable>&gt;</code> are the same time if and only if <code><replaceable>ValueType1</replaceable></code> and <code><replaceable>ValueType2</replaceable></code> are the same type.
+              They can be assigned to variables of the same type; however, there must be an exact match for <code><replaceable>ValueType</replaceable></code>.  In other words, <code>ValueProducer&lt;<replaceable>ValueType1</replaceable>&gt;</code> and <code>ValueProducer&lt;<replaceable>ValueType2</replaceable>&gt;</code> are the same type if and only if <code><replaceable>ValueType1</replaceable></code> and <code><replaceable>ValueType2</replaceable></code> are the same type.
             </para></listitem>
 
             <listitem><para>
-              They support a method <programlisting>function <replaceable>ValueType</replaceable> ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;.produce();</programlisting> that produces the value producer's value.
+              They support a method <programlisting language="kl">function <replaceable>ValueType</replaceable> ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;.produce();</programlisting> that produces the value producer's value.
             </para></listitem>
 
             <listitem><para>
-              They support a method <programlisting>function ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;.flush();</programlisting> that recursively flushes any caches connected to the value producer.
+              They support a method <programlisting language="kl">function ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;.flush();</programlisting> that recursively flushes any caches connected to the value producer.
             </para></listitem>
           </itemizedlist>
         </para>
@@ -3546,19 +3551,19 @@ operator entry() {
 
           <itemizedlist>
             <listitem><para>
-              They can be assigned to variables of the same type; however, there must be an exact match for <code><replaceable>ElementType</replaceable></code>.  In other words, <code>ArrayProducer&lt;<replaceable>ElementType1</replaceable>&gt;</code> and <code>ArrayProducer&lt;<replaceable>ElementType2</replaceable>&gt;</code> are the same time if and only if <code><replaceable>ElementType1</replaceable></code> and <code><replaceable>ElementType2</replaceable></code> are the same type.
+              They can be assigned to variables of the same type; however, there must be an exact match for <code><replaceable>ElementType</replaceable></code>.  In other words, <code>ArrayProducer&lt;<replaceable>ElementType1</replaceable>&gt;</code> and <code>ArrayProducer&lt;<replaceable>ElementType2</replaceable>&gt;</code> are the same type if and only if <code><replaceable>ElementType1</replaceable></code> and <code><replaceable>ElementType2</replaceable></code> are the same type.
             </para></listitem>
 
             <listitem><para>
-              They support a method <programlisting>function Size ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.getCount();</programlisting> that returns the number of elements in the array producer.  Calling <code>produce(<replaceable>i</replaceable>)</code> (below) with <code><replaceable>i</replaceable></code> not less than the result of <code>getCount()</code> will cause an exception to be thrown.
+              They support a method <programlisting language="kl">function Size ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.getCount();</programlisting> that returns the number of elements in the array producer.  Calling <code>produce(<replaceable>i</replaceable>)</code> (below) with <code><replaceable>i</replaceable></code> not less than the result of <code>getCount()</code> will cause an exception to be thrown.
             </para></listitem>
 
             <listitem><para>
-              They support a method <programlisting>function <replaceable>ElementType</replaceable> ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.produce(Index <replaceable>i</replaceable>);</programlisting> that produces the array producer's element at index <code><replaceable>i</replaceable></code>.
+              They support a method <programlisting language="kl">function <replaceable>ElementType</replaceable> ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.produce(Index <replaceable>i</replaceable>);</programlisting> that produces the array producer's element at index <code><replaceable>i</replaceable></code>.
             </para></listitem>
 
             <listitem><para>
-              They support a method <programlisting>function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.flush();</programlisting> that recursively flushes any caches connected to the array producer.
+              They support a method <programlisting language="kl">function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;.flush();</programlisting> that recursively flushes any caches connected to the array producer.
             </para></listitem>
           </itemizedlist>
         </para>
@@ -3578,7 +3583,7 @@ operator entry() {
         <section>
           <title><code>createConstValue</code></title>
 
-          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createConstValue(<replaceable>expr</replaceable>)</programlisting>
+          <programlisting language="kl">ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createConstValue(<replaceable>expr</replaceable>)</programlisting>
 
           <para>
             Creates a value producer with value type <replaceable>ValueType</replaceable> that returns a constant value.  <replaceable>expr</replaceable> must be an expression that evaluates to a value.
@@ -3586,7 +3591,7 @@ operator entry() {
 
           <example>
             <title><code>createConstValue</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   ValueProducer<Integer> vp = createConstValue( 42 );
   report(vp);
@@ -3607,7 +3612,7 @@ ValueProducer<Integer>
         <section>
           <title><code>createValueGenerator</code></title>
 
-          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueGenerator(<replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
+          <programlisting language="kl">ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueGenerator(<replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
 
           <para>
             Creates a value producer with value type <replaceable>ValueType</replaceable> that calls the operator named <code><replaceable>operatorName</replaceable></code> to generate the value.
@@ -3615,13 +3620,13 @@ ValueProducer<Integer>
             <itemizedlist>
               <listitem>
                 <para>
-                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
+                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting language="kl">operator operatorName(io <replaceable>ValueType</replaceable> value, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
                 </para>
               </listitem>
 
               <listitem>
                 <para>
-                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value);</programlisting>
+                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting language="kl">operator operatorName(io <replaceable>ValueType</replaceable> value);</programlisting>
                 </para>
               </listitem>
             </itemizedlist>
@@ -3629,7 +3634,7 @@ ValueProducer<Integer>
 
           <example>
             <title><code>createValueGenerator</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator gen1(io String output) {
   output = "Hello!";
 }
@@ -3664,7 +3669,7 @@ vp2.produce() = Hello, Hello!
         <section>
           <title><code>createValueTransform</code></title>
 
-          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueTransform(ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;, <replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
+          <programlisting language="kl">ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueTransform(ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;, <replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
 
           <para>
             Creates a value producer with value type <replaceable>ValueType</replaceable> that calls the operator named <code><replaceable>operatorName</replaceable></code> to transform the result of another value producer of the same type.
@@ -3672,13 +3677,13 @@ vp2.produce() = Hello, Hello!
             <itemizedlist>
               <listitem>
                 <para>
-                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
+                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting language="kl">operator operatorName(io <replaceable>ValueType</replaceable> value, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
                 </para>
               </listitem>
 
               <listitem>
                 <para>
-                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(io <replaceable>ValueType</replaceable> value);</programlisting>
+                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting language="kl">operator operatorName(io <replaceable>ValueType</replaceable> value);</programlisting>
                 </para>
               </listitem>
             </itemizedlist>
@@ -3686,7 +3691,7 @@ vp2.produce() = Hello, Hello!
 
           <example>
             <title><code>createValueTransform</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator multByTwo(
   io Integer value
   )
@@ -3737,7 +3742,7 @@ ValueProducer<Integer>
         <section>
           <title><code>createValueMap</code></title>
 
-          <programlisting>ValueProducer&lt;<replaceable>OutputValueType</replaceable>&gt; createValueMap(ValueProducer&lt;<replaceable>InputValueType</replaceable>&gt;, <replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
+          <programlisting language="kl">ValueProducer&lt;<replaceable>OutputValueType</replaceable>&gt; createValueMap(ValueProducer&lt;<replaceable>InputValueType</replaceable>&gt;, <replaceable>operatorName</replaceable>[, ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;])</programlisting>
 
           <para>
             Creates a value producer with value type <replaceable>OutputValueType</replaceable> that calls the operator named <code><replaceable>operatorName</replaceable></code> to map the result of another value producer of type <code>ValueProducer&lt;<replaceable>InputValueType</replaceable>&gt;</code>.
@@ -3745,13 +3750,13 @@ ValueProducer<Integer>
             <itemizedlist>
               <listitem>
                 <para>
-                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operator operatorName(<replaceable>InputValueType</replaceable> inputValue, io <replaceable>OutputValueType</replaceable> outputValue, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
+                  If <code>ValueProducer&lt;<replaceable>SharedValueType</replaceable>&gt;</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting language="kl">operator operatorName(<replaceable>InputValueType</replaceable> inputValue, io <replaceable>OutputValueType</replaceable> outputValue, <replaceable>SharedValueType</replaceable> sharedValue);</programlisting>
                 </para>
               </listitem>
 
               <listitem>
                 <para>
-                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting>operatorName(<replaceable>InputValueType</replaceable> inputValue, io <replaceable>OutputValueType</replaceable> outputValue);</programlisting>
+                  Otherwise, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype <programlisting language="kl">operatorName(<replaceable>InputValueType</replaceable> inputValue, io <replaceable>OutputValueType</replaceable> outputValue);</programlisting>
                 </para>
               </listitem>
             </itemizedlist>
@@ -3759,7 +3764,7 @@ ValueProducer<Integer>
 
           <example>
             <title><code>createValueMap</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator multByPi(
   Integer input,
   io Scalar output
@@ -3812,15 +3817,22 @@ ValueProducer<Scalar>
         <section>
           <title><code>createValueCache</code></title>
 
-          <programlisting>ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueCache(ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;)</programlisting>
+          <programlisting language="kl">ValueProducer&lt;<replaceable>ValueType</replaceable>&gt; createValueCache(ValueProducer&lt;<replaceable>ValueType</replaceable>&gt;)</programlisting>
 
           <para>
-            Creates a value producer with value type <replaceable>ValueType</replaceable> that caches the result of another value producer of the same type.  For more information on producer caches, see the Fabric Engine Map-Reduce Programming Guide.
+            Creates a value producer with value type <replaceable>ValueType</replaceable> that caches the result of another value producer of the same type.  For more information on producer caches, see refer to the
+            <link condition="html" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-MapReduceProgrammingGuide.html">
+              <quote>Map-Reduce Programming Guide</quote>
+            </link>
+            <link condition="pdf" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-MapReduceProgrammingGuide.pdf">
+              <quote>Map-Reduce Programming Guide</quote>
+            </link>
+            .
           </para>
 
           <example>
             <title><code>createValueCache</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator valueGen(
   io Scalar output
   )
@@ -3862,15 +3874,15 @@ vp.produce() = 2.71
         <section>
           <title><code>createConstArray</code></title>
 
-          <programlisting>ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createConstArray(<replaceable>arrayExpr</replaceable>)</programlisting>
+          <programlisting language="kl">ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createConstArray(<replaceable>arrayExpr</replaceable>)</programlisting>
 
           <para>
-            Creates a constant array producer.  <replaceable>arrayExpr</replaceable> must be an expression that evaluates to an array (variable-size, fixed-size or sliced) whose element type is <replaceable>ElementType</replaceable>.  The array is <quote>frozen</quote> in the resulting array producer; that is, if the aray used in the call to <code>createConstArray</code> is later changed, the result of  <code>createConstArray</code> will not change.
+            Creates a constant array producer.  <replaceable>arrayExpr</replaceable> must be an expression that evaluates to an array (variable-size, fixed-size or sliced) whose element type is <replaceable>ElementType</replaceable>.  The array is <quote>frozen</quote> in the resulting array producer; that is, if the array used in the call to <code>createConstArray</code> is later changed, the result of  <code>createConstArray</code> will not change.
           </para>
  
           <example>
             <title><code>createConstArray</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator entry() {
   Integer a[]; a.push(42); a.push(17); a.push(52); a.push(871);
   ArrayProducer<Integer> ap = createConstArray(a);
@@ -3897,7 +3909,7 @@ ArrayProducer<Integer>
           <para>
             <code>createArrayGenerator</code> has one of the following <quote>prototypes</quote>:
 
-            <programlisting>
+            <programlisting language="kl">
 function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayGenerator(
   ValueProducer&lt;Size&gt; countProducer,
   <replaceable>operatorName</replaceable>
@@ -3918,7 +3930,7 @@ function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArray
           <para>
             If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   io <replaceable>ElementType</replaceable> elementValue,
   Size index,
@@ -3929,7 +3941,7 @@ operator <replaceable>operatorName</replaceable>(
 
             Otherwise, it must name an operator with any of the following prototypes:
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   io <replaceable>ElementType</replaceable> elementValue,
   Size index,
@@ -3949,7 +3961,7 @@ operator <replaceable>operatorName</replaceable>(
  
           <example>
             <title><code>createArrayGenerator</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator generator(
   io Float32 value,
   Size index,
@@ -4007,7 +4019,7 @@ generator: value=0 index=9 count=10 shared=3.141
           <para>
             <code>createArrayTransform</code> has one of the following <quote>prototypes</quote>:
 
-            <programlisting>
+            <programlisting language="kl">
 function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayTransform(
   ArrayProducer&lt;ElementType&gt; inputArrayProducer,
   <replaceable>operatorName</replaceable>
@@ -4028,7 +4040,7 @@ function ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArray
           <para>
             If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   io <replaceable>ElementType</replaceable> elementValue,
   Size index,
@@ -4039,7 +4051,7 @@ operator <replaceable>operatorName</replaceable>(
 
             Otherwise, it must name an operator with any of the following prototypes:
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   io <replaceable>ElementType</replaceable> elementValue,
   Size index,
@@ -4059,7 +4071,7 @@ operator <replaceable>operatorName</replaceable>(
  
           <example>
             <title><code>createArrayTransform</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator transform(
   io Float32 value,
   Size index,
@@ -4105,7 +4117,7 @@ transform: value=1.4142 index=2 count=3 shared=2.56
           <para>
             <code>createArrayMap</code> has one of the following <quote>prototypes</quote>:
 
-            <programlisting>
+            <programlisting language="kl">
 function ArrayProducer&lt;<replaceable>OutputElementType</replaceable>&gt; createArrayMap(
   ArrayProducer&lt;InputElementType&gt; inputArrayProducer,
   <replaceable>operatorName</replaceable>
@@ -4126,7 +4138,7 @@ function ArrayProducer&lt;<replaceable>OutputElementType</replaceable>&gt; creat
           <para>
             If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   <replaceable>InputElementType</replaceable> inputElementValue,
   io <replaceable>OutputElementType</replaceable> outputElementValue,
@@ -4138,7 +4150,7 @@ operator <replaceable>operatorName</replaceable>(
 
             Otherwise, it must name an operator with any of the following prototypes:
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   <replaceable>InputElementType</replaceable> inputElementValue,
   io <replaceable>OutputElementType</replaceable> outputElementValue,
@@ -4161,7 +4173,7 @@ operator <replaceable>operatorName</replaceable>(
  
           <example>
             <title><code>createArrayMap</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator map(
   Float32 inputValue,
   io String outputValue,
@@ -4213,15 +4225,22 @@ large
         <section>
           <title><code>createArrayCache</code></title>
 
-          <programlisting>ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayCache(ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;)</programlisting>
+          <programlisting language="kl">ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt; createArrayCache(ArrayProducer&lt;<replaceable>ElementType</replaceable>&gt;)</programlisting>
 
           <para>
-            Creates an array producer with array type <replaceable>ElementType</replaceable> that caches the result of another array producer of the same type.  For more information on producer caches, see the Fabric Engine Map-Reduce Programming Guide.
+            Creates an array producer with array type <replaceable>ElementType</replaceable> that caches the result of another array producer of the same type.  For more information on producer caches, refer to the
+            <link condition="html" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-MapReduceProgrammingGuide.html">
+              <quote>Map-Reduce Programming Guide</quote>
+            </link>
+            <link condition="pdf" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-MapReduceProgrammingGuide.pdf">
+              <quote>Map-Reduce Programming Guide</quote>
+            </link>
+            .
           </para>
 
           <example>
             <title><code>createArrayCache</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator elementGen(
   io Scalar output,
   Size index
@@ -4272,7 +4291,7 @@ ap.produce(2) = 5.42
           <para>
             <code>createReduce</code> has one of the following <quote>prototypes</quote>:
 
-            <programlisting>
+            <programlisting language="kl">
 function ValueProducer&lt;<replaceable>OutputValueType</replaceable>&gt; createReduce(
   ArrayProducer&lt;InputElementType&gt; inputArrayProducer,
   <replaceable>operatorName</replaceable>
@@ -4293,7 +4312,7 @@ function ValueProducer&lt;<replaceable>OutputValueType</replaceable>&gt; createR
           <para>
             If <code>sharedValueProducer</code> is provided, <code><replaceable>operatorName</replaceable></code> must name an operator with prototype
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   <replaceable>InputElementType</replaceable> inputElementValue,
   io <replaceable>OutputValueType</replaceable> outputValue,
@@ -4305,7 +4324,7 @@ operator <replaceable>operatorName</replaceable>(
 
             Otherwise, it must name an operator with any of the following prototypes:
 
-            <programlisting>
+            <programlisting language="kl">
 operator <replaceable>operatorName</replaceable>(
   <replaceable>InputElementType</replaceable> inputElementValue,
   io <replaceable>OutputValueType</replaceable> outputValue,
@@ -4328,7 +4347,7 @@ operator <replaceable>operatorName</replaceable>(
  
           <example>
             <title><code>createReduce</code></title>
-            <programlisting language="KL"><![CDATA[
+            <programlisting language="kl"><![CDATA[
 operator generator(
   io Integer outputValue,
   Size index

@@ -15,12 +15,17 @@ namespace Fabric
   namespace RT
   {
     SlicedArrayImpl::SlicedArrayImpl( std::string const &codeName, RC::ConstHandle<Impl> const &memberImpl )
-      : ArrayImpl( codeName, DT_SLICED_ARRAY, memberImpl )
+      : ArrayImpl( memberImpl )
       , m_memberImpl( memberImpl )
       , m_memberSize( memberImpl->getAllocSize() )
       , m_variableArrayImpl( memberImpl->getVariableArrayImpl() )
     {
-      setSize( sizeof(bits_t) );
+      size_t flags = 0;
+      if ( m_memberImpl->isNoAliasUnsafe() )  
+        flags |= FlagNoAliasUnsafe;
+      if ( m_memberImpl->isExportable() )  
+        flags |= FlagExportable;
+      initialize( codeName, DT_SLICED_ARRAY, sizeof(bits_t), flags );
     }
     
     void const *SlicedArrayImpl::getDefaultData() const
@@ -29,23 +34,33 @@ namespace Fabric
       return &defaultData;
     }
 
-    void SlicedArrayImpl::setData( void const *src, void *dst ) const
+    void SlicedArrayImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      bits_t const *srcBits = reinterpret_cast<bits_t const *>(src);
-      bits_t *dstBits = reinterpret_cast<bits_t *>(dst);
-      dstBits->offset = srcBits->offset;
-      dstBits->size = srcBits->size;
-      if ( dstBits->rcva )
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
       {
-        if ( --dstBits->rcva->refCount == 0 )
+        bits_t const *srcBits = reinterpret_cast<bits_t const *>(src);
+        bits_t *dstBits = reinterpret_cast<bits_t *>(dst);
+        dstBits->offset = srcBits->offset;
+        dstBits->size = srcBits->size;
+        if ( dstBits->rcva )
         {
-          m_variableArrayImpl->disposeData( &dstBits->rcva->varArray );
-          free( dstBits->rcva );
+          if ( --dstBits->rcva->refCount == 0 )
+          {
+            m_variableArrayImpl->disposeData( &dstBits->rcva->varArray );
+            free( dstBits->rcva );
+          }
         }
+        dstBits->rcva = srcBits->rcva;
+        if ( dstBits->rcva )
+          ++dstBits->rcva->refCount;
+
+        src += srcStride;
+        dst += dstStride;
       }
-      dstBits->rcva = srcBits->rcva;
-      if ( dstBits->rcva )
-        ++dstBits->rcva->refCount;
     }
 
     void SlicedArrayImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
@@ -88,16 +103,21 @@ namespace Fabric
       FABRIC_ASSERT( membersFound == entity.value.array.size );
     }
 
-    void SlicedArrayImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void SlicedArrayImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      bits_t *bits = reinterpret_cast<bits_t *>(data);
-      if ( bits->rcva )
+      uint8_t * const dataEnd = data + count * stride;
+      while ( data != dataEnd )
       {
-        if ( --bits->rcva->refCount == 0 )
+        bits_t *bits = reinterpret_cast<bits_t *>(data);
+        if ( bits->rcva )
         {
-          m_variableArrayImpl->disposeData( &bits->rcva->varArray );
-          free( bits->rcva );
+          if ( --bits->rcva->refCount == 0 )
+          {
+            m_variableArrayImpl->disposeData( &bits->rcva->varArray );
+            free( bits->rcva );
+          }
         }
+        data += stride;
       }
     }
     
@@ -121,16 +141,6 @@ namespace Fabric
         result += "...";
       result += "]";
       return result;
-    }
-    
-    bool SlicedArrayImpl::isShallow() const
-    {
-      return false;
-    }
-
-    bool SlicedArrayImpl::isNoAliasSafe() const
-    {
-      return isMemberNoAliasSafe();
     }
 
     bool SlicedArrayImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const
@@ -198,11 +208,6 @@ namespace Fabric
       if ( bits->rcva )
         return sizeof( *bits->rcva ) + m_variableArrayImpl->getIndirectMemoryUsage( &bits->rcva->varArray );
       else return 0;
-    }
-    
-    bool SlicedArrayImpl::isExportable() const
-    {
-      return m_variableArrayImpl->isExportable();
     }
   }
 }

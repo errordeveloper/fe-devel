@@ -16,13 +16,15 @@ namespace Fabric
     public:
       REPORT_RC_LEAKS
     
-      // Impl
-      
-      virtual bool isExportable() const;
-
     protected:
       
-      ProducerImpl( std::string const &codeNamee, ImplType type );
+      ProducerImpl();
+
+      void initialize(
+        std::string const &codeName,
+        ImplType type,
+        size_t allocSize
+        );
     };
   }
 }

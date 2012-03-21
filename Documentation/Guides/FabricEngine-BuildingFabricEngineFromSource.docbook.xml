@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!DOCTYPE book [
+<!ENTITY % allent SYSTEM "w3centities-f.ent">
+%allent;
+]>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+  <info>
+    <title>Building Fabric Engine From Source</title>
+    <copyright>
+      <year>{{FABRIC_COPYRIGHT_YEARS}}</year>
+      <holder>{{FABRIC_COMPANY_NAME}}</holder>
+    </copyright>
+    <releaseinfo>{{FABRIC_NAME}} Version {{FABRIC_VERSION}}</releaseinfo>
+  </info>
+  
+  <chapter xml:id="introduction">
+    <title>Introduction</title>
+
+    <para>
+      This document will outline how to set up your development environment in order to build Fabric Engine Core under Mac OS X, Linux, and Windows. The builds under all three systems are generally done from the command prompt, using Mingw32 under Windows for more UNIX-like functionality.
+      The Fabric Engine Core is used by all Fabric applications whether in the browser or in a language binding module.
+    </para>
+
+    <para>
+      Fabric supports the following platforms:
+
+      <itemizedlist>
+        <listitem><para>
+          <emphasis>Windows</emphasis>: Vista or Windows 7.
+        </para></listitem>
+        
+        <listitem><para>
+          <emphasis>Mac OS X</emphasis>: 10.6 (Snow Leopard) or above
+        </para></listitem>
+
+        <listitem><para>
+          <emphasis>Linux</emphasis>: Tested on Ubuntu 10.04 and above (32-bit or 64-bit). Should work with any modern distro.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </chapter>
+
+  <chapter xml:id="setup">
+    <title>Core Setup</title>
+
+    <section xml:id="setup.prereqs">
+      <title>Prerequisites</title>
+      <para>
+        Before getting started you will need several packages installed in order to be able to retrieve and compile the Fabric source code. Packages vary depending on build operating system.
+      </para>
+
+      <section xml:id="setup.prereqs.windows">
+        <title>Windows</title>
+
+        <section xml:id="setup.prereqs.windows.install">
+          <title>Install software</title>
+          <para>
+            The following software is required to build Fabric on Windows:
+          </para>
+
+          <itemizedlist>
+            <listitem><para>
+              <link xlink:href="http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-express">Microsoft Visual C++ Express 2010</link> (or any superior Visual Studio version). Use standard settings.
+            </para></listitem>
+            <listitem><para>
+              <link xlink:href="http://www.python.org/download/">Latest Python 2.x 32-bit</link>. Use standard settings.
+            </para></listitem>
+            <listitem><para>
+              <link xlink:href="http://sourceforge.net/projects/scons/files/scons/">Latest Scons 2.x</link>. Use standard settings.
+            </para></listitem>
+          </itemizedlist>
+
+          <para>
+            You'll also need to add the python and python/scripts folders to your <prompt>PATH</prompt> environment variable. To do so click on the Windows Menu, choose “Control Panel”. Now click on “System and Security”, followed by “System”. Finally, click on “Advanced System Settings”, followed by the “Environment Variables” button. If the variable “PATH” already exists, append “;c:\Python27;c:\Python27\Scripts” to its value, else create it and choose “c:\Python27;c:\Python27\Scripts” for its value.
+          </para>
+        </section>
+
+        <section xml:id="setup.prereqs.windows.git">
+          <title>Install Git and Configure SSH</title>
+          <para>
+            The Fabric Engine source code is hosted in a GitHub repositroy, which uses SSH for security. You will need to set up Git and SSH on your windows machine to be able to clone the repository.
+          </para>
+          <para>
+            Install Git for Windows and (optionally) set up your github ssh key by following the instructions found here: <link xlink:href="http://help.github.com/win-set-up-git/"><uri>Set Up Git</uri></link>
+          </para>
+          <para>
+            If you want the system to remember your git passphrase, you can follow the instructions found here: <link xlink:href="http://stackoverflow.com/questions/370030/why-git-cant-remember-my-passphrase-under-windows"><uri>Why git can't remember my passphrase under Windows</uri></link>
+          </para>
+        </section>
+
+      </section>
+
+      <section xml:id="setup.prereqs.mac">
+        <title>Mac OS X</title>
+        
+        <section xml:id="setup.prereqs.mac.xcode">
+          <title>Install Xcode</title>
+          <para>
+            Install the latest version of Xcode (4.1 as of this writing). This should automatically get you the <command>git</command> binary so you can check out the source.
+          </para>
+        </section>
+
+        <section xml:id="setup.prereqs.mac.macports">
+          <title>Install MacPorts</title>
+          <para>
+            Follow the instructions <link xlink:href="http://www.macports.org/install.php">to install MacPorts on your system.</link> Use the OS X .pkg installer (the recommended choice). Once the installer has finished, bring MacPorts up-to-date by opening a Terminal and running:
+          </para>
+          <para><command>sudo port -v selfupdate</command></para>
+          <para>
+            You need to make sure that the directory <filename>/opt/local/bin</filename> is in your <prompt>PATH</prompt> environment variable so you can run the MacPorts tools easily. To the end of the file <filename>~/.profile</filename>, add the line:
+          </para>
+          <para><command>export PATH="$PATH":/opt/local/bin</command></para>
+          <para>
+            Then restart the Terminal application.
+          </para>
+        </section>
+
+        <section xml:id="setup.prereqs.mac.install">
+          <title>Install required applications</title>
+          <para>
+            There is a version of bison (the GNU yacc-compatible parser generator) that ships with Xcode but it is too old for us; you need to install the version of bison from MacPorts. To do so, run:
+          </para>
+          <para><command>sudo port install bison</command></para>
+          <para>
+            The build system we use is scons, and it too needs to be installed from MacPorts. To do so, run:
+          </para>
+          <para><command>sudo port install scons</command></para>
+        </section>
+        
+        <section xml:id="setup.prereqs.mac.git">
+          <title>Install Git</title>
+          <para>
+            Follow the instructions on GitHub for setting up Git on OsX.
+            <link xlink:href="http://help.github.com/mac-set-up-git/"><uri>mac-set-up-git</uri></link>
+          </para>
+        </section>
+      </section>
+
+      <section xml:id="setup.prereqs.linux">
+        <title>Linux</title>
+        <para>
+          A few packages are necessary to build under Linux, namely the compiler, bison, and scons. Assuming you are running Ubuntu, you may run:
+        </para>
+        <para><command>sudo apt-get install build-essential scons bison</command></para>
+        <para>
+          If you are running a different distribution use your appropriate package manager to install the required application.
+        </para>
+        
+        <section xml:id="setup.prereqs.linux.git">
+          <title>Install Git</title>
+          <para>
+            Follow the instructions on GitHub for setting up Git on Linux.
+            <link xlink:href="http://help.github.com/linux-set-up-git/"><uri>linux-set-up-git</uri></link>
+          </para>
+        </section>
+      </section>
+    </section>
+
+    <section xml:id="setup.build-folder">
+      <title>Build Folder</title>
+      <para>
+        You first need to choose a directory where the Fabric source code will live. Assuming that <prompt>myuser</prompt> is your local username, the recommended paths are:
+
+        <itemizedlist>
+          <listitem><para>
+            Windows: <prompt>c:\Users\myuser\Fabric</prompt>
+          </para></listitem>
+          
+          <listitem><para>
+            Mac OS X: <prompt>/Users/myuser/Fabric</prompt>
+          </para></listitem>
+
+          <listitem><para>
+            Linux: <prompt>/home/myuser/Fabric</prompt>
+          </para></listitem>
+        </itemizedlist>
+      </para>
+
+      <para>
+        You will then need to set an environment variable called <prompt>FABRIC_CORE_PATH</prompt> that points to this newly-created directory. Under Mac OS X and Linux, this can be done by running:
+      </para>
+
+      <para>
+        <prompt>export FABRIC_CORE_PATH=~/Fabric</prompt>
+      </para>
+
+      <para>
+        You may also want to add this to your <prompt>~/.bash_profile</prompt> or <prompt>~/.profile</prompt> file.
+      </para>
+
+      <para>
+        Under Windows you'll want to set it as a permanent environment variable by going to Control Panel -> System -> Advanced System Settings -> Advanced -> Environment Variables. You can create a new variable named <prompt>FABRIC_CORE_PATH</prompt> and set it to <prompt>c:\Users\myuser\Fabric</prompt> (or whatever directory you chose).
+      </para>
+
+    </section>
+
+    <section xml:id="setup.clone-repo">
+      <title>Clone the PublicDev Repository</title>
+      <para>
+        If read-only access is enough, you can clone the PublicDev repository from the command line without setting up an ssh key by doing:
+      </para>
+      <para>
+        <prompt>git clone https://github.com/fabric-engine/PublicDev.git $FABRIC_CORE_PATH</prompt>
+      </para>
+      <para>
+        Where <prompt>$FABRIC_CORE_PATH</prompt> is the folder set up above.
+      </para>
+
+      <para>
+        If you will require write access then you will need to:
+        <itemizedlist>
+          <listitem><para>
+            Ensure that you have uploaded your public SSH key to your github.com account.
+          </para></listitem>
+          <listitem><para>
+            Test that your SSH keys are properly set up for github.com by running:
+            <command>ssh -T git@github.com</command>. You should see a message like the following:
+            <prompt>Hi myuser! You've successfully authenticated, but GitHub does not provide shell access.</prompt>
+          </para></listitem>
+          <listitem><para>
+            If your keys have been set up and you have been granted write access, you can check out the repository by running:
+            <command>git clone ssh://github.com/fabric-engine/PublicDev.git $FABRIC_CORE_PATH</command>
+          </para></listitem>
+        </itemizedlist>
+        
+      </para>
+    </section>
+
+    <section xml:id="setup.thirdparty">
+      <title>Install Pre-built Third-Party Binaries</title>
+      <para>
+        Certain additional custom-compiled binaries are needed to compile Fabric. These are platform-specific and available from the PublicDev github page.
+      </para>
+      <orderedlist>
+        <listitem><para>
+          From the <link xlink:href="https://github.com/fabric-engine/PublicDev/downloads">downloads page for the PublicDev repository</link>, download the latest set of pre-built third-party binaries for you platform.
+        </para></listitem>
+        <listitem><para>
+          Unpack the archive into <prompt>$FABRIC_CORE_PATH</prompt>.
+        </para></listitem>
+      </orderedlist>
+    </section>
+
+    <section xml:id="setup.build">
+      <title>Build</title>
+      <para>
+        Before running the build, you'll need to set up some necessary environment variables that the build process will use. These are set by simply running a script found in the PublicDev repository.
+      </para>
+      <para>
+        Source the <prompt>$FABRIC_CORE_PATH</prompt>/Util/fabric-build-env.sh script with the following args (Windows: use Git bash):
+      </para>
+      <para><command>source ~Fabric/Util/fabric-build-env.sh -n Release</command></para>
+      <para>
+        The <prompt>-n</prompt> is optional and adds a symlink for the NPAPI plugin to be automatically loaded when your browser runs. You can pass either <prompt>Debug</prompt> or <prompt>Release</prompt> to specify either a Debug build or a Release build.
+      </para>
+      <para>
+        This can be added to your <filename>~/.bash_profile</filename> or <filename>~/.profile</filename> file so that it will always run on the command line if you want.
+      </para>
+      <note><para>
+        <emphasis>Important note:</emphasis> If you are building on Windows, you will need to copy two resource headers from your Visual Studio Professional install into Fabric before compiling. In your VS install path, under <filename>VC\atlmfc\include\</filename> there should be files named <filename>afxres.h</filename> and <filename>winres.h</filename>, these will need to be copied to your <filename>$FABRIC_CORE_PATH\Native\Clients\NPAPI\Windows\</filename> folder.
+      </para></note>
+      <para>
+        The build can now be run:
+      </para>
+      <para><command>cd $FABRIC_CORE_PATH</command></para>
+      <para><command>scons all</command></para>
+      <note>
+        <para>
+          <emphasis>Note:</emphasis> Building the documentation guides (<command>scons guides</command>) require additional setup steps which have not been detailed yet. Required additional software include <link xlink:href="http://napcs.com/products/docbook/"><uri>Short-Attention-Span Docbook</uri></link>, Java, Haml and Ruby.
+        </para>
+      </note>
+    </section>
+
+  </chapter>
+</book>
