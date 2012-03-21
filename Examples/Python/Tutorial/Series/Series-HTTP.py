@@ -52,8 +52,8 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
     sumTermsBinding = fabricClient.DG.createBinding()
     sumTermsBinding.setOperator(sumTermsOp)
     sumTermsBinding.setParameterLayout([
-      "terms.count",      # terms.count is special: the slice count of
-                          # the dependency called "terms"
+      "terms",            # terms is special: it is an object that
+                          # allows you to get and set the number of slices
       "terms.result<>",   # the <> syntax specifies that we want to bind
                           # to all the slices at once
       "self.result" 

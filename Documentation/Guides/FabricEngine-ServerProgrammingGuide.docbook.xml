@@ -264,9 +264,9 @@ computeTermOp.setEntryFunctionName('computeTerm');
 var computeTermBinding = fabricClient.DG.createBinding();
 computeTermBinding.setOperator(computeTermOp);
 computeTermBinding.setParameterLayout([
-"self.index",   // self.index is special: the index of the
-                // slice being operated on
-"self.result"
+  "self.index",   // self.index is special: the index of the
+                  // slice being operated on
+  "self.result"
 ]);
 
 // Create the node that holds the terms in the series.
@@ -290,11 +290,12 @@ sumTermsOp.setEntryFunctionName('sumTerms');
 var sumTermsBinding = fabricClient.DG.createBinding();
 sumTermsBinding.setOperator(sumTermsOp);
 sumTermsBinding.setParameterLayout([
-"terms.count",      // terms.count is special: the slice count of
-                    // the dependency called "terms"
-"terms.result<>",   // the <> syntax specifies that we want to bind
-                    // to all the slices at once
-"self.result" 
+  "terms",            // terms is special: it is a Container
+                      // object that allows you to get and set
+                      // the slice count of the node
+  "terms.result<>",   // the <> syntax specifies that we want to bind
+                      // to all the slices at once
+  "self.result" 
 ]);
 
 // Create the node to hold the result, add termsNode as a
@@ -363,13 +364,13 @@ operator computeTerm(
           <programlisting language="kl">
             <![CDATA[
 operator sumTerms(
-  Size numTerms,
+  Container self,
   io Scalar terms<>,
   io Scalar result
   )
 {
   result = 0.0;
-  for (Size i=0; i<numTerms; ++i)
+  for (Size i=0; i<self.size; ++i)
     result += terms[i];
 }
             ]]>
@@ -433,86 +434,87 @@ var url = require('url');
 // Create the HTTP server
 http.createServer(function (req, res) {
 
-// Take the number of terms to compute from the 'n' GET
-// parameter; default to 10
-var numTerms = parseInt(url.parse(req.url, true).query['n']) || 10;
+  // Take the number of terms to compute from the 'n' GET
+  // parameter; default to 10
+  var numTerms = parseInt(url.parse(req.url, true).query['n']) || 10;
 
-// Ensure that each request has its own client
-// connection and local scope using the usual JavaScript trick
-(function (fabricClient) {
+  // Ensure that each request has its own client
+  // connection and local scope using the usual JavaScript trick
+  (function (fabricClient) {
 
-  // Create the operator that computes the value for
-  // each term of the series
+    // Create the operator that computes the value for
+    // each term of the series
 
-  var computeTermOp = fabricClient.DG.createOperator("computeTermOp");
-  computeTermOp.setSourceCode('computeTerm.kl', fs.readFileSync('computeTerm.kl', 'utf8'));
-  computeTermOp.setEntryFunctionName('computeTerm');
+    var computeTermOp = fabricClient.DG.createOperator("computeTermOp");
+    computeTermOp.setSourceCode('computeTerm.kl', fs.readFileSync('computeTerm.kl', 'utf8'));
+    computeTermOp.setEntryFunctionName('computeTerm');
 
-  // Create the binding that binds the computeTermOp to the
-  // terms node.  A binding binds the members of the node
-  // to the arguments to the operator
+    // Create the binding that binds the computeTermOp to the
+    // terms node.  A binding binds the members of the node
+    // to the arguments to the operator
 
-  var computeTermBinding = fabricClient.DG.createBinding();
-  computeTermBinding.setOperator(computeTermOp);
-  computeTermBinding.setParameterLayout([
-    "self.index",   // self.index is special: the index of the
-                    // slice being operated on
-    "self.result"
-  ]);
+    var computeTermBinding = fabricClient.DG.createBinding();
+    computeTermBinding.setOperator(computeTermOp);
+    computeTermBinding.setParameterLayout([
+      "self.index",   // self.index is special: the index of the
+                      // slice being operated on
+      "self.result"
+    ]);
 
-  // Create the node that holds the terms in the series.
-  // The number of terms is the "count" of the node,
-  // ie. the SIMD multiplicity
+    // Create the node that holds the terms in the series.
+    // The number of terms is the "count" of the node,
+    // ie. the SIMD multiplicity
 
-  var termsNode = fabricClient.DG.createNode("termsNode");
-  termsNode.setCount(numTerms);
-  termsNode.addMember("result", "Scalar");
-  termsNode.bindings.append(computeTermBinding);
+    var termsNode = fabricClient.DG.createNode("termsNode");
+    termsNode.setCount(numTerms);
+    termsNode.addMember("result", "Scalar");
+    termsNode.bindings.append(computeTermBinding);
 
-  // Create the operator that sums the terms of the series
+    // Create the operator that sums the terms of the series
 
-  var sumTermsOp = fabricClient.DG.createOperator("sumTermsOp");
-  sumTermsOp.setSourceCode('sumTerms.kl', fs.readFileSync('sumTerms.kl', 'utf8'));
-  sumTermsOp.setEntryFunctionName('sumTerms');
+    var sumTermsOp = fabricClient.DG.createOperator("sumTermsOp");
+    sumTermsOp.setSourceCode('sumTerms.kl', fs.readFileSync('sumTerms.kl', 'utf8'));
+    sumTermsOp.setEntryFunctionName('sumTerms');
 
-  // Create the binding that binds sumTermsOp to the members of
-  // sumNode
+    // Create the binding that binds sumTermsOp to the members of
+    // sumNode
 
-  var sumTermsBinding = fabricClient.DG.createBinding();
-  sumTermsBinding.setOperator(sumTermsOp);
-  sumTermsBinding.setParameterLayout([
-    "terms.count",      // terms.count is special: the slice count of
-                        // the dependency called "terms"
-    "terms.result<>",   // the <> syntax specifies that we want to bind
-                        // to all the slices at once
-    "self.result" 
-  ]);
+    var sumTermsBinding = fabricClient.DG.createBinding();
+    sumTermsBinding.setOperator(sumTermsOp);
+    sumTermsBinding.setParameterLayout([
+      "terms",            // terms is special: it is a Container object
+                          // that allows you to get and set the slice
+                          // count of the node
+      "terms.result<>",   // the <> syntax specifies that we want to bind
+                          // to all the slices at once
+      "self.result" 
+    ]);
 
-  // Create the node to hold the result, add termsNode as a
-  // dependency and append the binding for sumTermsOp
+    // Create the node to hold the result, add termsNode as a
+    // dependency and append the binding for sumTermsOp
 
-  var sumNode = fabricClient.DG.createNode("sumNode");
-  sumNode.addMember("result", "Scalar");
-  sumNode.setDependency(termsNode, "terms");
-  sumNode.bindings.append(sumTermsBinding);
+    var sumNode = fabricClient.DG.createNode("sumNode");
+    sumNode.addMember("result", "Scalar");
+    sumNode.setDependency(termsNode, "terms");
+    sumNode.bindings.append(sumTermsBinding);
 
-  // Evaluate the sumNode asynchronously.  The given
-  // callback is issue when the computation is done.
+    // Evaluate the sumNode asynchronously.  The given
+    // callback is issue when the computation is done.
 
-  sumNode.evaluateAsync(function () {
+    sumNode.evaluateAsync(function () {
 
-    // Return the result as the HTTP content
+      // Return the result as the HTTP content
 
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end(sumNode.getData('result', 0) + "\n");
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end(sumNode.getData('result', 0) + "\n");
 
-    // Close the Fabric Engine client.  If the client isn't closed
-    // then Node.js will keep this script alive!
+      // Close the Fabric Engine client.  If the client isn't closed
+      // then Node.js will keep this script alive!
 
-    fabricClient.close();
-  });
+      fabricClient.close();
+    });
 
-})(fabric.createClient());
+  })(fabric.createClient());
 
 }).listen(1337, "127.0.0.1");
 
@@ -880,8 +882,9 @@ sumTermsOp.setEntryFunctionName('sumTerms')
 sumTermsBinding = fabricClient.DG.createBinding()
 sumTermsBinding.setOperator(sumTermsOp)
 sumTermsBinding.setParameterLayout([
-  "terms.count",      # terms.count is special: the slice count of
-                      # the dependency called "terms"
+  "terms",            # terms is special: it is an object that
+                      # allows you to get and set the number of
+                      # slices of the node
   "terms.result<>",   # the <> syntax specifies that we want to bind
                       # to all the slices at once
   "self.result" 
@@ -898,6 +901,9 @@ sumNode.bindings.append(sumTermsBinding)
 # Evaluate the sumNode (which evalutes its dependecy, the
 # termsNode, first) and then print the result.
 
+errors = sumNode.getErrors()
+for error in errors:
+  print error
 sumNode.evaluate()
 print(sumNode.getData('result', 0))
 
@@ -1011,7 +1017,6 @@ user@host~$
             <![CDATA[
 import fabric
 import BaseHTTPServer
-import sys
 import urlparse
 
 class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
@@ -1064,8 +1069,8 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
     sumTermsBinding = fabricClient.DG.createBinding()
     sumTermsBinding.setOperator(sumTermsOp)
     sumTermsBinding.setParameterLayout([
-      "terms.count",      # terms.count is special: the slice count of
-                          # the dependency called "terms"
+      "terms",            # terms is special: it is an object that
+                          # allows you to get and set the number of slices
       "terms.result<>",   # the <> syntax specifies that we want to bind
                           # to all the slices at once
       "self.result" 
@@ -1088,7 +1093,7 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
       self.wfile.write( str(sumNode.getData('result', 0)) + '\n' )
 
       # Close the Fabric Engine client.  If the client isn't closed
-      # then the Fabric Python client will keep this script alive!
+      # then Fabric Python client will keep this script alive!
 
       fabricClient.close()
 

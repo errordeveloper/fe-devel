@@ -46,8 +46,9 @@ sumTermsOp.setEntryFunctionName('sumTerms');
 var sumTermsBinding = fabricClient.DG.createBinding();
 sumTermsBinding.setOperator(sumTermsOp);
 sumTermsBinding.setParameterLayout([
-  "terms.count",      // terms.count is special: the slice count of
-                      // the dependency called "terms"
+  "terms",            // terms is special: it is a Container
+                      // object that allows you to get and set
+                      // the slice count of the node
   "terms.result<>",   // the <> syntax specifies that we want to bind
                       // to all the slices at once
   "self.result" 

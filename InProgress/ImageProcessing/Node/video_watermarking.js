@@ -1,3 +1,11 @@
+if(process.argv.length != 5) {
+  console.log("---------");
+  console.log("Please specify the command line arguments like this:");
+  console.log("  node video_watermarking.js input_video_file watermark_image_file output_video_file");
+  console.log("---------");
+  process.exit();
+}  
+
 // create a context and store it
 F = require('Fabric').createClient();
 
@@ -31,6 +39,12 @@ var createOperator = function(node,options) {
   }
 };
 
+inputMovie = process.argv[2]
+watermarkImage = process.argv[3]
+watermarkImageExt = watermarkImage.split('.')
+watermarkImageExt = watermarkImageExt[watermarkImageExt.length-1]
+outputMovie = process.argv[4]
+
 // create the dependency graph nodes
 var watermarkNode = F.DG.createNode("watermark");
 var videoInputNode = F.DG.createNode("videoInput");
@@ -41,20 +55,21 @@ videoOutputNode.setDependency(videoInputNode,'input');
 videoOutputNode.setDependency(watermarkNode,'watermark');
 
 // create the watermark image members
-watermarkNode.addMember('filePath','String','/development/watermark/dvd-logo.png');
+watermarkNode.addMember('filePath','String',watermarkImage);
+watermarkNode.addMember('ext','String',watermarkImageExt);
 watermarkNode.addMember('clientData','String','Client Name & Address');
 watermarkNode.addMember('width','Size',0);
 watermarkNode.addMember('height','Size',0);
 watermarkNode.addMember('pixels','RGBA[]');
 
 // create the input video members
-videoInputNode.addMember('filePath','String','/development/watermark/oneyear.mp4');
+videoInputNode.addMember('filePath','String',inputMovie);
 videoInputNode.addMember('video','VideoHandle');
 videoInputNode.addMember('pixels','RGB[]');
 videoInputNode.addMember('time','Scalar',0.0);
 
 // create the output video members
-videoOutputNode.addMember('filePath','String','/development/watermark/oneyear.mpeg');
+videoOutputNode.addMember('filePath','String',outputMovie);
 videoOutputNode.addMember('video','VideoHandle');
 videoOutputNode.addMember('offsetWidth','Scalar',0.0);
 videoOutputNode.addMember('offsetHeight','Scalar',0.0);
@@ -67,13 +82,10 @@ createOperator(watermarkNode,{
   name: 'openWaterMark',
   srcCode: [
     'use FabricCIMG;',
-    'use FabricFILESYSTEM;',
     '',
-    'operator openWaterMark(io String filePath, io String clientText, io Size width, io Size height, io RGBA pixels[]) {',
+    'operator openWaterMark(io String filePath, io String ext, io String clientText, io Size width, io Size height, io RGBA pixels[]) {',
     '  if(pixels.size() == 0) {',
-    '    FabricFileHandleWrapper wrapper;',
-    '    wrapper.setAbsolutePath(filePath);',
-    '    FabricCIMGOpenFileHandle(wrapper.getHandle(), width, height, pixels);',
+    '    FabricCIMGOpenFileHandle(filePath, ext, width, height, pixels);',
     '    report("Loaded Watermark image, resolution "+width+"x"+height+".");',
     '    ',
     '    Size textWidth;',
@@ -104,6 +116,7 @@ createOperator(watermarkNode,{
   ],
   binding: [
     'self.filePath',
+    'self.ext',
     'self.clientData',
     'self.width',
     'self.height',

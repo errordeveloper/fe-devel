@@ -50,8 +50,9 @@ sumTermsOp.setEntryFunctionName('sumTerms')
 sumTermsBinding = fabricClient.DG.createBinding()
 sumTermsBinding.setOperator(sumTermsOp)
 sumTermsBinding.setParameterLayout([
-  "terms.count",      # terms.count is special: the slice count of
-                      # the dependency called "terms"
+  "terms",            # terms is special: it is an object that
+                      # allows you to get and set the number of
+                      # slices of the node
   "terms.result<>",   # the <> syntax specifies that we want to bind
                       # to all the slices at once
   "self.result" 
@@ -68,6 +69,9 @@ sumNode.bindings.append(sumTermsBinding)
 # Evaluate the sumNode (which evalutes its dependecy, the
 # termsNode, first) and then print the result.
 
+errors = sumNode.getErrors()
+for error in errors:
+  print error
 sumNode.evaluate()
 print(sumNode.getData('result', 0))
 

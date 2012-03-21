@@ -31,15 +31,23 @@ var createOperator = function(node,options) {
   }
 };
 
+if(process.argv.length != 4) {
+  console.log("---------");
+  console.log("Please specify the command line arguments like this:");
+  console.log("  "+process.argv[0]+" "+process.argv[1]+" input_video_file output_detector_folder");
+  console.log("---------");
+  process.exit();
+}  
+
 // create the input video node 
 var videoInputNode = F.DG.createNode("videoInput");
-videoInputNode.addMember('videoPath','String','/development/watermark/87350029_orig.mov');
+videoInputNode.addMember('videoPath','String',process.argv[2]);
 videoInputNode.addMember('video','VideoHandle');
 videoInputNode.addMember('pixels','RGB[]');
 videoInputNode.addMember('time','Scalar',0.0);
 videoInputNode.addMember('detector','FaceDetector');
 videoInputNode.addMember('detectorPath','String','haarcascade_frontalface_alt.xml');
-videoInputNode.addMember('detectorFolder','String','/development/watermark/faces');
+videoInputNode.addMember('detectorFolder','String',process.argv[3]);
 videoInputNode.addMember('jpgPaths','String[]');
 
 // create the face recognition node
