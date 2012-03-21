@@ -20,7 +20,6 @@ namespace Fabric
     
       // Impl
     
-      virtual void setData( void const *value, void *data ) const;
       virtual std::string descData( void const *data ) const;
       virtual void const *getDefaultData() const;
       
@@ -47,8 +46,10 @@ namespace Fabric
     protected:
 
       BooleanImpl( std::string const &codeName );
+
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_BOOLEAN_IMPL_H

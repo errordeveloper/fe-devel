@@ -13,18 +13,11 @@ namespace Fabric
 {
   namespace RT
   {
-
-    std::string ContainerImpl::undefinedName("(uninitialized Container)");
+    std::string ContainerImpl::s_undefinedName("(uninitialized Container)");
 
     ContainerImpl::ContainerImpl( std::string const &codeName )
-      : Impl( codeName, DT_CONTAINER )
     {
-      setSize( sizeof(RC::WeakHandle<DG::Container> const *) );
-    }
-    
-    bool ContainerImpl::isExportable() const
-    {
-      return false;
+      initialize( codeName, DT_CONTAINER, sizeof(RC::WeakHandle<DG::Container> const *), FlagNoAliasUnsafe );
     }
 
     void const *ContainerImpl::getDefaultData() const
@@ -33,9 +26,18 @@ namespace Fabric
       return &defaultData;
     }
     
-    void ContainerImpl::setData( void const *src, void *dst ) const
+    void ContainerImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      SetData( src, dst );
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        SetData( src, dst );
+        src += srcStride;
+        dst += dstStride;
+      }
     }
      
     bool ContainerImpl::equalsData( void const *lhs, void const *rhs ) const
@@ -60,9 +62,8 @@ namespace Fabric
       throw Exception( "unable to convert Container from JSON" );
     }
 
-    void ContainerImpl::disposeDatasImpl( void *dst, size_t count, size_t stride ) const
+    void ContainerImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *data = static_cast<uint8_t *>( dst );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
@@ -86,16 +87,6 @@ namespace Fabric
     bool ContainerImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
     {
       return isContainer( impl->getType() );
-    }
-    
-    bool ContainerImpl::isShallow() const
-    {
-      return false;
-    }
-
-    bool ContainerImpl::isNoAliasSafe() const
-    {
-      return false;
     }
 
     size_t ContainerImpl::getIndirectMemoryUsage( void const *data ) const
@@ -147,7 +138,7 @@ namespace Fabric
 
       if ( srcBits && !srcBits->isNull() )
       {
-        if( !dstBits )
+        if ( !dstBits )
           dstBits = new RC::WeakHandle<DG::Container>();
         *dstBits = *srcBits;
       }
@@ -162,7 +153,7 @@ namespace Fabric
     size_t ContainerImpl::size( void const *data )
     {
       RC::WeakHandle<DG::Container> const *bits = *static_cast<RC::WeakHandle<DG::Container> const * const *>( data );
-      if( !bits )
+      if ( !bits )
         throw Exception( "Calling size() on an uninitialized Container" );
 
       return bits->makeStrong()->size();
@@ -171,7 +162,7 @@ namespace Fabric
     void ContainerImpl::resize( void *data, size_t count )
     {
       RC::WeakHandle<DG::Container> *bits = *static_cast<RC::WeakHandle<DG::Container> * const *>( data );
-      if( !bits )
+      if ( !bits )
         throw Exception( "Calling resize() on an uninitialized Container" );
 
       return bits->makeStrong()->resize( count );
@@ -180,8 +171,8 @@ namespace Fabric
     std::string ContainerImpl::GetName( void const *data )
     {
       RC::WeakHandle<DG::Container> const *bits = *static_cast<RC::WeakHandle<DG::Container> const * const *>( data );
-      if( !bits )
-        return undefinedName;
+      if ( !bits )
+        return s_undefinedName;
       else
         return bits->makeStrong()->getName();
     }
