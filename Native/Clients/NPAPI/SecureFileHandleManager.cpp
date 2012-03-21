@@ -24,6 +24,7 @@ namespace Fabric
 
     SecureFileHandleManager::SecureFileHandleManager()
       : m_encodedHandleLength(0)
+      , m_mapMutex( "SecureFileHandleManager Map Mutex" )
     {
     }
 
@@ -40,6 +41,8 @@ namespace Fabric
       data.m_readOnly = readOnly;
 
       IO::validateAbsolutePath( data.m_path );//Ensure no '..'
+
+      Util::Mutex::Lock lock( m_mapMutex );
 
       std::pair< PathToHandleMap::const_iterator, PathToHandleMap::const_iterator > existingRange = m_pathToHandle.equal_range( data.m_path );
       while( existingRange.first != existingRange.second )
@@ -95,6 +98,7 @@ namespace Fabric
       if( handle.length() < m_encodedHandleLength )
         return false;
 
+      Util::Mutex::Lock lock( m_mapMutex );
       HandleToDataMap::const_iterator iter = m_handleToData.find( std::string( handle, 0, m_encodedHandleLength ) );
       if( iter == m_handleToData.end() )
         return false;
@@ -112,6 +116,7 @@ namespace Fabric
       if( handle.length() < m_encodedHandleLength )
         throw Exception( "Invalid FileHandle" );
 
+      Util::Mutex::Lock lock( m_mapMutex );
       HandleToDataMap::const_iterator iter = m_handleToData.find( handle.substr( 0, m_encodedHandleLength ) );
       if( iter == m_handleToData.end() )
         throw Exception( "Invalid FileHandle" );
