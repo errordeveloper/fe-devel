@@ -29,8 +29,8 @@ namespace Fabric
     protected:
     
       FloatImpl( std::string const &codeName, size_t size )
-        : NumericImpl( codeName, DT_FLOAT, size )
       {
+        initialize( codeName, DT_FLOAT, size );
       }
     };
     
@@ -49,9 +49,18 @@ namespace Fabric
         return &defaultData;
       }
       
-      void setData( void const *src, void *dst ) const
+      void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
       {
-        setValue( getValue( src ), dst );
+        FABRIC_ASSERT( src );
+        FABRIC_ASSERT( dst );
+        uint8_t * const dstEnd = dst + count * dstStride;
+
+        while ( dst != dstEnd )
+        {
+          setValue( getValue( src ), dst );
+          src += srcStride;
+          dst += dstStride;
+        }
       }
         
       void encodeJSON( void const *data, JSON::Encoder &encoder ) const

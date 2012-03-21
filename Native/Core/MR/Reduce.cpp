@@ -188,7 +188,7 @@ namespace Fabric
             }
           }
         
-          m_inputDesc->disposeDatas( inputDatas, groupSize, inputElementSize );
+          m_inputDesc->disposeDatas( groupSize, inputDatas, inputElementSize );
           
           index += groupSize;
         }

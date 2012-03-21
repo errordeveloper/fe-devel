@@ -48,8 +48,6 @@ namespace Fabric
     
       // Impl
       
-      virtual void setData( void const *src, void *dst ) const;
-      virtual void disposeDatasImpl( void *data, size_t count, size_t stride ) const;
       virtual std::string descData( void const *data ) const;
       virtual void const *getDefaultData() const;
       virtual size_t getIndirectMemoryUsage( void const *data ) const;
@@ -57,10 +55,7 @@ namespace Fabric
       virtual void encodeJSON( void const *data, JSON::Encoder &encoder ) const;
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
       
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
       virtual bool isEquivalentTo( RC::ConstHandle<RT::Impl> const &desc ) const;
-      virtual bool isExportable() const;
 
       // ArrayImpl
       
@@ -78,13 +73,16 @@ namespace Fabric
     
       SlicedArrayImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &memberImpl );
 
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
+
     private:
 
       RC::ConstHandle<Impl> m_memberImpl;
       size_t m_memberSize;
       RC::ConstHandle<VariableArrayImpl> m_variableArrayImpl;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_SLICED_ARRAY_IMPL_H

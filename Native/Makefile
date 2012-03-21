@@ -5,10 +5,10 @@
 .PHONY: default xcode test
 
 default:
-	scons -k
+	$(MAKE) -C .. default
 
 xcode:
 	PYTHONUNBUFFERED=1 scons -k
 
-test: build
+test:
 	$(MAKE) -C Test

@@ -24,18 +24,18 @@ namespace Fabric
       RC::ConstHandle<ComparableImpl> const &keyImpl,
       RC::ConstHandle<Impl> const &valueImpl
       )
-      : Impl( codeName, DT_DICT )
-      , m_keyImpl( keyImpl )
+      : m_keyImpl( keyImpl )
       , m_keySize( keyImpl->getAllocSize() )
-      , m_keyIsShallow( keyImpl->isShallow() )
-      , m_keyIsNoAliasSafe( keyImpl->isNoAliasSafe() )
       , m_valueImpl( valueImpl )
       , m_valueSize( valueImpl->getAllocSize() )
-      , m_valueIsShallow( valueImpl->isShallow() )
-      , m_valueIsNoAliasSafe( valueImpl->isNoAliasSafe() )
       , m_nodeSize( sizeof(node_t) + m_keySize + m_valueSize )
     {
-      setSize( sizeof(bits_t) );
+      size_t flags = 0;
+      if ( keyImpl->isNoAliasUnsafe() || valueImpl->isNoAliasUnsafe() )
+        flags |= FlagNoAliasUnsafe;
+      if ( m_keyImpl->isExportable() && m_valueImpl->isExportable() )
+        flags |= FlagExportable;
+      initialize( codeName, DT_DICT, sizeof(bits_t), flags );
     }
     
     void const *DictImpl::getDefaultData() const
@@ -50,28 +50,36 @@ namespace Fabric
       return &defaultData;
     }
 
-    void DictImpl::setData( void const *srcData, void *dstData ) const
+    void DictImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      disposeData( dstData );
-      memset( dstData, 0, sizeof(bits_t) );
-      
-      bits_t const *srcBits = reinterpret_cast<bits_t const *>( srcData );
-      node_t const *node = srcBits->firstNode;
-      while ( node )
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
       {
-        void const *srcKeyData = immutableKeyData( node );
-        void const *srcValueData = immutableValueData( node );
-        m_valueImpl->setData( srcValueData, getMutable( dstData, srcKeyData ) );
-        node = node->bitsNextNode;
+        disposeData( dst );
+        memset( dst, 0, sizeof(bits_t) );
+        
+        bits_t const *srcBits = reinterpret_cast<bits_t const *>( src );
+        node_t const *node = srcBits->firstNode;
+        while ( node )
+        {
+          void const *srcKeyData = immutableKeyData( node );
+          void const *srcValueData = immutableValueData( node );
+          m_valueImpl->setData( srcValueData, getMutable( dst, srcKeyData ) );
+          node = node->bitsNextNode;
+        }
+
+        src += srcStride;
+        dst += dstStride;
       }
     }
     
     void DictImpl::disposeNode( node_t *node ) const
     {
-      if ( !m_keyIsShallow )
-        m_keyImpl->disposeData( mutableKeyData( node ) );
-      if ( !m_valueIsShallow )
-        m_valueImpl->disposeData( mutableValueData( node ) );
+      m_keyImpl->disposeData( mutableKeyData( node ) );
+      m_valueImpl->disposeData( mutableValueData( node ) );
       free( node );
     }
     
@@ -87,9 +95,8 @@ namespace Fabric
       free( bits->buckets );
     }
 
-    void DictImpl::disposeDatasImpl( void *_data, size_t count, size_t stride ) const
+    void DictImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *data = static_cast<uint8_t *>( _data );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
@@ -484,16 +491,6 @@ namespace Fabric
       return descData( data, 16 );
     }
     
-    bool DictImpl::isShallow() const
-    {
-      return false;
-    }
-    
-    bool DictImpl::isNoAliasSafe() const
-    {
-      return m_keyIsNoAliasSafe && m_valueIsNoAliasSafe;
-    }
-    
     bool DictImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const
     {
       if ( !isDict( that->getType() ) )
@@ -533,11 +530,6 @@ namespace Fabric
         }
       }
       return total;
-    }
-
-    bool DictImpl::isExportable() const
-    {
-      return m_keyImpl->isExportable() && m_valueImpl->isExportable();
     }
   }
 }
