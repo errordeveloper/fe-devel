@@ -57,9 +57,17 @@ namespace Fabric
       releaseFile();
     }
 
+    void ResourceLoadNode::destroy()
+    {
+      if ( m_resourceManagerWeak && m_inProgress )
+        m_resourceManagerWeak.makeStrong()->cancelRequests( this );
+      releaseFile();
+      return Node::destroy();
+    }
+
     void ResourceLoadNode::releaseFile()
     {
-      if( m_resourceManagerWeak && !m_file.empty() )
+      if ( m_resourceManagerWeak && !m_file.empty() )
         m_resourceManagerWeak.makeStrong()->releaseFile( m_file.c_str() );
       m_file.clear();
     }
@@ -76,7 +84,7 @@ namespace Fabric
 
     void ResourceLoadNode::evaluateLocal( void *userdata )
     {
-      if( isDirty() )
+      if ( isDirty() )
       {
         // [JeromeCG 20110727] Important: Url streaming task must be run in main thread only since it might use some thread-sensitive APIs such as NPAPI's stream interface
         MT::executeParallel( getContext()->getLogCollector(), 1, &ResourceLoadNode::EvaluateResource, (void *)this, true );
@@ -92,13 +100,13 @@ namespace Fabric
       bool isFirstEvalAfterLoad = m_firstEvalAfterLoad;
       m_firstEvalAfterLoad = false;
 
-      if( sameURL && m_inProgress )
+      if ( sameURL && m_inProgress )
         return;
 
-      if( sameURL && isFirstEvalAfterLoad )
+      if ( sameURL && isFirstEvalAfterLoad )
         return;//[JeromeCG 20111221] The data was already set asynchronously, during setResourceData, so the work is already done.
 
-      if( sameURL && (m_keepMemoryCache || m_asFile) )
+      if ( sameURL && (m_keepMemoryCache || m_asFile) )
       {
         //Set from m_fabricResourceStreamData
         //[JeromeCG 20110727] Note: if m_asFile, the handle was created as "readOnly", so in theory the data is still valid.
@@ -121,7 +129,7 @@ namespace Fabric
       m_asFile = getContext()->getRTManager()->getBooleanDesc()->getValue( getConstData( "storeDataAsFile", 0 ) );
 
       std::string url = m_fabricResourceStreamData.getURL();
-      if( !url.empty() )
+      if ( !url.empty() )
       {
         m_inProgress = true;
         getContext()->getIOManager()->getResourceManager()->get( url.c_str(), this, m_asFile, (void*)m_streamGeneration );
@@ -132,11 +140,11 @@ namespace Fabric
 
     void ResourceLoadNode::onData( size_t offset, size_t size, void const *data, void *userData )
     {
-      if( (size_t)userData != m_streamGeneration )
+      if ( (size_t)userData != m_streamGeneration )
         return;
 
       FABRIC_ASSERT( !m_asFile );
-      if( size )
+      if ( size )
       {
         size_t prevSize = m_fabricResourceStreamData.getDataSize();
         if ( offset + size > prevSize )
@@ -147,7 +155,7 @@ namespace Fabric
 
     void ResourceLoadNode::onFile( char const *fileName, void *userData )
     {
-      if( (size_t)userData != m_streamGeneration )
+      if ( (size_t)userData != m_streamGeneration )
         return;
 
       FABRIC_ASSERT( m_asFile );
@@ -160,7 +168,7 @@ namespace Fabric
 
     void ResourceLoadNode::onFailure( char const *errorDesc, void *userData )
     {
-      if( (size_t)userData != m_streamGeneration )
+      if ( (size_t)userData != m_streamGeneration )
         return;
 
       m_fabricResourceStreamData.resizeData( 0 );
@@ -171,14 +179,14 @@ namespace Fabric
 
     void ResourceLoadNode::onProgress( char const *mimeType, size_t done, size_t total, void *userData )
     {
-      if( (size_t)userData != m_streamGeneration )
+      if ( (size_t)userData != m_streamGeneration )
         return;
 
       size_t prevSize = m_fabricResourceStreamData.getDataSize();
       if ( total < prevSize )
         m_fabricResourceStreamData.resizeData( total );
 
-      if( done < total )
+      if ( done < total )
       {
         std::vector<std::string> src;
         src.push_back( "DG" );
@@ -216,27 +224,27 @@ namespace Fabric
       std::string url = m_fabricResourceStreamData.getURL();
       std::string extension = IO::GetURLExtension( url );
       size_t extensionPos = url.rfind('.');
-      if( extensionPos != std::string::npos )
+      if ( extensionPos != std::string::npos )
         extension = url.substr( extensionPos+1 );
       else
       {
         std::string mimeType = m_fabricResourceStreamData.getMIMEType();
         extensionPos = mimeType.rfind('/');
-        if( extensionPos != std::string::npos )
+        if ( extensionPos != std::string::npos )
           extension = mimeType.substr( extensionPos+1 );
       }
       m_fabricResourceStreamData.setExtension( extension );
 
       void const *prevResourceData = getConstData( "resource", 0 );
-      if( !m_fabricResourceStreamData.isDataEqualTo( prevResourceData ) || !m_fabricResourceStreamData.isDataExternalLocationEqualTo( prevResourceData ) )
+      if ( !m_fabricResourceStreamData.isDataEqualTo( prevResourceData ) || !m_fabricResourceStreamData.isDataExternalLocationEqualTo( prevResourceData ) )
       {
         void *resourceDataMember = getMutableData( "resource", 0 );
         m_fabricResourceStreamData.getDesc()->setData( m_fabricResourceStreamData.get(), resourceDataMember );
 
-        if( !m_keepMemoryCache )
+        if ( !m_keepMemoryCache )
           m_fabricResourceStreamData.resizeData( 0 );
 
-        if( errorDesc )
+        if ( errorDesc )
         {
           if ( getContext()->getLogCollector() )
           {
@@ -244,13 +252,13 @@ namespace Fabric
           }
         }
       }
-      if( notify )
+      if ( notify )
       {
         std::vector<std::string> src;
         src.push_back( "DG" );
         src.push_back( getName() );
 
-        if( errorDesc )
+        if ( errorDesc )
           getContext()->jsonNotify( src, "resourceLoadFailure", 19 );
         else
           getContext()->jsonNotify( src, "resourceLoadSuccess", 19 );

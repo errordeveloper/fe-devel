@@ -628,7 +628,7 @@ namespace Fabric
           , m_rcva( that.m_variableArray )
         {
           if ( m_rcva && offset + size > m_rcva->varArray.size() )
-            throw Exception( "SlicedArray: offset and/or size out of range" );
+            throwException( "SlicedArray: offset and/or size out of range" );
           
           if ( m_rcva )
             ++m_rcva->refCount;

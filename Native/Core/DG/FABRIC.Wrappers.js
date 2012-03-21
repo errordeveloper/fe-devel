@@ -375,8 +375,8 @@ function (originalFabricClient, logCallback, debugLogCallback) {
       result.name = name;
 
       result.queueCommand = function(cmd, arg, unwind, callback) {
-        if (!this.name)
-          throw "NamedObject '" + name + "' has been deleted";
+        if (!result.pub.isValid())
+          throw "NamedObject '" + this.name + "' has been destroyed";
         DG.queueCommand([this.name], cmd, arg, unwind, callback);
       };
 
@@ -385,15 +385,27 @@ function (originalFabricClient, logCallback, debugLogCallback) {
           result.errors = diff.errors;
       };
 
-      result.destroy = function() {
+      result.confirmDestroy = function() {
         delete DG.namedObjects[name];
-        delete result.name;
+        result.destroyed = true;
+      };
+
+      result.setAsDestroyed = function() {
+        result.destroyed = true;
+      };
+
+      result.unsetDestroyed = function() {
+        DG.namedObjects[name] = this;
+        delete result.destroyed;
       };
 
       result.handle = function(cmd, arg) {
         switch (cmd) {
           case 'delta':
             result.patch(arg);
+            break;
+          case 'destroy':
+            result.confirmDestroy();
             break;
           default:
             throw "command '" + cmd + "': unrecognized";
@@ -417,6 +429,10 @@ function (originalFabricClient, logCallback, debugLogCallback) {
       result.pub.getErrors = function() {
         executeQueuedCommands();
         return result.errors;
+      };
+
+      result.pub.isValid = function() {
+        return (!('destroyed' in result));
       };
 
       DG.namedObjects[name] = result;
@@ -550,6 +566,14 @@ function (originalFabricClient, logCallback, debugLogCallback) {
         else {
           parentHandleNotification(cmd, arg);
         }
+      };
+
+      result.pub.destroy = function() {
+        result.setAsDestroyed();
+        //Don't call result.queueCommand as it checks isValid()
+        DG.queueCommand([name], 'destroy', undefined, function() {
+          result.unsetDestroyed();
+        });
       };
 
       result.pub.getCount = function() {
@@ -1226,35 +1250,35 @@ function (originalFabricClient, logCallback, debugLogCallback) {
       createOperator: function(name) {
         var operator = DG.createOperator(name);
         DG.queueCommand([], 'createOperator', name, function() {
-          operator.destroy();
+          operator.confirmDestroy();
         });
         return operator.pub;
       },
       createNode: function(name) {
         var node = DG.createNode(name);
         DG.queueCommand([], 'createNode', name, function() {
-          node.destroy();
+          node.confirmDestroy();
         });
         return node.pub;
       },
       createResourceLoadNode: function(name) {
         var node = DG.createResourceLoadNode(name);
         DG.queueCommand([], 'createResourceLoadNode', name, function() {
-          node.destroy();
+          node.confirmDestroy();
         });
         return node.pub;
       },
       createEvent: function(name) {
         var event = DG.createEvent(name);
         DG.queueCommand([], 'createEvent', name, function() {
-          event.destroy();
+          event.confirmDestroy();
         });
         return event.pub;
       },
       createEventHandler: function(name) {
         var eventHandler = DG.createEventHandler(name);
         DG.queueCommand([], 'createEventHandler', name, function() {
-          eventHandler.destroy();
+          eventHandler.confirmDestroy();
         });
         return eventHandler.pub;
       },

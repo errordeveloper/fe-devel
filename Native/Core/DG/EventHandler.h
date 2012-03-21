@@ -97,6 +97,7 @@ namespace Fabric
     
       EventHandler( std::string const &name, RC::Handle<Context> const &context );
       ~EventHandler();
+      virtual void destroy();
       
       virtual void setOutOfDate();
       
@@ -122,9 +123,11 @@ namespace Fabric
       virtual void evaluateLocal( void *userdata );
       
       void ensureRunState() const;
-      
+
     private:
-    
+
+      void clearDependencies();
+
       Context *m_context;
       
       std::set<Event *> m_events;

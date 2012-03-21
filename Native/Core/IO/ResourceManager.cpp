@@ -40,13 +40,14 @@ namespace Fabric
     ResourceManager::~ResourceManager()
     {
       releaseAllFiles();
-      while( !m_pendingRequests.empty() )
+      while ( !m_pendingRequests.empty() )
       {
         PendingRequestInfo* requestInfo = (PendingRequestInfo*)m_pendingRequests.front();
         //Note: we don't delete the PendingRequestInfo* structs as there might be some pending async calls; leak instead of crash in this exceptional race condition.
         //[JeromeCG 20111221] Calling onFailure here is unsafe; might try to fire back a notif in the DG context... Commenting out until a good solution...
         //requestInfo->m_client->onFailure( ("Resource request for \"" + requestInfo->m_url + "\" failed because of termination").c_str(), requestInfo->m_clientUserData );
-        requestInfo->m_client->release();
+        if ( requestInfo->m_client )
+          requestInfo->m_client->release();
         m_pendingRequests.pop_front();
       }
     }
@@ -56,12 +57,12 @@ namespace Fabric
       std::string scheme = provider->getUrlScheme();
 
       std::pair<SchemeToProviderMap::iterator, bool> result = m_schemeToProvider.insert( std::make_pair(scheme, provider) );
-      if( result.second && result.first->second != provider )
+      if ( result.second && result.first->second != provider )
         throw Exception( "Error: another resource provider is already registered for URL scheme " + scheme );
 
-      if( setAsDefault )
+      if ( setAsDefault )
       {
-        if( m_defaultProvider && m_defaultProvider != provider )
+        if ( m_defaultProvider && m_defaultProvider != provider )
           throw Exception( "Error: there is already another default provider" );
         m_defaultProvider = provider;
       }
@@ -85,25 +86,25 @@ namespace Fabric
         ResourceProvider* provider = m_defaultProvider.ptr();
         char const *separator = url;
         int separatorPos = -1;
-        while( *separator )
+        while ( *separator )
         {
-          if( *separator == '/')
+          if ( *separator == '/')
             break;
-          if( *separator == ':')
+          if ( *separator == ':')
           {
             separatorPos = separator-url;
             break;
           }
           ++separator;
         }
-        if( separatorPos != -1 )
+        if ( separatorPos != -1 )
         {
           std::string scheme(url, separatorPos);
           SchemeToProviderMap::iterator providerIt = m_schemeToProvider.find( scheme );
-          if( providerIt != m_schemeToProvider.end() )
+          if ( providerIt != m_schemeToProvider.end() )
             provider = providerIt->second.ptr();
         }
-        if( !provider )
+        if ( !provider )
           throw Exception( "No suitable provider registered" );
         else
           provider->get( url, getAsFile, requestInfo );
@@ -119,32 +120,48 @@ namespace Fabric
       }
     }
 
+    void ResourceManager::cancelRequests( ResourceClient* client )
+    {
+      //For now, keep it simple: don't really cancel the request, but at least release the client reference.
+      for( std::list< void* >::iterator it = m_pendingRequests.begin(); it != m_pendingRequests.end(); ++it )
+      {
+        PendingRequestInfo* requestInfo = (PendingRequestInfo*)(*it);
+        if ( requestInfo->m_client == client )
+        {
+          requestInfo->m_client->release();
+          requestInfo->m_client = 0;
+        }
+      }
+    }
+
     void ResourceManager::onCompletedRequest( void *userData )
     {
       PendingRequestInfo* requestInfo = (PendingRequestInfo*)userData;
       m_pendingRequests.erase( requestInfo->m_pendingRequestsListIter );
-      requestInfo->m_client->release();
+      if ( requestInfo->m_client )
+        requestInfo->m_client->release();
       delete requestInfo;
     }
 
     void ResourceManager::onProgress( char const *mimeType, size_t done, size_t total, void *userData )
     {
       PendingRequestInfo* requestInfo = (PendingRequestInfo*)userData;
-      if( !requestInfo->m_manager )
+      if ( !requestInfo->m_manager )
         return;//Manager might have been destroyed, in which case we should ignore this call
 
       RC::Handle<ResourceManager> keepAlive( requestInfo->m_manager.makeStrong() );
-      if( done < total)
+      if ( done < total)
       {
         int deltaMS = (int)(requestInfo->m_lastProgressTimer.getElapsedMS(false));
-        if( deltaMS < (int)requestInfo->m_manager.makeStrong()->m_progressMaxFrequencyMS )
+        if ( deltaMS < (int)requestInfo->m_manager.makeStrong()->m_progressMaxFrequencyMS )
           return;
       }
       requestInfo->m_lastProgressTimer.reset();
 
       try
       {
-        requestInfo->m_client->onProgress( mimeType, done, total, requestInfo->m_clientUserData );
+        if ( requestInfo->m_client )
+          requestInfo->m_client->onProgress( mimeType, done, total, requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
@@ -155,20 +172,21 @@ namespace Fabric
         FABRIC_LOG( "ResourceManager: error while calling client's onProgress for \"" + requestInfo->m_url + "\"." );
       }
 
-      if(done == total)
+      if ( done == total )
         requestInfo->m_manager.makeStrong()->onCompletedRequest( userData );
     }
 
     void ResourceManager::onData( size_t offset, size_t size, void const *data, void *userData )
     {
       PendingRequestInfo* requestInfo = (PendingRequestInfo*)userData;
-      if( !requestInfo->m_manager )
+      if ( !requestInfo->m_manager )
         return;//Manager might have been destroyed, in which case we should ignore this call
 
       RC::Handle<ResourceManager> keepAlive( requestInfo->m_manager.makeStrong() );
       try
       {
-        requestInfo->m_client->onData( offset, size, data, requestInfo->m_clientUserData );
+        if ( requestInfo->m_client )
+          requestInfo->m_client->onData( offset, size, data, requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
@@ -183,12 +201,12 @@ namespace Fabric
     void ResourceManager::onFile( char const *fileName, void *userData )
     {
       PendingRequestInfo* requestInfo = (PendingRequestInfo*)userData;
-      if( !requestInfo->m_manager )
+      if ( !requestInfo->m_manager )
         return;//Manager might have been destroyed, in which case we should ignore this call
 
       RC::Handle<ResourceManager> manager( requestInfo->m_manager.makeStrong() );
       FilesInUseMap::iterator it = manager->m_filesInUse.insert( std::make_pair( fileName, fopen( fileName, "rb" ) ) );
-      if( it->second == NULL )
+      if ( it->second == NULL )
       {
         manager->m_filesInUse.erase( it );
         throw Exception( "Unable to open tempory file containing data for " + requestInfo->m_url );
@@ -196,7 +214,8 @@ namespace Fabric
 
       try
       {
-        requestInfo->m_client->onFile( fileName, requestInfo->m_clientUserData );
+        if ( requestInfo->m_client )
+          requestInfo->m_client->onFile( fileName, requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
@@ -213,13 +232,14 @@ namespace Fabric
     void ResourceManager::onFailure( char const *errorDesc, void *userData )
     {
       PendingRequestInfo* requestInfo = (PendingRequestInfo*)userData;
-      if( !requestInfo->m_manager )
+      if ( !requestInfo->m_manager )
         return;//Manager might have been destroyed, in which case we should ignore this call
 
       RC::Handle<ResourceManager> keepAlive( requestInfo->m_manager.makeStrong() );
       try
       {
-        requestInfo->m_client->onFailure( ( "Error while processing request for URL \"" + requestInfo->m_url + "\": " + errorDesc).c_str(), requestInfo->m_clientUserData );
+        if ( requestInfo->m_client )
+          requestInfo->m_client->onFailure( ( "Error while processing request for URL \"" + requestInfo->m_url + "\": " + errorDesc).c_str(), requestInfo->m_clientUserData );
       }
       catch ( Exception e )
       {
@@ -277,7 +297,7 @@ namespace Fabric
     {
       OnDataCallbackStruct* callStruct = new OnDataCallbackStruct();
       callStruct->m_offset = offset;
-      if(size)
+      if ( size )
       {
         callStruct->m_data.resize(size);
         memcpy( &callStruct->m_data.front(), data, size );
@@ -329,7 +349,7 @@ namespace Fabric
     void ResourceManager::releaseFile( char const *fileName )
     {
       FilesInUseMap::iterator it = m_filesInUse.find( fileName );
-      if( it != m_filesInUse.end() )
+      if ( it != m_filesInUse.end() )
       {
         fclose( it->second );
         m_filesInUse.erase( it );

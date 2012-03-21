@@ -54,6 +54,7 @@ namespace Fabric
 
       void releaseFile( char const *fileName );
       void releaseAllFiles();
+      void cancelRequests( ResourceClient* client );
 
       static void onProgress( char const *mimeType, size_t done, size_t total, void *userData );
       static void onData( size_t offset, size_t size, void const *data, void *userData );

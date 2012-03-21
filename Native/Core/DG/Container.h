@@ -114,11 +114,13 @@ namespace Fabric
       void jsonDescMembers( JSON::Encoder &resultEncoder ) const;
       void jsonDescSize( JSON::Encoder &resultEncoder ) const;
       virtual void jsonGetMemoryUsage( JSON::Encoder &jg ) const;
+      void jsonExecDestroy( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder );
       
     protected:
     
       Container( std::string const &name, RC::Handle<Context> const &context );
       ~Container();
+      virtual void destroy();
       
       virtual void setOutOfDate() = 0;
       

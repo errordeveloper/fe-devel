@@ -131,12 +131,22 @@ namespace Fabric
     
     Container::~Container()
     {
-      if( m_rtContainerData )
+      if ( m_rtContainerData )
       {
         RC::ConstHandle<RT::ContainerDesc> desc = m_context->getRTManager()->getContainerDesc();
         desc->disposeData( m_rtContainerData );
         free( m_rtContainerData );
       }
+    }
+
+    void Container::destroy()
+    {
+      while ( !m_members.empty() )
+      {
+        std::string name = m_members.begin()->first;
+        removeMember( name );
+      }
+      NamedObject::destroy();
     }
     
     Container::MemberDescs Container::getMemberDescs() const
@@ -205,7 +215,7 @@ namespace Fabric
 
     void *Container::getRTContainerData()
     {
-      if( !m_rtContainerData )
+      if ( !m_rtContainerData )
       {
         RC::ConstHandle<RT::ContainerDesc> desc = m_context->getRTManager()->getContainerDesc();
       
@@ -570,6 +580,8 @@ namespace Fabric
         jsonExecRemoveMember( arg, resultArrayEncoder );
       else if ( cmd.stringIs( "resize", 6 ) )
         jsonResize( arg, resultArrayEncoder );
+      else if ( cmd.stringIs( "destroy", 7 ) )
+        jsonExecDestroy( arg, resultArrayEncoder );
       else
         NamedObject::jsonExec( cmd, arg, resultArrayEncoder );
     }
@@ -640,6 +652,12 @@ namespace Fabric
       if ( newSize < 0 )
         throw Exception( "size must be non-negative" );
       resize( size_t( newSize ) );
+    }
+
+    void Container::jsonExecDestroy( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder )
+    {
+      RC::Handle<Container> ensureWeLiveLongEnough( this );
+      destroy();
     }
     
     void Container::jsonGenerateMemberSliceJSON( JSON::Entity const &arg, JSON::Encoder &resultEncoder ) const
@@ -1038,7 +1056,7 @@ namespace Fabric
       FabricResourceWrapper resource( m_context->getRTManager(), (void*)member->getImmutableElementData( 0 ) );
 
       std::string dataExternalLocation = resource.getDataExternalLocation();
-      if( dataExternalLocation.empty() )
+      if ( dataExternalLocation.empty() )
         m_context->getIOManager()->getFileHandleManager()->putFile( handle, resource.getDataSize(), resource.getDataPtr(), false );
       else
         m_context->getIOManager()->getFileHandleManager()->copyFile( dataExternalLocation, handle );
