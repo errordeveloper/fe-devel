@@ -477,7 +477,7 @@ class _DG( _NAMESPACE ):
     self._namedObjects[ name ] = obj
     
     def __unwind():
-      obj._destroy()
+      obj._confirmDestroy()
 
     self._queueCommand( cmd, name, __unwind )
 
@@ -550,36 +550,34 @@ class _DG( _NAMESPACE ):
     def __init__( self, dg, name ):
       self.__name = name
       self.__errors = []
+      self.__destroyed = None
       self._dg = dg
   
     def _nObjQueueCommand( self, cmd, arg = None, unwind = None, callback = None ):
-      if self.__name is None:
-        raise Exception( 'NamedObject "' + name + '" has been deleted' )
+      if not self.isValid():
+        raise Exception( 'NamedObject "' + self.__name + '" has been destroyed' )
       self._dg._objQueueCommand( [ self.__name ], cmd, arg, unwind, callback )
   
     def _patch( self, diff ):
       if 'errors' in diff:
         self.__errors = diff[ 'errors' ]
   
-    def _destroy( self ):
+    def _confirmDestroy( self ):
       del self._dg._namedObjects[ self.__name ]
-      self.__name = None
-  
-    def _detach( self ):
-      value = {
-        'entry': self._dg._namedObjects[ self.__name ],
-        'name': self.__name
-      }
-      _destroy( self );
-      return value;
+      self.__destroyed = True
 
-    def _reattach( self, value ):
-      self._dg._namedObjects[ value.name ] = value.entry;
-      self.__name = value.name;
+    def _setAsDestroyed( self ):
+      self.__destroyed = True
+
+    def _unsetDestroyed( self ):
+      self._dg._namedObjects[ self.__name ] = self;
+      self.__destroyed = None
 
     def _handle( self, cmd, arg ):
       if cmd == 'delta':
         self._patch( arg )
+      elif cmd == 'destroy':
+        self._confirmDestroy()
       else:
         raise Exception( 'command "' + cmd + '" not recognized' )
   
@@ -588,13 +586,16 @@ class _DG( _NAMESPACE ):
         self._handle( cmd, arg )
       else:
         raise Exception( 'unroutable' )
-  
+
     def getName( self ):
       return self.__name
   
     def getErrors( self ):
       self._dg._executeQueuedCommands()
       return self.__errors
+
+    def isValid( self ):
+      return self.__destroyed is None
   
   class _BINDINGLIST( object ):
     def __init__( self, dg, dst ):
@@ -830,12 +831,11 @@ class _DG( _NAMESPACE ):
         super( _DG._CONTAINER, self )._handle( cmd, arg )
 
     def destroy( self ):
-      oldName = self.__name
-      oldValue = self._detach()
+      self._setAsDestroyed()
       def __unwind():
-        self._reattach( oldValue )
-      //Don't call self._nObjQueueCommand as it needs self.__name (removed by detach)
-      self._dg._objQueueCommand( [ self.__name ], 'destroy', None, __unwind )
+        self._unsetDestroyed()
+      # Don't call self._nObjQueueCommand as it checks isValid()
+      self._dg._objQueueCommand( [ self.getName() ], 'destroy', None, __unwind )
 
     def getCount( self ):
       if self.__sizeNeedRefresh:
@@ -1119,7 +1119,6 @@ class _DG( _NAMESPACE ):
           self.__dependencies[ dependencyName ] = oldDependency
         else:
           del self.__dependencies[ dependencyName ]
-          
       self._nObjQueueCommand( 'setDependency', args, __unwind )
 
     def getDependencies( self ):

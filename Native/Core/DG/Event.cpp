@@ -111,7 +111,34 @@ namespace Fabric
       }
       jsonNotifyMemberDelta( "eventHandlers", 13, json );
     }
-    
+
+    void Event::removeEventHandler( RC::Handle<EventHandler> const &eventHandler )
+    {
+      if ( !eventHandler )
+        throw Exception( "event handler is null" );
+
+      EventHandlers::iterator it;
+      for( it = m_eventHandlers.begin(); it != m_eventHandlers.end(); ++it )
+      {
+        if( *it == eventHandler )
+          break;
+      }
+      if( it == m_eventHandlers.end() )
+        throw Exception( "event handler not found" );
+
+      (*it)->removeEvent( this );
+      m_eventHandlers.erase( it );
+      
+      markForRecompile();
+      
+      Util::SimpleString json;
+      {
+        JSON::Encoder jg( &json );
+        jsonDescEventHandlers( jg );
+      }
+      jsonNotifyMemberDelta( "eventHandlers", 13, json );
+    }
+
     Event::EventHandlers const &Event::getEventHandlers() const
     {
       return m_eventHandlers;

@@ -85,10 +85,18 @@ namespace Fabric
       FABRIC_ASSERT( m_events.empty() );
       FABRIC_ASSERT( m_parentEventHandlers.empty() );
       clearDependencies();
+      m_postDescendBindings->removeOwner( this );
+      m_preDescendBindings->removeOwner( this );
     }
 
     void EventHandler::destroy()
     {
+      //First, explicitely remove childrenEventHandlers (sends notifications)
+      while( !m_childEventHandlers.empty() )
+      {
+        RC::Handle<EventHandler> child = *(m_childEventHandlers.begin());
+        removeChildEventHandler( child );
+      }
       clearDependencies();
       Container::destroy();
     }
@@ -99,6 +107,12 @@ namespace Fabric
       {
         EventHandler* parent = *(m_parentEventHandlers.begin());
         parent->removeChildEventHandler( this );
+      }
+
+      while( !m_events.empty() )
+      {
+        Event* event = *(m_events.begin());
+        event->removeEventHandler( this );
       }
 
       while ( !m_bindings.empty() )
@@ -118,9 +132,7 @@ namespace Fabric
         RC::Handle<EventHandler> const &childEventHandler = m_childEventHandlers[i];
         childEventHandler->removeParent( this );
       }
-      
-      m_postDescendBindings->removeOwner( this );
-      m_preDescendBindings->removeOwner( this );
+      m_childEventHandlers.clear();
     }
 
     void EventHandler::addEvent( Event *event )

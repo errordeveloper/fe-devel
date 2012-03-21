@@ -50,6 +50,7 @@ namespace Fabric
       static RC::Handle<Event> Create( std::string const &name, RC::Handle<Context> const &context );
       
       void appendEventHandler( RC::Handle<EventHandler> const &eventHandler );
+      void removeEventHandler( RC::Handle<EventHandler> const &eventHandler );
       EventHandlers const &getEventHandlers() const;
       
       void fire() const;
