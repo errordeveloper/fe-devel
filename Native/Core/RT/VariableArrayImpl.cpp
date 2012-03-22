@@ -19,16 +19,21 @@ namespace Fabric
   namespace RT
   {
     VariableArrayImpl::VariableArrayImpl( std::string const &codeName, RC::ConstHandle<Impl> const &memberImpl )
-      : ArrayImpl( codeName, DT_VARIABLE_ARRAY, memberImpl )
+      : ArrayImpl( memberImpl )
       , m_memberImpl( memberImpl )
       , m_memberSize( memberImpl->getAllocSize() )
     {
-      setSize( sizeof(bits_t) );
+      size_t flags = 0;
+      if ( m_memberImpl->isExportable() )
+        flags |= FlagExportable;
+      if ( m_memberImpl->isNoAliasUnsafe() )
+        flags |= FlagNoAliasUnsafe;
+      initialize( codeName, DT_VARIABLE_ARRAY, sizeof(bits_t), flags );
     }
-    
+
     void const *VariableArrayImpl::getDefaultData() const
     {
-      static bits_t defaultData = { 0, 0, 0 };
+      static bits_t const defaultData = { 0, 0, 0 };
       return &defaultData;
     }
 
@@ -84,44 +89,54 @@ namespace Fabric
         return nbRequested;
     }
 
-    void VariableArrayImpl::setData( void const *_src, void *_dst ) const
+    void VariableArrayImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      bits_t const *src = reinterpret_cast<bits_t const *>(_src);
-      bits_t *dst = reinterpret_cast<bits_t *>(_dst);
-    
-      size_t oldNumMembers = dst->numMembers;
-      if ( dst->numMembers > src->numMembers )
-        m_memberImpl->disposeDatas( dst->memberDatas + src->numMembers * m_memberSize, dst->numMembers - src->numMembers, m_memberSize );
-      dst->numMembers = src->numMembers;
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
 
-      dst->allocNumMembers = src->numMembers;
-      if ( dst->allocNumMembers == 0 )
+      while ( dst != dstEnd )
       {
-        if ( dst->memberDatas )
-          free( dst->memberDatas );
-        dst->memberDatas = 0;
-      }
-      else if ( dst->memberDatas )
-        dst->memberDatas = reinterpret_cast<uint8_t *>( realloc( dst->memberDatas, dst->allocNumMembers * m_memberSize ) );
-      else
-        dst->memberDatas = reinterpret_cast<uint8_t *>( malloc( dst->allocNumMembers * m_memberSize ) );
-      
-      size_t totalSize = src->numMembers * m_memberSize;
-      uint8_t const *srcMemberData = src->memberDatas;
-      uint8_t const * const srcMemberDataEnd = srcMemberData + totalSize;
-      uint8_t *dstMemberData = dst->memberDatas;
+        bits_t const *srcBits = reinterpret_cast<bits_t const *>( src );
+        bits_t *dstBits = reinterpret_cast<bits_t *>( dst );
 
-      if ( oldNumMembers < src->numMembers )
-      {
-        size_t oldMemberSize = oldNumMembers * m_memberSize;
-        memset( dstMemberData + oldMemberSize, 0, totalSize - oldMemberSize );
-      }
+        size_t oldNumMembers = dstBits->numMembers;
+        if ( dstBits->numMembers > srcBits->numMembers )
+          m_memberImpl->disposeDatas( dstBits->numMembers - srcBits->numMembers, dstBits->memberDatas + srcBits->numMembers * m_memberSize, m_memberSize );
+        dstBits->numMembers = srcBits->numMembers;
 
-      while ( srcMemberData != srcMemberDataEnd )
-      {
-        m_memberImpl->setData( srcMemberData, dstMemberData );
-        srcMemberData += m_memberSize;
-        dstMemberData += m_memberSize;
+        dstBits->allocNumMembers = srcBits->numMembers;
+        if ( dstBits->allocNumMembers == 0 )
+        {
+          if ( dstBits->memberDatas )
+            free( dstBits->memberDatas );
+          dstBits->memberDatas = 0;
+        }
+        else if ( dstBits->memberDatas )
+          dstBits->memberDatas = reinterpret_cast<uint8_t *>( realloc( dstBits->memberDatas, dstBits->allocNumMembers * m_memberSize ) );
+        else
+          dstBits->memberDatas = reinterpret_cast<uint8_t *>( malloc( dstBits->allocNumMembers * m_memberSize ) );
+        
+        size_t totalSize = srcBits->numMembers * m_memberSize;
+        uint8_t const *srcMemberData = srcBits->memberDatas;
+        uint8_t const * const srcMemberDataEnd = srcMemberData + totalSize;
+        uint8_t *dstMemberData = dstBits->memberDatas;
+
+        if ( oldNumMembers < srcBits->numMembers )
+        {
+          size_t oldMemberSize = oldNumMembers * m_memberSize;
+          memset( dstMemberData + oldMemberSize, 0, totalSize - oldMemberSize );
+        }
+
+        while ( srcMemberData != srcMemberDataEnd )
+        {
+          m_memberImpl->setData( srcMemberData, dstMemberData );
+          srcMemberData += m_memberSize;
+          dstMemberData += m_memberSize;
+        }
+
+        src += srcStride;
+        dst += dstStride;
       }
     }
 
@@ -165,14 +180,13 @@ namespace Fabric
       FABRIC_ASSERT( membersFound == entity.value.array.size );
     }
 
-    void VariableArrayImpl::disposeDatasImpl( void *_data, size_t count, size_t stride ) const
+    void VariableArrayImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *data = static_cast<uint8_t *>( _data );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
         bits_t *bits = reinterpret_cast<bits_t *>(data);
-        m_memberImpl->disposeDatas( bits->memberDatas, bits->numMembers, m_memberSize );
+        m_memberImpl->disposeDatas( bits->numMembers, bits->memberDatas, m_memberSize );
         free( bits->memberDatas );
         data += stride;
       }
@@ -224,16 +238,6 @@ namespace Fabric
         copyMemberDatas( dstBits, oldNumMembers, srcBits, 0, srcBits->numMembers, false );
       }
     }
-    
-    bool VariableArrayImpl::isShallow() const
-    {
-      return false;
-    }
-
-    bool VariableArrayImpl::isNoAliasSafe() const
-    {
-      return isMemberNoAliasSafe();
-    }
 
     bool VariableArrayImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const
     {
@@ -278,7 +282,7 @@ namespace Fabric
     void VariableArrayImpl::setMembers( void *data, size_t dstOffset, size_t numMembers, void const *members ) const
     {
       FABRIC_ASSERT( numMembers + dstOffset <= getNumMembers( data ) );
-      if ( !isMemberShallow() )
+      if ( !m_memberImpl->isShallow() )
       {
         for ( size_t i=0; i<numMembers; ++i )
         {
@@ -302,7 +306,7 @@ namespace Fabric
       if ( oldNumMembers != newNumMembers )
       {
         if ( newNumMembers < oldNumMembers )
-          getMemberImpl()->disposeDatas( bits->memberDatas + m_memberSize * newNumMembers, oldNumMembers - newNumMembers, m_memberSize );
+          getMemberImpl()->disposeDatas( oldNumMembers - newNumMembers, bits->memberDatas + m_memberSize * newNumMembers, m_memberSize );
           
         if ( newNumMembers == 0 )
         {
@@ -346,7 +350,7 @@ namespace Fabric
           {
             for ( ; memberData!=memberDataEnd; memberData += m_memberSize )
             {
-              if ( !isMemberShallow() )
+              if ( !m_memberImpl->isShallow() )
                 getMemberImpl()->setData( defaultMemberData, memberData );
               else
                 memcpy( memberData, defaultMemberData, memberSize );
@@ -364,11 +368,6 @@ namespace Fabric
       for ( size_t i=0; i<bits->numMembers; ++i )
         total += m_memberImpl->getIndirectMemoryUsage( getImmutableMemberData_NoCheck( data, i ) );
       return total;
-    }
-    
-    bool VariableArrayImpl::isExportable() const
-    {
-      return m_memberImpl->isExportable();
     }
   }
 }

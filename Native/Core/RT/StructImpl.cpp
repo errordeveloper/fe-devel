@@ -15,27 +15,28 @@ namespace Fabric
   namespace RT
   {
     StructImpl::StructImpl( std::string const &codeName, StructMemberInfoVector const &memberInfos )
-      : Impl( codeName, DT_STRUCT )
-      , m_memberInfos( memberInfos )
+      : m_memberInfos( memberInfos )
       , m_numMembers( memberInfos.size() )
       , m_defaultData( 0 )
     {
-      m_isShallow = true;
-      m_isNoAliasSafe = true;
-      m_isExportable = true;
+      size_t flags = FlagShallow | FlagExportable;
       m_memberOffsets.push_back( 0 );
       for ( size_t i=0; i<m_numMembers; ++i )
       {
         StructMemberInfo const &memberInfo = getMemberInfo(i);
         m_memberOffsets.push_back( m_memberOffsets.back() + memberInfo.desc->getAllocSize() );
         m_nameToIndexMap.insert( NameToIndexMap::value_type( memberInfo.name, i ) );
-        m_isShallow = m_isShallow && memberInfo.desc->isShallow();
-        m_isNoAliasSafe = m_isNoAliasSafe && memberInfo.desc->isNoAliasSafe();
-        m_isExportable = m_isExportable && memberInfo.desc->isExportable();
+        if ( !memberInfo.desc->isShallow() )
+          flags &= ~FlagShallow;
+        if ( memberInfo.desc->isNoAliasUnsafe() )
+          flags |= FlagNoAliasUnsafe;
+        if ( !memberInfo.desc->isExportable() )
+          flags &= ~FlagExportable;
       }
-      
       size_t size = m_memberOffsets[m_numMembers];
-      setSize( size );
+
+      initialize( codeName, DT_STRUCT, size, flags );
+
       m_defaultData = malloc( size );
       memset( m_defaultData, 0, size );
       setDefaultValues( memberInfos );
@@ -66,20 +67,25 @@ namespace Fabric
       return m_defaultData;
     }
     
-    void StructImpl::setData( void const *srcData, void *dstData ) const
+    void StructImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      if ( m_isShallow )
-        memcpy( dstData, srcData, getAllocSize() );
-      else
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
       {
         for ( size_t i=0; i<m_numMembers; ++i )
         {
           StructMemberInfo const &memberInfo = m_memberInfos[i];
           size_t memberOffset = m_memberOffsets[i];
-          void const *srcMemberData = static_cast<uint8_t const *>(srcData) + memberOffset;
-          void *dstMemberData = static_cast<uint8_t *>(dstData) + memberOffset;
+          void const *srcMemberData = static_cast<uint8_t const *>(src) + memberOffset;
+          void *dstMemberData = static_cast<uint8_t *>(dst) + memberOffset;
           memberInfo.desc->setData( srcMemberData, dstMemberData );
         }
+
+        src += srcStride;
+        dst += dstStride;
       }
     }
     
@@ -133,13 +139,13 @@ namespace Fabric
         throw Exception( "missing members" );
     }
 
-    void StructImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void StructImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
       for ( size_t i=0; i<m_numMembers; ++i )
       {
         StructMemberInfo const &memberInfo = m_memberInfos[i];
-        void *memberData = static_cast<uint8_t *>(data) + m_memberOffsets[i];
-        memberInfo.desc->disposeDatas( memberData, count, stride );
+        void *memberData = data + m_memberOffsets[i];
+        memberInfo.desc->disposeDatas( count, memberData, stride );
       }
     }
     
@@ -158,16 +164,6 @@ namespace Fabric
       }
       result += "}";
       return result;
-    }
-    
-    bool StructImpl::isShallow() const
-    {
-      return m_isShallow;
-    }
-
-    bool StructImpl::isNoAliasSafe() const
-    {
-      return m_isNoAliasSafe;
     }
 
     bool StructImpl::isEquivalentTo( RC::ConstHandle<Impl> const &thatImpl ) const
@@ -197,7 +193,7 @@ namespace Fabric
     
     bool StructImpl::equalsData( void const *lhs, void const *rhs ) const
     {
-      if ( m_isShallow )
+      if ( isShallow() )
         return memcmp( lhs, rhs, getAllocSize() ) == 0;
       else
       {
@@ -217,11 +213,6 @@ namespace Fabric
       for ( size_t i=0; i<m_numMembers; ++i )
         total += m_memberInfos[i].desc->getIndirectMemoryUsage( getImmutableMemberData_NoCheck( data, i ) );
       return total;
-    }
-    
-    bool StructImpl::isExportable() const
-    {
-      return m_isExportable;
     }
   }
 }

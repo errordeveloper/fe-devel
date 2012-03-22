@@ -23,8 +23,7 @@ namespace Fabric
     
     protected:
     
-      NumericImpl( std::string const &codeName, ImplType implType, size_t size )
-        : SimpleImpl( codeName, implType, size )
+      NumericImpl()
       {
       }
     };

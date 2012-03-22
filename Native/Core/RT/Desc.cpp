@@ -74,9 +74,9 @@ namespace Fabric
       m_impl->disposeData( data );
     }
     
-    void Desc::disposeDatas( void *data, size_t count, size_t stride ) const
+    void Desc::disposeDatas( size_t count, void *data, size_t stride ) const
     {
-      m_impl->disposeDatas( data, count, stride );
+      m_impl->disposeDatas( count, data, stride );
     }
 
     std::string Desc::descData( void const *data ) const
@@ -123,6 +123,11 @@ namespace Fabric
     bool Desc::isNoAliasSafe() const
     {
       return m_impl->isNoAliasSafe();
+    }
+
+    bool Desc::isNoAliasUnsafe() const
+    {
+      return m_impl->isNoAliasUnsafe();
     }
 
     bool Desc::isExportable() const

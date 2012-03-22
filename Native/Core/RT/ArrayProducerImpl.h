@@ -31,8 +31,6 @@ namespace Fabric
     
       // Impl
       
-      virtual void setData( void const *value, void *data ) const;
-      virtual void disposeDatasImpl( void *data, size_t count, size_t stride ) const;
       virtual std::string descData( void const *data ) const;
       virtual void const *getDefaultData() const;
       virtual size_t getIndirectMemoryUsage( void const *data ) const;
@@ -42,8 +40,6 @@ namespace Fabric
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
 
       virtual bool isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const;
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
     
       // ArrayProducerImpl
       
@@ -52,6 +48,9 @@ namespace Fabric
     protected:
       
       ArrayProducerImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &valueImpl );
+
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
     
     private:
     

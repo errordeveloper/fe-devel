@@ -14,9 +14,9 @@ namespace Fabric
   namespace RT
   {
     OpaqueImpl::OpaqueImpl( std::string const &codeName, size_t size )
-      : Impl( codeName, DT_OPAQUE )
     {
-      setSize( size );
+      initialize( codeName, DT_OPAQUE, size, FlagShallow );
+
       m_defaultData = malloc( size );
       memset( m_defaultData, 0, size );
     }
@@ -31,12 +31,23 @@ namespace Fabric
       return m_defaultData;
     }
     
-    void OpaqueImpl::setData( void const *src, void *dst ) const
+    void OpaqueImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      memcpy( dst, src, getAllocSize() );
+      size_t allocSize = getAllocSize();
+      
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        memcpy( dst, src, allocSize );
+        src += srcStride;
+        dst += dstStride;
+      }
     }
    
-    void OpaqueImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void OpaqueImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
     }
     
@@ -56,16 +67,6 @@ namespace Fabric
       return "Opaque<" + Util::hexBuf( getAllocSize(), src ) + ">";
     }
 
-    bool OpaqueImpl::isShallow() const
-    {
-      return true;
-    }
-
-    bool OpaqueImpl::isNoAliasSafe() const
-    {
-      return true;
-    }
-
     bool OpaqueImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
     {
       if ( !isOpaque( impl->getType() ) )
@@ -76,11 +77,6 @@ namespace Fabric
     bool OpaqueImpl::equalsData( void const *lhs, void const *rhs ) const
     {
       return memcmp( lhs, rhs, getAllocSize() ) == 0;
-    }
-    
-    bool OpaqueImpl::isExportable() const
-    {
-      return false;
     }
   }
 }

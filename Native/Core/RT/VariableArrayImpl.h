@@ -34,8 +34,6 @@ namespace Fabric
     
       // Impl
       
-      virtual void setData( void const *src, void *dst ) const;
-      virtual void disposeDatasImpl( void *data, size_t count, size_t stride ) const;
       virtual std::string descData( void const *data ) const;
       virtual void const *getDefaultData() const;
       virtual size_t getIndirectMemoryUsage( void const *data ) const;
@@ -43,10 +41,7 @@ namespace Fabric
       virtual void encodeJSON( void const *data, JSON::Encoder &encoder ) const;
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
      
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
       virtual bool isEquivalentTo( RC::ConstHandle< RT::Impl > const &desc ) const;
-      virtual bool isExportable() const;
 
       // ArrayImpl
       
@@ -67,6 +62,9 @@ namespace Fabric
     protected:
     
       VariableArrayImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &memberImpl );
+
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
       
       static size_t ComputeAllocatedSize( size_t prevNbAllocated, size_t nbRequested );
             
@@ -91,21 +89,12 @@ namespace Fabric
           FABRIC_ASSERT( srcOffset + count <= srcBits->numMembers );
           FABRIC_ASSERT( dstOffset + count <= dstBits->numMembers );
           
-          size_t byteSize = m_memberSize * count;
-          
-          uint8_t *dstMemberDataStart = dstBits->memberDatas + m_memberSize * dstOffset;
+          uint8_t *dstMemberData = dstBits->memberDatas + m_memberSize * dstOffset;
           if ( disposeFirst )
-            m_memberImpl->disposeDatas( dstMemberDataStart, count, m_memberSize );
+            m_memberImpl->disposeDatas( count, dstMemberData, m_memberSize );
           
-          size_t srcByteOffset = m_memberSize * srcOffset;
-          uint8_t const *srcMemberData = srcBits->memberDatas + srcByteOffset;
-          if ( !isMemberShallow() )
-          {
-            uint8_t *dstMemberDataEnd = dstMemberDataStart + byteSize;
-            for ( uint8_t *dstMemberData = dstMemberDataStart; dstMemberData != dstMemberDataEnd; srcMemberData += m_memberSize, dstMemberData += m_memberSize )
-              m_memberImpl->setData( srcMemberData, dstMemberData );
-          }
-          else memcpy( dstMemberDataStart, srcMemberData, byteSize );
+          uint8_t const *srcMemberData = srcBits->memberDatas + m_memberSize * srcOffset;
+          m_memberImpl->setDatas( count, srcMemberData, m_memberSize, dstMemberData, m_memberSize );
         }
       }
 
@@ -113,8 +102,8 @@ namespace Fabric
 
       RC::ConstHandle<Impl> m_memberImpl;
       size_t m_memberSize;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_VARIABLE_ARRAY_IMPL_H

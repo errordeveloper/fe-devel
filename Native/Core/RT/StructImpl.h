@@ -25,8 +25,6 @@ namespace Fabric
       
       // Impl
       
-      virtual void setData( void const *value, void *data ) const;
-      virtual void disposeDatasImpl( void *data, size_t count, size_t impl ) const;
       virtual std::string descData( void const *data ) const;
       virtual void const *getDefaultData() const;
       virtual bool equalsData( void const *lhs, void const *rhs ) const;
@@ -35,11 +33,8 @@ namespace Fabric
       virtual void encodeJSON( void const *data, JSON::Encoder &encoder ) const;
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
 
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
       virtual bool isEquivalentTo( RC::ConstHandle< RT::Impl > const &desc ) const;
-      virtual bool isExportable() const;
-      
+       
       // StructImpl
           
       size_t getNumMembers() const
@@ -87,6 +82,9 @@ namespace Fabric
     
       StructImpl( std::string const &codeName, StructMemberInfoVector const &memberInfos );
       ~StructImpl();
+
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t impl ) const;
       
       void const *getImmutableMemberData_NoCheck( void const *data, size_t index ) const
       {
@@ -106,10 +104,8 @@ namespace Fabric
       MemberOffsetVector m_memberOffsets;
       NameToIndexMap m_nameToIndexMap;
       void *m_defaultData;
-      bool m_isShallow, m_isNoAliasSafe;
-      bool m_isExportable;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_STRUCT_IMPL_H

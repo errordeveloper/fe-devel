@@ -13,9 +13,9 @@ namespace Fabric
   namespace RT
   {
     StringImpl::StringImpl( std::string const &codeName )
-      : ComparableImpl( codeName, DT_STRING )
+      : ComparableImpl(  )
     {
-      setSize( sizeof(bits_t *) );
+      initialize( codeName, DT_STRING, sizeof(bits_t *), FlagExportable );
     }
     
     void const *StringImpl::getDefaultData() const
@@ -24,22 +24,29 @@ namespace Fabric
       return &defaultData;
     }
     
-    void StringImpl::setData( void const *src, void *dst ) const
+    void StringImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );
       FABRIC_ASSERT( dst );
-      
-      bits_t *srcBits = *static_cast<bits_t * const *>( src );
-      bits_t *&dstBits = *static_cast<bits_t **>( dst );
-      if ( dstBits != srcBits )
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
       {
-        if ( dstBits && dstBits->refCount.decrementAndGetValue() == 0 )
-          free( dstBits );
-        
-        dstBits = srcBits;
-        
-        if ( dstBits )
-          dstBits->refCount.increment();
+        bits_t *srcBits = *reinterpret_cast<bits_t * const *>( src );
+        bits_t *&dstBits = *reinterpret_cast<bits_t **>( dst );
+        if ( dstBits != srcBits )
+        {
+          if ( dstBits && dstBits->refCount.decrementAndGetValue() == 0 )
+            free( dstBits );
+          
+          dstBits = srcBits;
+          
+          if ( dstBits )
+            dstBits->refCount.increment();
+        }
+
+        src += srcStride;
+        dst += dstStride;
       }
     }
     
@@ -54,9 +61,8 @@ namespace Fabric
       entity.stringGetData( GetMutableValueData( dst, entity.stringLength() ) );
     }
 
-    void StringImpl::disposeDatasImpl( void *dst, size_t count, size_t stride ) const
+    void StringImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *data = static_cast<uint8_t *>( dst );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
@@ -85,16 +91,6 @@ namespace Fabric
     bool StringImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
     {
       return isString( impl->getType() );
-    }
-    
-    bool StringImpl::isShallow() const
-    {
-      return false;
-    }
-
-    bool StringImpl::isNoAliasSafe() const
-    {
-      return true;
     }
 
     size_t StringImpl::hash( void const *data ) const
@@ -139,11 +135,6 @@ namespace Fabric
       if ( bits )
         total += sizeof( *bits ) + bits->allocSize;
       return total;
-    }
-    
-    bool StringImpl::isExportable() const
-    {
-      return true;
     }
   }
 }

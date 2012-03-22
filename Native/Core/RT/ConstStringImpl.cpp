@@ -13,13 +13,8 @@ namespace Fabric
   namespace RT
   {
     ConstStringImpl::ConstStringImpl( std::string const &codeName )
-      : Impl( codeName, DT_CONST_STRING )
     {
-      setSize( sizeof(bits_t) );
-    }
-    
-    ConstStringImpl::~ConstStringImpl()
-    {
+      initialize( codeName, DT_CONST_STRING, sizeof(bits_t), FlagShallow );
     }
     
     void const *ConstStringImpl::getDefaultData() const
@@ -28,9 +23,18 @@ namespace Fabric
       return &defaultBits;
     }
 
-    void ConstStringImpl::setData( void const *src, void *dst ) const
+    void ConstStringImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      memcpy( dst, src, getAllocSize() );
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        memcpy( dst, src, getAllocSize() );
+        src += srcStride;
+        dst += dstStride;
+      }
     }
     
     bool ConstStringImpl::equalsData( void const *lhs, void const *rhs ) const
@@ -54,23 +58,13 @@ namespace Fabric
       throw Exception( "cannot set constant string from a JSON value" );
     }
 
-    void ConstStringImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void ConstStringImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
     }
     
     bool ConstStringImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
     {
       return isConstString( impl->getType() );
-    }
-    
-    bool ConstStringImpl::isShallow() const
-    {
-      return true;
-    }
-
-    bool ConstStringImpl::isNoAliasSafe() const
-    {
-      return true;
     }
 
     std::string ConstStringImpl::descData( void const *data ) const
@@ -91,11 +85,6 @@ namespace Fabric
     {
       bits_t const *bits = static_cast<bits_t const *>( data );
       return std::string( bits->data, bits->length );
-    }
-
-    bool ConstStringImpl::isExportable() const
-    {
-      return false;
     }
   }
 }

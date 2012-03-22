@@ -14,12 +14,19 @@ namespace Fabric
   namespace RT
   {
     FixedArrayImpl::FixedArrayImpl( std::string const &codeName, RC::ConstHandle<Impl> const &memberImpl, size_t length )
-      : ArrayImpl( codeName, DT_FIXED_ARRAY, memberImpl )
+      : ArrayImpl( memberImpl )
       , m_memberImpl( memberImpl )
       , m_memberSize( memberImpl->getAllocSize() )
       , m_length( length )
     {
-      setSize( m_memberSize * m_length );
+      size_t flags = 0;
+      if ( m_memberImpl->isShallow() )
+        flags |= FlagShallow;
+      if ( m_memberImpl->isNoAliasUnsafe() )
+        flags |= FlagNoAliasUnsafe;
+      if ( m_memberImpl->isExportable() )
+        flags |= FlagExportable;
+      initialize( codeName, DT_FIXED_ARRAY, m_memberSize * m_length, flags );
 
       m_defaultData = malloc( getAllocSize() );
       memset( m_defaultData, 0, getAllocSize() );
@@ -39,14 +46,18 @@ namespace Fabric
       return m_defaultData;
     }
 
-    void FixedArrayImpl::setData( void const *src, void *dst ) const
+    void FixedArrayImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      if ( !isMemberShallow() )
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
       {
-        for ( size_t i=0; i<m_length; ++i )
-          m_memberImpl->setData( getImmutableMemberData_NoCheck( src, i ), getMutableMemberData_NoCheck( dst, i ) );
+        m_memberImpl->setDatas( m_length, src, m_memberSize, dst, m_memberSize );
+        src += srcStride;
+        dst += dstStride;
       }
-      else memcpy( dst, src, getAllocSize() );
     }
     
     void FixedArrayImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
@@ -87,15 +98,15 @@ namespace Fabric
       FABRIC_ASSERT( membersFound == m_length );
     }
 
-    void FixedArrayImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void FixedArrayImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *fixedArrayData = static_cast<uint8_t *>( data );
-      uint8_t * const fixedArrayDataEnd = fixedArrayData + count * stride;
-      while ( fixedArrayData != fixedArrayDataEnd )
+      size_t memberAllocSize = m_memberImpl->getAllocSize();
+      uint8_t * const dataEnd = data + count * stride;
+      while ( data != dataEnd )
       {
-        void *memberData = getMutableMemberData_NoCheck( fixedArrayData, 0 );
-        m_memberImpl->disposeDatas( memberData, m_length, m_memberImpl->getAllocSize() );
-        fixedArrayData += stride;
+        void *memberData = getMutableMemberData_NoCheck( data, 0 );
+        m_memberImpl->disposeDatas( m_length, memberData, memberAllocSize );
+        data += stride;
       }
     }
     
@@ -132,16 +143,6 @@ namespace Fabric
     {
       return m_length;
     }
-    
-    bool FixedArrayImpl::isShallow() const
-    {
-      return isMemberShallow();
-    }
-
-    bool FixedArrayImpl::isNoAliasSafe() const
-    {
-      return isMemberNoAliasSafe();
-    }
 
     size_t FixedArrayImpl::getIndirectMemoryUsage( void const *data ) const
     {
@@ -149,11 +150,6 @@ namespace Fabric
       for ( size_t i=0; i<m_length; ++i )
         total += m_memberImpl->getIndirectMemoryUsage( getImmutableMemberData_NoCheck( data, i ) );
       return total;
-    }
-    
-    bool FixedArrayImpl::isExportable() const
-    {
-      return m_memberImpl->isExportable();
     }
   }
 }

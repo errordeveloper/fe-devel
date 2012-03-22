@@ -27,9 +27,9 @@ namespace Fabric
     
     protected:
     
-      ComparableImpl( std::string const &codeName, ImplType type );
+      ComparableImpl();
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_COMPARABLE_IMPL_H
