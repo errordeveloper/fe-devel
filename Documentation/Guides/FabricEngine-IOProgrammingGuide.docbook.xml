@@ -211,7 +211,7 @@ node = FABRIC.DependencyGraph.createResourceLoadNode("node");
 
 //Add an operator to the ResourceLoadNode so we can trace its runtime behavior
 op = FABRIC.DependencyGraph.createOperator("loadop");
-op.setEntryFunctionName("onLoad");
+op.setEntryPoint("onLoad");
 op.setSourceCode('\
 operator onLoad( io FabricResource resource )\n\
 {\n\

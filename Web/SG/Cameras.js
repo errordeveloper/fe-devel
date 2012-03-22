@@ -52,7 +52,7 @@ FABRIC.SceneGraph.registerNodeType('Camera', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
       operatorName: 'updateCameraProjection',
       srcFile: 'FABRIC_ROOT/SG/KL/camera.kl',
-      entryFunctionName: 'updateCameraProjection',
+      entryPoint: 'updateCameraProjection',
       parameterLayout: [
         'camera.projectionMat44',
         'window.width',
@@ -68,7 +68,7 @@ FABRIC.SceneGraph.registerNodeType('Camera', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'loadXfo',
       srcCode: 'use Xfo, Mat44; operator loadXfo(io Xfo xfo, io Mat44 mat44){ mat44 = xfo.toMat44().inverse(); }',
-      entryFunctionName: 'loadXfo',
+      entryPoint: 'loadXfo',
       parameterLayout: [
         'transform.globalXfo',
         'self.cameraMat44'
@@ -182,7 +182,7 @@ FABRIC.SceneGraph.registerNodeType('TargetCamera', {
     targetCameraNode.getDGNode().bindings.append(scene.constructOperator({
       operatorName: 'loadFocalDist',
       srcFile: 'FABRIC_ROOT/SG/KL/camera.kl',
-      entryFunctionName: 'loadFocalDist',
+      entryPoint: 'loadFocalDist',
       parameterLayout: [
         'transform.globalXfo',
         'transform.target',

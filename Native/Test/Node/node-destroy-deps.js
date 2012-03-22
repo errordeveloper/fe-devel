@@ -9,7 +9,7 @@ operator foo(\n\
   output = input * input;\n\
 }\n\
 ");
-op.setEntryFunctionName("foo");
+op.setEntryPoint("foo");
 
 binding = fabricClient.DG.createBinding();
 binding.setOperator(op);

@@ -6,7 +6,7 @@ import fabric
 fabricClient = fabric.createClient()
             
 op = fabricClient.DependencyGraph.createOperator("bar")
-op.setEntryFunctionName("foo")
+op.setEntryPoint("foo")
 op.setSourceCode("operator foo( Boolean testBool, io Integer foo ) { if(testBool){ foo = 10; } }")
 
 binding = fabricClient.DependencyGraph.createBinding()

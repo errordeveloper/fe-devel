@@ -728,8 +728,8 @@ class _DG( _NAMESPACE ):
       if 'sourceCode' in diff:
         self.__sourceCode = diff[ 'sourceCode' ]
 
-      if 'entryFunctionName' in diff:
-        self.__entryFunctionName = diff[ 'entryFunctionName' ]
+      if 'entryPoint' in diff:
+        self.__entryFunctionName = diff[ 'entryPoint' ]
 
       if 'diagnostics' in diff:
         self.__diagnostics = diff[ 'diagnostics' ]
@@ -785,20 +785,28 @@ class _DG( _NAMESPACE ):
       }
       self._nObjQueueCommand( 'setSourceCode', args, __unwind )
 
-    def getEntryFunctionName( self ):
+    def getEntryPoint( self ):
       if self.__entryFunctionName is None:
         self._dg._executeQueuedCommands()
       return self.__entryFunctionName
 
-    def setEntryFunctionName( self, entryFunctionName ):
+    def getEntryFunctionName( self ):
+      print "Warning: getEntryFunctionName() is deprecated and will be removed in a future version; use getEntryPoint() instead"
+      return self.getEntryPoint()
+
+    def setEntryPoint( self, entryPoint ):
       oldEntryFunctionName = self.__entryFunctionName
-      self.__entryFunctionName = entryFunctionName
+      self.__entryFunctionName = entryPoint
 
       def __unwind():
         self.__entryFunctionName = oldEntryFunctionName
 
-      self._nObjQueueCommand( 'setEntryFunctionName', entryFunctionName, __unwind )
+      self._nObjQueueCommand( 'setEntryPoint', entryPoint, __unwind )
       self.__diagnostics = []
+
+    def setEntryFunctionName( self, entryPoint ):
+      print "Warning: setEntryFunctionName() is deprecated and will be removed in a future version; use setEntryPoint() instead"
+      self.setEntryPoint( entryPoint )
 
     def getDiagnostics( self ):
       if len( self.__diagnostics ) == 0:

@@ -5,7 +5,7 @@
 FABRIC = require('Fabric').createClient();
 
 op = FABRIC.DependencyGraph.createOperator("op");
-op.setEntryFunctionName("load");
+op.setEntryPoint("load");
 op.setSourceCode('\
 require FabricPNG;\n\
 \n\

@@ -99,7 +99,7 @@ FABRIC.SceneGraph.registerNodeType('DebugGeometryDraw', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
         operatorName: 'loadModelProjectionMatrices',
         srcFile: 'FABRIC_ROOT/SG/KL/loadModelProjectionMatrices.kl',
-        entryFunctionName: 'loadModelProjectionMatrices',
+        entryPoint: 'loadModelProjectionMatrices',
         preProcessorDefinitions: {
           MODELMATRIX_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('modelMatrix'),
           MODELMATRIXINVERSE_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('modelMatrixInverse'),
@@ -124,7 +124,7 @@ FABRIC.SceneGraph.registerNodeType('DebugGeometryDraw', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
       operatorName: 'debugGeometryDraw',
       srcFile: 'FABRIC_ROOT/SG/KL/debugGeometryDraw.kl',
-      entryFunctionName: 'debugGeometryDraw',
+      entryPoint: 'debugGeometryDraw',
       parameterLayout: [
         'shader.shaderProgram',
         'debuggeometrynode.' + options.debugGemetryMemberName + '<>',

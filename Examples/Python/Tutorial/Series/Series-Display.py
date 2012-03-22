@@ -15,7 +15,7 @@ if len( sys.argv ) > 1:
 
 computeTermOp = fabricClient.DG.createOperator("computeTermOp")
 computeTermOp.setSourceCode('computeTerm.kl', open('computeTerm.kl').read())
-computeTermOp.setEntryFunctionName('computeTerm')
+computeTermOp.setEntryPoint('computeTerm')
 
 # Create the binding that binds the computeTermOp to the
 # terms node.  A binding binds the members of the node
@@ -42,7 +42,7 @@ termsNode.bindings.append(computeTermBinding)
 
 sumTermsOp = fabricClient.DG.createOperator("sumTermsOp")
 sumTermsOp.setSourceCode('sumTerms.kl', open('sumTerms.kl').read())
-sumTermsOp.setEntryFunctionName('sumTerms')
+sumTermsOp.setEntryPoint('sumTerms')
 
 # Create the binding that binds sumTermsOp to the members of
 # sumNode

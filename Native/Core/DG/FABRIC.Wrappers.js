@@ -455,8 +455,8 @@ function (originalFabricClient, logCallback, debugLogCallback) {
         if ('sourceCode' in diff)
           result.sourceCode = diff.sourceCode;
 
-        if ('entryFunctionName' in diff)
-          result.entryFunctionName = diff.entryFunctionName;
+        if ('entryPoint' in diff)
+          result.entryPoint = diff.entryPoint;
 
         if ('diagnostics' in diff)
           result.diagnostics = diff.diagnostics;
@@ -516,19 +516,28 @@ function (originalFabricClient, logCallback, debugLogCallback) {
         setSourceCode(filename, sourceCode);
       };
 
-      result.pub.getEntryFunctionName = function() {
-        if (!('entryFunctionName' in result))
+      result.pub.getEntryPoint = function() {
+        if (!('entryPoint' in result))
           executeQueuedCommands();
-        return result.entryFunctionName;
+        return result.entryPoint;
       };
 
-      result.pub.setEntryFunctionName = function(entryFunctionName) {
-        var oldEntryFunctionName = result.entryFunctionName;
-        result.entryFunctionName = entryFunctionName;
-        result.queueCommand('setEntryFunctionName', entryFunctionName, function() {
-          result.entryFunctionName = oldEntryFunctionName;
+      result.pub.getEntryFunctionName = function() {
+        console.warn("Warning: getEntryFunctionName() is deprecated and will be removed in a future version; use getEntryPoint() instead");
+        return result.pub.getEntryPoint();
+      };
+
+      result.pub.setEntryPoint = function(entryPoint) {
+        var oldEntryFunctionName = result.entryPoint;
+        result.entryPoint = entryPoint;
+        result.queueCommand('setEntryPoint', entryPoint, function() {
+          result.entryPoint = oldEntryFunctionName;
         });
         delete result.diagnostics;
+      };
+      result.pub.setEntryFunctionName = function(entryPoint) {
+        console.warn("Warning: setEntryFunctionName() is deprecated and will be removed in a future version; use setEntryPoint() instead");
+        result.pub.setEntryPoint(entryPoint);
       };
 
       result.pub.getDiagnostics = function() {
@@ -2513,7 +2522,7 @@ function (originalFabricClient, logCallback, debugLogCallback) {
       notifications = JSON.parse(jsonEncodedNotifications);
     }
     catch (e) {
-      throw 'unable to parse JSON notifications';
+      throw 'unable to parse JSON notifications: ' + jsonEncodedNotifications;
     }
 
     var size = notifications.length;

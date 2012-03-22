@@ -44,7 +44,7 @@ FABRIC.SceneGraph.registerNodeType('CrankshaftTransform', {
         'self.engineSpeed',
         'globals.time'
       ],
-      entryFunctionName: 'crankOp'
+      entryPoint: 'crankOp'
     }));
 
     return crankshaftTransform;
@@ -74,7 +74,7 @@ FABRIC.SceneGraph.registerNodeType('CamshaftTransform', {
         'self.phase',
         'crank.phase'
       ],
-      entryFunctionName: 'camshaftOp'
+      entryPoint: 'camshaftOp'
     }));
 
     return camshaftTransform;
@@ -122,7 +122,7 @@ FABRIC.SceneGraph.registerNodeType('Pistons', {
         'self.axialShift',
         'crank.phase'
       ],
-      entryFunctionName: 'cylinderOp'
+      entryPoint: 'cylinderOp'
     }));
     
     return crankshaftTransform;
@@ -155,7 +155,7 @@ FABRIC.SceneGraph.registerNodeType('PistonTransform', {
         'self.xfoIndex',
         'pistons.'+options.member+'<>'
       ],
-      entryFunctionName: 'bindPistonOp'
+      entryPoint: 'bindPistonOp'
     }));
     
     return pistonTransformNode;
@@ -327,7 +327,7 @@ $(document).ready(function() {
         "self.phase",
         "crank.phase"
       ],
-      entryFunctionName:"camshaftOp"
+      entryPoint:"camshaftOp"
     });
 
 */

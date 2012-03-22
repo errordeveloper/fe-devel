@@ -125,7 +125,7 @@ FABRIC.SceneGraph.registerNodeType('Shader', {
     var loadShaderOp = scene.constructOperator({
       operatorName: 'loadShader',
       srcFile: 'FABRIC_ROOT/SG/KL/loadShader.kl',
-      entryFunctionName: 'loadShader',
+      entryPoint: 'loadShader',
       parameterLayout: [
         'self.shaderProgram'
       ]
@@ -149,7 +149,7 @@ FABRIC.SceneGraph.registerNodeType('Shader', {
   */  redrawEventHandler.postDescendBindings.append(scene.constructOperator({
         operatorName: 'unloadShader',
         srcFile: 'FABRIC_ROOT/SG/KL/loadShader.kl',
-        entryFunctionName: 'unloadShader',
+        entryPoint: 'unloadShader',
         parameterLayout: [
           'self.shaderProgram'
         ]
@@ -307,7 +307,7 @@ FABRIC.SceneGraph.registerNodeType('Material', {
           ATTRIBUTE_ID: getShaderParamID(uniformName),
           DATA_TYPE: uniform.type
         },
-        entryFunctionName: 'loadUniform',
+        entryPoint: 'loadUniform',
         parameterLayout: [
           (options.separateShaderNode ? 'shader.shaderProgram' : 'self.shaderProgram'),
           uniformOwner + '.' + uniformName
@@ -344,7 +344,7 @@ FABRIC.SceneGraph.registerNodeType('Material', {
             ATTRIBUTE_ID: getShaderParamID(textureName),
             DATA_TYPE: 'Integer'
           },
-          entryFunctionName: 'loadUniform',
+          entryPoint: 'loadUniform',
           parameterLayout: [
             'shader.shaderProgram',
             'self.textureUnit'
@@ -369,7 +369,7 @@ FABRIC.SceneGraph.registerNodeType('Material', {
       redrawEventHandler.postDescendBindings.append(scene.constructOperator({
         operatorName: 'unbindTextures',
         srcFile: 'FABRIC_ROOT/SG/KL/loadTexture.kl',
-        entryFunctionName: 'unbindTextures',
+        entryPoint: 'unbindTextures',
         preProcessorDefinitions: { PIXELFORMAT: 'RGBA' },
         parameterLayout: [
           'self.numTextures'
@@ -482,7 +482,7 @@ FABRIC.SceneGraph.registerNodeType('PointMaterial', {
     pointMaterial.getRedrawEventHandler().preDescendBindings.append(scene.constructOperator({
         operatorName: 'setPointSize',
         srcFile: 'FABRIC_ROOT/SG/KL/drawPoints.kl',
-        entryFunctionName: 'setPointSize',
+        entryPoint: 'setPointSize',
         parameterLayout: ['material.pointSize']
       }));
     return pointMaterial;
@@ -511,13 +511,13 @@ FABRIC.SceneGraph.registerNodeType('LineMaterial', {
     lineMaterial.getRedrawEventHandler().preDescendBindings.append(scene.constructOperator({
         operatorName: 'setLineWidth',
         srcFile: 'FABRIC_ROOT/SG/KL/drawLines.kl',
-        entryFunctionName: 'setLineWidth',
+        entryPoint: 'setLineWidth',
         parameterLayout: ['self.lineWidth']
       }));
     lineMaterial.getRedrawEventHandler().postDescendBindings.append(scene.constructOperator({
         operatorName: 'resetLineWidth',
         srcFile: 'FABRIC_ROOT/SG/KL/drawLines.kl',
-        entryFunctionName: 'resetLineWidth',
+        entryPoint: 'resetLineWidth',
         parameterLayout: []
       }));
     return lineMaterial;
@@ -569,13 +569,13 @@ FABRIC.SceneGraph.registerNodeType('PointSpriteMaterial', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
         operatorName: 'preDrawSpritePoints',
         srcFile: 'FABRIC_ROOT/SG/KL/drawPoints.kl',
-        entryFunctionName: 'preDrawSpritePoints',
+        entryPoint: 'preDrawSpritePoints',
         parameterLayout: ['self.pointSize']
       }));
     redrawEventHandler.postDescendBindings.append(scene.constructOperator({
         operatorName: 'postDrawSpritePoints',
         srcFile: 'FABRIC_ROOT/SG/KL/drawPoints.kl',
-        entryFunctionName: 'postDrawSpritePoints',
+        entryPoint: 'postDrawSpritePoints',
         parameterLayout: []
       }));
 
@@ -605,13 +605,13 @@ FABRIC.SceneGraph.registerNodeType('TransparentMaterial', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
       operatorName: 'disableDepthMask',
       srcCode: 'use FabricOGL; operator disableDepthMask() { glDepthMask(GL_FALSE);; }',
-      entryFunctionName: 'disableDepthMask',
+      entryPoint: 'disableDepthMask',
       parameterLayout: []
     }));
     redrawEventHandler.postDescendBindings.append(scene.constructOperator({
       operatorName: 'enableDepthMask',
       srcCode: 'use FabricOGL; operator enableDepthMask() { glDepthMask(GL_TRUE);; }',
-      entryFunctionName: 'enableDepthMask',
+      entryPoint: 'enableDepthMask',
       parameterLayout: []
     }));
     return transparentMaterial;
@@ -631,7 +631,7 @@ FABRIC.SceneGraph.registerNodeType('InstancingMaterial', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
       operatorName: 'setInstanceCount',
       srcCode: 'operator setInstanceCount(io OGLShaderProgram shaderProgram, io Integer count) { shaderProgram.numInstances = count; }',
-      entryFunctionName: 'setInstanceCount',
+      entryPoint: 'setInstanceCount',
       parameterLayout: [
         'shader.shaderProgram',
         'self.instanceCount'
@@ -696,7 +696,7 @@ FABRIC.SceneGraph.registerNodeType('PostProcessEffect', {
       scene.constructOperator({
           operatorName: 'bindScreenRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'bindScreenRenderTarget',
+          entryPoint: 'bindScreenRenderTarget',
           parameterLayout: [
             'window.width',
             'window.height',
@@ -707,7 +707,7 @@ FABRIC.SceneGraph.registerNodeType('PostProcessEffect', {
       scene.constructOperator({
           operatorName: 'unbindRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'unbindRenderTarget',
+          entryPoint: 'unbindRenderTarget',
           parameterLayout: [
             'self.renderTarget'
           ]
@@ -716,7 +716,7 @@ FABRIC.SceneGraph.registerNodeType('PostProcessEffect', {
       scene.constructOperator({
           operatorName: 'drawRenderTargetToView',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'drawRenderTargetToView',
+          entryPoint: 'drawRenderTargetToView',
           parameterLayout: [
             'self.renderTarget',
             'self.shaderProgram'

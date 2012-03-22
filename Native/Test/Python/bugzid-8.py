@@ -11,7 +11,7 @@ operator entry(io Size a, io String b) {\n\
   report 'Hello ' + a + ' ' + b;\n\
 }\n\
 ")
-o.setEntryFunctionName("entry")
+o.setEntryPoint("entry")
 
 b = F.DG.createBinding()
 b.setOperator(o)

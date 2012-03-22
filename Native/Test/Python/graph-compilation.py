@@ -47,7 +47,7 @@ reportErrors( event, 0 )
 reportErrors( eventHandler, 0 )
 reportErrors( node, 3 )
 
-op.setEntryFunctionName("foo")
+op.setEntryPoint("foo")
 op.setSourceCode("operator foo( io Integer bar ) { bar = 7; }")
 
 try:

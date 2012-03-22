@@ -46,7 +46,7 @@ FABRIC.SceneGraph.registerNodeType('Geometry', {
       bboxdgnode.bindings.append(scene.constructOperator({
         operatorName: 'calcBoundingBox',
         srcFile: 'FABRIC_ROOT/SG/KL/calcBoundingBox.kl',
-        entryFunctionName: 'calcBoundingBox',
+        entryPoint: 'calcBoundingBox',
         parameterLayout: [
           'attributes.positions<>',
           'self.min',
@@ -101,7 +101,7 @@ FABRIC.SceneGraph.registerNodeType('Geometry', {
           preProcessorDefinitions: {
             DATA_TYPE: 'Integer'
           },
-          entryFunctionName: 'genVBO',
+          entryPoint: 'genVBO',
           parameterLayout: [
             'uniforms.indices',
             'self.indicesBuffer'
@@ -132,7 +132,7 @@ FABRIC.SceneGraph.registerNodeType('Geometry', {
             preProcessorDefinitions: {
               DATA_TYPE: type
             },
-            entryFunctionName: 'genAndBindVBO',
+            entryPoint: 'genAndBindVBO',
             parameterLayout: [
               'shader.shaderProgram',
               'attributes.' + name + '<>',
@@ -279,7 +279,7 @@ FABRIC.SceneGraph.registerNodeType('GeometryDataCopy', {
     geometryDataCopyNode.getAttributesDGNode().bindings.append(scene.constructOperator({
       operatorName: 'matchCount',
       srcCode: 'operator matchCount(in Container parentContainer, io Container selfContainer) { selfContainer.resize( parentContainer.size() ); }',
-      entryFunctionName: 'matchCount',
+      entryPoint: 'matchCount',
       parameterLayout: [
         'parentattributes',
         'self'
@@ -352,7 +352,7 @@ FABRIC.SceneGraph.registerNodeType('Points', {
       pointsNode.getRedrawEventHandler().postDescendBindings.append( scene.constructOperator({
         operatorName: 'drawPoints',
         srcFile: 'FABRIC_ROOT/SG/KL/drawPoints.kl',
-        entryFunctionName: 'drawPoints',
+        entryPoint: 'drawPoints',
         parameterLayout: [
           'shader.shaderProgram',
           'instance.drawToggle',
@@ -366,7 +366,7 @@ FABRIC.SceneGraph.registerNodeType('Points', {
       return scene.constructOperator({
           operatorName: 'rayIntersectPoints',
           srcFile: 'FABRIC_ROOT/SG/KL/rayIntersectPoints.kl',
-          entryFunctionName: 'rayIntersectPoints',
+          entryPoint: 'rayIntersectPoints',
           parameterLayout: [
             'raycastData.ray',
             'raycastData.threshold',
@@ -403,7 +403,7 @@ FABRIC.SceneGraph.registerNodeType('Lines', {
       linesNode.getRedrawEventHandler().postDescendBindings.append( scene.constructOperator({
         operatorName: 'drawLines',
         srcFile: 'FABRIC_ROOT/SG/KL/drawLines.kl',
-        entryFunctionName: 'drawLines',
+        entryPoint: 'drawLines',
         parameterLayout: [
           'shader.shaderProgram',
           'self.indicesBuffer',
@@ -418,7 +418,7 @@ FABRIC.SceneGraph.registerNodeType('Lines', {
       return scene.constructOperator({
           operatorName: 'rayIntersectLines',
           srcFile: 'FABRIC_ROOT/SG/KL/rayIntersectLines.kl',
-          entryFunctionName: 'rayIntersectLines',
+          entryPoint: 'rayIntersectLines',
           parameterLayout: [
             'raycastData.ray',
             'raycastData.threshold',
@@ -456,7 +456,7 @@ FABRIC.SceneGraph.registerNodeType('LineStrip', {
       linesNode.getRedrawEventHandler().postDescendBindings.append( scene.constructOperator({
         operatorName: 'drawLineStrip',
         srcFile: 'FABRIC_ROOT/SG/KL/drawLines.kl',
-        entryFunctionName: 'drawLineStrip',
+        entryPoint: 'drawLineStrip',
         parameterLayout: [
           'shader.shaderProgram',
           'self.indicesBuffer',
@@ -469,7 +469,7 @@ FABRIC.SceneGraph.registerNodeType('LineStrip', {
       return scene.constructOperator({
           operatorName: 'rayIntersectLineStrip',
           srcFile: 'FABRIC_ROOT/SG/KL/rayIntersectLines.kl',
-          entryFunctionName: 'rayIntersectLineStrip',
+          entryPoint: 'rayIntersectLineStrip',
           parameterLayout: [
             'raycastData.ray',
             'raycastData.threshold',
@@ -510,7 +510,7 @@ FABRIC.SceneGraph.registerNodeType('Triangles', {
       trianglesNode.getRedrawEventHandler().postDescendBindings.append( scene.constructOperator({
         operatorName: 'drawTriangles',
         srcFile: 'FABRIC_ROOT/SG/KL/drawTriangles.kl',
-        entryFunctionName: 'drawTriangles',
+        entryPoint: 'drawTriangles',
         parameterLayout: [
           'shader.shaderProgram',
           'self.indicesBuffer',
@@ -526,7 +526,7 @@ FABRIC.SceneGraph.registerNodeType('Triangles', {
       return scene.constructOperator({
           operatorName: 'rayIntersectTriangles',
           srcFile: 'FABRIC_ROOT/SG/KL/rayIntersectTriangles.kl',
-          entryFunctionName: 'rayIntersectTriangles',
+          entryPoint: 'rayIntersectTriangles',
           parameterLayout: [
             'raycastData.ray',
             'instance.drawToggle',
@@ -567,7 +567,7 @@ FABRIC.SceneGraph.registerNodeType('Triangles', {
         trianglesNode.getAttributesDGNode().bindings.append(scene.constructOperator({
           operatorName: 'computeTriangleTangents',
           srcFile: 'FABRIC_ROOT/SG/KL/generateTangents.kl',
-          entryFunctionName: 'computeTriangleTangents',
+          entryPoint: 'computeTriangleTangents',
           parameterLayout: [
             'uniforms.indices',
             'self.positions<>',
@@ -634,7 +634,7 @@ FABRIC.SceneGraph.registerNodeType('Instance', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
         operatorName: 'loadProjectionMatrices',
         srcFile: 'FABRIC_ROOT/SG/KL/loadModelProjectionMatrices.kl',
-        entryFunctionName: 'loadProjectionMatrices',
+        entryPoint: 'loadProjectionMatrices',
         preProcessorDefinitions: preProcessorDefinitions,
         parameterLayout: [
           'shader.shaderProgram',
@@ -649,7 +649,7 @@ FABRIC.SceneGraph.registerNodeType('Instance', {
       redrawEventHandler.preDescendBindings.append(scene.constructOperator({
           operatorName: 'loadModelProjectionMatrices',
           srcFile: 'FABRIC_ROOT/SG/KL/loadModelProjectionMatrices.kl',
-          entryFunctionName: 'loadModelProjectionMatrices',
+          entryPoint: 'loadModelProjectionMatrices',
           preProcessorDefinitions: preProcessorDefinitions,
           parameterLayout: [
             'shader.shaderProgram',
@@ -737,7 +737,7 @@ FABRIC.SceneGraph.registerNodeType('Instance', {
           'operator toggleDraw(io Boolean drawToggle, io Boolean layerValue) {\n' +
           '  drawToggle = layerValue;\n' +
           '}',
-          entryFunctionName: 'toggleDraw',
+          entryPoint: 'toggleDraw',
           parameterLayout: [
             'self.drawToggle',
             'layerManager.'+layer

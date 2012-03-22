@@ -285,7 +285,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
       parameterLayout: [
         'self.world'
       ],
-      entryFunctionName: 'createBulletWorld',
+      entryPoint: 'createBulletWorld',
       srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
     }));
 
@@ -312,7 +312,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
             'self.'+shapeName+'Shape',
             shapeName+"Shape_attributes.positions<>"
           ],
-          entryFunctionName: 'copyShapeVertices',
+          entryPoint: 'copyShapeVertices',
           srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
         }));
       }
@@ -332,7 +332,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
             'self.'+shapeName+'Shape',
             shapeName+"Shape_attributes.positions<>"
           ],
-          entryFunctionName: 'copyShapeVertices',
+          entryPoint: 'copyShapeVertices',
           srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
         }));
         shapedgnode.bindings.append(scene.constructOperator({
@@ -341,7 +341,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
             'self.'+shapeName+'Shape',
             shapeName+"Shape_uniforms.indices"
           ],
-          entryFunctionName: 'copyShapeIndices',
+          entryPoint: 'copyShapeIndices',
           srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
         }));
       }
@@ -352,7 +352,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
         parameterLayout: [
           'self.'+shapeName+'Shape'
         ],
-        entryFunctionName: 'createBulletShape',
+        entryPoint: 'createBulletShape',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
     };
@@ -396,7 +396,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           'shapes.'+shapeName+'Shape',
           'self.'+bodyName+'Rbd'
         ],
-        entryFunctionName: 'createBulletRigidBody',
+        entryPoint: 'createBulletRigidBody',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
     };
@@ -413,7 +413,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
             'self.'+rbdInitialTransforms[bodyName],
             'simulation.prevTime'
           ],
-          entryFunctionName: 'setBulletRigidBodyTransform',
+          entryPoint: 'setBulletRigidBodyTransform',
           srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
         }));
       }
@@ -487,7 +487,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           bodyName+'_Attributes.normals<>',
           bodyName+'_Uniforms.indices'
         ],
-        entryFunctionName: 'createBulletSoftBody',
+        entryPoint: 'createBulletSoftBody',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
 
@@ -500,7 +500,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           'self.positions',
           'self.normals'
         ],
-        entryFunctionName: 'getBulletSoftBodyPosition',
+        entryPoint: 'getBulletSoftBodyPosition',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
       
@@ -541,7 +541,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           'self.'+bodyNameA+'Rbd',
           'self.'+bodyNameB+'Rbd'
         ],
-        entryFunctionName: 'createBulletConstraint',
+        entryPoint: 'createBulletConstraint',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
     };
@@ -580,7 +580,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           'rigidBodies.'+rigidBodyName+'Rbd',
           'self.'+softBodyName+'Sbd'
         ],
-        entryFunctionName: 'createBulletAnchor',
+        entryPoint: 'createBulletAnchor',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
     };
@@ -612,7 +612,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           'self.world',
           'self.'+forceName+'Force'
         ],
-        entryFunctionName: 'applyBulletForce',
+        entryPoint: 'applyBulletForce',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
     };
@@ -660,7 +660,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           'self.prevTime',
           'globals.time'
         ],
-        entryFunctionName: 'stepBulletWorld',
+        entryPoint: 'stepBulletWorld',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
     } else {
@@ -672,7 +672,7 @@ FABRIC.SceneGraph.registerNodeType('BulletWorldNode', {
           'self.prevTime',
           'self.time'
         ],
-        entryFunctionName: 'stepBulletWorld',
+        entryPoint: 'stepBulletWorld',
         srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
       }));
     }
@@ -742,7 +742,7 @@ FABRIC.SceneGraph.registerNodeType('BulletRigidBodyTransform', {
         'rigidbodies.'+bodyName+'Rbd',
         'self.globalXfo'
       ],
-      entryFunctionName: 'getBulletRigidBodyTransform',
+      entryPoint: 'getBulletRigidBodyTransform',
       srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl'
     }));
     
@@ -754,7 +754,7 @@ FABRIC.SceneGraph.registerNodeType('BulletRigidBodyTransform', {
           var raycastOperator = scene.constructOperator({
             operatorName: 'raycastBulletWorld',
             srcFile: 'FABRIC_ROOT/SG/KL/bullet.kl',
-            entryFunctionName: 'raycastBulletWorld',
+            entryPoint: 'raycastBulletWorld',
             parameterLayout: [
               'raycastData.ray',
               'simulation.world',

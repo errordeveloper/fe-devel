@@ -9,7 +9,7 @@ node.addMember( "input", "Scalar" );
 node.setData( "input", 17 );
 
 op = FABRIC.DependencyGraph.createOperator( "op" );
-op.setEntryFunctionName('entry');
+op.setEntryPoint('entry');
 op.setSourceCode("operator entry( io Scalar input ) {}");
 
 binding = FABRIC.DependencyGraph.createBinding();

@@ -86,6 +86,7 @@ namespace Fabric
       Util::SimpleString const &memberDeltaJSON
       ) const
     {
+      FABRIC_ASSERT( strlen(memberData) == memberLength );
       Util::SimpleString json;
       {
         JSON::Encoder jsonEncoder( &json );

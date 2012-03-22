@@ -19,7 +19,7 @@ catch(e)
 }
 
 op = FABRIC.DependencyGraph.createOperator("op");
-op.setEntryFunctionName("op");
+op.setEntryPoint("op");
 op.setSourceCode('\
 operator op(\n\
   io Container c,\n\
@@ -67,7 +67,7 @@ catch(e)
 
 //Error test: we are not allowed to have io Container along with members elements
 badOp = FABRIC.DependencyGraph.createOperator("badOp");
-badOp.setEntryFunctionName("badOp");
+badOp.setEntryPoint("badOp");
 badOp.setSourceCode('\
 operator badOp(\n\
   io Container c,\n\

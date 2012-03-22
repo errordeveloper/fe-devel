@@ -38,7 +38,7 @@ FABRIC.SceneGraph.registerNodeType('ObjResource', {
     resourceloaddgnode.bindings.append(scene.constructOperator({
         operatorName: 'parseObj',
         srcFile: 'FABRIC_ROOT/SG/KL/loadObj.kl',
-        entryFunctionName: 'parseObj',
+        entryPoint: 'parseObj',
         parameterLayout: [
           'self.resource',
           'self.handle',
@@ -61,7 +61,7 @@ FABRIC.SceneGraph.registerNodeType('ObjResource', {
     scene.constructOperator({
         operatorName: 'setObjGeom',
         srcFile: 'FABRIC_ROOT/SG/KL/loadObj.kl',
-        entryFunctionName: 'setObjGeom',
+        entryPoint: 'setObjGeom',
         parameterLayout: [
           'self',
           'resource.handle',
@@ -212,7 +212,7 @@ FABRIC.SceneGraph.registerNodeType('ObjTriangles', {
       attributesdgnode.bindings.append(scene.constructOperator({
         operatorName: 'setObjGeom',
         srcFile: 'FABRIC_ROOT/SG/KL/loadObj.kl',
-        entryFunctionName: 'setObjGeom',
+        entryPoint: 'setObjGeom',
         parameterLayout: [
           'self',
           'resource.handle',

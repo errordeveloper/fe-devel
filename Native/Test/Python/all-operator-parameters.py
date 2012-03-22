@@ -16,7 +16,7 @@ for i in range( 1, 32 ):
   klCode += " }"
   
   op = fabricClient.DependencyGraph.createOperator("foo_"+str(i))
-  op.setEntryFunctionName("foo")
+  op.setEntryPoint("foo")
   op.setSourceCode(klCode)
 
   node = fabricClient.DependencyGraph.createNode("bar_"+str(i))

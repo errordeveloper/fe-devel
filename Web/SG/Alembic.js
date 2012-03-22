@@ -60,7 +60,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
         'self.resource',
         'self.handle'
       ],
-      entryFunctionName: 'alembicLoad',
+      entryPoint: 'alembicLoad',
       srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl',
       async: false
     }));
@@ -71,7 +71,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
         'self.handle',
         'self.identifiers'
       ],
-      entryFunctionName: 'alembicGetIdentifiers',
+      entryPoint: 'alembicGetIdentifiers',
       srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl',
       async: false
     }));
@@ -150,7 +150,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'self.identifier',
               'self.indices'
             ],
-            entryFunctionName: 'alembicParsePolyMeshUniforms',
+            entryPoint: 'alembicParsePolyMeshUniforms',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }));
           
@@ -166,7 +166,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'uniforms.uvsLoaded',
               'self.uvs0<>'
             ],
-            entryFunctionName: 'alembicParsePolyMeshAttributes',
+            entryPoint: 'alembicParsePolyMeshAttributes',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }));
         }
@@ -198,7 +198,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'self.farDistance',
               'self.fovY'
             ],
-            entryFunctionName: 'alembicParseCamera',
+            entryPoint: 'alembicParseCamera',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }),0);
         }
@@ -231,7 +231,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'self.alembicTime',
               'self.'+ (options.parentTransformNode!= undefined ? 'localXfo' : 'globalXfo')
             ],
-            entryFunctionName: 'alembicParseXform',
+            entryPoint: 'alembicParseXform',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }));
         }
@@ -273,7 +273,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'self.scales<>',
               'self.colors<>'
             ],
-            entryFunctionName: 'alembicParsePointsAttributes',
+            entryPoint: 'alembicParsePointsAttributes',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }));
         }
@@ -310,7 +310,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'self.identifier',
               'self.indices'
             ],
-            entryFunctionName: 'alembicParseCurvesUniforms',
+            entryPoint: 'alembicParseCurvesUniforms',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }));
           
@@ -328,7 +328,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'self.uvs0<>',
               'self.colors<>'
             ],
-            entryFunctionName: 'alembicParseCurvesAttributes',
+            entryPoint: 'alembicParseCurvesAttributes',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }));
 
@@ -339,7 +339,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
               'self.positions<>',
               'self.tangents<>'
             ],
-            entryFunctionName: 'alembicCurvesComputeTangents',
+            entryPoint: 'alembicCurvesComputeTangents',
             srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
           }));
         }
@@ -375,7 +375,7 @@ FABRIC.SceneGraph.registerNodeType('AlembicLoadNode', {
                 'self.alembicTime',
                 'controller.localTime'
               ],
-              entryFunctionName: 'alembicSetTime',
+              entryPoint: 'alembicSetTime',
               srcFile: 'FABRIC_ROOT/SG/KL/loadAlembic.kl'
             }),0);
           }
