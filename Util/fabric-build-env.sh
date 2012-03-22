@@ -105,9 +105,11 @@ EOF
     FABRIC_EXTS_DST="$FABRIC_LIBRARY_DST_DIR/Exts"
     create_link "$FABRIC_EXTS_SRC" "$FABRIC_EXTS_DST"
 
-    FABRIC_KL_SRC="$FABRIC_BUILD_PATH/Fabric/Tools/KL/kl"
-    FABRIC_KL_DST="$HOME/bin/kl"
-    create_link "$FABRIC_KL_SRC" "$FABRIC_KL_DST"
+    if [ "$FABRIC_BUILD_OS" != "Windows" ]; then
+	    FABRIC_KL_SRC="$FABRIC_BUILD_PATH/Fabric/Tools/KL/kl"
+		  FABRIC_KL_DST="$HOME/bin/kl"
+			create_link "$FABRIC_KL_SRC" "$FABRIC_KL_DST"
+		fi
 
     FABRIC_PYTHON_MODULE_SRC="$FABRIC_DIST_PATH/PythonModule"
     FABRIC_PYTHON_MODULE_DIR="$HOME/python_modules"
@@ -142,9 +144,7 @@ EOF
       if [ "$FABRIC_BUILD_OS" = "Windows" ]; then
         if [ -f $FABRIC_NPAPI_SRC/npFabricPlugin.dll ]; then
           echo "Regristering NPAPI plugin"
-          pushd $FABRIC_NPAPI_SRC
-          regsvr32 //s npFabricPlugin.dll
-          popd
+          regsvr32 //s $FABRIC_NPAPI_SRC/npFabricPlugin.dll
         fi
       else
         mkdir -p "$FABRIC_NPAPI_DST_DIR"
@@ -154,9 +154,7 @@ EOF
       if [ "$FABRIC_BUILD_OS" = "Windows" ]; then
         if [ -f $FABRIC_NPAPI_SRC/npFabricPlugin.dll ]; then
           echo "Unregristering NPAPI plugin"
-          pushd $FABRIC_NPAPI_SRC
-          regsvr32 //s //u npFabricPlugin.dll
-          popd
+          regsvr32 //s //u $FABRIC_NPAPI_SRC/npFabricPlugin.dll
         fi
       else
         echo "Removing $FABRIC_NPAPI_DST"
