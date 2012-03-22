@@ -6,7 +6,7 @@ FC = require("Fabric").createClient();
 
 cv = FC.MR.createConstValue("Size", 10);
 
-ago = FC.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Size index) { output = sqrt(Scalar(index)); }", "foo");
+ago = FC.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Index index) { output = sqrt(Scalar(index)); }", "foo");
 ag = FC.MR.createArrayGenerator(cv, ago);
 
 var count = ag.getCount();
