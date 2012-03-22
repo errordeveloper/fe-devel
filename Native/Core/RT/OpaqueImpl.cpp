@@ -53,13 +53,12 @@ namespace Fabric
     
     void OpaqueImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
     {
-      encoder.makeNull();
+      encoder.makeBoolean( memcmp( data, m_defaultData, getAllocSize() ) != 0 );
     }
     
     void OpaqueImpl::decodeJSON( JSON::Entity const &entity, void *dst ) const
     {
-      entity.requireNull();
-      memset( dst, 0, getAllocSize() );
+      entity.requireNullOrBoolean();
     }
     
     std::string OpaqueImpl::descData( void const *src ) const
