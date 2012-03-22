@@ -9,6 +9,7 @@
 #include <Fabric/Core/CG/ModuleBuilder.h>
 #include <Fabric/Core/CG/SizeAdapter.h>
 #include <Fabric/Core/CG/Manager.h>
+#include <Fabric/Core/AST/Param.h>
 
 #include <llvm/Module.h>
 
@@ -40,6 +41,11 @@ namespace Fabric
     {
     }
 
+    std::string Operator::getStubName( RC::Handle<CG::Manager> const &cgManager ) const
+    {
+      return getSymbolName( cgManager ) + ".stub";
+    }
+
     void Operator::llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctionBodies ) const
     {
       Function::llvmCompileToModule( moduleBuilder, diagnostics, buildFunctionBodies );
@@ -50,11 +56,13 @@ namespace Fabric
       RC::ConstHandle<ParamVector> params = getParams( cgManager );
       CG::AdapterVector paramAdapters = params->getAdapters( cgManager );
       size_t numArgs = params->size();
+
       std::vector<llvm::Type const *> argTypes;
       llvm::Type const *int64Type = llvm::Type::getInt64Ty( context->getLLVMContext() );
       llvm::Type const *ptrType = llvm::Type::getInt8PtrTy( context->getLLVMContext() );
       llvm::Type const *ptrArrayType = llvm::ArrayType::get( ptrType, numArgs );
       llvm::Type const *int64ArrayType = llvm::ArrayType::get( int64Type, numArgs );
+
       argTypes.push_back( int64Type ); // start
       argTypes.push_back( int64Type ); // count
       argTypes.push_back( llvm::PointerType::getUnqual( ptrArrayType ) ); // bases
@@ -62,7 +70,7 @@ namespace Fabric
 
       llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
 
-      std::string name = getSymbolName( cgManager ) + ".stub";
+      std::string name = getStubName( cgManager );
       llvm::Function *func = llvm::cast<llvm::Function>( moduleBuilder->getFunction( name ) );
 
       if ( !func )
@@ -144,11 +152,13 @@ namespace Fabric
           );
 
           llvm::Value *argLValue = bbb->CreateGEP( argBaseData, stepRValue, "argLValue" );
+          const llvm::Type *argType = paramAdapters[argIndex]->llvmRawType( context );
+          if ( paramAdapters[argIndex]->isPassByReference() || params->get(argIndex)->getUsage() == CG::USAGE_LVALUE )
+            argType = llvm::PointerType::getUnqual( argType );
+
           llvm::Value *typedDataLValue = bbb->CreatePointerCast(
             argLValue,
-            llvm::PointerType::getUnqual(
-              paramAdapters[argIndex]->llvmRawType( context )
-            ),
+            llvm::PointerType::getUnqual( argType ),
             "typedDataLValue"
           );
           args.push_back( bbb->CreateLoad( typedDataLValue, "typedDataRValue" ) );

@@ -37,6 +37,8 @@ namespace Fabric
 
       virtual void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctionBodies ) const;
 
+      std::string getStubName( RC::Handle<CG::Manager> const &cgManager ) const;
+
     protected:
     
       Operator( 
