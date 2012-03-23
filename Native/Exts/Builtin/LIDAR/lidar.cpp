@@ -9,6 +9,19 @@ using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 //#define LIDAR_TRACE
 
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
+FABRIC_EXT_KL_STRUCT( Color, {
+  KL::Float32 r;
+  KL::Float32 g;
+  KL::Float32 b;
+  KL::Float32 a;
+} );
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -202,8 +215,8 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_GetCount(
 
 FABRIC_EXT_EXPORT void FabricLIDAR_Reader_GetPoints(
   LidarReader & lidar,
-  KL::SlicedArray<KL::Vec3>& positions,
-  KL::SlicedArray<KL::Color>& colors
+  KL::SlicedArray<Vec3>& positions,
+  KL::SlicedArray<Color>& colors
 )
 {
   if(lidar.localData != NULL) {

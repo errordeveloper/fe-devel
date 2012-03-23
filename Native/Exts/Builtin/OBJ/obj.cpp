@@ -11,6 +11,17 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
+FABRIC_EXT_KL_STRUCT( Vec2, {
+  KL::Float32 x;
+  KL::Float32 y;
+} );
+
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
 FABRIC_EXT_KL_STRUCT( OBJDataHandle, {
   ObjParser * m_parseData;
 } );
@@ -212,7 +223,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetNbEntityPoints(
 FABRIC_EXT_EXPORT void FabricOBJGetEntityPoints(
   const OBJDataHandle& handle,
   KL::Integer entityIndex,
-  KL::VariableArray<KL::Vec3>& points
+  KL::VariableArray<Vec3>& points
   )
 {
   if( handle.m_parseData == NULL )
@@ -225,7 +236,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityPoints(
     for( size_t i = 0; i < nbPoints; ++i )
     {
       V3 point = handle.m_parseData->GetEntityPoint( entityIndex, i );
-      KL::Vec3 klVec = { point.v[0], point.v[1], point.v[2] };
+      Vec3 klVec = { point.v[0], point.v[1], point.v[2] };
       points[i] = klVec;
     }
   }
@@ -234,7 +245,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityPoints(
 FABRIC_EXT_EXPORT void FabricOBJGetEntityPointsSliced(
   const OBJDataHandle& handle,
   KL::Integer entityIndex,
-  KL::SlicedArray<KL::Vec3>& points
+  KL::SlicedArray<Vec3>& points
   )
 {
   if ( handle.m_parseData != NULL )
@@ -246,7 +257,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityPointsSliced(
     for( size_t i = 0; i < nbPoints; ++i )
     {
       V3 point = handle.m_parseData->GetEntityPoint( entityIndex, i );
-      KL::Vec3 klVec = { point.v[0], point.v[1], point.v[2] };
+      Vec3 klVec = { point.v[0], point.v[1], point.v[2] };
       points[i] = klVec;
     }
   }
@@ -255,7 +266,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityPointsSliced(
 FABRIC_EXT_EXPORT void FabricOBJGetEntityNormals(
   const OBJDataHandle& handle,
   KL::Integer entityIndex,
-  KL::VariableArray<KL::Vec3>& normals
+  KL::VariableArray<Vec3>& normals
   )
 {
   if( handle.m_parseData == NULL )
@@ -268,7 +279,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityNormals(
     for( size_t i = 0; i < nbPoints; ++i )
     {
       V3 normal = handle.m_parseData->GetEntityNormal( entityIndex, i );
-      KL::Vec3 klVec = { normal.v[0], normal.v[1], normal.v[2] };
+      Vec3 klVec = { normal.v[0], normal.v[1], normal.v[2] };
       normals[i] = klVec;
     }
   }
@@ -277,7 +288,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityNormals(
 FABRIC_EXT_EXPORT void FabricOBJGetEntityNormalsSliced(
   const OBJDataHandle& handle,
   KL::Integer entityIndex,
-  KL::SlicedArray<KL::Vec3>& normals
+  KL::SlicedArray<Vec3>& normals
   )
 {
   if ( handle.m_parseData )
@@ -289,7 +300,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityNormalsSliced(
     for ( size_t i = 0; i < nbPoints; ++i )
     {
       V3 normal = handle.m_parseData->GetEntityNormal( entityIndex, i );
-      KL::Vec3 klVec = { normal.v[0], normal.v[1], normal.v[2] };
+      Vec3 klVec = { normal.v[0], normal.v[1], normal.v[2] };
       normals[i] = klVec;
     }
   }
@@ -298,7 +309,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityNormalsSliced(
 FABRIC_EXT_EXPORT void FabricOBJGetEntityTextureCoords(
   const OBJDataHandle& handle,
   KL::Integer entityIndex,
-  KL::VariableArray<KL::Vec2>& textureCoords
+  KL::VariableArray<Vec2>& textureCoords
   )
 {
   if( handle.m_parseData == NULL )
@@ -311,7 +322,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityTextureCoords(
     for( size_t i = 0; i < nbPoints; ++i )
     {
       V2 texCoord = handle.m_parseData->GetEntityTextureCoord( entityIndex, i );
-      KL::Vec2 klVec = { texCoord.v[0], texCoord.v[1] };
+      Vec2 klVec = { texCoord.v[0], texCoord.v[1] };
       textureCoords[i] = klVec;
     }
   }
@@ -320,7 +331,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityTextureCoords(
 FABRIC_EXT_EXPORT void FabricOBJGetEntityTextureCoordsSliced(
   const OBJDataHandle& handle,
   KL::Integer entityIndex,
-  KL::SlicedArray<KL::Vec2>& textureCoords
+  KL::SlicedArray<Vec2>& textureCoords
   )
 {
   if ( handle.m_parseData )
@@ -332,7 +343,7 @@ FABRIC_EXT_EXPORT void FabricOBJGetEntityTextureCoordsSliced(
     for ( size_t i = 0; i < nbPoints; ++i )
     {
       V2 texCoord = handle.m_parseData->GetEntityTextureCoord( entityIndex, i );
-      KL::Vec2 klVec = { texCoord.v[0], 1.0-texCoord.v[1] };//OBJ considers (0, 0) to be the top left of a texture, OpenGL considers it to be the bottom left
+      Vec2 klVec = { texCoord.v[0], 1.0-texCoord.v[1] };//OBJ considers (0, 0) to be the top left of a texture, OpenGL considers it to be the bottom left
       textureCoords[i] = klVec;
     }
   }

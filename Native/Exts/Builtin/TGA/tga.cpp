@@ -7,6 +7,13 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
+FABRIC_EXT_KL_STRUCT( RGBA, {
+  KL::Byte r;
+  KL::Byte g;
+  KL::Byte b;
+  KL::Byte a;
+} );
+
 class Buffer
 {
 public:
@@ -74,7 +81,7 @@ __attribute__ ((packed))
 static inline void setPixelFromBytes(
   size_t     bpp,
   uint8_t     *v,
-  KL::RGBA &p
+  RGBA &p
   )
 {
   switch( bpp )
@@ -111,7 +118,7 @@ static inline void setPixelFromBytes(
 static void readTCPixelsRaw( 
   Buffer &buffer, 
   TGAHeader const &header, 
-  KL::VariableArray<KL::RGBA> &imagePixels )
+  KL::VariableArray<RGBA> &imagePixels )
 {
   size_t  bpp = header.imageBPP / 8;
   if( bpp < 2 || bpp > 4 )
@@ -129,7 +136,7 @@ static void readTCPixelsRaw(
 
     for( size_t x = 0; x < header.imageWidth; x++ )
     {
-      KL::RGBA &pixel = imagePixels[ x + yoff ];
+      RGBA &pixel = imagePixels[ x + yoff ];
       uint8_t     v[4];
       
       if( !buffer.read( v, bpp ) )
@@ -143,7 +150,7 @@ static void readTCPixelsRaw(
 static void readTCPixelsRLE( 
   Buffer &buffer, 
   TGAHeader const &header, 
-  KL::VariableArray<KL::RGBA> &imagePixels )
+  KL::VariableArray<RGBA> &imagePixels )
 {
   size_t  bpp = header.imageBPP / 8;
   if( bpp < 2 || bpp > 4 )
@@ -176,7 +183,7 @@ static void readTCPixelsRLE(
         {
           if( x < header.imageWidth )
           {
-            KL::RGBA &pixel = imagePixels[ x + yoff ];
+            RGBA &pixel = imagePixels[ x + yoff ];
             
             setPixelFromBytes( bpp, v, pixel );
           }
@@ -195,7 +202,7 @@ static void readTCPixelsRLE(
           
           if( x < header.imageWidth )
           {
-            KL::RGBA &pixel = imagePixels[ x + yoff ];
+            RGBA &pixel = imagePixels[ x + yoff ];
             
             setPixelFromBytes( bpp, v, pixel );
           }
@@ -212,7 +219,7 @@ FABRIC_EXT_EXPORT void FabricTGADecode(
   KL::Size tgaDataSize,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
   imageWidth = imageHeight = 0;
@@ -250,7 +257,7 @@ FABRIC_EXT_EXPORT void FabricTGAOpenFileHandle(
   const KL::String & handle,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
   KL::FileHandleWrapper wrapper(handle);
