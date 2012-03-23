@@ -16,6 +16,42 @@ IMPLEMENT_FABRIC_EDK_ENTRIES
 
 using namespace Fabric::EDK;
 
+FABRIC_EXT_KL_STRUCT( Vec2, {
+  KL::Float32 x;
+  KL::Float32 y;
+} );
+
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
+FABRIC_EXT_KL_STRUCT( Vec4, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+  KL::Float32 t;
+} );
+
+FABRIC_EXT_KL_STRUCT( Mat22, {
+  Vec2 row0;
+  Vec2 row1;
+} );
+
+FABRIC_EXT_KL_STRUCT( Mat33, {
+  Vec3 row0;
+  Vec3 row1;
+  Vec3 row2;
+} );
+
+FABRIC_EXT_KL_STRUCT( Mat44, {
+  Vec4 row0;
+  Vec4 row1;
+  Vec4 row2;
+  Vec4 row3;
+} );
+
 static bool fglDebuggingEnabled = false;
 
 static unsigned int gBracket = 0;

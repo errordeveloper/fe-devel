@@ -21,6 +21,23 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 //#define BULLET_TRACE
+    
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
+FABRIC_EXT_KL_STRUCT( Quat, {
+  Vec3 v;
+  KL::Float32 w;
+} );
+
+FABRIC_EXT_KL_STRUCT( Xfo, {
+  Quat ori;
+  Vec3 tr;
+  Vec3 sc;
+} );
 
 const int maxProxies = 32766;
 const int maxOverlap = 65535;
@@ -48,18 +65,18 @@ FABRIC_EXT_KL_STRUCT( BulletWorld, {
   };
 
   LocalData * localData;
-  KL::Vec3 gravity;
+  Vec3 gravity;
   KL::Size step;
   KL::Size substeps;
 } );
 
 FABRIC_EXT_KL_STRUCT( BulletContact, {
   KL::Scalar fraction;
-  KL::Vec3 normal;
+  Vec3 normal;
   KL::Scalar mass;
-  KL::Xfo transform;
-  KL::Vec3 linearVelocity;
-  KL::Vec3 angularVelocity;
+  Xfo transform;
+  Vec3 linearVelocity;
+  Vec3 angularVelocity;
 } );
 
 FABRIC_EXT_KL_STRUCT( BulletShape, {
@@ -74,7 +91,7 @@ FABRIC_EXT_KL_STRUCT( BulletShape, {
   KL::Integer type;
   KL::String name;
   KL::VariableArray<KL::Scalar> parameters;
-  KL::VariableArray<KL::Vec3> vertices;
+  KL::VariableArray<Vec3> vertices;
   KL::VariableArray<KL::Integer> indices;
 } );
 
@@ -88,7 +105,7 @@ FABRIC_EXT_KL_STRUCT( BulletRigidBody, {
 
   LocalData * localData;
   KL::String name;
-  KL::Xfo transform;
+  Xfo transform;
   KL::Scalar mass;
   KL::Scalar friction;
   KL::Scalar restitution;
@@ -113,7 +130,7 @@ FABRIC_EXT_KL_STRUCT( BulletSoftBody, {
 
   LocalData * localData;
   KL::String name;
-  KL::Xfo transform;
+  Xfo transform;
   KL::Integer clusters;
   KL::Integer constraints;
   KL::Scalar mass;
@@ -135,8 +152,8 @@ FABRIC_EXT_KL_STRUCT( BulletConstraint, {
   BulletRigidBody::LocalData * bodyLocalDataB;
   KL::Integer type;
   KL::String name;
-  KL::Xfo pivotA;
-  KL::Xfo pivotB;
+  Xfo pivotA;
+  Xfo pivotB;
   KL::String nameA;
   KL::String nameB;
   KL::Integer indexA;
@@ -146,8 +163,8 @@ FABRIC_EXT_KL_STRUCT( BulletConstraint, {
 
 FABRIC_EXT_KL_STRUCT( BulletForce, {
   KL::String name;
-  KL::Vec3 origin;
-  KL::Vec3 direction;
+  Vec3 origin;
+  Vec3 direction;
   KL::Scalar radius;
   KL::Scalar factor;
   KL::Boolean useTorque;
@@ -443,8 +460,8 @@ struct fabricRayResultCallback : public btCollisionWorld::RayResultCallback
 
 FABRIC_EXT_EXPORT void FabricBULLET_World_Raycast(
   BulletWorld & world,
-  KL::Vec3 & from,
-  KL::Vec3 & to,
+  Vec3 & from,
+  Vec3 & to,
   KL::Boolean & filterPassiveObjects,
   KL::VariableArray<BulletContact> & contacts
 )
@@ -914,12 +931,12 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetMass(
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_GetTransform(
   BulletRigidBody & body,
-  KL::Xfo &result
+  Xfo &result
 )
 {
   if(body.localData != NULL) {
     btTransform & bodyTransform = body.localData->mBody->getWorldTransform();
-    KL::Xfo transform;
+    Xfo transform;
     transform.tr.x = bodyTransform.getOrigin().getX();
     transform.tr.y = bodyTransform.getOrigin().getY();
     transform.tr.z = bodyTransform.getOrigin().getZ();
@@ -937,7 +954,7 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_GetTransform(
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetTransform(
   BulletRigidBody & body,
-  const KL::Xfo & transform
+  const Xfo & transform
 )
 {
   if(body.localData != NULL) {
@@ -961,11 +978,11 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetTransform(
   }  
 }
 
-FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetLinearVelocity(
+FABRIC_EXT_EXPORT Vec3 FabricBULLET_RigidBody_GetLinearVelocity(
   BulletRigidBody & body
 )
 {
-  KL::Vec3 result;
+  Vec3 result;
   result.x = result.y = result.z = 0.0f;
   if(body.localData != NULL) {
 #ifdef BULLET_TRACE
@@ -984,7 +1001,7 @@ FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetLinearVelocity(
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetLinearVelocity(
   BulletRigidBody & body,
-  KL::Vec3 & bodyVelocity
+  Vec3 & bodyVelocity
 )
 {
   if(body.localData != NULL) {
@@ -998,11 +1015,11 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetLinearVelocity(
   }  
 }
 
-FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetAngularVelocity(
+FABRIC_EXT_EXPORT Vec3 FabricBULLET_RigidBody_GetAngularVelocity(
   BulletRigidBody & body
 )
 {
-  KL::Vec3 result;
+  Vec3 result;
   result.x = result.y = result.z = 0.0f;
   if(body.localData != NULL) {
 #ifdef BULLET_TRACE
@@ -1021,7 +1038,7 @@ FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetAngularVelocity(
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetAngularVelocity(
   BulletRigidBody & body,
-  KL::Vec3 & bodyVelocity
+  Vec3 & bodyVelocity
 )
 {
   if(body.localData != NULL) {
@@ -1040,8 +1057,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetAngularVelocity(
 FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_Create(
   BulletSoftBody & body,
   BulletWorld & world,
-  KL::SlicedArray<KL::Vec3> & positions,
-  KL::SlicedArray<KL::Vec3> & normals,
+  KL::SlicedArray<Vec3> & positions,
+  KL::SlicedArray<Vec3> & normals,
   KL::VariableArray<KL::Integer> & indices
 )
 {
@@ -1169,8 +1186,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_Delete(
 FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_GetPosition(
   KL::Size index,
   BulletSoftBody & body,
-  KL::Vec3 & position,
-  KL::Vec3 & normal
+  Vec3 & position,
+  Vec3 & normal
 )
 {
   if(body.localData != NULL) {
