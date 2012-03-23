@@ -14,6 +14,11 @@
 
 namespace Fabric
 {
+  namespace CG
+  {
+    class VariableArrayAdapter;
+  }
+  
   namespace RT
   {
     class VariableArrayImpl : public ArrayImpl
@@ -21,12 +26,14 @@ namespace Fabric
       friend class Manager;
       friend class Impl;
       friend class SlicedArrayImpl;
+      friend class CG::VariableArrayAdapter;
       
       struct bits_t
       {
+        Util::AtomicSize refCount;
         size_t allocNumMembers;
         size_t numMembers;
-        uint8_t *memberDatas;
+        uint8_t memberDatas[0];
       };
     
     public:
@@ -51,7 +58,7 @@ namespace Fabric
       
       // VariableArrayImpl
       
-      void setNumMembers( void *data, size_t newNumMembers, void const *defaultMemberData = 0 ) const;
+      void setNumMembers( void *data, size_t newNumMembers, void const *defaultMemberData = 0, size_t defaultMemberStride = 0 ) const;
       void setMembers( void *data, size_t numMembers, void const *members ) const;
       void setMembers( void *data, size_t dstOffset, size_t numMembers, void const *members ) const;
       
@@ -71,33 +78,26 @@ namespace Fabric
             
       void const *getImmutableMemberData_NoCheck( void const *data, size_t index ) const
       { 
-        bits_t const *bits = reinterpret_cast<bits_t const *>(data);
+        bits_t const *bits = *reinterpret_cast<bits_t const * const *>(data);
         return bits->memberDatas + m_memberSize * index;
       }
       
       void *getMutableMemberData_NoCheck( void *data, size_t index ) const
       { 
-        bits_t *bits = reinterpret_cast<bits_t *>(data);
+        bits_t *bits = prepareForModify( data );
         return bits->memberDatas + m_memberSize * index;
       }    
 
-      void copyMemberDatas( bits_t *dstBits, size_t dstOffset, bits_t const *srcBits, size_t srcOffset, size_t count, bool disposeFirst ) const
+      bits_t *prepareForModify( void *data ) const
       {
-        if ( count > 0 )
-        {
-          FABRIC_ASSERT( srcBits );
-          FABRIC_ASSERT( dstBits );
-          FABRIC_ASSERT( srcOffset + count <= srcBits->numMembers );
-          FABRIC_ASSERT( dstOffset + count <= dstBits->numMembers );
-          
-          uint8_t *dstMemberData = dstBits->memberDatas + m_memberSize * dstOffset;
-          if ( disposeFirst )
-            m_memberImpl->disposeDatas( count, dstMemberData, m_memberSize );
-          
-          uint8_t const *srcMemberData = srcBits->memberDatas + m_memberSize * srcOffset;
-          m_memberImpl->setDatas( count, srcMemberData, m_memberSize, dstMemberData, m_memberSize );
-        }
+        bits_t *bits = *static_cast<bits_t **>( data );
+        if ( bits->refCount.getValue() > 1 )
+          bits = duplicate( data );
+        FABRIC_ASSERT( bits->refCount.getValue() == 1 );
+        return bits;
       }
+
+      bits_t *duplicate( void *data ) const;
 
     private:
 

@@ -432,53 +432,64 @@ namespace Fabric
       FABRIC_EXT_DECL_BEGIN //Note: FABRIC_EXT_KL_CLASS macro can't be used on templated classes
       template< class Member, bool copyOnWrite = true > class VariableArray
       {
+        struct bits_t
+        {
+          Util::AtomicSize refCount;
+          size_t allocSize;
+          size_t size;
+          Member members[0];
+        };
+
+      protected:
+
+        void init()
+        {
+          m_bits = 0;
+        }
+
+        void init( size_t size )
+        {
+          m_bits = static_cast<bits_t *>( (*s_callbacks.m_malloc)( sizeof( bits_t ) + size * sizeof(Member) ) );
+          m_bits->refCount.setValue( 1 );
+          m_bits->allocSize = size;
+          m_bits->size = size;
+          new (&m_bits->members[0]) Member[size];
+        }
+
+        void init( VariableArray const &that )
+        {
+          m_bits = that.m_bits;
+          if ( m_bits )
+            m_bits->refCount.increment();
+        }
+        
+        void dispose()
+        {
+          if ( m_bits && m_bits->refCount.decrementAndGetValue() == 0 )
+          {
+            // [pzion 20120323] FIXME: should dispose the member data here
+            (*s_callbacks.m_free)( m_bits );
+          }
+        }
+
       public:
         
         typedef VariableArray const &IN;
         typedef VariableArray &IO;
-        
-        void init( size_t size )
-        {
-          m_allocSize = size;
-          m_size = size;
-          m_memberDatas = static_cast<Member *>( ( *s_callbacks.m_malloc )( m_allocSize * sizeof(Member) ) );
-          memset( &m_memberDatas[0], 0, m_size * sizeof(Member) );
-        }
     
         VariableArray()
-          : m_allocSize( 0 )
-          , m_size( 0 )
-          , m_memberDatas( 0 )
         {
+          init();
         }
         
         VariableArray( size_t size )
         {
           init( size );
         }
-      
-        void assign( VariableArray const &that )
-        {
-          if ( m_memberDatas )
-            ( *s_callbacks.m_free )( m_memberDatas );
-          m_allocSize = that.m_size;
-          m_size = that.m_size;
-          m_memberDatas = static_cast<Member *>( ( *s_callbacks.m_malloc )( m_allocSize * sizeof(Member) ) );
-          memset( &m_memberDatas[0], 0, m_size * sizeof(Member) );
-          for ( size_t i=0; i<m_size; ++i )
-            m_memberDatas[i] = that.m_memberDatas[i];
-        }
         
         VariableArray( VariableArray const &that )
-          : m_memberDatas( 0 )
         {
-          assign( that );
-        }
-        
-        void dispose()
-        {
-          if ( m_memberDatas )
-            ( *s_callbacks.m_free )( m_memberDatas );
+          init( that );
         }
         
         ~VariableArray()
@@ -488,71 +499,101 @@ namespace Fabric
       
         VariableArray &operator =( VariableArray const &that )
         {
-          assign( that );
-          *this;
-        }
-      
-        Member const &member( size_t index ) const
-        {
-          return m_memberDatas[index];
-        }
-      
-        Member const &operator[]( size_t index ) const        {
-          return member( index );
-        }
-      
-        Member &member( size_t index )
-        {
-          return m_memberDatas[index];
-        }
-      
-        Member &operator[]( size_t index )
-        {
-          return member( index );
+          if ( m_bits != that.m_bits )
+          {
+            dispose();
+            init( that );
+          }
+          return *this;
         }
       
         size_t size() const
         {
-          return m_size;
+          return m_bits? m_bits->size: 0;
+        }
+      
+        Member const &operator[]( size_t index ) const
+        {
+          return m_bits->members[index];
+        }
+      
+        Member &operator[]( size_t index )
+        {
+          prepareForModify();
+          return m_bits->members[index];
         }
       
         void resize( size_t newSize )
         {
-          size_t oldSize = m_size;
+          size_t oldSize = size();
           if ( oldSize != newSize )
           {
-            size_t oldAllocSize = m_allocSize;
-            if ( newSize < oldSize )
+            if ( m_bits && m_bits->refCount.getValue() > 1 )
             {
-              //getMemberImpl()->disposeDatas( bits->memberDatas + m_memberSize * newNumMembers, oldNumMembers - newNumMembers, m_memberSize );
-            }
-              
-            if ( newSize == 0 )
-            {
-              ( *s_callbacks.m_free )( m_memberDatas );
-              m_allocSize = 0;
-              m_memberDatas = 0;
+              size_t newAllocSize = ComputeAllocatedSize( 0, newSize );
+
+              bits_t *newBits;
+              if ( newAllocSize )
+              {
+                newBits = static_cast<bits_t *>( (*s_callbacks.m_malloc)( sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
+                newBits->refCount.setValue( 1 );
+                newBits->allocSize = newAllocSize;
+                newBits->size = newSize;
+                if ( m_bits )
+                {
+                  size_t copyFromOldCount = std::min( oldSize, newSize );
+                  memset( &newBits->members[0], 0, copyFromOldCount * sizeof(Member) );
+                  for ( size_t i=0; i<copyFromOldCount; ++i )
+                    newBits->members[i] = m_bits->members[i];
+                  size_t initialzeCount = newSize - copyFromOldCount;
+                  // Should really be disposing here
+                  memset( &newBits->members[copyFromOldCount], 0, initialzeCount * sizeof(Member) );
+                }
+              }
+              else newBits = 0;
+
+              dispose();
+              m_bits = newBits;
             }
             else
             {
-              if ( newSize > oldAllocSize )
+              if ( newSize < oldSize )
               {
-                size_t newAllocSize = ComputeAllocatedSize( oldAllocSize, newSize );
-                size_t size = sizeof(Member) * newAllocSize;
-                if ( oldSize )
-                {
-                  m_memberDatas = static_cast<Member *>( ( *s_callbacks.m_realloc )( m_memberDatas, size ) );
-                }
-                else
-                {
-                  m_memberDatas = static_cast<Member *>( ( *s_callbacks.m_malloc )( size ) );
-                }
-                m_allocSize = newAllocSize;
+                // [pzion 20120323] FIXME: should dispose some of the members here
+                //m_memberImpl->disposeDatas( oldSize - newSize, bits->memberDatas + m_memberSize * newSize, m_memberSize );
               }
-              if( newSize > oldSize )
-                  memset( m_memberDatas + oldSize, 0, (newSize - oldSize) * sizeof(Member) );
+
+              size_t oldAllocSize = m_bits? m_bits->allocSize: 0;
+              size_t newAllocSize = ComputeAllocatedSize( oldAllocSize, newSize );
+              if ( newAllocSize != oldAllocSize )
+              {
+                if ( !newAllocSize )
+                {
+                  free( m_bits );
+                  m_bits = 0;
+                }
+                else if ( !oldAllocSize )
+                {
+                  m_bits = static_cast<bits_t *>( malloc( sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
+                  m_bits->refCount.setValue( 1 );
+                  m_bits->allocSize = newAllocSize;
+                }
+                else if ( m_bits )
+                {
+                  m_bits = static_cast<bits_t *>( realloc( m_bits, sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
+                  m_bits->allocSize = newAllocSize;
+                }
+              }
+
+              if ( newSize > oldSize )
+              {
+                memset( &m_bits->members[oldSize], 0, (newSize - oldSize) * sizeof( Member ) );
+                //m_memberImpl->initializeDatas( newSize - oldSize, defaultMemberData, defaultMemberStride, bits->memberDatas + m_memberSize * oldSize, m_memberSize );
+              }
+
+              if ( m_bits )
+                m_bits->size = newSize;
             }
-            m_size = newSize;
           }
         }
       
@@ -581,12 +622,30 @@ namespace Fabric
           else
             return nbRequested;
         }
+
+        void prepareForModify()
+        {
+          if ( m_bits && m_bits->refCount.getValue() > 1 )
+            makeUnique();
+        }
+
+        void makeUnique()
+        {
+          bits_t *newBits = new bits_t;
+          newBits->refCount.setValue( 1 );
+          newBits->allocSize = m_bits->allocSize;
+          newBits->size = m_bits->size;
+          memset( &newBits->members[0], 0, newBits->size * sizeof(Member) );
+          for ( size_t i=0; i<newBits->size; ++i )
+            newBits->members[i] = m_bits->members[i];
+          if ( m_bits && m_bits->refCount.decrementAndGetValue() == 0 )
+            (*s_callbacks.m_free)( m_bits );
+          m_bits = newBits;
+        }
       
       private:
     
-        size_t m_allocSize;
-        size_t m_size;
-        Member *m_memberDatas;
+        bits_t *m_bits;
       }
       FABRIC_EXT_DECL_END;
 
@@ -615,7 +674,7 @@ namespace Fabric
       
         SlicedArray( SlicedArray const &that )
           : m_offset( that.m_offset )
-          , m_size( that.size )
+          , m_size( that.m_size )
           , m_rcva( that.m_rcva )
         {
           if ( m_rcva )
@@ -624,7 +683,7 @@ namespace Fabric
       
         SlicedArray( SlicedArray const &that, size_t offset, size_t size )
           : m_offset( that.m_offset )
-          , m_size( that.size )
+          , m_size( that.m_size )
           , m_rcva( that.m_variableArray )
         {
           if ( m_rcva && offset + size > m_rcva->varArray.size() )
@@ -643,7 +702,7 @@ namespace Fabric
           }
 
           m_offset = that.m_offset;
-          m_size = that.m_size;
+          size = that.size;
           m_rcva = that.m_rcva;
           
           if ( m_rcva )

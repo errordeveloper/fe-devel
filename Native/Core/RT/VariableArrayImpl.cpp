@@ -28,13 +28,13 @@ namespace Fabric
         flags |= FlagExportable;
       if ( m_memberImpl->isNoAliasUnsafe() )
         flags |= FlagNoAliasUnsafe;
-      initialize( codeName, DT_VARIABLE_ARRAY, sizeof(bits_t), flags );
+      initialize( codeName, DT_VARIABLE_ARRAY, sizeof(bits_t *), flags );
     }
 
     void const *VariableArrayImpl::getDefaultData() const
     {
-      static bits_t const defaultData = { 0, 0, 0 };
-      return &defaultData;
+      static bits_t *defaultBits = 0;
+      return &defaultBits;
     }
 
     size_t VariableArrayImpl::ComputeAllocatedSize( size_t prevNbAllocated, size_t nbRequested )
@@ -95,29 +95,15 @@ namespace Fabric
       uint8_t * const dstEnd = dst + count * dstStride;
       while ( dst != dstEnd )
       {
-        bits_t *dstBits = reinterpret_cast<bits_t *>( dst );
         if ( src )
         {
-          bits_t const *srcBits = reinterpret_cast<bits_t const *>( src );
-
-          dstBits->numMembers = srcBits->numMembers;
-          dstBits->allocNumMembers = srcBits->numMembers;
-          if ( dstBits->allocNumMembers == 0 )
-            dstBits->memberDatas = 0;
-          else
-          {
-            dstBits->memberDatas = reinterpret_cast<uint8_t *>( malloc( dstBits->allocNumMembers * m_memberSize ) );
-            m_memberImpl->initializeDatas( dstBits->numMembers, srcBits->memberDatas, m_memberSize, dstBits->memberDatas, m_memberSize );
-          }
-
+          bits_t *srcBits = *reinterpret_cast<bits_t * const *>( src );
+          if ( srcBits )
+            srcBits->refCount.increment();
+          *reinterpret_cast<bits_t **>( dst ) = srcBits;
           src += srcStride;
         }
-        else
-        {
-          dstBits->numMembers = 0;
-          dstBits->allocNumMembers = 0;
-          dstBits->memberDatas = 0;
-        }
+        else *reinterpret_cast<bits_t **>( dst ) = 0;
         dst += dstStride;
       }
     }
@@ -127,45 +113,22 @@ namespace Fabric
       FABRIC_ASSERT( src );
       FABRIC_ASSERT( dst );
       uint8_t * const dstEnd = dst + count * dstStride;
-
       while ( dst != dstEnd )
       {
-        bits_t const *srcBits = reinterpret_cast<bits_t const *>( src );
-        bits_t *dstBits = reinterpret_cast<bits_t *>( dst );
+        bits_t *srcBits = *reinterpret_cast<bits_t * const *>( src );
+        bits_t *dstBits = *reinterpret_cast<bits_t **>( dst );
 
-        size_t oldNumMembers = dstBits->numMembers;
-        if ( dstBits->numMembers > srcBits->numMembers )
-          m_memberImpl->disposeDatas( dstBits->numMembers - srcBits->numMembers, dstBits->memberDatas + srcBits->numMembers * m_memberSize, m_memberSize );
-        dstBits->numMembers = srcBits->numMembers;
-
-        dstBits->allocNumMembers = srcBits->numMembers;
-        if ( dstBits->allocNumMembers == 0 )
+        if ( dstBits != srcBits )
         {
-          if ( dstBits->memberDatas )
-            free( dstBits->memberDatas );
-          dstBits->memberDatas = 0;
-        }
-        else if ( dstBits->memberDatas )
-          dstBits->memberDatas = reinterpret_cast<uint8_t *>( realloc( dstBits->memberDatas, dstBits->allocNumMembers * m_memberSize ) );
-        else
-          dstBits->memberDatas = reinterpret_cast<uint8_t *>( malloc( dstBits->allocNumMembers * m_memberSize ) );
-        
-        size_t totalSize = srcBits->numMembers * m_memberSize;
-        uint8_t const *srcMemberData = srcBits->memberDatas;
-        uint8_t const * const srcMemberDataEnd = srcMemberData + totalSize;
-        uint8_t *dstMemberData = dstBits->memberDatas;
-
-        if ( oldNumMembers < srcBits->numMembers )
-        {
-          size_t oldMemberSize = oldNumMembers * m_memberSize;
-          memset( dstMemberData + oldMemberSize, 0, totalSize - oldMemberSize );
-        }
-
-        while ( srcMemberData != srcMemberDataEnd )
-        {
-          m_memberImpl->setData( srcMemberData, dstMemberData );
-          srcMemberData += m_memberSize;
-          dstMemberData += m_memberSize;
+          if ( dstBits && dstBits->refCount.decrementAndGetValue() == 0 )
+          {
+            m_memberImpl->disposeDatas( dstBits->numMembers, dstBits->memberDatas, m_memberSize );
+            free( dstBits );
+          }
+          dstBits = srcBits;
+          if ( dstBits )
+            dstBits->refCount.increment();
+          *reinterpret_cast<bits_t **>( dst ) = dstBits;
         }
 
         src += srcStride;
@@ -215,12 +178,16 @@ namespace Fabric
 
     void VariableArrayImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
+      FABRIC_ASSERT( data );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
-        bits_t *bits = reinterpret_cast<bits_t *>(data);
-        m_memberImpl->disposeDatas( bits->numMembers, bits->memberDatas, m_memberSize );
-        free( bits->memberDatas );
+        bits_t *bits = *reinterpret_cast<bits_t **>(data);
+        if ( bits && bits->refCount.decrementAndGetValue() == 0 )
+        {
+          m_memberImpl->disposeDatas( bits->numMembers, bits->memberDatas, m_memberSize );
+          free( bits );
+        }
         data += stride;
       }
     }
@@ -247,28 +214,33 @@ namespace Fabric
     void VariableArrayImpl::push( void *dst, void const *src ) const
     {
       size_t oldNumMembers = getNumMembers( dst );
-      setNumMembers( dst, oldNumMembers + 1 );
-      getMemberImpl()->setData( src, getMutableMemberData_NoCheck( dst, oldNumMembers ) );
+      size_t newNumMembers = oldNumMembers + 1;
+      setNumMembers( dst, newNumMembers );
+      m_memberImpl->setData( src, getMutableMemberData_NoCheck( dst, oldNumMembers ) );
     }
     
     void VariableArrayImpl::pop( void *dst, void *result ) const
     {
       size_t oldNumMembers = getNumMembers( dst );
+      size_t newNumMembers = oldNumMembers - 1;
       if ( result )
-        getMemberImpl()->setData( getImmutableMemberData_NoCheck( (void const *)dst, oldNumMembers - 1 ), result );
-      setNumMembers( dst, oldNumMembers - 1 );
+        m_memberImpl->setData( getImmutableMemberData_NoCheck( (void const *)dst, newNumMembers ), result );
+      setNumMembers( dst, newNumMembers );
     }
     
     void VariableArrayImpl::append( void *dst, void const *src ) const
     {
-      bits_t const *srcBits = reinterpret_cast<bits_t const *>(src);
-      if ( srcBits )
+      size_t srcNumMembers = getNumMembers( src );
+      if ( srcNumMembers > 0 )
       {
-        bits_t *dstBits = static_cast<bits_t *>( dst );
-        size_t oldNumMembers = dstBits->numMembers;
-        size_t newNumMembers = oldNumMembers + srcBits->numMembers;
-        setNumMembers( dst, newNumMembers );
-        copyMemberDatas( dstBits, oldNumMembers, srcBits, 0, srcBits->numMembers, false );
+        size_t oldDstNumMembers = getNumMembers( dst );
+        size_t newDstNumMembers = oldDstNumMembers + srcNumMembers;
+        setNumMembers(
+          dst,
+          newDstNumMembers,
+          getImmutableMemberData_NoCheck( src, 0 ),
+          m_memberSize
+          );
       }
     }
 
@@ -277,20 +249,20 @@ namespace Fabric
       if ( !isVariableArray( that->getType() ) )
         return false;
       RC::ConstHandle<VariableArrayImpl> variableArrayImpl = RC::ConstHandle<VariableArrayImpl>::StaticCast( that );
-
       return getMemberImpl()->isEquivalentTo( variableArrayImpl->getMemberImpl() );
     }
 
     size_t VariableArrayImpl::getNumMembers( void const *data ) const
     {
       FABRIC_ASSERT( data );
-      bits_t const *bits = static_cast<bits_t const *>(data);
-      return bits->numMembers;
+      bits_t const *bits = *static_cast<bits_t const * const*>(data);
+      return bits? bits->numMembers: 0;
     }
     
     void const *VariableArrayImpl::getImmutableMemberData( void const *data, size_t index ) const
     { 
-      bits_t const *bits = reinterpret_cast<bits_t const *>(data);
+      FABRIC_ASSERT( data );
+      bits_t const *bits = *static_cast<bits_t const * const*>(data);
       size_t numMembers = bits->numMembers;
       if ( index >= numMembers )
         throw Exception( "index ("+_(index)+") out of range ("+_(numMembers)+")" );
@@ -299,7 +271,8 @@ namespace Fabric
     
     void *VariableArrayImpl::getMutableMemberData( void *data, size_t index ) const
     { 
-      bits_t *bits = reinterpret_cast<bits_t *>(data);
+      FABRIC_ASSERT( data );
+      bits_t const *bits = *static_cast<bits_t const **>(data);
       size_t numMembers = bits->numMembers;
       if ( index >= numMembers )
         throw Exception( "index ("+_(index)+") out of range ("+_(numMembers)+")" );
@@ -308,99 +281,142 @@ namespace Fabric
 
     void VariableArrayImpl::setMembers( void *data, size_t numMembers, void const *members ) const
     {
+      FABRIC_ASSERT( data );
       setNumMembers( data, numMembers );
       setMembers( data, 0, numMembers, members );
     }
 
     void VariableArrayImpl::setMembers( void *data, size_t dstOffset, size_t numMembers, void const *members ) const
     {
+      FABRIC_ASSERT( data );
       FABRIC_ASSERT( numMembers + dstOffset <= getNumMembers( data ) );
-      if ( !m_memberImpl->isShallow() )
-      {
-        for ( size_t i=0; i<numMembers; ++i )
-        {
-          void *memberData = getMutableMemberData( data, i+dstOffset );
-          getMemberImpl()->setData( &((uint8_t const *)members)[i*m_memberSize], memberData );
-        }
-      }
-      else
-      {
-        bits_t *bits = reinterpret_cast<bits_t *>(data);
-        memcpy( bits->memberDatas + dstOffset*m_memberSize, members, numMembers*m_memberSize );
-      }
+      m_memberImpl->setDatas(
+        numMembers,
+        members,
+        m_memberSize,
+        getMutableMemberData( data, dstOffset ),
+        m_memberSize
+        );
     }
 
-    void VariableArrayImpl::setNumMembers( void *data, size_t newNumMembers, void const *defaultMemberData ) const
+    void VariableArrayImpl::setNumMembers( void *data, size_t newNumMembers, void const *defaultMemberData, size_t defaultMemberStride ) const
     {
-      //Util::Timer ft;
-      bits_t *bits = reinterpret_cast<bits_t *>(data);
-      size_t oldNumMembers = bits->numMembers;
-      size_t oldAllocNumMembers = bits->allocNumMembers;
+      FABRIC_ASSERT( data );
+
+      bits_t *bits = *reinterpret_cast<bits_t **>(data);
+      size_t oldNumMembers = bits? bits->numMembers: 0;
       if ( oldNumMembers != newNumMembers )
       {
-        if ( newNumMembers < oldNumMembers )
-          getMemberImpl()->disposeDatas( oldNumMembers - newNumMembers, bits->memberDatas + m_memberSize * newNumMembers, m_memberSize );
-          
-        if ( newNumMembers == 0 )
+        if ( bits && bits->refCount.getValue() > 1 )
         {
-          free( bits->memberDatas );
-          bits->allocNumMembers = 0;
-          bits->memberDatas = 0;
+          size_t newAllocNumMembers = ComputeAllocatedSize( 0, newNumMembers );
+
+          bits_t *newBits;
+          if ( newAllocNumMembers )
+          {
+            newBits = static_cast<bits_t *>( malloc( sizeof(bits_t) + newAllocNumMembers * m_memberSize ) );
+            newBits->refCount.setValue( 1 );
+            newBits->allocNumMembers = newAllocNumMembers;
+            newBits->numMembers = newNumMembers;
+            if ( bits )
+            {
+              size_t copyFromOldCount = std::min( oldNumMembers, newNumMembers );
+              if ( copyFromOldCount > 0 )
+                m_memberImpl->initializeDatas( copyFromOldCount, bits->memberDatas, m_memberSize, newBits->memberDatas, m_memberSize );
+              size_t initialzeCount = newNumMembers - copyFromOldCount;
+              if ( initialzeCount > 0 )
+              {
+                if ( !defaultMemberData )
+                {
+                  defaultMemberData = m_memberImpl->getDefaultData();
+                  FABRIC_ASSERT( defaultMemberStride == 0 );
+                }
+                m_memberImpl->initializeDatas( initialzeCount, defaultMemberData, defaultMemberStride, newBits->memberDatas + m_memberSize * copyFromOldCount, m_memberSize );
+              }
+            }
+          }
+          else newBits = 0;
+          *reinterpret_cast<bits_t **>(data) = newBits;
+
+          if ( bits && bits->refCount.decrementAndGetValue() == 0 )
+          {
+            m_memberImpl->disposeDatas( bits->numMembers, bits->memberDatas, m_memberSize );
+            free( bits );
+          }
         }
         else
         {
-          if ( newNumMembers > oldAllocNumMembers )
+          if ( newNumMembers < oldNumMembers )
+            m_memberImpl->disposeDatas( oldNumMembers - newNumMembers, bits->memberDatas + m_memberSize * newNumMembers, m_memberSize );
+
+          size_t oldAllocNumMembers = bits? bits->allocNumMembers: 0;
+          size_t newAllocNumMembers = ComputeAllocatedSize( oldAllocNumMembers, newNumMembers );
+          if ( newAllocNumMembers != oldAllocNumMembers )
           {
-            size_t newAllocNumMembers = ComputeAllocatedSize( oldAllocNumMembers, newNumMembers );
-            if ( oldNumMembers )
+            if ( !newAllocNumMembers )
             {
-              size_t size = m_memberSize * newAllocNumMembers;
-              //FABRIC_LOG( "realloc(%u)", (unsigned)size );
-              bits->memberDatas = static_cast<uint8_t *>( realloc( bits->memberDatas, size ) );
+              free( bits );
+              bits = 0;
             }
-            else
+            else if ( !oldAllocNumMembers )
             {
-              size_t size = m_memberSize * newAllocNumMembers;
-              //FABRIC_LOG( "malloc(%u)", (unsigned)size );
-              bits->memberDatas = static_cast<uint8_t *>( malloc( size ) );
+              bits = static_cast<bits_t *>( malloc( sizeof(bits_t) + newAllocNumMembers * m_memberSize ) );
+              bits->refCount.setValue( 1 );
+              bits->allocNumMembers = newAllocNumMembers;
             }
-            bits->allocNumMembers = newAllocNumMembers;
+            else if ( bits )
+            {
+              bits = static_cast<bits_t *>( realloc( bits, sizeof(bits_t) + newAllocNumMembers * m_memberSize ) );
+              bits->allocNumMembers = newAllocNumMembers;
+            }
+            *reinterpret_cast<bits_t **>(data) = bits;
           }
-        }
-        bits->numMembers = newNumMembers;
-        
-        if ( oldNumMembers < newNumMembers )
-        {
-          if ( !defaultMemberData )
-            defaultMemberData = getMemberImpl()->getDefaultData();
-          size_t memberSize = getMemberImpl()->getAllocSize();
-          uint8_t *memberData = bits->memberDatas + m_memberSize * oldNumMembers;
-          uint8_t *memberDataEnd = bits->memberDatas + m_memberSize * newNumMembers;
-          memset( memberData, 0, memberDataEnd - memberData );
-          // [pzion 20110908] Very special case: if the default data is
-          // all 0, we just memset to 0 and leave it at that
-          if ( !Util::IsZero( memberSize, defaultMemberData ) )
+
+          if ( newNumMembers > oldNumMembers )
           {
-            for ( ; memberData!=memberDataEnd; memberData += m_memberSize )
+            if ( !defaultMemberData )
             {
-              if ( !m_memberImpl->isShallow() )
-                getMemberImpl()->setData( defaultMemberData, memberData );
-              else
-                memcpy( memberData, defaultMemberData, memberSize );
+              defaultMemberData = m_memberImpl->getDefaultData();
+              FABRIC_ASSERT( defaultMemberStride == 0 );
             }
+            m_memberImpl->initializeDatas( newNumMembers - oldNumMembers, defaultMemberData, defaultMemberStride, bits->memberDatas + m_memberSize * oldNumMembers, m_memberSize );
           }
+
+          if ( bits )
+            bits->numMembers = newNumMembers;
         }
       }
-      //FABRIC_LOG( "VariableArrayImpl::setNumMembers: %fms", ft.getElapsedMS() );
     }
 
     size_t VariableArrayImpl::getIndirectMemoryUsage( void const *data ) const
     {
-      bits_t const *bits = reinterpret_cast<bits_t const *>(data);
-      size_t total = bits->allocNumMembers * m_memberImpl->getAllocSize();
-      for ( size_t i=0; i<bits->numMembers; ++i )
-        total += m_memberImpl->getIndirectMemoryUsage( getImmutableMemberData_NoCheck( data, i ) );
+      bits_t const *bits = *reinterpret_cast<bits_t const * const *>(data);
+      size_t total = 0;
+      if ( bits )
+      {
+        total += bits->allocNumMembers * m_memberImpl->getAllocSize();
+        for ( size_t i=0; i<bits->numMembers; ++i )
+          total += m_memberImpl->getIndirectMemoryUsage( getImmutableMemberData_NoCheck( data, i ) );
+      }
       return total;
+    }
+
+    VariableArrayImpl::bits_t *VariableArrayImpl::duplicate( void *data ) const
+    {
+      bits_t *bits = *static_cast<bits_t **>( data );
+      FABRIC_ASSERT ( bits->refCount.getValue() > 1 );
+      bits_t *newBits = static_cast<bits_t *>( malloc( sizeof(bits_t) + bits->allocNumMembers * m_memberSize ) );
+      newBits->refCount.setValue( 1 );
+      newBits->allocNumMembers = bits->allocNumMembers;
+      newBits->numMembers = bits->numMembers;
+      m_memberImpl->initializeDatas( newBits->numMembers, bits->memberDatas, m_memberSize, newBits->memberDatas, m_memberSize );
+      if ( bits->refCount.decrementAndGetValue() == 0 )
+      {
+        m_memberImpl->disposeDatas( bits->numMembers, bits->memberDatas, m_memberSize );
+        free( bits );
+      }
+      *static_cast<bits_t **>( data ) = newBits;
+      return newBits;
     }
   }
 }
