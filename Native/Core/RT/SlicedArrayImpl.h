@@ -73,6 +73,7 @@ namespace Fabric
     
       SlicedArrayImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &memberImpl );
 
+      virtual void initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
       virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
       virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
 

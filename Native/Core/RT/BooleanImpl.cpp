@@ -22,6 +22,20 @@ namespace Fabric
       encoder.makeBoolean( getValue(data) );
     }
     
+    void BooleanImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        setValue( getValue( src ), dst );
+        src += srcStride;
+        dst += dstStride;
+      }
+    }
+    
     void BooleanImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );

@@ -63,6 +63,34 @@ namespace Fabric
       }
     }
 
+    void SlicedArrayImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        bits_t *dstBits = reinterpret_cast<bits_t *>(dst);
+        if ( src )
+        {
+          bits_t const *srcBits = reinterpret_cast<bits_t const *>(src);
+          dstBits->offset = srcBits->offset;
+          dstBits->size = srcBits->size;
+          dstBits->rcva = srcBits->rcva;
+          if ( dstBits->rcva )
+            ++dstBits->rcva->refCount;
+          src += srcStride;
+        }
+        else
+        {
+          dstBits->offset = 0;
+          dstBits->size = 0;
+          dstBits->rcva = 0;
+        }
+        dst += dstStride;
+      }
+    }
+
     void SlicedArrayImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
     {
       bits_t const *bits = reinterpret_cast<bits_t const *>(data);

@@ -33,7 +33,7 @@ namespace Fabric
       
       size_t allocSize = valueDesc->getAllocSize();
       void *valueData = alloca( allocSize );
-      memset( valueData, 0, allocSize );
+      valueDesc->initializeData( valueDesc->getDefaultData(), valueData );
       produce( valueData );
       valueDesc->encodeJSON( valueData, jg );
       valueDesc->disposeData( valueData );

@@ -31,6 +31,25 @@ namespace Fabric
       return m_defaultData;
     }
     
+    void OpaqueImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      size_t allocSize = getAllocSize();
+      
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        if ( src )
+        {
+          memcpy( dst, src, allocSize );
+          src += srcStride;
+        }
+        else memset( dst, 0, allocSize );
+        dst += dstStride;
+      }
+    }
+    
     void OpaqueImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       size_t allocSize = getAllocSize();

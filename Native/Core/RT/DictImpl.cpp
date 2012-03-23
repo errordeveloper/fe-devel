@@ -50,6 +50,31 @@ namespace Fabric
       return &defaultData;
     }
 
+    void DictImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        memset( dst, 0, sizeof(bits_t) );
+        if ( src )
+        {
+          bits_t const *srcBits = reinterpret_cast<bits_t const *>( src );
+          node_t const *node = srcBits->firstNode;
+          while ( node )
+          {
+            void const *srcKeyData = immutableKeyData( node );
+            void const *srcValueData = immutableValueData( node );
+            m_valueImpl->setData( srcValueData, getMutable( dst, srcKeyData ) );
+            node = node->bitsNextNode;
+          }
+          src += srcStride;
+        }
+        dst += dstStride;
+      }
+    }
+
     void DictImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );
@@ -257,10 +282,10 @@ namespace Fabric
       
       // Set the key and default value, and return the value data
       
-      memset( &node->keyAndValue[0], 0, m_keySize + m_valueSize );
-      m_keyImpl->setData( keyData, mutableKeyData( node ) );
+      void *dstKeyData = mutableKeyData( node );
+      m_keyImpl->initializeData( keyData, dstKeyData );
       void *valueData = mutableValueData( node );
-      m_valueImpl->setData( m_valueImpl->getDefaultData(), valueData );
+      m_valueImpl->initializeData( m_valueImpl->getDefaultData(), valueData );
       return valueData;
     }
     
@@ -325,7 +350,7 @@ namespace Fabric
       memset( data, 0, sizeof(bits_t) );
         
       void *keyData = alloca( m_keySize );
-      memset( keyData, 0, m_keySize );
+      m_keyImpl->initializeData( m_keyImpl->getDefaultData(), keyData );
       JSON::ObjectDecoder jsonObjectDecoder( entity );
       JSON::Entity keyString, valueEntity;
       while ( jsonObjectDecoder.getNext( keyString, valueEntity ) )

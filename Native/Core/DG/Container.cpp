@@ -101,14 +101,13 @@ namespace Fabric
       
       size_t memberSize = memberDesc->getAllocSize();
       m_defaultMemberData = malloc( memberSize );
-      memset( m_defaultMemberData, 0, memberSize );
-      memberDesc->setData( defaultMemberData, m_defaultMemberData );
+      memberDesc->initializeData( defaultMemberData, m_defaultMemberData );
       
       m_slicedArrayDesc = rtManager->getSlicedArrayOf( memberDesc );
       
       size_t arraySize = m_slicedArrayDesc->getAllocSize();
       m_slicedArrayData = malloc( arraySize );
-      memset( m_slicedArrayData, 0, arraySize );
+      m_slicedArrayDesc->initializeData( 0, m_slicedArrayData );
       m_slicedArrayDesc->setNumMembers( m_slicedArrayData, size, m_defaultMemberData );
     }
     

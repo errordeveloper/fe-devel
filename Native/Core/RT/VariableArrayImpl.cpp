@@ -89,6 +89,39 @@ namespace Fabric
         return nbRequested;
     }
 
+    void VariableArrayImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+      while ( dst != dstEnd )
+      {
+        bits_t *dstBits = reinterpret_cast<bits_t *>( dst );
+        if ( src )
+        {
+          bits_t const *srcBits = reinterpret_cast<bits_t const *>( src );
+
+          dstBits->numMembers = srcBits->numMembers;
+          dstBits->allocNumMembers = srcBits->numMembers;
+          if ( dstBits->allocNumMembers == 0 )
+            dstBits->memberDatas = 0;
+          else
+          {
+            dstBits->memberDatas = reinterpret_cast<uint8_t *>( malloc( dstBits->allocNumMembers * m_memberSize ) );
+            m_memberImpl->initializeDatas( dstBits->numMembers, srcBits->memberDatas, m_memberSize, dstBits->memberDatas, m_memberSize );
+          }
+
+          src += srcStride;
+        }
+        else
+        {
+          dstBits->numMembers = 0;
+          dstBits->allocNumMembers = 0;
+          dstBits->memberDatas = 0;
+        }
+        dst += dstStride;
+      }
+    }
+
     void VariableArrayImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );

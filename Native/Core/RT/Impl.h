@@ -47,7 +47,31 @@ namespace Fabric
       bool isNoAliasSafe() const { return !isNoAliasUnsafe(); }
       bool isExportable() const { return m_flags & FlagExportable; }
       
-      virtual void const *getDefaultData() const = 0;
+      void initializeData( void const *initialData, void *data ) const
+      {
+        initializeDatas( 1, initialData, getAllocSize(), data, getAllocSize() );
+      }
+      void initializeDatas( size_t count, void const *initialData, size_t initialStride, void *data, size_t stride ) const
+      {
+        if ( isShallow()
+          && (initialData == 0 || initialStride == getAllocSize())
+          && stride == getAllocSize()
+          )
+        {
+          if ( initialData )
+            memcpy( data, initialData, stride * count );
+          else
+            memset( data, 0, stride * count );
+        }
+        else
+          initializeDatasImpl(
+            count,
+            static_cast<uint8_t const *>( initialData ),
+            initialStride,
+            static_cast<uint8_t *>( data ),
+            stride
+            );
+      }
       void setData( void const *src, void *dst ) const
       {
         setDatas( 1, src, getAllocSize(), dst, getAllocSize() );
@@ -88,6 +112,8 @@ namespace Fabric
             stride
             );
       }
+
+      virtual void const *getDefaultData() const = 0;
       virtual std::string descData( void const *data ) const = 0;
       virtual bool equalsData( void const *lhs, void const *rhs ) const = 0;
       virtual size_t getIndirectMemoryUsage( void const *data ) const;
@@ -118,6 +144,7 @@ namespace Fabric
 
       virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const = 0;
       virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const = 0;
+      virtual void initializeDatasImpl( size_t count, uint8_t const *initialData, size_t initialStride, uint8_t *data, size_t stride ) const = 0;
       
     private:
     
