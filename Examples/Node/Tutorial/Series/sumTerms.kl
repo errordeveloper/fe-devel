@@ -1,10 +1,10 @@
 operator sumTerms(
-  Size numTerms,
+  Container self,
   io Scalar terms<>,
   io Scalar result
   )
 {
   result = 0.0;
-  for (Size i=0; i<numTerms; ++i)
+  for (Size i=0; i<self.size; ++i)
     result += terms[i];
 }

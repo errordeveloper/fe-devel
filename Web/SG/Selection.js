@@ -338,7 +338,7 @@ FABRIC.SceneGraph.registerManagerType('SelectionManipulationManager', {
          operatorName: operatorName,
          srcCode: (srcCodeHeader + srcCodeBody),
          parameterLayout: parameterLayout,
-         entryFunctionName: 'selMgrCalcAverageXfo',
+         entryPoint: 'selMgrCalcAverageXfo',
          async: false
        });
      

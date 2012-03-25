@@ -66,7 +66,7 @@ FABRIC.SceneGraph.registerNodeType('Crowd', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'copyCurrentFrameDataToPrevFrameData',
       srcFile: 'FABRIC_ROOT/SG/KL/crowds.kl',
-      entryFunctionName: 'copyCurrentFrameDataToPrevFrameData',
+      entryPoint: 'copyCurrentFrameDataToPrevFrameData',
       parameterLayout: [
         'self.xfo',
         'self.linearVelocity',
@@ -81,7 +81,7 @@ FABRIC.SceneGraph.registerNodeType('Crowd', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'calcCellIndex',
       srcFile: 'FABRIC_ROOT/SG/KL/crowds.kl',
-      entryFunctionName: 'calcCellIndex',
+      entryPoint: 'calcCellIndex',
       parameterLayout: [
         'self.previousframe_position',
         'self.cellcoord',
@@ -96,7 +96,7 @@ FABRIC.SceneGraph.registerNodeType('Crowd', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'populateHashTable',
       srcFile: 'FABRIC_ROOT/SG/KL/crowds.kl',
-      entryFunctionName: 'populateHashTable',
+      entryPoint: 'populateHashTable',
       parameterLayout: [
         'hashtable.hashtable',
         'self.cellindex<>'
@@ -121,7 +121,7 @@ FABRIC.SceneGraph.registerNodeType('Crowd', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'simulateCrowd',
       srcFile: 'FABRIC_ROOT/SG/KL/crowds.kl',
-      entryFunctionName: 'simulateCrowd',
+      entryPoint: 'simulateCrowd',
       parameterLayout: [
         'self.index',
         'self.initialized',

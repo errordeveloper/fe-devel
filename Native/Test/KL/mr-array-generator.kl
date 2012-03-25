@@ -12,7 +12,7 @@ operator generator1(
 
 operator generator2(
   io Integer value,
-  Size index
+  Index index
   )
 {
   report "generator2: value=" + value + " index=" + index;
@@ -21,7 +21,7 @@ operator generator2(
 
 operator generator3(
   io Integer value,
-  Size index,
+  Index index,
   Size count
   )
 {
@@ -31,7 +31,7 @@ operator generator3(
 
 operator generator4(
   io Integer value,
-  Size index,
+  Index index,
   Size count,
   String shared
   )
@@ -46,24 +46,24 @@ operator entry() {
   ArrayProducer<Integer> ag1 = createArrayGenerator(cvg, generator1);
   report ag1;
   report ag1.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report ag1.produce(i);
 
   ArrayProducer<Integer> ag2 = createArrayGenerator(cvg, generator2);
   report ag2;
   report ag2.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report ag2.produce(i);
 
   ArrayProducer<Integer> ag3 = createArrayGenerator(cvg, generator3);
   report ag3;
   report ag3.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report ag3.produce(i);
 
   ArrayProducer<Integer> ag4 = createArrayGenerator(cvg, generator4, createConstValue("hello"));
   report ag4;
   report ag4.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report ag4.produce(i);
 }

@@ -38,7 +38,7 @@ factoryFn: function(options, scene) {
     twistedMesh.getAttributesDGNode().bindings.append(scene.constructOperator({
       operatorName: 'twistOp',
       srcFile: 'KL/twistOp.kl',
-      entryFunctionName: 'twistOp',
+      entryPoint: 'twistOp',
       parameterLayout: [
         'parentattributes.positions<>',
         'parentattributes.normals<>',

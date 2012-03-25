@@ -64,7 +64,7 @@ FABRIC.SceneGraph.registerNodeType('Viewport', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
           operatorName: 'viewportBeginRender',
           srcFile: 'FABRIC_ROOT/SG/KL/viewport.kl',
-          entryFunctionName: 'viewportBeginRender',
+          entryPoint: 'viewportBeginRender',
           parameterLayout: [
             'window.width',
             'window.height',
@@ -87,7 +87,7 @@ FABRIC.SceneGraph.registerNodeType('Viewport', {
     windowRedrawEventHandler.preDescendBindings.append(scene.constructOperator({
           operatorName: 'windowBeginRender',
           srcFile: 'FABRIC_ROOT/SG/KL/window.kl',
-          entryFunctionName: 'windowBeginRender',
+          entryPoint: 'windowBeginRender',
           parameterLayout: [
             'window.numDrawnVerticies',
             'window.numDrawnTriangles',
@@ -190,7 +190,7 @@ FABRIC.SceneGraph.registerNodeType('Viewport', {
           viewPortRayCastDgNode.bindings.append(scene.constructOperator({
             operatorName: 'viewportUpdateRayCast',
             srcFile: 'FABRIC_ROOT/SG/KL/viewport.kl',
-            entryFunctionName: 'viewportUpdateRayCast',
+            entryPoint: 'viewportUpdateRayCast',
             parameterLayout: [
               'camera.cameraMat44',
               'camera.projectionMat44',
@@ -274,7 +274,7 @@ FABRIC.SceneGraph.registerNodeType('Viewport', {
             scene.constructOperator({
                 operatorName: 'drawTextureFullScreen',
                 srcFile: 'FABRIC_ROOT/SG/KL/drawTexture.kl',
-                entryFunctionName: 'drawTextureFullScreen',
+                entryPoint: 'drawTextureFullScreen',
                 parameterLayout: [
                   'self.textureUnit',
                   'self.program'
@@ -712,7 +712,7 @@ FABRIC.SceneGraph.registerNodeType('OffscreenViewport', {
       scene.constructOperator({
           operatorName: 'bindScreenRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'bindScreenRenderTarget',
+          entryPoint: 'bindScreenRenderTarget',
           parameterLayout: [
             'window.width',
             'window.height',
@@ -723,7 +723,7 @@ FABRIC.SceneGraph.registerNodeType('OffscreenViewport', {
     preBindings.append(scene.constructOperator({
       operatorName: 'UpdateCameraProjection',
       srcFile: 'FABRIC_ROOT/SG/KL/camera.kl',
-      entryFunctionName: 'updateCameraProjection',
+      entryPoint: 'updateCameraProjection',
       parameterLayout: [
         'camera.projectionMat44',
         'window.width',
@@ -740,7 +740,7 @@ FABRIC.SceneGraph.registerNodeType('OffscreenViewport', {
       scene.constructOperator({
           operatorName: 'unbindRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'unbindRenderTarget',
+          entryPoint: 'unbindRenderTarget',
           parameterLayout: [
             'data.renderTarget'
           ]

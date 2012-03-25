@@ -94,7 +94,7 @@ FABRIC.SceneGraph.registerNodeType('UVViewport', {
     /*
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'getRGBAPixelsFromRenderTarget',
-      entryFunctionName: 'getRGBAPixelsFromRenderTarget',
+      entryPoint: 'getRGBAPixelsFromRenderTarget',
       srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
       parameterLayout: [
         'self.queryToggle',
@@ -111,7 +111,7 @@ FABRIC.SceneGraph.registerNodeType('UVViewport', {
     var redrawEventHandler = offscreenNode.getRedrawEventHandler();
     redrawEventHandler.postDescendBindings.insert(scene.constructOperator({
       operatorName: 'getAllRGBAPixelsFromRenderTarget',
-      entryFunctionName: 'getAllRGBAPixelsFromRenderTarget',
+      entryPoint: 'getAllRGBAPixelsFromRenderTarget',
       srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
       parameterLayout: [
         'data.renderTarget',
@@ -121,7 +121,7 @@ FABRIC.SceneGraph.registerNodeType('UVViewport', {
     
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'lookupUVPixels',
-      entryFunctionName: 'lookupUVPixels',
+      entryPoint: 'lookupUVPixels',
       srcFile: 'KL/AnimationReview.kl',
       parameterLayout: [
         'self.renderTarget',
@@ -281,7 +281,7 @@ FABRIC.SceneGraph.registerNodeType('PaintPlaneInstance', {
     texturepixelsdgnode.setDependency(uvViewportNode.getDGNode(),'uvviewport');
     texturepixelsdgnode.bindings.append(scene.constructOperator({
       operatorName: 'paintPixels',
-      entryFunctionName: 'paintPixels',
+      entryPoint: 'paintPixels',
       srcFile: 'KL/AnimationReview.kl',
       parameterLayout: [
         'uniforms.paint',
@@ -301,7 +301,7 @@ FABRIC.SceneGraph.registerNodeType('PaintPlaneInstance', {
     textureuniformsdgnode.addMember('frameColor','RGBA',FABRIC.RT.rgba(255,0,0,255));
     texturepixelsdgnode.bindings.append(scene.constructOperator({
       operatorName: 'setFramePixels',
-      entryFunctionName: 'setFramePixels',
+      entryPoint: 'setFramePixels',
       srcFile: 'KL/AnimationReview.kl',
       parameterLayout: [
         'uniforms.drawFrame',
@@ -349,7 +349,7 @@ FABRIC.SceneGraph.registerNodeType('PaintPlaneInstance', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'setTextureBlend',
       srcFile: 'KL/AnimationReview.kl',
-      entryFunctionName: 'setTextureBlend',
+      entryPoint: 'setTextureBlend',
       parameterLayout: [
         'self.colorBlend',
         'self.drawToggle',
@@ -368,7 +368,7 @@ FABRIC.SceneGraph.registerNodeType('PaintPlaneInstance', {
         ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('colorBlend'),
         DATA_TYPE: 'Scalar'
       },
-      entryFunctionName: 'loadUniform',
+      entryPoint: 'loadUniform',
       parameterLayout: [
         'shader.shaderProgram',
         'instance.colorBlend'
@@ -460,7 +460,7 @@ FABRIC.SceneGraph.registerNodeType('PaintPlaneInstance', {
     eventHandler.preDescendBindings.append(scene.constructOperator({
       operatorName: 'encodeImage',
       srcFile: 'FABRIC_ROOT/SG/KL/encodeImage.kl',
-      entryFunctionName: 'encodeImageLDRSliced',
+      entryPoint: 'encodeImageLDRSliced',
       parameterLayout: [
             'uniforms.width',
             'uniforms.height',

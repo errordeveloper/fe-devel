@@ -12,7 +12,7 @@ eventHandler.setScope( 'self', node );
 
 var nodeOne = FABRIC.DependencyGraph.createNode( "nodeOne" );
 var operatorOne = FABRIC.DependencyGraph.createOperator( "operatorOne" );
-operatorOne.setEntryFunctionName('test');
+operatorOne.setEntryPoint('test');
 operatorOne.setSourceCode("operator test( io Boolean select, io Scalar value ) { select = true; value = 7; }");
 var bindingOne = FABRIC.DependencyGraph.createBinding();
 bindingOne.setOperator( operatorOne );
@@ -24,7 +24,7 @@ eventHandler.appendChildEventHandler( eventHandlerOne );
 
 var nodeTwo = FABRIC.DependencyGraph.createNode( "nodeTwo" );
 var operatorTwo = FABRIC.DependencyGraph.createOperator( "operatorTwo" );
-operatorTwo.setEntryFunctionName('test');
+operatorTwo.setEntryPoint('test');
 operatorTwo.setSourceCode("operator test( io Boolean select, io Scalar value ) { value = 4; }");
 var bindingTwo = FABRIC.DependencyGraph.createBinding();
 bindingTwo.setOperator( operatorTwo );

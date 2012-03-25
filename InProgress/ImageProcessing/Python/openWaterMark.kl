@@ -3,6 +3,7 @@ use FabricFILESYSTEM;
 
 operator openWaterMark(
     io String filePath,
+    io String ext,
     io String clientText,
     io Size width,
     io Size height,
@@ -12,7 +13,7 @@ operator openWaterMark(
   if(pixels.size() == 0) {
     FabricFileHandleWrapper wrapper;
     wrapper.setAbsolutePath(filePath);
-    FabricCIMGOpenFileHandle(wrapper.getHandle(), width, height, pixels);
+    FabricCIMGOpenFileHandle(wrapper.getHandle(), ext, width, height, pixels);
     report("Loaded Watermark image, resolution "+width+"x"+height+".");
     
     Size textWidth;

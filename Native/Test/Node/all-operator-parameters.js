@@ -18,7 +18,7 @@ for( var i = 1; i < 32; i++ )
   klCode += " }";
   
   op = FABRIC.DependencyGraph.createOperator("foo_"+i);
-  op.setEntryFunctionName("foo");
+  op.setEntryPoint("foo");
   op.setSourceCode(klCode);
 
   node = FABRIC.DependencyGraph.createNode("bar_"+i);

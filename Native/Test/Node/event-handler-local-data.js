@@ -5,7 +5,7 @@
 F = require('Fabric').createClient();
 
 o = F.DG.createOperator("op");
-o.setEntryFunctionName("entry");
+o.setEntryPoint("entry");
 o.setSourceCode("\
 operator entry( io String string )\n\
 {\n\

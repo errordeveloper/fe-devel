@@ -16,6 +16,7 @@ namespace Fabric
         , m_realloc(NULL)
         , m_free(NULL)
         , m_throwException(NULL)
+        , m_log(NULL)
         , m_fileHandleCreateFromPath(NULL)
         , m_fileGetPath(NULL)
         , m_fileHandleIsValid(NULL)
@@ -28,8 +29,8 @@ namespace Fabric
       void *( *m_malloc )( size_t );
       void *( *m_realloc )( void *, size_t );
       void ( *m_free )( void * );
-      void (*m_throwException)( size_t length, char const *data );
-
+      void ( *m_throwException )( size_t length, char const *data );
+      void ( *m_log )( size_t length, char const *data );
       void ( *m_fileHandleCreateFromPath )( void *stringData, char const *filePathCString, bool folder, bool readOnly );
       void ( *m_fileGetPath )( void const *stringData, void *pathStringData );
       bool ( *m_fileHandleIsValid )( void const *stringData );

@@ -8,8 +8,9 @@
 #include <Fabric/Base/Config.h>
 #include <Fabric/Base/Util/Bits.h>
 #include <Fabric/Base/Util/AtomicSize.h>
-#include <Fabric/Base/Exception.h>
 #include <Fabric/EDK/Common.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #if defined(FABRIC_OS_WINDOWS)
 # define FABRIC_EXT_EXPORT extern "C" __declspec(dllexport)
@@ -28,7 +29,7 @@
 # define FABRIC_EXT_DECL_BEGIN
 # define FABRIC_EXT_DECL_END __attribute__((__packed__))
 # define FABRIC_EXT_KL_STRUCT( name, content ) \
- struct name content FABRIC_EXT_DECL_END
+  struct name content FABRIC_EXT_DECL_END
 # define FABRIC_EXT_KL_CLASS( name, content ) \
  class name content FABRIC_EXT_DECL_END
 #endif
@@ -44,13 +45,35 @@ namespace Fabric
   namespace EDK
   {
     static Callbacks s_callbacks;
-    
+
+    void throwException( size_t length, char const *data );
+
+    inline void log( size_t length, char const *data )
+    {
+      s_callbacks.m_log( length, data );
+    }
+
+    inline void log( char const *cStrFormat, ... )
+    {
+      char cStr[16384];
+      va_list argList;
+      va_start( argList, cStrFormat );
+      int vsnprintfResult = vsnprintf( cStr, 16384, cStrFormat, argList );
+      va_end( argList );
+      if ( vsnprintfResult < 0 )
+      {
+        static const char *malformattedLog = "internal error: malformed log";
+        throwException( strlen( malformattedLog ), malformattedLog );
+      }
+      else log( vsnprintfResult, cStr );
+    }
+
     inline void throwException( size_t length, char const *data )
     {
-      printf("Fabric::EDK::Exception: %s\n",data);
+      log("Fabric::EDK::Exception: %s\n",data);
       s_callbacks.m_throwException( length, data );
     }
-    
+
     inline void throwException( char const *cStrFormat, ... )
     {
       char cStr[4096];
@@ -76,10 +99,13 @@ namespace Fabric
       typedef bool Boolean;
       typedef uint8_t Byte;
       typedef int32_t Integer;
+      typedef size_t Index;
       typedef size_t Size;
-      typedef float Scalar;
+      typedef float Float32;
+      typedef double Float64;
+      typedef Float32 Scalar;
       typedef void *Data;
-    
+      
       FABRIC_EXT_KL_CLASS( StringBase, {
         struct bits_t
         {
@@ -339,73 +365,6 @@ namespace Fabric
         String m_handle;
       } );
 
-      FABRIC_EXT_KL_STRUCT( RGBA, {
-        Byte r;
-        Byte g;
-        Byte b;
-        Byte a;
-      } );
-    
-      FABRIC_EXT_KL_STRUCT( RGB, {
-        Byte r;
-        Byte g;
-        Byte b;
-      } );
-    
-      FABRIC_EXT_KL_STRUCT( Color, {
-        Scalar r;
-        Scalar g;
-        Scalar b;
-        Scalar a;
-      } );
-      
-      FABRIC_EXT_KL_STRUCT( Vec2, {
-        Scalar x;
-        Scalar y;
-      } );
-    
-      FABRIC_EXT_KL_STRUCT( Vec3, {
-        Scalar x;
-        Scalar y;
-        Scalar z;
-      } );
-    
-      FABRIC_EXT_KL_STRUCT( Vec4, {
-        Scalar x;
-        Scalar y;
-        Scalar z;
-        Scalar t;
-      } );
-
-      FABRIC_EXT_KL_STRUCT( Quat, {
-        Vec3 v;
-        Scalar w;
-      } );
-      
-      FABRIC_EXT_KL_STRUCT( Xfo, {
-        Quat ori;
-        Vec3 tr;
-        Vec3 sc;
-      } );
-
-      FABRIC_EXT_KL_STRUCT( Mat22, {
-        Vec2 row0;
-        Vec2 row1;
-      } );
-    
-      FABRIC_EXT_KL_STRUCT( Mat33, {
-        Vec3 row0;
-        Vec3 row1;
-        Vec3 row2;
-      } );
-    
-      FABRIC_EXT_KL_STRUCT( Mat44, {
-        Vec4 row0;
-        Vec4 row1;
-        Vec4 row2;
-        Vec4 row3;
-      } );
-
       FABRIC_EXT_DECL_BEGIN //Note: FABRIC_EXT_KL_CLASS macro can't be used on templated classes
       template< class Member, bool copyOnWrite = true > class VariableArray
       {
@@ -605,7 +564,7 @@ namespace Fabric
           , m_rcva( that.m_variableArray )
         {
           if ( m_rcva && offset + size > m_rcva->varArray.size() )
-            throw Exception( "SlicedArray: offset and/or size out of range" );
+            throwException( "SlicedArray: offset and/or size out of range" );
           
           if ( m_rcva )
             ++m_rcva->refCount;

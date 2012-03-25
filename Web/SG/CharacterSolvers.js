@@ -182,7 +182,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('FKHierarchySolver',{
     rigNode.addSolverOperator({
       operatorName: 'solveFKHierarchy',
       srcFile: 'FABRIC_ROOT/SG/KL/solveFKHierarchy.kl',
-      entryFunctionName: 'solveFKHierarchy',
+      entryPoint: 'solveFKHierarchy',
       parameterLayout: [
         'self.pose',
         'skeleton.bones',
@@ -204,7 +204,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('FKHierarchySolver',{
       variablesNode.getDGNode().bindings.append(scene.constructOperator({
           operatorName: 'invertFKHierarchy',
           srcFile: 'FABRIC_ROOT/SG/KL/solveFKHierarchy.kl',
-          entryFunctionName: 'invertFKHierarchy',
+          entryPoint: 'invertFKHierarchy',
           parameterLayout: [
             'sourcerig.pose',
             'skeleton.bones',
@@ -280,7 +280,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('FKChainSolver',{
     rigNode.addSolverOperator({
       operatorName: 'solveFKHierarchy',
       srcFile: 'FABRIC_ROOT/SG/KL/solveFKHierarchy.kl',
-      entryFunctionName: 'solveFKHierarchy',
+      entryPoint: 'solveFKHierarchy',
       parameterLayout: [
         'self.pose',
         'skeleton.bones',
@@ -302,7 +302,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('FKChainSolver',{
       variablesNode.getDGNode().bindings.append(scene.constructOperator({
           operatorName: 'invertFKHierarchy',
           srcFile: 'FABRIC_ROOT/SG/KL/solveFKHierarchy.kl',
-          entryFunctionName: 'invertFKHierarchy',
+          entryPoint: 'invertFKHierarchy',
           parameterLayout: [
             'sourcerig.pose',
             'skeleton.bones',
@@ -418,7 +418,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('HubSolver', {
           attachmentOperator:{
             operatorName: 'calcHubManipulatorAttachmentXfo',
             srcFile: 'FABRIC_ROOT/SG/KL/solveHubRig.kl',
-            entryFunctionName: 'calcHubManipulatorAttachmentXfo',
+            entryPoint: 'calcHubManipulatorAttachmentXfo',
             parameterLayout: [
               'skeleton.bones',
               'skeleton.hubs',
@@ -444,7 +444,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('HubSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveHubRigs',
       srcFile: 'FABRIC_ROOT/SG/KL/solveHubRig.kl',
-      entryFunctionName: 'solveHubRigs',
+      entryPoint: 'solveHubRigs',
       parameterLayout: [
         'charactercontroller.xfo<>',
         'self.pose',
@@ -502,7 +502,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('HubSolver', {
       variablesNode.getDGNode().bindings.append(scene.constructOperator({
         operatorName: 'invertHubRigs',
         srcFile: 'FABRIC_ROOT/SG/KL/solveHubRig.kl',
-        entryFunctionName: 'invertHubRigs',
+        entryPoint: 'invertHubRigs',
         parameterLayout: [
           'sourcerig.pose',
           'skeleton.bones',
@@ -647,7 +647,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('ArmSolver', {
                   'self.targetXfo',
                   'self.globalXfo'
                 ],
-                entryFunctionName: 'calcManipulatorChainAttachmentXfo'
+                entryPoint: 'calcManipulatorChainAttachmentXfo'
               }
             });
           }
@@ -677,7 +677,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('ArmSolver', {
                   'self.targetXfo',
                   'self.globalXfo'
                 ],
-                entryFunctionName: 'calcManipulatorChainAttachmentXfo'
+                entryPoint: 'calcManipulatorChainAttachmentXfo'
               }
             });
           }
@@ -709,7 +709,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('ArmSolver', {
                   'self.targetXfo',
                   'self.globalXfo'
                 ],
-                entryFunctionName: 'calcManipulatorChainAttachmentXfo'
+                entryPoint: 'calcManipulatorChainAttachmentXfo'
               }
             });
           }
@@ -722,7 +722,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('ArmSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveArmRig',
       srcFile: 'FABRIC_ROOT/SG/KL/solveArmRig.kl',
-      entryFunctionName: 'solveArmRig',
+      entryPoint: 'solveArmRig',
       parameterLayout: [
         'charactercontroller.xfo<>',
         'self.pose',
@@ -776,7 +776,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('ArmSolver', {
       variablesNode.getDGNode().bindings.append(scene.constructOperator({
           operatorName: 'invertHumanoidLegRig',
           srcFile: 'FABRIC_ROOT/SG/KL/solveLegRig.kl',
-          entryFunctionName: 'invertHumanoidLegRig',
+          entryPoint: 'invertHumanoidLegRig',
           parameterLayout: [
             'sourcerig.pose',
             'skeleton.bones',
@@ -852,7 +852,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('InsectLegSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveInsectLegRig',
       srcFile: 'FABRIC_ROOT/SG/KL/solveLegRig.kl',
-      entryFunctionName: 'solveInsectLegRig',
+      entryPoint: 'solveInsectLegRig',
       parameterLayout: [
         'charactercontroller.xfo<>',
         'self.pose',
@@ -868,7 +868,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('InsectLegSolver', {
       variablesNode.getDGNode().bindings.append(scene.constructOperator({
         operatorName: 'invertInsectLegRig',
         srcFile: 'FABRIC_ROOT/SG/KL/solveLegRig.kl',
-        entryFunctionName: 'invertInsectLegRig',
+        entryPoint: 'invertInsectLegRig',
         parameterLayout: [
           'sourcerig.pose',
           'skeleton.bones',
@@ -981,7 +981,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('HumanoidLegSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveHumanoidLegRig',
       srcFile: 'FABRIC_ROOT/SG/KL/solveLegRig.kl',
-      entryFunctionName: 'solveHumanoidLegRig',
+      entryPoint: 'solveHumanoidLegRig',
       parameterLayout: [
         'charactercontroller.xfo<>',
         'self.pose',
@@ -1040,7 +1040,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('HumanoidLegSolver', {
       variablesNode.getDGNode().bindings.append(scene.constructOperator({
           operatorName: 'invertHumanoidLegRig',
           srcFile: 'FABRIC_ROOT/SG/KL/solveLegRig.kl',
-          entryFunctionName: 'invertHumanoidLegRig',
+          entryPoint: 'invertHumanoidLegRig',
           parameterLayout: [
             'sourcerig.pose',
             'skeleton.bones',
@@ -1129,7 +1129,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('DigitSolver', {
                 'self.targetXfo',
                 'self.globalXfo'
               ],
-              entryFunctionName: 'calcManipulatorChainAttachmentXfo'
+              entryPoint: 'calcManipulatorChainAttachmentXfo'
             }
           });
         }
@@ -1143,7 +1143,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('DigitSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveDigits',
       srcFile: 'FABRIC_ROOT/SG/KL/solveDigit.kl',
-      entryFunctionName: 'solveDigits',
+      entryPoint: 'solveDigits',
       parameterLayout: [
         'self.pose',
         'skeleton.bones',
@@ -1245,7 +1245,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('TwistBoneSolver', {
     rigNode.addSolverOperator({
         operatorName: 'solveTwistBones',
         srcFile: 'FABRIC_ROOT/SG/KL/solveTwistBones.kl',
-        entryFunctionName: 'solveTwistBones',
+        entryPoint: 'solveTwistBones',
         parameterLayout: [
           'self.pose',
           'skeleton.bones',
@@ -1312,7 +1312,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('BlendBoneSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveBlendBones',
       srcFile: 'FABRIC_ROOT/SG/KL/solveTwistBones.kl',
-      entryFunctionName: 'solveBlendBones',
+      entryPoint: 'solveBlendBones',
       parameterLayout: [
         'self.pose',
         'skeleton.bones',
@@ -1376,7 +1376,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('VerletBoneSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveVerletBone',
       srcFile: 'FABRIC_ROOT/SG/KL/solveVerlet.kl',
-      entryFunctionName: 'solveVerletBone',
+      entryPoint: 'solveVerletBone',
       parameterLayout: [
         'globals.timestep',
         'self.pose',
@@ -1469,7 +1469,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('VerletMuscleBoneSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveVerletMuscleBone',
       srcFile: 'FABRIC_ROOT/SG/KL/solveVerlet.kl',
-      entryFunctionName: 'solveVerletMuscleBone',
+      entryPoint: 'solveVerletMuscleBone',
       parameterLayout: [
         'globals.timestep',
         'self.pose',
@@ -1579,7 +1579,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('VerletChainSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveVerletChain',
       srcFile: 'FABRIC_ROOT/SG/KL/solveVerlet.kl',
-      entryFunctionName: 'solveVerletChain',
+      entryPoint: 'solveVerletChain',
       parameterLayout: [
         'globals.timestep',
         'self.pose',

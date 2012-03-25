@@ -46,7 +46,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterMesh', {
         SKINNIMATRICIES_TEXTUREUNIT_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('skinningMatricesTextureUnit'),
         TRANSFORM_TEXTURE_HEIGHT_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('transformTextureHeight')
       },
-      entryFunctionName: 'loadSkinningMatricesTexture',
+      entryPoint: 'loadSkinningMatricesTexture',
       parameterLayout: [
         'shader.shaderProgram',
         'rig.pose<>',
@@ -244,7 +244,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterSkeleton', {
       dgnode.bindings.append(scene.constructOperator({
         operatorName: 'calcReferenceLocalPose',
         srcFile: 'FABRIC_ROOT/SG/KL/characterSkeleton.kl',
-        entryFunctionName: 'calcReferenceLocalPose',
+        entryPoint: 'calcReferenceLocalPose',
         parameterLayout: [
           'self.bones'
         ]
@@ -257,7 +257,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterSkeleton', {
       dgnode.bindings.append(scene.constructOperator({
         operatorName: 'calcReferenceGlobalPose',
         srcFile: 'FABRIC_ROOT/SG/KL/characterSkeleton.kl',
-        entryFunctionName: 'calcReferenceGlobalPose',
+        entryPoint: 'calcReferenceGlobalPose',
         parameterLayout: [
           'self.bones'
         ]
@@ -304,7 +304,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterSkeletonDebug', {
       characterSkeletonDebug.getAttributesDGNode().bindings.append(scene.constructOperator({
           operatorName: 'generateSkeletonOp',
           srcFile: 'FABRIC_ROOT/SG/KL/generateSkeleton.kl',
-          entryFunctionName: 'generateSkeleton',
+          entryPoint: 'generateSkeleton',
           parameterLayout: [
             'self',
             'skeleton.bones',
@@ -411,7 +411,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterVariables', {
           preProcessorDefinitions: {
             KEYFRAMETRACKSETTYPE: m_characterAnimationContainerNode.getTrackSetType()
           },
-          entryFunctionName: 'evaluatePoseTracks',
+          entryPoint: 'evaluatePoseTracks',
           parameterLayout: [
             'characteranimationcontainer.trackSet<>',
             'characteranimationcontainer.bindings<>',
@@ -565,7 +565,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterRig', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'matchCount',
       srcCode: 'operator matchCount(in Container parentContainer, io Container selfContainer) { selfContainer.resize( parentContainer.size() ); }',
-      entryFunctionName: 'matchCount',
+      entryPoint: 'matchCount',
       parameterLayout: [
         'charactercontroller',
         'self'
@@ -582,7 +582,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterRig', {
           }\n\
         }\n\
       }',
-      entryFunctionName: 'initPose',
+      entryPoint: 'initPose',
       parameterLayout: [
         'self.pose',
         'skeleton.bones'
@@ -602,7 +602,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterRig', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'resetDebugDrawing',
       srcCode: 'use DebugGeometry; operator resetDebugDrawing(io DebugGeometry debugGeometry) { debugGeometry.reset(); }',
-      entryFunctionName: 'resetDebugDrawing',
+      entryPoint: 'resetDebugDrawing',
       parameterLayout: [
         'self.debugGeometry'
       ],
@@ -932,7 +932,7 @@ FABRIC.SceneGraph.registerNodeType('Attachment', {
           'self.boneIndex',
           'self.globalXfo'
         ],
-        entryFunctionName: 'calcIndexedGlobalXfo'
+        entryPoint: 'calcIndexedGlobalXfo'
       }));
 
     attachmentNode.addMemberInterface(dgnode, 'localXfo', true, true);
@@ -1030,7 +1030,7 @@ FABRIC.SceneGraph.registerNodeType('ManipulatorAttachment', {
           'self.targetXfo',
           'self.globalXfo'
         ],
-        entryFunctionName: 'calcManipulatorAttachmentXfo'
+        entryPoint: 'calcManipulatorAttachmentXfo'
       }));
 
     attachmentNode.pub.setRigNode = function(node, boneName) {

@@ -72,14 +72,14 @@ $(document).ready(function() {
     'operator add(io myVector a, io myVector b, io myVector result) {\n'+
     '  result = a + b;\n'+
     '}\n');
-  operatorAdd.setEntryFunctionName('add');
+  operatorAdd.setEntryPoint('add');
 
   var operatorLength = context.DependencyGraph.createOperator("length");
   operatorLength.setSourceCode(
     'operator length(io myVector v, io Scalar result) {\n'+
     '  result = v.length();\n'+
     '}\n');
-  operatorLength.setEntryFunctionName('length');
+  operatorLength.setEntryPoint('length');
   
   // create bindings between the nodes and the operator
   var bindingAdd = context.DependencyGraph.createBinding();

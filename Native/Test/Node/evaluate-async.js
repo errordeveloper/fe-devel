@@ -10,7 +10,7 @@ for (var testIndex=0; testIndex<testCount;) {
   (function (fabricClient) {
     var o = fabricClient.DG.createOperator("o"+testIndex);
     o.setSourceCode("inline", "operator entry(in Size index, io Scalar result) { for (Size i=0; i<4096; ++i) result = log(1+index+i); }");
-    o.setEntryFunctionName("entry");
+    o.setEntryPoint("entry");
 
     var b = fabricClient.DG.createBinding("b"+testIndex);
     b.setOperator(o);

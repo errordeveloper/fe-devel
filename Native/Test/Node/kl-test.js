@@ -5,7 +5,7 @@
 FABRIC = require('Fabric').createClient();
 
 parentOp = FABRIC.DependencyGraph.createOperator( "parentOp" );
-parentOp.setEntryFunctionName('entry');
+parentOp.setEntryPoint('entry');
 parentOp.setSourceCode("operator entry( io Scalar input, io Scalar output ) { output = 2 * input; }");
 
 parentBinding = FABRIC.DependencyGraph.createBinding();
@@ -19,7 +19,7 @@ parentNode.addMember( "output", "Scalar" );
 parentNode.bindings.append(parentBinding);
 
 childOp = FABRIC.DependencyGraph.createOperator( "childOp" );
-childOp.setEntryFunctionName('entry');
+childOp.setEntryPoint('entry');
 childOp.setSourceCode("operator entry( io Scalar input, io Scalar output ) { output = 2 * input; }");
 
 childBinding = FABRIC.DependencyGraph.createBinding();

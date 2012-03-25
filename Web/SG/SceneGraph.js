@@ -382,7 +382,7 @@ FABRIC.SceneGraph = {
           return desc;
         };
   
-        operator.setEntryFunctionName(operatorDef.entryFunctionName);
+        operator.setEntryPoint(operatorDef.entryPoint);
         try {
           operator.setSourceCode(filename, code);
         }
@@ -643,7 +643,7 @@ FABRIC.SceneGraph = {
         globalsNode.bindings.append(scene.constructOperator( {
           operatorName:'calcTimeStep',
           srcCode:'operator calcTimeStep(io Scalar t, io Scalar prev_t, io Scalar delta_t){ delta_t = t - prev_t; prev_t = t; }',
-          entryFunctionName:'calcTimeStep',
+          entryPoint:'calcTimeStep',
           parameterLayout: [
             'self.time',
             'self.time_prevupdate',

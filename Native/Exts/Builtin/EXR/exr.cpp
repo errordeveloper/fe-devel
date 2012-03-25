@@ -12,6 +12,13 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
+FABRIC_EXT_KL_STRUCT( Color, {
+  KL::Float32 r;
+  KL::Float32 g;
+  KL::Float32 b;
+  KL::Float32 a;
+} );
+
 class MemIStream : public Imf::IStream
 {
 public:
@@ -128,7 +135,7 @@ FABRIC_EXT_EXPORT void FabricEXRDecode(
   KL::Size exrDataSize,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::Color> &imagePixels
+  KL::VariableArray<Color> &imagePixels
   )
 {
   MemIStream memIStream( exrData, exrDataSize );
@@ -148,7 +155,7 @@ FABRIC_EXT_EXPORT void FabricEXRDecode(
     for ( size_t x=0; x<imageWidth; ++x )
     {
       Imf::Rgba const &rgba = rgbaPixels[y][x];
-      KL::Color &klColor = imagePixels[index++];
+      Color &klColor = imagePixels[index++];
       klColor.r = rgba.r;
       klColor.g = rgba.g;
       klColor.b = rgba.b;
@@ -161,7 +168,7 @@ FABRIC_EXT_EXPORT void FabricEXROpenFileHandle(
   const KL::String & handle,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::Color> &imagePixels
+  KL::VariableArray<Color> &imagePixels
   )
 {
   KL::FileHandleWrapper wrapper(handle);
@@ -183,7 +190,7 @@ FABRIC_EXT_EXPORT void FabricEXROpenFileHandle(
     for ( size_t x=0; x<imageWidth; ++x )
     {
       Imf::Rgba const &rgba = rgbaPixels[y][x];
-      KL::Color &klColor = imagePixels[index++];
+      Color &klColor = imagePixels[index++];
       klColor.r = rgba.r;
       klColor.g = rgba.g;
       klColor.b = rgba.b;

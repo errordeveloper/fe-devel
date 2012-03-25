@@ -14,7 +14,7 @@ operator map2(
 operator map3(
   Integer input,
   io Scalar output,
-  Size index
+  Index index
   )
 {
   report "map3: input=" + input + " index=" + index;
@@ -24,7 +24,7 @@ operator map3(
 operator map4(
   Integer input,
   io Scalar output,
-  Size index,
+  Index index,
   Size count
   )
 {
@@ -35,7 +35,7 @@ operator map4(
 operator map5(
   Integer input,
   io Scalar output,
-  Size index,
+  Index index,
   Size count,
   String shared
   )
@@ -55,24 +55,24 @@ operator entry() {
   ArrayProducer<Scalar> am2 = createArrayMap(cap, map2);
   report am2;
   report am2.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report am2.produce(i);
 
   ArrayProducer<Scalar> am3 = createArrayMap(cap, map3);
   report am3;
   report am3.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report am3.produce(i);
 
   ArrayProducer<Scalar> am4 = createArrayMap(cap, map4);
   report am4;
   report am4.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report am4.produce(i);
 
   ArrayProducer<Scalar> am5 = createArrayMap(cap, map5, createConstValue("hello"));
   report am5;
   report am5.getCount();
-  for (Size i=0; i<10; ++i)
+  for (Index i=0; i<10; ++i)
     report am5.produce(i);
 }

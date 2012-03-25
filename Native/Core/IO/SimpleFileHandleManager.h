@@ -8,6 +8,7 @@
 #include <Fabric/Base/RC/Object.h>
 #include <Fabric/Base/RC/ConstHandle.h>
 #include <Fabric/Core/IO/FileHandleManager.h>
+#include <Fabric/Core/Util/Mutex.h>
 #include <map>
 #include <string>
 
@@ -51,6 +52,7 @@ namespace Fabric
       std::string makeHandle( std::string const& path ) const;
       Data const *getHandleData( std::string const &handle ) const;
 
+      mutable Util::Mutex m_mapMutex;
       HandleToDataMap m_handleToData;
     };
   };

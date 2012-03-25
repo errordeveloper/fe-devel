@@ -30,7 +30,7 @@ F = require('Fabric').createClient();
     '  a = 12.5 * Scalar(index);\n'+
     '  b = 1.73 * Scalar(index);\n'+
     '}\n');
-  operatorInit.setEntryFunctionName('initiate');
+  operatorInit.setEntryPoint('initiate');
   if (operatorInit.getErrors().length > 0) {
     if (operatorInit.getDiagnostics().length > 0)
       console.log(JSON.stringify(opreatorInit.getDiagnostics()));
@@ -41,7 +41,7 @@ F = require('Fabric').createClient();
     'operator add(io Scalar a, io Scalar b, io Scalar result) {\n'+
     '  result = a + b;\n'+
     '}\n');
-  operatorAdd.setEntryFunctionName('add');
+  operatorAdd.setEntryPoint('add');
   if (operatorAdd.getErrors().length > 0) {
     if (operatorAdd.getDiagnostics().length > 0)
       console.log(JSON.stringify(opreatorInit.getDiagnostics()));
@@ -52,7 +52,7 @@ F = require('Fabric').createClient();
     'operator mul(io Scalar input<>, io Scalar result, in Size index) {\n'+
     '  result = 3.0 * input[index];\n'+
     '}\n');
-  operatorMul.setEntryFunctionName('mul');
+  operatorMul.setEntryPoint('mul');
   if (operatorMul.getErrors().length > 0) {
     if (operatorMul.getDiagnostics().length > 0)
       console.log(JSON.stringify(opreatorInit.getDiagnostics()));

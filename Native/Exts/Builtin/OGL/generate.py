@@ -365,7 +365,7 @@ def main():
           if len(digit) > 0 and name.lower().find('matrix') > -1:
             # let's convert to matrix
             klParameters.append('io Mat'+digit+digit+' '+klvarname+'[]')
-            cParameters.append('KL::VariableArray<KL::Mat'+digit+digit+'> & '+varname)
+            cParameters.append('KL::VariableArray<Mat'+digit+digit+'> & '+varname)
             klCast.append('('+fulltype+')&'+varname+'[0]')
           else:
             if knownCTypes[type][3] == 'Data':
@@ -432,7 +432,7 @@ def main():
       else:
         functionsCode.append('FABRIC_EXT_EXPORT KL::'+knownCTypes[returnTypeKey][3]+' '+name+'_wrapper()')
       functionsCode.append('{')
-    functionsCode.append('  if(!'+name+')')
+    functionsCode.append('  if( '+name+' == 0 )')
     functionsCode.append('    throwException( "OGL: '+name+': unsupported on this hardware" );')
     if not name == 'glGetError' and not name == 'gluErrorString':
       functionsCode.append('  _clearError();')

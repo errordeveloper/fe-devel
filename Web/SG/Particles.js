@@ -65,7 +65,7 @@ FABRIC.SceneGraph.registerNodeType('Particles', {
     particlesNode.getAttributesDGNode().bindings.append(scene.constructOperator({
       operatorName: 'calcCellIndex',
       srcFile: 'FABRIC_ROOT/SG/KL/particles.kl',
-      entryFunctionName: 'calcCellIndex',
+      entryPoint: 'calcCellIndex',
       parameterLayout: [
         'self.positions',
         'self.cellcoords',
@@ -79,7 +79,7 @@ FABRIC.SceneGraph.registerNodeType('Particles', {
     particlesNode.getAttributesDGNode().bindings.append(scene.constructOperator({
       operatorName: 'copyCurrentFrameDataToPrevFrameData',
       srcFile: 'FABRIC_ROOT/SG/KL/particles.kl',
-      entryFunctionName: 'copyCurrentFrameDataToPrevFrameData',
+      entryPoint: 'copyCurrentFrameDataToPrevFrameData',
       parameterLayout: [
         'self.positions',
         'self.velocities',
@@ -94,7 +94,7 @@ FABRIC.SceneGraph.registerNodeType('Particles', {
     particlesNode.getAttributesDGNode().bindings.append(scene.constructOperator({
       operatorName: 'populateHashTable',
       srcFile: 'FABRIC_ROOT/SG/KL/particles.kl',
-      entryFunctionName: 'populateHashTable',
+      entryPoint: 'populateHashTable',
       parameterLayout: [
         'uniforms.hashtable',
         'self.cellindices<>'

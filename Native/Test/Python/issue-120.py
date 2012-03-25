@@ -7,7 +7,7 @@ F = fabric.createClient()
 
 o = F.DG.createOperator("op")
 o.setSourceCode("operator entry( io Scalar x, io Scalar y ) { y = x * x; }")
-o.setEntryFunctionName("entry")
+o.setEntryPoint("entry")
 
 b = F.DG.createBinding()
 b.setOperator(o)

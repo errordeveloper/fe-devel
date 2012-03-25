@@ -4,18 +4,18 @@
 
 # [pzion 20110726] !!!!!!!!!!!!!!!!!!!!
 # When you change the version number,
-# don't forget to consider the expiry
-# and cache generation!!
+# don't forget to consider the 
+# cache generation!!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 FABRIC_NAME='Fabric Engine'
 FABRIC_COMPANY_NAME='Fabric Engine Inc.'
 FABRIC_DESC='High Performance Computing for the Web'
 FABRIC_COPYRIGHT_YEARS='2010-2012'
-FABRIC_URL="http://fabric-engine.com"
+FABRIC_URL="http://fabricengine.com"
 FABRIC_VERSION_MAJ='1'
-FABRIC_VERSION_MIN='0'
-FABRIC_VERSION_REV='22'
-FABRIC_VERSION_SUFFIX='-release'
+FABRIC_VERSION_MIN='1'
+FABRIC_VERSION_REV='0'
+FABRIC_VERSION_SUFFIX='-alpha'
 FABRIC_CACHE_GENERATION='20'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

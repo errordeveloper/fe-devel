@@ -146,6 +146,14 @@ namespace Fabric
         FABRIC_ASSERT( isBoolean() );
         return value.boolean;
       }
+
+      // Null or Boolean
+
+      void requireNullOrBoolean() const
+      {
+        if ( !isNull() || !isBoolean() )
+          throw Exception("must be a JSON null or boolean");
+      }
       
       // Integer
       

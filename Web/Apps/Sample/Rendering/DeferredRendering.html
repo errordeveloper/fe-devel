@@ -63,7 +63,7 @@ FABRIC.SceneGraph.registerNodeType('MoveCarsNode', {
                                 'if(direction.z < -0.99 && position.z < zMinMax.x)\n' +
                                 '  position.z = zMinMax.y;\n' +
                                 'globalXfo.tr = position;\n}',
-    entryFunctionName: 'moveCars',
+    entryPoint: 'moveCars',
     parameterLayout: [
       'globals.timestep',
       'self.xMinMax',

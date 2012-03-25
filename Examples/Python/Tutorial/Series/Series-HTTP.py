@@ -17,7 +17,7 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
 
     computeTermOp = fabricClient.DG.createOperator("computeTermOp")
     computeTermOp.setSourceCode('computeTerm.kl', open('computeTerm.kl').read())
-    computeTermOp.setEntryFunctionName('computeTerm')
+    computeTermOp.setEntryPoint('computeTerm')
 
     # Create the binding that binds the computeTermOp to the
     # terms node.  A binding binds the members of the node
@@ -44,7 +44,7 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
 
     sumTermsOp = fabricClient.DG.createOperator("sumTermsOp")
     sumTermsOp.setSourceCode('sumTerms.kl', open('sumTerms.kl').read())
-    sumTermsOp.setEntryFunctionName('sumTerms')
+    sumTermsOp.setEntryPoint('sumTerms')
 
     # Create the binding that binds sumTermsOp to the members of
     # sumNode
@@ -52,8 +52,8 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
     sumTermsBinding = fabricClient.DG.createBinding()
     sumTermsBinding.setOperator(sumTermsOp)
     sumTermsBinding.setParameterLayout([
-      "terms.count",      # terms.count is special: the slice count of
-                          # the dependency called "terms"
+      "terms",            # terms is special: it is an object that
+                          # allows you to get and set the number of slices
       "terms.result<>",   # the <> syntax specifies that we want to bind
                           # to all the slices at once
       "self.result" 

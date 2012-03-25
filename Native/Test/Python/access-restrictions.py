@@ -6,7 +6,7 @@ import fabric
 fabricClient = fabric.createClient()
 
 op = fabricClient.DependencyGraph.createOperator("foo")
-op.setEntryFunctionName("entry")
+op.setEntryPoint("entry")
 op.setSourceCode("\
 operator entry( io Integer element, io Integer slice[] )\n\
 {\n\

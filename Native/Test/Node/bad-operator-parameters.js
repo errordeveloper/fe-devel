@@ -5,7 +5,7 @@
 FABRIC = require('Fabric').createClient();
             
 op = FABRIC.DependencyGraph.createOperator("bar");
-op.setEntryFunctionName("foo");
+op.setEntryPoint("foo");
 op.setSourceCode("operator foo( Boolean testBool, io Integer foo ) { if(testBool){ foo = 10; } }");
 
 binding = FABRIC.DependencyGraph.createBinding();

@@ -56,7 +56,7 @@ FABRIC.SceneGraph.registerNodeType('FileSystemNode', {
         "self.baseFolder",
         "self.childFolders"
       ],
-      entryFunctionName: 'getFolderSubFolders',
+      entryPoint: 'getFolderSubFolders',
       async: false
     }));
     dgnode.bindings.append(scene.constructOperator({
@@ -66,7 +66,7 @@ FABRIC.SceneGraph.registerNodeType('FileSystemNode', {
         "self.baseFolder",
         "self.childFiles"
       ],
-      entryFunctionName: 'getFolderFiles',
+      entryPoint: 'getFolderFiles',
       async: false
     }));
     

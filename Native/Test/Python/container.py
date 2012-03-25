@@ -16,7 +16,7 @@ except Exception as e:
   print("Runtime eval error (container member): " + str(e));
 
 op = fabricClient.DependencyGraph.createOperator("op");
-op.setEntryFunctionName("op");
+op.setEntryPoint("op");
 op.setSourceCode('\
 operator op(\n\
   io Container c,\n\
@@ -60,7 +60,7 @@ except Exception as e:
 
 # Error test: we are not allowed to have io Container along with members elements
 badOp = fabricClient.DependencyGraph.createOperator("badOp");
-badOp.setEntryFunctionName("badOp");
+badOp.setEntryPoint("badOp");
 badOp.setSourceCode('\
 operator badOp(\n\
   io Container c,\n\
