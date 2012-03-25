@@ -16,7 +16,7 @@ FABRIC_VERSION_MAJ='1'
 FABRIC_VERSION_MIN='0'
 FABRIC_VERSION_REV='22'
 FABRIC_VERSION_SUFFIX='-release'
-FABRIC_CACHE_GENERATION='19'
+FABRIC_CACHE_GENERATION='20'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import os, platform, posixpath, glob, sys

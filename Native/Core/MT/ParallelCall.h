@@ -66,6 +66,32 @@ namespace Fabric
         m_baseAddresses[index] = baseAddress;
       }
       
+      size_t addAdjustment( size_t count )
+      {
+        size_t index = m_adjustments.size();
+
+        // andrew 2012-03-25
+        // only allow a single adjustment unless there is a need to add
+        // support for more later (e.g. for cross-product of adjustments)
+        FABRIC_ASSERT( index == 0 );
+
+        m_adjustments.resize( index + 1 );
+        Adjustment &newAdjustment = m_adjustments[index];
+
+        newAdjustment.count = count;
+        newAdjustment.batchSize = std::max<size_t>( 1, count / (MT::getNumCores()*4) );
+        newAdjustment.batchCount = (count + newAdjustment.batchSize - 1) / newAdjustment.batchSize;
+
+        for ( size_t i=0; i<m_paramCount; ++i )
+          newAdjustment.offsets[i] = 0;
+
+        m_totalParallelCalls *= newAdjustment.batchCount;
+        
+        return index;
+      }
+
+      /*
+       * FIXME deleteme
       size_t addAdjustment( size_t count, size_t batchSize )
       {
         size_t index = m_adjustments.size();
@@ -82,9 +108,11 @@ namespace Fabric
         
         return index;
       }
+      */
       
       void setAdjustmentOffset( size_t adjustmentIndex, size_t paramIndex, size_t adjustmentOffset )
       {
+        FABRIC_ASSERT( adjustmentIndex == 0 );
         FABRIC_ASSERT( adjustmentIndex < m_adjustments.size() );
         FABRIC_ASSERT( paramIndex < m_paramCount );
         m_adjustments[adjustmentIndex].offsets[paramIndex] = adjustmentOffset;
@@ -95,7 +123,15 @@ namespace Fabric
         //FABRIC_DEBUG_LOG( "executeSerial('%s')", m_debugDesc.c_str() );
         RC::ConstHandle<RC::Object> objectToAvoidFreeDuringExecution;
         void (*functionPtr)( ... ) = m_function->getFunctionPtr( objectToAvoidFreeDuringExecution );
-        execute( 0, m_baseAddresses, NULL, functionPtr, userdata );
+
+        size_t no_offsets[32];
+        for (int i=0; i<32; i++)
+          no_offsets[i] = 0;
+
+        Util::TLSVar<void *>::Setter userdataSetter( s_userdataTLS, userdata );
+        functionPtr( 0, 1, m_baseAddresses, &no_offsets );
+        // FIXME deleteme
+        //execute( 0, m_baseAddresses, NULL, functionPtr, userdata );
       }
       
       void executeParallel( RC::Handle<LogCollector> const &logCollector, void *userdata, bool mainThreadOnly ) const
@@ -115,7 +151,37 @@ namespace Fabric
       }
       
     protected:
-    
+
+      void executeParallel( size_t iteration, void (*functionPtr)( ... ), void *userdata ) const
+      {
+        size_t no_offsets[32];
+        for (int i=0; i<32; i++)
+          no_offsets[i] = 0;
+
+        size_t start = 0;
+        size_t count = 1;
+        const void *offsets;
+        if ( m_adjustments.size() == 0 )
+        {
+          offsets = no_offsets;
+        }
+        else
+        {
+          Adjustment const &adjustment = m_adjustments[0];
+          size_t batch = iteration % adjustment.batchCount;
+          start = batch * adjustment.batchSize;
+          count = adjustment.batchSize;
+          if ( start + count > adjustment.count )
+            count = adjustment.count - start;
+          offsets = adjustment.offsets;
+        }
+
+        Util::TLSVar<void *>::Setter userdataSetter( s_userdataTLS, userdata );
+        functionPtr( start, count, m_baseAddresses, offsets );
+      }
+   
+      /*
+       * FIXME deleteme
       void execute( size_t adjustmentIndex, void * const *addresses, size_t const *iteration, void (*functionPtr)( ... ), void *userdata ) const
       {
         if ( adjustmentIndex == m_adjustments.size() )
@@ -137,7 +203,7 @@ namespace Fabric
             count = adjustment.batchSize;
             if ( start + count > adjustment.count )
               count = adjustment.count - start;
-            
+
             for ( size_t i=0; i<m_paramCount; ++i )
               newAddresses[i] = (uint8_t *)addresses[i] + start * adjustment.offsets[i];
               
@@ -167,6 +233,7 @@ namespace Fabric
       {
         execute( 0, m_baseAddresses, &iteration, functionPtr, userdata );
       }
+      */
       
       static void ExecuteParallel( void *userdata, size_t iteration )
       {

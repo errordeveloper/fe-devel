@@ -143,7 +143,7 @@ namespace Fabric
       FABRIC_ASSERT( m_entryFunctionName.length() > 0 );
       FABRIC_ASSERT( m_astOperator );
       
-      m_function = Function::Create( m_code, m_astOperator->getSymbolName( m_context->getCGManager() ) );
+      m_function = Function::Create( m_code, m_astOperator->getStubName( m_context->getCGManager() ) );
       
       markForRecompile();
     }

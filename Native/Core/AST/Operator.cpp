@@ -13,6 +13,32 @@
 
 #include <llvm/Module.h>
 
+// FIXME deleteme
+#include <Fabric/Core/CG/ConstStringAdapter.h>
+#include <Fabric/Core/CG/StringAdapter.h>
+#include <Fabric/Core/CG/ExprValue.h>
+// FIXME
+
+#define INIT_DUMP \
+  llvm::Value *tempLValue; \
+  llvm::Value *tempStrLValue; \
+  std::string msg; \
+  CG::ExprValue *msgExprValue; \
+  llvm::Value *msgRValue;
+
+#define DUMP_SIZE( x ) \
+  tempLValue = sizeAdapter->llvmRValueToLValue( bbb, x ); \
+  tempStrLValue = stringAdapter->llvmAlloca( bbb, "tempStrLValue" ); \
+  stringAdapter->llvmInit( bbb, tempStrLValue ); \
+  stringAdapter->llvmCallCast( bbb, sizeAdapter, tempLValue, tempStrLValue ); \
+  stringAdapter->llvmReport( bbb, stringAdapter->llvmLValueToRValue( bbb, tempStrLValue ) );
+
+#define DUMP_STR( x ) \
+  msg = x; \
+  msgExprValue = new CG::ExprValue( constStringAdapter, CG::USAGE_RVALUE, context, constStringAdapter->llvmConst( bbb, msg ) ); \
+  msgRValue = stringAdapter->llvmCast( bbb, *msgExprValue ); \
+  stringAdapter->llvmReport( bbb, msgRValue );
+
 namespace Fabric
 {
   namespace AST
@@ -43,7 +69,7 @@ namespace Fabric
 
     std::string Operator::getStubName( RC::Handle<CG::Manager> const &cgManager ) const
     {
-      return getSymbolName( cgManager ) + ".stub";
+      return getDefaultSymbolName( cgManager ) + ".stub";
     }
 
     void Operator::llvmCompileToModule( CG::ModuleBuilder &moduleBuilder, CG::Diagnostics &diagnostics, bool buildFunctionBodies ) const
@@ -72,14 +98,14 @@ namespace Fabric
 
       std::string name = getStubName( cgManager );
       llvm::Function *func = llvm::cast<llvm::Function>( moduleBuilder->getFunction( name ) );
-
       if ( !func )
       {
         llvm::AttributeWithIndex AWI[1];
-        AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
+        AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint );
         llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 1 );
 
         func = llvm::cast<llvm::Function>( moduleBuilder->getOrInsertFunction( name, funcType, attrListPtr ) );
+        func->setLinkage( llvm::GlobalValue::ExternalLinkage );
 
         CG::FunctionBuilder functionBuilder( moduleBuilder, funcType, func );
         llvm::Argument *start = functionBuilder[0];
@@ -110,6 +136,8 @@ namespace Fabric
 
         llvm::Value *endRValue = bbb->CreateAdd( startRValue, countRValue, "endRValue" );
 
+        RC::ConstHandle<CG::ConstStringAdapter> constStringAdapter = cgManager->getConstStringAdapter();
+        RC::ConstHandle<CG::StringAdapter> stringAdapter = cgManager->getStringAdapter();
         /*
         for (int index=start; index<start+count; index++)
         {
@@ -130,7 +158,6 @@ namespace Fabric
 
         bbb->SetInsertPoint( loopBodyBB );
 
-        // XXX indexLValue should be an rValue
         llvm::Function *realOp = llvm::cast<llvm::Function>( moduleBuilder->getFunction( getSymbolName( cgManager ) ) );
         std::vector<llvm::Value *>args;
         for (int argIndex=0; argIndex<numArgs; argIndex++)
@@ -144,24 +171,42 @@ namespace Fabric
           llvm::Value *argBaseLValue = bbb->CreateGEP( basesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argBaseLValue" );
           llvm::Value *argStrideLValue = bbb->CreateGEP( stridesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argStrideLValue" );
 
-          llvm::Value *argBaseData = bbb->CreateLoad( argBaseLValue, "argBaseData" );
           llvm::Value *stepRValue = bbb->CreateMul(
             sizeAdapter->llvmLValueToRValue( bbb, argStrideLValue ),
             sizeAdapter->llvmLValueToRValue( bbb, indexLValue ),
             "stepRValue"
           );
 
-          llvm::Value *argLValue = bbb->CreateGEP( argBaseData, stepRValue, "argLValue" );
+          llvm::Value *argBaseRValue = bbb->CreateLoad( argBaseLValue, "argBaseRValue" );
+          llvm::Value *argLValue = bbb->CreateGEP( argBaseRValue, stepRValue, "argLValue" );
           const llvm::Type *argType = paramAdapters[argIndex]->llvmRawType( context );
+          llvm::Value *argValue;
           if ( paramAdapters[argIndex]->isPassByReference() || params->get(argIndex)->getUsage() == CG::USAGE_LVALUE )
-            argType = llvm::PointerType::getUnqual( argType );
+          {
+            argValue = bbb->CreatePointerCast(
+              argLValue,
+              argType->getPointerTo(),
+              "argValue"
+            );
+          }
+          else if ( params->get(argIndex)->getName() == "index" )
+          {
+            argValue = bbb->CreatePointerCast(
+              argLValue,
+              argType,
+              "argValue"
+            );
+          }
+          else
+          {
+            // andrew 2012-03-23
+            // FIXME dummy value, the only allowed r-value parameter in DG
+            // operators is the special 'index' parameter so this is never
+            // actually called (will fix when MR stubs are implemented)
+            argValue = paramAdapters[argIndex]->llvmDefaultRValue( bbb );
+          }
 
-          llvm::Value *typedDataLValue = bbb->CreatePointerCast(
-            argLValue,
-            llvm::PointerType::getUnqual( argType ),
-            "typedDataLValue"
-          );
-          args.push_back( bbb->CreateLoad( typedDataLValue, "typedDataRValue" ) );
+          args.push_back( argValue );
         }
         bbb->CreateCall( realOp, args.begin(), args.end() );
 
