@@ -59,23 +59,22 @@ parentEH.postDescendBindings.append( parentEHPostBinding );
 
 childEHPreOp = FABRIC.DependencyGraph.createOperator( "childEHPreOp" );
 childEHPreOp.setEntryPoint('entry');
-childEHPreOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput, Size parentIndex, io Scalar parentOutput ) { report 'childEHPreOp begin'; report '  Child Index: ' + childIndex; report '  Child Output: ' + childOutput; report '  Parent Index: ' + parentIndex; report '  Parent Output: ' + parentOutput; report 'childEHPreOp end'; }");
+childEHPreOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput ) { report 'childEHPreOp begin'; report '  Child Index: ' + childIndex; report '  Child Output: ' + childOutput; report 'childEHPreOp end'; }");
 
 childEHPreBinding = FABRIC.DependencyGraph.createBinding();
 childEHPreBinding.setOperator( childEHPreOp );
-childEHPreBinding.setParameterLayout( [ "child.index", "child.output", "parent.index", "parent.output" ] );
+childEHPreBinding.setParameterLayout( [ "child.index", "child.output" ] );
 
 childEHPostOp = FABRIC.DependencyGraph.createOperator( "childEHPostOp" );
 childEHPostOp.setEntryPoint('entry');
-childEHPostOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput, Size parentIndex, io Scalar parentOutput ) { report 'childEHPostOp begin'; report '  Child Index: ' + childIndex; report '  Child Output: ' + childOutput; report '  Parent Index: ' + parentIndex; report '  Parent Output: ' + parentOutput; report 'childEHPostOp end'; }");
+childEHPostOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput ) { report 'childEHPostOp begin'; report '  Child Index: ' + childIndex; report '  Child Output: ' + childOutput; report 'childEHPostOp end'; }");
 
 childEHPostBinding = FABRIC.DependencyGraph.createBinding();
 childEHPostBinding.setOperator( childEHPostOp );
-childEHPostBinding.setParameterLayout( [ "child.index", "child.output", "parent.index", "parent.output" ] );
+childEHPostBinding.setParameterLayout( [ "child.index", "child.output" ] );
 
 childEH = FABRIC.DependencyGraph.createEventHandler( "childEH" );
 childEH.appendChildEventHandler( parentEH );
-childEH.setScope( 'parent', parentNode );
 childEH.setScope( 'child', childNode );
 childEH.preDescendBindings.append( childEHPreBinding );
 childEH.postDescendBindings.append( childEHPostBinding );

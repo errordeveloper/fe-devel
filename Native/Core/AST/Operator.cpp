@@ -154,31 +154,60 @@ namespace Fabric
             sizeAdapter->llvmLValueToRValue( bbb, stepLValue ),
             "argLValue" );
           const llvm::Type *argType = paramAdapters[argIndex]->llvmRawType( context );
-          llvm::Value *argValue;
-          if ( params->get(argIndex)->getName() == "index" )
+   
+          if ( paramAdapters[argIndex]->isPassByReference()
+                || params->get(argIndex)->getUsage() == CG::USAGE_LVALUE )
           {
-            argValue = bbb->CreatePointerCast(
-              argLValue,
-              argType,
-              "typedArgLValue"
-            );
-          }
-          else
-          {
-            argValue = bbb->CreatePointerCast(
+            llvm::Value *typedArgLValue = bbb->CreatePointerCast(
               argLValue,
               argType->getPointerTo(),
               "typedArgLValue"
             );
-
-            if ( !paramAdapters[argIndex]->isPassByReference()
-                  && params->get(argIndex)->getUsage() != CG::USAGE_LVALUE )
-            {
-              argValue = bbb->CreateLoad( argValue, "typedArgRValue" );
-            }
+            args.push_back( typedArgLValue );
           }
+          // andrew 2012-03-26
+          // special case, if it's an r-value of type Size we have to check
+          // if it's NULL since it may be the special 'index' parameter
+          else if ( argType == sizeAdapter->llvmRawType( context ) )
+          {
+            llvm::BasicBlock *argNullBB = functionBuilder.createBasicBlock( "argNullBB" );
+            llvm::BasicBlock *argNotNullBB = functionBuilder.createBasicBlock( "argNotNullBB" );
+            llvm::BasicBlock *continueArgBB = functionBuilder.createBasicBlock( "continueArgBB" );
 
-          args.push_back( argValue );
+            llvm::Value *argValue = bbb->CreateAlloca( argType );
+            bbb->CreateCondBr( bbb->CreateIsNotNull( argBaseRValue ), argNotNullBB, argNullBB );
+            bbb->SetInsertPoint( argNotNullBB );
+            llvm::Value *typedArgLValue = bbb->CreatePointerCast(
+              argLValue,
+              argType->getPointerTo(),
+              "typedArgLValue"
+            );
+            llvm::Value *typedArgRValue = bbb->CreateLoad( argValue, "typedArgRValue" );
+            bbb->CreateStore( typedArgRValue, argValue );
+            bbb->CreateBr( continueArgBB );
+
+            bbb->SetInsertPoint( argNullBB );
+            llvm::Value *indexValue = bbb->CreatePointerCast(
+              argLValue,
+              sizeAdapter->llvmRawType( context ),
+              "indexValue"
+            );
+            bbb->CreateStore( indexValue, argValue );
+            bbb->CreateBr( continueArgBB );
+
+            bbb->SetInsertPoint( continueArgBB );
+            args.push_back( bbb->CreateLoad( argValue, "argValue" ) );
+          }
+          else
+          {
+            llvm::Value *typedArgLValue = bbb->CreatePointerCast(
+              argLValue,
+              argType->getPointerTo(),
+              "typedArgLValue"
+            );
+            llvm::Value *typedArgRValue = bbb->CreateLoad( typedArgLValue, "typedArgRValue" );
+            args.push_back( typedArgRValue );
+          }
         }
         bbb->CreateCall( realOp, args.begin(), args.end() );
 
