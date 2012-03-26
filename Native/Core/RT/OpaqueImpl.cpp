@@ -15,7 +15,7 @@ namespace Fabric
   {
     OpaqueImpl::OpaqueImpl( std::string const &codeName, size_t size )
     {
-      initialize( codeName, DT_OPAQUE, size, FlagShallow );
+      initialize( codeName, DT_OPAQUE, size, FlagShallow | FlagExportable );
 
       m_defaultData = malloc( size );
       memset( m_defaultData, 0, size );
