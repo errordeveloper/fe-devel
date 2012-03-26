@@ -349,6 +349,7 @@ namespace Fabric
           llvm::BasicBlock *entryBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "entry" );
 
           basicBlockBuilder->SetInsertPoint( entryBB );
+          llvmPrepareForModify( basicBlockBuilder, arrayLValue );
           llvm::Value *bitsLValue = basicBlockBuilder->CreateLoad( arrayLValue );
           llvm::Value *memberDatasLValue = basicBlockBuilder->CreateStructGEP( basicBlockBuilder->CreateStructGEP( bitsLValue, MemberDatasIndex ), 0 );
           llvm::Value *memberLValue = basicBlockBuilder->CreateGEP( memberDatasLValue, indexRValue );
@@ -908,8 +909,9 @@ namespace Fabric
         llvm::BasicBlock *doneBB = fb.createBasicBlock( "done" );
 
         bbb->SetInsertPoint( entryBB );
-        llvm::Value *refCountLValue = bbb->CreateStructGEP( selfLValue, RefCountIndex );
-        llvm::Value *refCountRValue = sizeAdapter->llvmLValueToRValue( basicBlockBuilder, refCountLValue );
+        llvm::Value *bitsLValue = bbb->CreateLoad( selfLValue );
+        llvm::Value *refCountLValue = bbb->CreateStructGEP( bitsLValue, RefCountIndex );
+        llvm::Value *refCountRValue = sizeAdapter->llvmLValueToRValue( bbb, refCountLValue );
         bbb->CreateCondBr(
           bbb->CreateICmpUGT(
             refCountRValue,
@@ -919,7 +921,7 @@ namespace Fabric
           doneBB
           );
 
-        bbb->SetInsertPoint( entryBB );
+        bbb->SetInsertPoint( isSharedBB );
         llvmDuplicate( bbb, selfLValue );
         bbb->CreateBr( doneBB );
 
