@@ -151,7 +151,7 @@ namespace Fabric
 
       void requireNullOrBoolean() const
       {
-        if ( !isNull() || !isBoolean() )
+        if ( !isNull() && !isBoolean() )
           throw Exception("must be a JSON null or boolean");
       }
       

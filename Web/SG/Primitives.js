@@ -303,6 +303,63 @@ FABRIC.SceneGraph.registerNodeType('Circle', {
   }});
 
 
+FABRIC.SceneGraph.registerNodeType('Spline', {
+  briefDesc: 'The Spline primitive draws a spline between two points using line segments.',
+  detailedDesc: 'The Spline primitive draws a hermite curve using line segments. The number of segments can be specified.',
+  parentNodeDesc: 'Lines',
+  optionsDesc: {
+    p1:         'The starting position of the spline',
+    t1:         'The tangent at the starting position',
+    p2:         'The ending position of the spline',
+    t2:         'The tangent at the end position',
+    numSegments: 'The number of line segments to use when drawing the spline.'
+  },
+  factoryFn: function(options, scene) {
+    // create a default spline on z=0 plane
+    scene.assignDefaults(options, {
+        p1: new FABRIC.RT.Vec3(0, 0, 0),
+        t1: new FABRIC.RT.Vec3(0, -10, 0),
+        p2: new FABRIC.RT.Vec3(10, 0, 0),
+        t2: new FABRIC.RT.Vec3(0, -10, 0),
+        numSegments: 24
+      });
+
+    var splineNode = scene.constructNode('Lines', options);
+    splineNode.pub.addUniformValue('p1', 'Vec3', options.p1);
+    splineNode.pub.addUniformValue('t1', 'Vec3', options.t1);
+    splineNode.pub.addUniformValue('p2', 'Vec3', options.p2);
+    splineNode.pub.addUniformValue('t2', 'Vec3', options.t2);
+    splineNode.pub.addUniformValue('numSegments', 'Integer', options.numSegments);
+
+    // getters and setters
+    var uniforms = splineNode.getUniformsDGNode();
+    splineNode.addMemberInterface(uniforms, 'p1', true);
+    splineNode.addMemberInterface(uniforms, 't1', true);
+    splineNode.addMemberInterface(uniforms, 'p2', true);
+    splineNode.addMemberInterface(uniforms, 't2', true);
+    splineNode.addMemberInterface(uniforms, 'numSegments', true);
+    
+    splineNode.setGeneratorOps([
+      scene.constructOperator({
+        operatorName: 'generateSpline',
+        srcFile: 'FABRIC_ROOT/SG/KL/generateSpline.kl',
+        entryFunctionName: 'generateSpline',
+        parameterLayout: [
+          'self',
+          'self.positions<>',
+          'uniforms.indices',
+          'uniforms.p1',
+          'uniforms.t1',
+          'uniforms.p2',
+          'uniforms.t2',
+          'uniforms.numSegments'
+          ]
+      })
+    ]);
+    return splineNode;
+  }});
+
+  
 FABRIC.SceneGraph.registerNodeType('Plane', {
   briefDesc: 'The Plane primitive draws a plane or arc using triangles.',
   detailedDesc: 'The Plane primitive draws a plane or arc using triangles.',
