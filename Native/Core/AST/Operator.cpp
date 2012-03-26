@@ -138,17 +138,8 @@ namespace Fabric
 
         RC::ConstHandle<CG::ConstStringAdapter> constStringAdapter = cgManager->getConstStringAdapter();
         RC::ConstHandle<CG::StringAdapter> stringAdapter = cgManager->getStringAdapter();
-        /*
-        for (int index=start; index<start+count; index++)
-        {
-          for (int argIndex=0; argIndex<numArgs; argIndex++)
-          {
-            args.push( bases[argIndex] + index*strides[argIndex] );
-          }
-          bbb->CreateCall( realOp, args );
-        }
-        */
 
+        llvm::Value *stepLValue = sizeAdapter->llvmAlloca( bbb, "stepLValue" );
         llvm::Value *indexLValue = sizeAdapter->llvmAlloca( bbb, "indexLValue" );
         sizeAdapter->llvmAssign( bbb, indexLValue, startRValue );
         bbb->CreateBr( loopCmpBB );
@@ -162,6 +153,9 @@ namespace Fabric
         std::vector<llvm::Value *>args;
         for (int argIndex=0; argIndex<numArgs; argIndex++)
         {
+          llvm::BasicBlock *getStrideBB = functionBuilder.createBasicBlock( "getStrideBB" );
+          llvm::BasicBlock *getValueBB = functionBuilder.createBasicBlock( "getValueBB" );
+
           // bases[argIndex] + index*strides[argIndex]
           llvm::Value *argIndexRValue = sizeAdapter->llvmConst( context, argIndex );
           std::vector<llvm::Value *> argArrayIdx;
@@ -169,16 +163,25 @@ namespace Fabric
           argArrayIdx.push_back( argIndexRValue );
 
           llvm::Value *argBaseLValue = bbb->CreateGEP( basesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argBaseLValue" );
-          llvm::Value *argStrideLValue = bbb->CreateGEP( stridesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argStrideLValue" );
+          llvm::Value *argBaseRValue = bbb->CreateLoad( argBaseLValue, "argBaseRValue" );
+          sizeAdapter->llvmAssign( bbb, stepLValue, zeroRValue );
+          bbb->CreateCondBr( bbb->CreateIsNotNull( stridesLValue ), getStrideBB, getValueBB );
 
+          bbb->SetInsertPoint( getStrideBB );
+          llvm::Value *argStrideLValue = bbb->CreateGEP( stridesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argStrideLValue" );
           llvm::Value *stepRValue = bbb->CreateMul(
             sizeAdapter->llvmLValueToRValue( bbb, argStrideLValue ),
             sizeAdapter->llvmLValueToRValue( bbb, indexLValue ),
             "stepRValue"
           );
+          sizeAdapter->llvmAssign( bbb, stepLValue, stepRValue );
+          bbb->CreateBr( getValueBB );
 
-          llvm::Value *argBaseRValue = bbb->CreateLoad( argBaseLValue, "argBaseRValue" );
-          llvm::Value *argLValue = bbb->CreateGEP( argBaseRValue, stepRValue, "argLValue" );
+          bbb->SetInsertPoint( getValueBB );
+          llvm::Value *argLValue = bbb->CreateGEP(
+            argBaseRValue,
+            sizeAdapter->llvmLValueToRValue( bbb, stepLValue ),
+            "argLValue" );
           const llvm::Type *argType = paramAdapters[argIndex]->llvmRawType( context );
           llvm::Value *argValue;
           if ( paramAdapters[argIndex]->isPassByReference() || params->get(argIndex)->getUsage() == CG::USAGE_LVALUE )

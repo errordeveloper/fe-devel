@@ -124,12 +124,8 @@ namespace Fabric
         RC::ConstHandle<RC::Object> objectToAvoidFreeDuringExecution;
         void (*functionPtr)( ... ) = m_function->getFunctionPtr( objectToAvoidFreeDuringExecution );
 
-        size_t no_offsets[32];
-        for (int i=0; i<32; i++)
-          no_offsets[i] = 0;
-
         Util::TLSVar<void *>::Setter userdataSetter( s_userdataTLS, userdata );
-        functionPtr( 0, 1, m_baseAddresses, &no_offsets );
+        functionPtr( 0, 1, m_baseAddresses, NULL );
         // FIXME deleteme
         //execute( 0, m_baseAddresses, NULL, functionPtr, userdata );
       }
@@ -154,16 +150,12 @@ namespace Fabric
 
       void executeParallel( size_t iteration, void (*functionPtr)( ... ), void *userdata ) const
       {
-        size_t no_offsets[32];
-        for (int i=0; i<32; i++)
-          no_offsets[i] = 0;
-
         size_t start = 0;
         size_t count = 1;
         const void *offsets;
         if ( m_adjustments.size() == 0 )
         {
-          offsets = no_offsets;
+          offsets = NULL;
         }
         else
         {
