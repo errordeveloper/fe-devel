@@ -178,40 +178,44 @@
       %simpara JavaScript:
       %screen<
         :cdata
+          // Registered types
           > Vec3 = function(x, y, z) {
-          ...   if (typeof x === 'number' && typeof y === 'number' && typeof z === 'number') {
-          .....     this.x = x;
-          .....     this.y = y;
-          .....     this.z = z;
-          .....   }
-          ...   else if (x === undefined && y === undefined && z === undefined) {
-          .....     this.x = 0;
-          .....     this.y = 0;
-          .....     this.z = 0;
-          .....   }
-          ...   else throw'new Vec3: invalid arguments';
-          ... };
-          [Function]
+            if (typeof x === 'number' && typeof y === 'number' && typeof z === 'number') {
+              this.x = x;
+              this.y = y;
+              this.z = z;
+            }
+            else if (x === undefined && y === undefined && z === undefined) {
+              this.x = 0;
+              this.y = 0;
+              this.z = 0;
+            }
+            else throw'new Vec3: invalid arguments';
+          };
+
           > vec3KLBindings = "\n\
-          ... // Construct a Vec3 from three Scalars\n\
-          ... function Vec3(Scalar x, Scalar y, Scalar z) {\n\
-          ...   this.x = x;\n\
-          ...   this.y = y;\n\
-          ...   this.z = z;\n\
-          ... }\n\
-          ... \n\
-          ... // Add two Vec3s\n\
-          ... function Vec3 + (Vec3 a, Vec3 b) {\n\
-          ...   return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);\n\
-          ... }\n\
-          ... ";
-          '\n// Construct a Vec3 from three Scalars\nfunction Vec3(Scalar x, Scalar y, Scalar z) {\nself.x = x;\nself.y = y;\nself.z = z;\n}\n\n// Add two Vec3s\nfunction Vec3 + (Vec3 a, Vec3 b) {\nreturn Vec3(a.x + b.x, a.y + b.y, a.z + b.z);\n}\n'
+          // Construct a Vec3 from three Scalars\n\
+          function Vec3(Scalar x, Scalar y, Scalar z) {\n\
+            this.x = x;\n\
+            this.y = y;\n\
+            this.z = z;\n\
+          }\n\
+          \n\
+          // Add two Vec3s\n\
+          function Vec3 + (Vec3 a, Vec3 b) {\n\
+            return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);\n\
+          }\n\
+          ";
+
           > FABRIC.RT.registerType('Vec3', {
-          ...   members: [{x: 'Scalar'}, {y: 'Scalar'}, {z: 'Scalar'}],
-          ...   constructor: Vec3,
-          ...   kBindings: vec3KLBindings
-          ... });
-          undefined
+            members: [{x: 'Scalar'}, {y: 'Scalar'}, {z: 'Scalar'}],
+            constructor: Vec3,
+            klBindings: {
+              filename: "inline",
+              sourceCode: vec3KLBindings
+            }
+          });
+
           > FABRIC.RT.getRegisteredTypes().Vec3;
           { name: 'Vec3',
             size: 12,
@@ -225,38 +229,44 @@
       %simpara Python:
       %screen<
         :cdata
-          >>> class Vec3():
-          ...   def __init__( self, x = None, y = None, z = None ):
-          ...     if type( x ) is float and type( y ) is float and type( z ) is float:
-          ...       self.x = x
-          ...       self.y = y
-          ...       self.z = z
-          ...     elif x is None and y is None and z is None:
-          ...       self.x = 0
-          ...       self.y = 0
-          ...       self.z = 0
-          ...     else:
-          ...       raise Exception( 'Vec3: invalid arguments' )
-          ...
+          >>> # Registered types
+          class Vec3():
+            def __init__( self, x = None, y = None, z = None ):
+              if type( x ) is float and type( y ) is float and type( z ) is float:
+                self.x = x
+                self.y = y
+                self.z = z
+              elif x is None and y is None and z is None:
+                self.x = 0
+                self.y = 0
+                self.z = 0
+              else:
+                raise Exception( 'Vec3: invalid arguments' )
+
           >>> vec3KLBindings = """
-          ... // Construct a Vec3 from three Scalars
-          ... function Vec3(Scalar x, Scalar y, Scalar z) {
-          ...   self.x = x;
-          ...   self.y = y;
-          ...   self.z = z;
-          ... }
-          ... 
-          ... // Add two Vec3s
-          ... function Vec3 + (Vec3 a, Vec3 b) {
-          ...   return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
-          ... }
-          ... """
+          // Construct a Vec3 from three Scalars
+          function Vec3(Scalar x, Scalar y, Scalar z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+          }
+          // Add two Vec3s
+          function Vec3 + (Vec3 a, Vec3 b) {
+            return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
+          }
+          """
+
           >>> vec3TypeDesc = {
-          ...   'members': [{'x': 'Scalar'}, {'y': 'Scalar'}, {'z': 'Scalar'}],
-          ...   'constructor': Vec3,
-          ...   'kBindings': vec3KLBindings
-          ... };
+            'members': [{'x': 'Scalar'}, {'y': 'Scalar'}, {'z': 'Scalar'}],
+            'constructor': Vec3,
+            'klBindings': {
+              'filename': "(inline)",
+              'sourceCode': vec3KLBindings
+             }
+          }
+
           >>> FABRIC.RT.registerType('Vec3', vec3TypeDesc)
+
           >>> FABRIC.RT.getRegisteredTypes()['Vec3']
           {u'defaultValue': {u'y': 0, u'x': 0, u'z': 0}, u'internalType': u'struct', u'name': u'Vec3', u'members': [{u'type': u'Scalar', u'name': u'x'}, {u'type': u'Scalar', u'name': u'y'}, {u'type': u'Scalar', u'name': u'z'}], u'size': 12}
           >>> 
