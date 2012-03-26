@@ -90,29 +90,8 @@ namespace Fabric
         return index;
       }
 
-      /*
-       * FIXME deleteme
-      size_t addAdjustment( size_t count, size_t batchSize )
-      {
-        size_t index = m_adjustments.size();
-        m_adjustments.resize( index + 1 );
-        Adjustment &newAdjustment = m_adjustments[index];
-        
-        newAdjustment.count = count;
-        newAdjustment.batchSize = batchSize;
-        newAdjustment.batchCount = (count + batchSize - 1) / batchSize;
-        for ( size_t i=0; i<m_paramCount; ++i )
-          newAdjustment.offsets[i] = 0;
-
-        m_totalParallelCalls *= newAdjustment.batchCount;
-        
-        return index;
-      }
-      */
-      
       void setAdjustmentOffset( size_t adjustmentIndex, size_t paramIndex, size_t adjustmentOffset )
       {
-        FABRIC_ASSERT( adjustmentIndex == 0 );
         FABRIC_ASSERT( adjustmentIndex < m_adjustments.size() );
         FABRIC_ASSERT( paramIndex < m_paramCount );
         m_adjustments[adjustmentIndex].offsets[paramIndex] = adjustmentOffset;
@@ -123,11 +102,7 @@ namespace Fabric
         //FABRIC_DEBUG_LOG( "executeSerial('%s')", m_debugDesc.c_str() );
         RC::ConstHandle<RC::Object> objectToAvoidFreeDuringExecution;
         void (*functionPtr)( ... ) = m_function->getFunctionPtr( objectToAvoidFreeDuringExecution );
-
-        Util::TLSVar<void *>::Setter userdataSetter( s_userdataTLS, userdata );
-        functionPtr( 0, 1, m_baseAddresses, NULL );
-        // FIXME deleteme
-        //execute( 0, m_baseAddresses, NULL, functionPtr, userdata );
+        executeStub( NULL, functionPtr, userdata );
       }
       
       void executeParallel( RC::Handle<LogCollector> const &logCollector, void *userdata, bool mainThreadOnly ) const
@@ -148,23 +123,29 @@ namespace Fabric
       
     protected:
 
-      void executeParallel( size_t iteration, void (*functionPtr)( ... ), void *userdata ) const
+      void executeStub( size_t *iteration, void (*functionPtr)( ... ), void *userdata ) const
       {
         size_t start = 0;
         size_t count = 1;
         const void *offsets;
         if ( m_adjustments.size() == 0 )
-        {
           offsets = NULL;
-        }
         else
         {
+          FABRIC_ASSERT( m_adjustments.size() == 1 );
+
           Adjustment const &adjustment = m_adjustments[0];
-          size_t batch = iteration % adjustment.batchCount;
-          start = batch * adjustment.batchSize;
-          count = adjustment.batchSize;
-          if ( start + count > adjustment.count )
-            count = adjustment.count - start;
+          if ( iteration )
+          {
+            size_t batch = *iteration % adjustment.batchCount;
+            start = batch * adjustment.batchSize;
+            count = adjustment.batchSize;
+            if ( start + count > adjustment.count )
+              count = adjustment.count - start;
+          }
+          else
+            count = adjustment.count;
+
           offsets = adjustment.offsets;
         }
 
@@ -172,65 +153,10 @@ namespace Fabric
         functionPtr( start, count, m_baseAddresses, offsets );
       }
    
-      /*
-       * FIXME deleteme
-      void execute( size_t adjustmentIndex, void * const *addresses, size_t const *iteration, void (*functionPtr)( ... ), void *userdata ) const
-      {
-        if ( adjustmentIndex == m_adjustments.size() )
-        {
-          evalWithArgs( addresses, functionPtr, userdata );
-        }
-        else
-        {
-          Adjustment const &adjustment = m_adjustments[adjustmentIndex];
-
-          void **newAddresses = (void **)alloca( m_paramCount * sizeof( void * ) );
-          size_t newIterations;
-          size_t count;
-          size_t const *newIterationsPtr;
-          if ( iteration )
-          {
-            size_t batch = *iteration % adjustment.batchCount;
-            size_t start = batch * adjustment.batchSize;
-            count = adjustment.batchSize;
-            if ( start + count > adjustment.count )
-              count = adjustment.count - start;
-
-            for ( size_t i=0; i<m_paramCount; ++i )
-              newAddresses[i] = (uint8_t *)addresses[i] + start * adjustment.offsets[i];
-              
-            newIterations = *iteration / adjustment.batchCount;
-            newIterationsPtr = &newIterations;
-          }
-          else
-          {
-            count = adjustment.count;
-            
-            for ( size_t i=0; i<m_paramCount; ++i )
-              newAddresses[i] = addresses[i];
-              
-            newIterationsPtr = NULL;
-          }
-
-          for ( size_t i=0; i<count; ++i )
-          {
-            execute( adjustmentIndex + 1, newAddresses, newIterationsPtr, functionPtr, userdata );
-            for ( size_t j=0; j<m_paramCount; ++j )
-              newAddresses[j] = (uint8_t *)newAddresses[j] + adjustment.offsets[j];
-          }
-        }
-      }
-      
-      void executeParallel( size_t iteration, void (*functionPtr)( ... ), void *userdata ) const
-      {
-        execute( 0, m_baseAddresses, &iteration, functionPtr, userdata );
-      }
-      */
-      
       static void ExecuteParallel( void *userdata, size_t iteration )
       {
         ParallelExecutionUserData const *parallelExecutionUserData = static_cast<ParallelExecutionUserData const *>( userdata );
-        parallelExecutionUserData->parallelCall->executeParallel( iteration, parallelExecutionUserData->functionPtr, parallelExecutionUserData->userdata );
+        parallelExecutionUserData->parallelCall->executeStub( &iteration, parallelExecutionUserData->functionPtr, parallelExecutionUserData->userdata );
       }
       
       void evalWithArgs( void * const *argv, void (*functionPtr)( ... ), void *userdata ) const

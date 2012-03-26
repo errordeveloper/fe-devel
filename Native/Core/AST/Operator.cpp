@@ -155,29 +155,27 @@ namespace Fabric
             "argLValue" );
           const llvm::Type *argType = paramAdapters[argIndex]->llvmRawType( context );
           llvm::Value *argValue;
-          if ( paramAdapters[argIndex]->isPassByReference() || params->get(argIndex)->getUsage() == CG::USAGE_LVALUE )
-          {
-            argValue = bbb->CreatePointerCast(
-              argLValue,
-              argType->getPointerTo(),
-              "argValue"
-            );
-          }
-          else if ( params->get(argIndex)->getName() == "index" )
+          if ( params->get(argIndex)->getName() == "index" )
           {
             argValue = bbb->CreatePointerCast(
               argLValue,
               argType,
-              "argValue"
+              "typedArgLValue"
             );
           }
           else
           {
-            // andrew 2012-03-23
-            // FIXME dummy value, the only allowed r-value parameter in DG
-            // operators is the special 'index' parameter so this is never
-            // actually called (will fix when MR stubs are implemented)
-            argValue = paramAdapters[argIndex]->llvmDefaultRValue( bbb );
+            argValue = bbb->CreatePointerCast(
+              argLValue,
+              argType->getPointerTo(),
+              "typedArgLValue"
+            );
+
+            if ( !paramAdapters[argIndex]->isPassByReference()
+                  && params->get(argIndex)->getUsage() != CG::USAGE_LVALUE )
+            {
+              argValue = bbb->CreateLoad( argValue, "typedArgRValue" );
+            }
           }
 
           args.push_back( argValue );
