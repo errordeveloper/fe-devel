@@ -13,32 +13,6 @@
 
 #include <llvm/Module.h>
 
-// FIXME deleteme
-#include <Fabric/Core/CG/ConstStringAdapter.h>
-#include <Fabric/Core/CG/StringAdapter.h>
-#include <Fabric/Core/CG/ExprValue.h>
-// FIXME
-
-#define INIT_DUMP \
-  llvm::Value *tempLValue; \
-  llvm::Value *tempStrLValue; \
-  std::string msg; \
-  CG::ExprValue *msgExprValue; \
-  llvm::Value *msgRValue;
-
-#define DUMP_SIZE( x ) \
-  tempLValue = sizeAdapter->llvmRValueToLValue( bbb, x ); \
-  tempStrLValue = stringAdapter->llvmAlloca( bbb, "tempStrLValue" ); \
-  stringAdapter->llvmInit( bbb, tempStrLValue ); \
-  stringAdapter->llvmCallCast( bbb, sizeAdapter, tempLValue, tempStrLValue ); \
-  stringAdapter->llvmReport( bbb, stringAdapter->llvmLValueToRValue( bbb, tempStrLValue ) );
-
-#define DUMP_STR( x ) \
-  msg = x; \
-  msgExprValue = new CG::ExprValue( constStringAdapter, CG::USAGE_RVALUE, context, constStringAdapter->llvmConst( bbb, msg ) ); \
-  msgRValue = stringAdapter->llvmCast( bbb, *msgExprValue ); \
-  stringAdapter->llvmReport( bbb, msgRValue );
-
 namespace Fabric
 {
   namespace AST
@@ -135,9 +109,6 @@ namespace Fabric
         llvm::Value *stridesLValue = llvm::cast<llvm::Value>( strides );
 
         llvm::Value *endRValue = bbb->CreateAdd( startRValue, countRValue, "endRValue" );
-
-        RC::ConstHandle<CG::ConstStringAdapter> constStringAdapter = cgManager->getConstStringAdapter();
-        RC::ConstHandle<CG::StringAdapter> stringAdapter = cgManager->getStringAdapter();
 
         llvm::Value *stepLValue = sizeAdapter->llvmAlloca( bbb, "stepLValue" );
         llvm::Value *indexLValue = sizeAdapter->llvmAlloca( bbb, "indexLValue" );
