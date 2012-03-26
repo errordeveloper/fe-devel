@@ -706,8 +706,8 @@ namespace Fabric
       llvm::FunctionType const *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
       
       llvm::AttributeWithIndex AWI[3];
-      AWI[0] = llvm::AttributeWithIndex::get( 1, llvm::Attribute::NoCapture );
-      AWI[1] = llvm::AttributeWithIndex::get( 2, llvm::Attribute::NoCapture );
+      AWI[0] = llvm::AttributeWithIndex::get( 1, llvm::Attribute::NoCapture | llvm::Attribute::NoAlias );
+      AWI[1] = llvm::AttributeWithIndex::get( 2, llvm::Attribute::NoCapture | llvm::Attribute::NoAlias );
       AWI[2] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
       llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 3 );
       
@@ -942,8 +942,8 @@ namespace Fabric
       llvm::FunctionType const *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
       
       llvm::AttributeWithIndex AWI[3];
-      AWI[0] = llvm::AttributeWithIndex::get( 1, llvm::Attribute::NoCapture );
-      AWI[1] = llvm::AttributeWithIndex::get( 2, llvm::Attribute::NoCapture );
+      AWI[0] = llvm::AttributeWithIndex::get( 1, llvm::Attribute::NoCapture | llvm::Attribute::NoAlias );
+      AWI[1] = llvm::AttributeWithIndex::get( 2, llvm::Attribute::NoCapture | llvm::Attribute::NoAlias );
       AWI[2] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
       llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 3 );
       
