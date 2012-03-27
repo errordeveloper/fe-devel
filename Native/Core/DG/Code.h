@@ -43,7 +43,6 @@ namespace Fabric
     class Context;
     class ExecutionEngine;
     class Function;
-    class IRCache;
     
     class Code : public RC::Object
     {
