@@ -11,7 +11,6 @@
 #include <Fabric/Core/KLC/ValueGeneratorOperatorWrapper.h>
 #include <Fabric/Core/KLC/ValueMapOperatorWrapper.h>
 #include <Fabric/Core/KLC/ValueTransformOperatorWrapper.h>
-#include <Fabric/Core/DG/IRCache.h>
 #include <Fabric/Core/DG/BCCache.h>
 #include <Fabric/Core/Plug/Manager.h>
 #include <Fabric/Core/KL/Externals.h>
@@ -120,7 +119,6 @@ namespace Fabric
       
         m_cgContext = CG::Context::Create();
 
-        RC::Handle<DG::IRCache> irCache =  DG::IRCache::Instance( &compileOptions ); 
         RC::Handle<DG::BCCache> bcCache = DG::BCCache::Instance( &compileOptions );
         std::string bcCacheKeyForAST = bcCache->keyForAST( m_ast );
         llvm::MemoryBuffer *cachedBuffer = bcCache->get( bcCacheKeyForAST );

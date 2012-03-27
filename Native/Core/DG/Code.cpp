@@ -21,7 +21,6 @@
 #include <Fabric/Core/DG/Function.h>
 #include <Fabric/Core/MT/Impl.h>
 #include <Fabric/Core/MT/LogCollector.h>
-#include <Fabric/Core/DG/IRCache.h>
 #include <Fabric/Core/DG/BCCache.h>
 #include <Fabric/Core/KL/StringSource.h>
 #include <Fabric/Core/KL/Scanner.h>
@@ -169,8 +168,6 @@ namespace Fabric
         OCL::llvmPrepareModule( moduleBuilder, context->getRTManager() );
 #endif
 
-        RC::Handle<IRCache> irCache =  IRCache::Instance( m_compileOptions ); 
-        
         ast->registerTypes( cgManager, diagnostics );
         if ( !diagnostics.containsError() )
         {
