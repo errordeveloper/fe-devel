@@ -44,7 +44,7 @@ namespace Fabric
     BCCache::BCCache( std::string const &compileOptionsString )
     {
       RC::ConstHandle<IO::Dir> rootDir = IO::Dir::Private();
-      RC::ConstHandle<IO::Dir> baseDir = IO::Dir::Create( rootDir, "BCCache" );
+      RC::ConstHandle<IO::Dir> baseDir = IO::Dir::Create( rootDir, "IRCache" );
       baseDir->recursiveDeleteFilesOlderThan( time(NULL) - FABRIC_BC_CACHE_EXPIRY_SEC );
       RC::ConstHandle<IO::Dir> osDir = IO::Dir::Create( baseDir, buildOS );
       RC::ConstHandle<IO::Dir> archDir = IO::Dir::Create( osDir, runningArch );
