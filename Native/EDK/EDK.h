@@ -652,12 +652,6 @@ namespace Fabric
       FABRIC_EXT_DECL_BEGIN //Note: FABRIC_EXT_KL_CLASS macro can't be used on templated classes
       template< class Member > class SlicedArray
       {
-        struct RCVA
-        {
-          size_t refCount;
-          VariableArray<Member> varArray;
-        };
-      
       public:
         
         typedef SlicedArray const &IN;
@@ -666,66 +660,50 @@ namespace Fabric
         SlicedArray( size_t size )
           : m_offset( 0 )
           , m_size( size )
+          , m_va( size )
         {
-          m_rcva = static_cast<RCVA *>( ( *s_callbacks.m_malloc )( sizeof( RCVA ) ) );
-          m_rcva->refCount = 1;
-          m_rcva->varArray.init( size );
         }
       
         SlicedArray( SlicedArray const &that )
           : m_offset( that.m_offset )
           , m_size( that.m_size )
-          , m_rcva( that.m_rcva )
+          , m_va( that.m_va )
         {
-          if ( m_rcva )
-            ++m_rcva->refCount;
         }
       
         SlicedArray( SlicedArray const &that, size_t offset, size_t size )
-          : m_offset( that.m_offset )
+          : m_offset( that.m_offset + offset )
           , m_size( that.m_size )
-          , m_rcva( that.m_variableArray )
+          , m_va( that.m_va )
         {
-          if ( m_rcva && offset + size > m_rcva->varArray.size() )
+          if ( m_offset > m_va.size() )
             throwException( "SlicedArray: offset and/or size out of range" );
-          
-          if ( m_rcva )
-            ++m_rcva->refCount;
         }
       
         SlicedArray &operator =( SlicedArray const &that )
         {
-          if ( m_rcva && --m_rcva->refCount == 0 )
-          {
-            m_rcva->varArray.dispose();
-            ( *s_callbacks.m_free )( m_rcva );
-          }
-
           m_offset = that.m_offset;
-          size = that.size;
-          m_rcva = that.m_rcva;
-          
-          if ( m_rcva )
-            ++m_rcva->refCount;
+          m_size = that.size;
+          m_va = that.m_va;
         }
         
         ~SlicedArray()
         {
-          if ( m_rcva && --m_rcva->refCount == 0 )
-          {
-            m_rcva->varArray.dispose();
-            ( *s_callbacks.m_free )( m_rcva );
-          }
         }
       
         Member const &operator[]( size_t index ) const
         {
-          return m_rcva->varArray[m_offset + index];
+          return m_va[m_offset + index];
         }
       
         Member &operator[]( size_t index )
         {
-          return m_rcva->varArray[m_offset + index];
+          return m_va[m_offset + index];
+        }
+
+        size_t offset() const
+        {
+          return m_offset;
         }
       
         size_t size() const
@@ -737,7 +715,7 @@ namespace Fabric
     
         size_t m_offset;
         size_t m_size;
-        RCVA *m_rcva;
+        VariableArray<Member> m_va;
       }
       FABRIC_EXT_DECL_END;
     };

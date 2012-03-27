@@ -1034,9 +1034,11 @@ namespace Fabric
           );
 
         bbb->SetInsertPoint( loopBodyBB );
-        m_memberAdapter->llvmAssign(
+        llvm::Value *dstMemberLValue = bbb->CreateGEP( bbb->CreateStructGEP( bbb->CreateStructGEP( newBitsLValue, MemberDatasIndex ), 0 ), indexRValue );
+        m_memberAdapter->llvmInit( bbb, dstMemberLValue );
+        m_memberAdapter->llvmAssign( 
           bbb,
-          bbb->CreateGEP( bbb->CreateStructGEP( bbb->CreateStructGEP( newBitsLValue, MemberDatasIndex ), 0 ), indexRValue ),
+          dstMemberLValue,
           m_memberAdapter->llvmLValueToRValue( bbb, bbb->CreateGEP( bbb->CreateStructGEP( bbb->CreateStructGEP( oldBitsLValue, MemberDatasIndex ), 0 ), indexRValue ) )
           );
         sizeAdapter->llvmDefaultAssign(
