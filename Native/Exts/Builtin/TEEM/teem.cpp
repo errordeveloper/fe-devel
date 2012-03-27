@@ -6,6 +6,20 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
+FABRIC_EXT_KL_STRUCT( Vec4, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+  KL::Float32 t;
+} );
+
+FABRIC_EXT_KL_STRUCT( Mat44, {
+  Vec4 row0;
+  Vec4 row1;
+  Vec4 row2;
+  Vec4 row3;
+} );
+
 #include <teem/nrrd.h>
 //#include <teem/gage.h>
 
@@ -15,7 +29,7 @@ void FabricTeemNRRDLoadUShortFromFile(
   KL::Size &imageHeight,
   KL::Size &imageDepth,
   KL::VariableArray<KL::Byte> &imageUShortVoxels,
-  KL::Mat44 &xfoMat
+  Mat44 &xfoMat
   )
 {
   Nrrd* nin = nrrdNew();
@@ -73,7 +87,7 @@ FABRIC_EXT_EXPORT void FabricTeemNRRDLoadUShortFromFileHandle(
   KL::Size &imageHeight,
   KL::Size &imageDepth,
   KL::VariableArray<KL::Byte> &imageUShortVoxels,
-  KL::Mat44 &xfoMat
+  Mat44 &xfoMat
   )
 {
   KL::FileHandleWrapper wrapper(handle);
@@ -88,7 +102,7 @@ FABRIC_EXT_EXPORT void FabricTeemNRRDLoadUShort(
   KL::Size &imageHeight,
   KL::Size &imageDepth,
   KL::VariableArray<KL::Byte> &imageUShortVoxels,
-  KL::Mat44 &xfoMat
+  Mat44 &xfoMat
   )
 {
   imageWidth = 0;

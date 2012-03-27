@@ -14,6 +14,13 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
+FABRIC_EXT_KL_STRUCT( RGBA, {
+  KL::Byte r;
+  KL::Byte g;
+  KL::Byte b;
+  KL::Byte a;
+} );
+
 using namespace cimg_library;
 
 void readImageFromFile(
@@ -21,7 +28,7 @@ void readImageFromFile(
   const KL::String & ext,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
   CImg<unsigned char> img;
@@ -80,7 +87,7 @@ FABRIC_EXT_EXPORT void FabricCIMGDecode(
   KL::Size dataSize,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
 #if defined(FABRIC_OS_WINDOWS)
@@ -112,7 +119,7 @@ FABRIC_EXT_EXPORT void FabricCIMGOpenFileHandle(
   const KL::String & ext,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
   KL::FileHandleWrapper wrapper(fileHandle);
@@ -124,7 +131,7 @@ FABRIC_EXT_EXPORT void FabricCIMGCreateFromText(
   const KL::String & text,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
   unsigned char foreground = 255;
@@ -155,7 +162,7 @@ FABRIC_EXT_EXPORT void FabricCIMGSaveToFileHandle(
   KL::Size imageWidth,
   KL::Size imageHeight,
   KL::Boolean mirrorVertically,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
 )
 {
   KL::FileHandleWrapper wrapper(fileHandle);

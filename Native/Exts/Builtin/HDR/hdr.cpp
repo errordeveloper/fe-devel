@@ -8,6 +8,13 @@
 
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
+    
+FABRIC_EXT_KL_STRUCT( Color, {
+  KL::Scalar r;
+  KL::Scalar g;
+  KL::Scalar b;
+  KL::Scalar a;
+} );
 
 class Buffer
 {
@@ -96,7 +103,7 @@ static bool readHeader(
   return true;
 }
 
-static void rgbeToColor( unsigned char rgbe[4], KL::Color &col )
+static void rgbeToColor( unsigned char rgbe[4], Color &col )
 {
   if( rgbe[3] ) {
     float f = ldexp(1.0,rgbe[3]-(int)(128+8));
@@ -112,7 +119,7 @@ static void rgbeToColor( unsigned char rgbe[4], KL::Color &col )
 
 static bool readPixelsRaw(
   Buffer  &hdr, 
-  KL::VariableArray<KL::Color> &img,
+  KL::VariableArray<Color> &img,
   size_t  idx,
   size_t  nbPixels
   )
@@ -131,7 +138,7 @@ static bool readPixelsRaw(
 
 static bool readPixelsRLE(
   Buffer &hdr, 
-  KL::VariableArray<KL::Color> &img,
+  KL::VariableArray<Color> &img,
   size_t scanlineWidth,
   size_t nbScanlines
   )
@@ -215,7 +222,7 @@ FABRIC_EXT_EXPORT void FabricHDRDecode(
   KL::Size hdrDataSize,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::Color> &imagePixels
+  KL::VariableArray<Color> &imagePixels
   )
 {
   Buffer buffer( hdrData, hdrDataSize );
@@ -232,7 +239,7 @@ FABRIC_EXT_EXPORT void FabricHDROpenFileHandle(
   const KL::String & handle,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::Color> &imagePixels
+  KL::VariableArray<Color> &imagePixels
   )
 {
   KL::FileHandleWrapper wrapper(handle);

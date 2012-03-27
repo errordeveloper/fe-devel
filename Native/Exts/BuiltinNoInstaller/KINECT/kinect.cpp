@@ -26,8 +26,8 @@ FABRIC_EXT_KL_STRUCT( KinectSkeletonData, {
   KL::Integer trackingState;
   KL::Integer trackingID;
   KL::Integer userID;
-  KL::Vec3 center;
-  KL::VariableArray<KL::Vec3> positions;
+  Vec3 center;
+  KL::VariableArray<Vec3> positions;
   KL::VariableArray<KL::Integer> positionTrackingStates;
   KL::Integer quality;
 } );
@@ -60,7 +60,7 @@ FABRIC_EXT_KL_STRUCT( KinectCamera, {
   KL::Boolean supportsColor;
   KL::Boolean supportsDepth;
   KL::Boolean supportsSkeleton;
-  KL::VariableArray<KL::RGBA> colorData;
+  KL::VariableArray<RGBA> colorData;
   KL::VariableArray<KL::Integer> depthData;
   KL::VariableArray<KL::Integer> playerData;
   KL::VariableArray<KinectSkeletonData> skeletonData;
@@ -276,8 +276,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetDepthPixels(
 
 FABRIC_EXT_EXPORT void FabricKINECT_GetPoints(
   KinectCamera & camera,
-  KL::SlicedArray<KL::Vec3> & positions,
-  KL::SlicedArray<KL::Color> & colors
+  KL::SlicedArray<Vec3> & positions,
+  KL::SlicedArray<Color> & colors
 )
 {
 #ifdef KINECT_TRACE
@@ -379,8 +379,8 @@ FABRIC_EXT_EXPORT void FabricKINECT_GetSkeleton(
 /*
   KL::Integer trackingID;
   KL::Integer userID;
-  KL::Vec3 center;
-  KL::VariableArray<KL::Vec3> positions;
+  Vec3 center;
+  KL::VariableArray<Vec3> positions;
   KL::VariableArray<KL::Integer> positionTrackingStates;
   KL::Integer quality;
 */
