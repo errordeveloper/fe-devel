@@ -128,6 +128,15 @@ FABRIC.RT.Vec4.prototype = {
     Math.checkDivisor(s, 'Vec4.divideScalar');
     return this.multiplyScalar(1.0 / s);
   },
+  
+  premultiplyMat44: function(mat44) {
+    return new FABRIC.RT.Vec4(
+      mat44.row0.x * this.x + mat44.row1.x * this.y + mat44.row2.x * this.z + mat44.row3.x * this.t,
+      mat44.row0.y * this.x + mat44.row1.y * this.y + mat44.row2.y * this.z + mat44.row3.y * this.t,
+      mat44.row0.z * this.x + mat44.row1.z * this.y + mat44.row2.z * this.z + mat44.row3.z * this.t,
+      mat44.row0.t * this.x + mat44.row1.t * this.y + mat44.row2.t * this.z + mat44.row3.t * this.t
+    );
+  },
 
   negate: function() {
     return new FABRIC.RT.Vec4(-this.x, - this.y, - this.z, - this.t);
