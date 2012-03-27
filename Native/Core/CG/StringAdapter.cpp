@@ -96,7 +96,7 @@ namespace Fabric
       dataAdapter->llvmCompileToModule( moduleBuilder );
       
       moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
-      moduleBuilder->addTypeName( getCodeName() + "Bits", implType );
+      moduleBuilder->addTypeName( getCodeName() + ".Bits", implType );
       
       static const bool buildFunctions = true;
 

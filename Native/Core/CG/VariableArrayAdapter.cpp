@@ -67,8 +67,6 @@ namespace Fabric
       
       RC::Handle<Context> context = moduleBuilder.getContext();
       
-      llvm::Type const *implType = llvmRawType( context );
-
       m_memberAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<BooleanAdapter> booleanAdapter = getManager()->getBooleanAdapter();
       booleanAdapter->llvmCompileToModule( moduleBuilder );
@@ -83,7 +81,8 @@ namespace Fabric
       RC::ConstHandle<ConstStringAdapter> constStringAdapter = getManager()->getConstStringAdapter();
       constStringAdapter->llvmCompileToModule( moduleBuilder );
       
-      moduleBuilder->addTypeName( getCodeName(), implType );
+      moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
+      moduleBuilder->addTypeName( getCodeName() + ".Bits", getLLVMImplType( context ) );
       
       static const bool buildFunctions = true;
       bool const guarded = moduleBuilder.getCompileOptions()->getGuarded();
