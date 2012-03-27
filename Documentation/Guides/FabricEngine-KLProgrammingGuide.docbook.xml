@@ -1276,8 +1276,7 @@ String c<>[];   // A sliced array of variable-size
               </para></listitem>
             
               <listitem><para>
-                Variable-size arrays are copied when they are assigned.
-                <warning><simpara>This means that there is no inexpensive way to assign variable-size arrays; this will probably be fixed in a future version of Fabric.</simpara></warning>
+                Variable-size arrays are <glossterm>duplicate-on-modify</glossterm>, meaning that it is inexpensive to assign one variable-size array to another but as soon as one of the <quote>copies</quote> is modified the contents are duplciated.
               </para></listitem>
             
               <listitem><para>
@@ -1453,8 +1452,7 @@ Boolean integerToBoolean[Integer];  // An Integer-to-Boolean dictionary
         
           <itemizedlist>
             <listitem><para>
-              Dictionaries are copied on assignment.  However, they are always passed by reference to functions.
-              <note><para>The copy-on-assignment property of dictionaries is likely to change in a future version of KL.</para></note>
+              Dictionaries are <glossterm>duplicate-on-modify</glossterm>, meaning that it is inexpensive to assign one dictionary to another but as soon as one of the <quote>copies</quote> is modified the contents are duplciated.
             </para></listitem>
           
             <listitem><para>
