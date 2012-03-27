@@ -579,9 +579,7 @@ namespace Fabric
     
     void *VariableArrayAdapter::llvmResolveExternalFunction( std::string const &functionName ) const
     {
-      if ( functionName == "__"+getCodeName()+"__Duplicate" )
-        return (void *)&VariableArrayAdapter::Duplicate;
-      else if ( functionName == "__"+getCodeName()+"__Resize" )
+      if ( functionName == "__"+getCodeName()+"__Resize" )
         return (void *)&VariableArrayAdapter::Resize;
       else if ( functionName == "__"+getCodeName()+"__Pop" )
         return (void *)&VariableArrayAdapter::Pop;
@@ -687,11 +685,6 @@ namespace Fabric
     void VariableArrayAdapter::Resize( VariableArrayAdapter const *inst, void *data, size_t newSize )
     {
       inst->m_variableArrayImpl->setNumMembers( data, newSize );
-    }
-    
-    void VariableArrayAdapter::Duplicate( VariableArrayAdapter const *inst, void *data )
-    {
-      inst->m_variableArrayImpl->duplicate( data );
     }
 
     void VariableArrayAdapter::llvmCallResize( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayLValue, llvm::Value *newSizeRValue ) const
@@ -935,22 +928,134 @@ namespace Fabric
     void VariableArrayAdapter::llvmDuplicate( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayLValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
+      RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
       
       std::vector< llvm::Type const * > argTypes;
-      argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
       argTypes.push_back( llvmLType( context ) );
       llvm::FunctionType const *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
       
-      llvm::AttributeWithIndex AWI[3];
-      AWI[0] = llvm::AttributeWithIndex::get( 1, llvm::Attribute::NoCapture | llvm::Attribute::NoAlias );
-      AWI[1] = llvm::AttributeWithIndex::get( 2, llvm::Attribute::NoCapture | llvm::Attribute::NoAlias );
-      AWI[2] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
-      llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 3 );
-      
-      llvm::Function *func = llvm::cast<llvm::Function>( basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__Duplicate", funcType, attrListPtr ) ); 
+      llvm::AttributeWithIndex AWI[1];
+      AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
+      llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 1 );
+
+      std::string name = "__"+getCodeName()+"__Duplicate";
+      llvm::Function *func = llvm::cast<llvm::Function>( basicBlockBuilder.getModuleBuilder()->getFunction( name ) );
+      if ( !func )
+      {
+        ModuleBuilder &mb = basicBlockBuilder.getModuleBuilder();
+        
+        func = llvm::cast<llvm::Function>( mb->getOrInsertFunction( name, funcType, attrListPtr ) ); 
+        func->setLinkage( llvm::GlobalValue::PrivateLinkage );
+        
+        FunctionBuilder fb( mb, funcType, func );
+        llvm::Argument *selfLValue = fb[0];
+        selfLValue->setName( "selfLValue" );
+        selfLValue->addAttr( llvm::Attribute::NoCapture );
+        selfLValue->addAttr( llvm::Attribute::NoAlias );
+        
+        BasicBlockBuilder bbb( fb );
+
+        llvm::BasicBlock *entryBB = fb.createBasicBlock( "entry" );
+        llvm::BasicBlock *loopCheckBB = fb.createBasicBlock( "loopCheck" );
+        llvm::BasicBlock *loopBodyBB = fb.createBasicBlock( "loopBodyBB" );
+        llvm::BasicBlock *loopDoneBB = fb.createBasicBlock( "loopDoneBB" );
+        
+        bbb->SetInsertPoint( entryBB );
+        llvm::Value *oldBitsLValue = bbb->CreateLoad( selfLValue );
+        llvm::Value *allocSizeRValue = sizeAdapter->llvmLValueToRValue(
+          bbb,
+          bbb->CreateStructGEP(
+            oldBitsLValue,
+            AllocSizeIndex
+            )
+          );
+        llvm::Value *mallocSizeRValue = bbb->CreateAdd(
+          sizeAdapter->llvmConst( context, 3 * sizeof(size_t) ),
+          bbb->CreateMul(
+            allocSizeRValue,
+            sizeAdapter->llvmConst( context, m_variableArrayImpl->getMemberImpl()->getAllocSize() )
+            )
+          );
+        llvm::Value *newBitsLValue = bbb->CreatePointerCast(
+          llvmCallMalloc(
+            bbb,
+            mallocSizeRValue
+            ),
+          static_cast<llvm::PointerType const *>( oldBitsLValue->getType() )
+          );
+        sizeAdapter->llvmDefaultAssign(
+          bbb,
+          bbb->CreateStructGEP(
+            newBitsLValue,
+            RefCountIndex
+            ),
+          sizeAdapter->llvmConst( context, 1 )
+          );
+        sizeAdapter->llvmDefaultAssign(
+          bbb,
+          bbb->CreateStructGEP(
+            newBitsLValue,
+            AllocSizeIndex
+            ),
+          allocSizeRValue
+          );
+        llvm::Value *sizeRValue = sizeAdapter->llvmLValueToRValue(
+          bbb,
+          bbb->CreateStructGEP(
+            oldBitsLValue,
+            SizeIndex
+            )
+          );
+        sizeAdapter->llvmDefaultAssign(
+          bbb,
+          bbb->CreateStructGEP(
+            newBitsLValue,
+            SizeIndex
+            ),
+          sizeRValue
+          );
+        llvm::Value *indexLValue = sizeAdapter->llvmAlloca( bbb, "index" );
+        sizeAdapter->llvmDefaultAssign(
+          bbb,
+          indexLValue,
+          sizeAdapter->llvmConst( context, 0 )
+          );
+        bbb->CreateBr( loopCheckBB );
+
+        bbb->SetInsertPoint( loopCheckBB );
+        llvm::Value *indexRValue = sizeAdapter->llvmLValueToRValue( bbb, indexLValue );
+        bbb->CreateCondBr(
+          bbb->CreateICmpULT(
+            indexRValue,
+            sizeRValue
+            ),
+          loopBodyBB,
+          loopDoneBB
+          );
+
+        bbb->SetInsertPoint( loopBodyBB );
+        m_memberAdapter->llvmAssign(
+          bbb,
+          bbb->CreateGEP( bbb->CreateStructGEP( bbb->CreateStructGEP( newBitsLValue, MemberDatasIndex ), 0 ), indexRValue ),
+          m_memberAdapter->llvmLValueToRValue( bbb, bbb->CreateGEP( bbb->CreateStructGEP( bbb->CreateStructGEP( oldBitsLValue, MemberDatasIndex ), 0 ), indexRValue ) )
+          );
+        sizeAdapter->llvmDefaultAssign(
+          bbb,
+          indexLValue,
+          bbb->CreateAdd(
+            indexRValue,
+            sizeAdapter->llvmConst( context, 1 )
+            )
+          );
+        bbb->CreateBr( loopCheckBB );
+
+        bbb->SetInsertPoint( loopDoneBB );
+        llvmRelease( bbb, oldBitsLValue );
+        bbb->CreateStore( newBitsLValue, selfLValue );
+        bbb->CreateRetVoid();
+      }
 
       std::vector< llvm::Value * > args;
-      args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( arrayLValue );
       basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
     }
@@ -981,6 +1086,7 @@ namespace Fabric
         llvm::Argument *bitsLValue = fb[0];
         bitsLValue->setName( "bitsLValue" );
         bitsLValue->addAttr( llvm::Attribute::NoCapture );
+        bitsLValue->addAttr( llvm::Attribute::NoAlias );
         
         BasicBlockBuilder bbb( fb );
 
@@ -1053,6 +1159,7 @@ namespace Fabric
         llvm::Argument *bitsLValue = fb[0];
         bitsLValue->setName( "bitsLValue" );
         bitsLValue->addAttr( llvm::Attribute::NoCapture );
+        bitsLValue->addAttr( llvm::Attribute::NoAlias );
         
         BasicBlockBuilder bbb( fb );
 
