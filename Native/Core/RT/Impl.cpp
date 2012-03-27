@@ -39,7 +39,7 @@ namespace Fabric
       RC::ConstHandle<DictImpl> dictImpl = dictImplWeakHandle.makeStrong();
       if ( !dictImpl )
       {
-        dictImpl = new DictImpl( m_codeName + ".Dict" + comparableImpl->getCodeName(), comparableImpl, this );
+        dictImpl = new DictImpl( m_codeName + ".Dict_" + comparableImpl->getCodeName(), comparableImpl, this );
         dictImplWeakHandle = dictImpl;
       }
       return dictImpl;
@@ -51,7 +51,7 @@ namespace Fabric
       RC::ConstHandle<FixedArrayImpl> fixedArrayImpl = fixedArrayImplWeakHandle.makeStrong();
       if ( !fixedArrayImpl )
       {
-        fixedArrayImpl = new FixedArrayImpl( m_codeName + ".FixArray" + _(length), this, length );
+        fixedArrayImpl = new FixedArrayImpl( m_codeName + ".FixArray_" + _(length), this, length );
         fixedArrayImplWeakHandle = fixedArrayImpl;
       }
       return fixedArrayImpl;
