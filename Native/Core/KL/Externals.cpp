@@ -37,7 +37,7 @@
 #include <stdlib.h>
 
 #if defined(FABRIC_OS_WINDOWS)
-extern "C" void _chkstk();
+extern "C" void __chkstk();
     
 static float imp_roundf( float x )
 {
@@ -499,7 +499,7 @@ namespace Fabric
 
         // Weird Windows stuff
 #if defined(FABRIC_OS_WINDOWS)
-        symbolNameToAddressMap["_chkstk"] = (void *)&_chkstk;
+        symbolNameToAddressMap["_chkstk"] = (void *)&__chkstk;
 #endif
 
         // Map-reduce
