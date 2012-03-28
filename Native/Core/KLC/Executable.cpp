@@ -11,7 +11,7 @@
 #include <Fabric/Core/KLC/ValueGeneratorOperatorWrapper.h>
 #include <Fabric/Core/KLC/ValueMapOperatorWrapper.h>
 #include <Fabric/Core/KLC/ValueTransformOperatorWrapper.h>
-#include <Fabric/Core/DG/IRCache.h>
+#include <Fabric/Core/DG/BCCache.h>
 #include <Fabric/Core/Plug/Manager.h>
 #include <Fabric/Core/KL/Externals.h>
 #include <Fabric/Core/KL/Parser.hpp>
@@ -37,6 +37,7 @@
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/PassManager.h>
 #include <llvm/Support/StandardPasses.h>
+#include <llvm/Bitcode/ReaderWriter.h>
 
 namespace Fabric
 {
@@ -117,7 +118,26 @@ namespace Fabric
         static const bool optimize = true;
       
         m_cgContext = CG::Context::Create();
-        llvm::OwningPtr<llvm::Module> module( new llvm::Module( "Fabric", m_cgContext->getLLVMContext() ) );
+
+        RC::Handle<DG::BCCache> bcCache = DG::BCCache::Instance( &compileOptions );
+        std::string bcCacheKeyForAST = bcCache->keyForAST( m_ast );
+        llvm::MemoryBuffer *cachedBuffer = bcCache->get( bcCacheKeyForAST );
+        llvm::Module *cachedModule = NULL;
+        if ( cachedBuffer )
+        {
+          std::string parseError;
+          llvm::OwningPtr<llvm::MemoryBuffer> buffer( cachedBuffer ); 
+          cachedModule = llvm::ParseBitcodeFile( buffer.get(), m_cgContext->getLLVMContext(), &parseError );
+          if ( cachedModule )
+          {
+            m_ast->registerTypes( cgManager, m_diagnostics );
+            FABRIC_ASSERT( !m_diagnostics.containsError() );
+
+            FABRIC_ASSERT( !llvm::verifyModule( *cachedModule, llvm::PrintMessageAction ) );
+          }
+        }
+
+        llvm::OwningPtr<llvm::Module> module( cachedModule ? cachedModule : new llvm::Module( "Fabric", m_cgContext->getLLVMContext() ) );
         CG::ModuleBuilder moduleBuilder( cgManager, m_cgContext, module.get(), &compileOptions );
 #if defined(FABRIC_MODULE_OPENCL)
         OCL::llvmPrepareModule( moduleBuilder, rtManager );
@@ -126,20 +146,7 @@ namespace Fabric
         llvm::NoFramePointerElim = true;
         llvm::JITExceptionHandling = true;
         
-        RC::Handle<DG::IRCache> irCache =  DG::IRCache::Instance( &compileOptions ); 
-        std::string irCacheKeyForAST = irCache->keyForAST( m_ast );
-        std::string ir = irCache->get( irCacheKeyForAST );
-        if ( ir.length() > 0 )
-        {
-          llvm::SMDiagnostic error;
-          llvm::ParseAssemblyString( ir.c_str(), module.get(), error, m_cgContext->getLLVMContext() );
-          
-          m_ast->registerTypes( cgManager, m_diagnostics );
-          FABRIC_ASSERT( !m_diagnostics.containsError() );
-
-          FABRIC_ASSERT( !llvm::verifyModule( *module, llvm::PrintMessageAction ) );
-        }
-        else
+        if ( !cachedModule )
         {
           m_ast->registerTypes( cgManager, m_diagnostics );
           if ( !m_diagnostics.containsError() )
@@ -175,13 +182,7 @@ namespace Fabric
             passManager->run( *module );
          
             if ( optimize )
-            {
-              std::string ir;
-              llvm::raw_string_ostream irStream( ir );
-              module->print( irStream, 0 );
-              irStream.flush();
-              irCache->put( irCacheKeyForAST, ir );
-            }
+              bcCache->put( bcCacheKeyForAST, module.get() );
           }
         }
         

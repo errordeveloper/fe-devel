@@ -2,14 +2,15 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
-#ifndef _FABRIC_DG_IR_CACHE_H
-#define _FABRIC_DG_IR_CACHE_H
+#ifndef _FABRIC_DG_BC_CACHE_H
+#define _FABRIC_DG_BC_CACHE_H
 
 #include <Fabric/Base/RC/Object.h>
 #include <Fabric/Base/RC/Handle.h>
 #include <Fabric/Base/RC/ConstHandle.h>
 
-#include <string>
+#include <llvm/Module.h>
+#include <llvm/Support/MemoryBuffer.h>
 
 namespace Fabric
 {
@@ -30,22 +31,22 @@ namespace Fabric
   
   namespace DG
   {
-    class IRCache : public RC::Object
+    class BCCache : public RC::Object
     {
     public:
       REPORT_RC_LEAKS
     
-      static RC::Handle<IRCache> Instance( CG::CompileOptions const *compileOptions );
+      static RC::Handle<BCCache> Instance( CG::CompileOptions const *compileOptions );
       static void Terminate();
       
       std::string keyForAST( RC::ConstHandle<AST::GlobalList> const &ast ) const;
       
-      std::string get( std::string const &key ) const;
-      void put( std::string const &key, std::string const &ir ) const;
+      llvm::MemoryBuffer *get( std::string const &key ) const;
+      void put( std::string const &key, llvm::Module *module ) const;
       
     protected:
     
-      IRCache( std::string const &compileOptionsString );
+      BCCache( std::string const &compileOptionsString );
       
       void subDirAndEntryFromKey( std::string const &key, RC::ConstHandle<IO::Dir> &subDir, std::string &entry ) const;
       
@@ -56,4 +57,4 @@ namespace Fabric
   };
 };
 
-#endif //_FABRIC_DG_IR_CACHE_H
+#endif //_FABRIC_DG_BC_CACHE_H
