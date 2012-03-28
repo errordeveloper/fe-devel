@@ -308,7 +308,7 @@ namespace Fabric
                   {
                     if ( !haveAdjustmentIndex )
                     {
-                      adjustmentIndex = result->addAdjustment( container->size(), std::max<size_t>( 1, container->size()/(4*MT::getNumCores()) ) );
+                      adjustmentIndex = result->addAdjustment( container->size() );
                       haveAdjustmentIndex = true;
                     }
                     result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), 1 );
@@ -357,7 +357,7 @@ namespace Fabric
                         {
                           if ( !haveAdjustmentIndex )
                           {
-                            adjustmentIndex = result->addAdjustment( container->size(), std::max<size_t>( 1, container->size()/(4*MT::getNumCores()) ) );
+                            adjustmentIndex = result->addAdjustment( container->size() );
                             haveAdjustmentIndex = true;
                           }
                           result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), memberImpl->getAllocSize() );
