@@ -346,8 +346,6 @@ namespace Fabric
                         RC::ConstHandle<RT::Impl> memberImpl = memberDesc->getImpl();
                         if ( astParamImpl != memberImpl )
                           errors.push_back( memberErrorPrefix + "parameter type mismatch: member element type is "+_(memberDesc->getUserName())+", operator parameter type is "+_(astParamDesc->getUserName()) );
-                        if ( astParamExprType.getUsage() != CG::USAGE_LVALUE )
-                          errors.push_back( memberErrorPrefix + "element parmeters must bind to operator io parameters" );
                         void *baseAddress;
                         if ( slicedArrayDesc->getNumMembers( slicedArrayData ) > 0 )
                           baseAddress = slicedArrayImpl->getMutableMemberData( slicedArrayData, 0 );

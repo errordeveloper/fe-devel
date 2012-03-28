@@ -1,0 +1,8 @@
+[u'compile failed']
+[{u'column': 53, u'line': 1, u'level': u'error', u'desc': u'expression is not an l-value', u'filename': u'(unknown)'}]
+[]
+[]
+[]
+input: 5.19999980927
+input: 5.19999980927
+output: myoutput: 5.2
