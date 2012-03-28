@@ -343,7 +343,7 @@ FABRIC.SceneGraph.registerNodeType('Spline', {
       scene.constructOperator({
         operatorName: 'generateSpline',
         srcFile: 'FABRIC_ROOT/SG/KL/generateSpline.kl',
-        entryFunctionName: 'generateSpline',
+        entryPoint: 'generateSpline',
         parameterLayout: [
           'self',
           'self.positions<>',

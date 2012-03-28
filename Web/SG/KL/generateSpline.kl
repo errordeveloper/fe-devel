@@ -38,12 +38,9 @@ operator generateSpline(
   for (var Integer i = 0; i < numSegments; i++) {
     //calculate the interpolant between 0,1
     var Scalar s = (Scalar(i) / Scalar(numSegments)) ;
-    var Vec4 S = Vec4(pow(s,3), pow(s,2), s, 1);
+    var Vec4 S = Vec4(s*s*s, s*s, s, 1);
     //Post-multiplying vector S with Matrix hC
-    //NOTE: can't do = S*hC since vec4 premultiplication
-    //with Mat44 is not defined in KL.
-    //This should be fixed in Vec4 really!
-    var Vec4 p = (hC.transpose())*S;
+    var Vec4 p = S * hC;
     positions[i] = Vec3(p.x, p.y, p.z);
     indices[indexid++] = i;
     indices[indexid++] = (i + 1);
