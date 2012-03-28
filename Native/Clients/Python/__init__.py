@@ -43,7 +43,7 @@ def _waitForClose():
 atexit.register( _waitForClose )
 
 # declare explicit prototypes for all the external library calls
-_fabric.identify.argtypes = []
+_fabric.initialize.argtypes = []
 _fabric.createClient.argtypes = [
   ctypes.c_void_p
 ]
@@ -69,8 +69,7 @@ _fabric.setJSONNotifyCallback.argtypes = [
   _NOTIFYCALLBACK
 ]
 
-# print app and version information
-_fabric.identify()
+_fabric.initialize()
 
 def createClient():
   return _INTERFACE( _fabric )
