@@ -67,25 +67,34 @@ namespace Fabric
       return m_defaultData;
     }
     
+    void StructImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      for ( size_t i=0; i<m_numMembers; ++i )
+      {
+        StructMemberInfo const &memberInfo = m_memberInfos[i];
+        size_t memberOffset = m_memberOffsets[i];
+        void const *srcMemberData;
+        if ( src )
+          srcMemberData = src + memberOffset;
+        else
+          srcMemberData = 0;
+        void *dstMemberData = dst + memberOffset;
+        memberInfo.desc->initializeDatas( count, srcMemberData, srcStride, dstMemberData, dstStride );
+      }
+    }
+    
     void StructImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );
       FABRIC_ASSERT( dst );
-      uint8_t * const dstEnd = dst + count * dstStride;
-
-      while ( dst != dstEnd )
+      for ( size_t i=0; i<m_numMembers; ++i )
       {
-        for ( size_t i=0; i<m_numMembers; ++i )
-        {
-          StructMemberInfo const &memberInfo = m_memberInfos[i];
-          size_t memberOffset = m_memberOffsets[i];
-          void const *srcMemberData = static_cast<uint8_t const *>(src) + memberOffset;
-          void *dstMemberData = static_cast<uint8_t *>(dst) + memberOffset;
-          memberInfo.desc->setData( srcMemberData, dstMemberData );
-        }
-
-        src += srcStride;
-        dst += dstStride;
+        StructMemberInfo const &memberInfo = m_memberInfos[i];
+        size_t memberOffset = m_memberOffsets[i];
+        void const *srcMemberData = static_cast<uint8_t const *>(src) + memberOffset;
+        void *dstMemberData = static_cast<uint8_t *>(dst) + memberOffset;
+        memberInfo.desc->setDatas( count, srcMemberData, srcStride, dstMemberData, dstStride );
       }
     }
     

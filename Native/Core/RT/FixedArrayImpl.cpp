@@ -29,21 +29,32 @@ namespace Fabric
       initialize( codeName, DT_FIXED_ARRAY, m_memberSize * m_length, flags );
 
       m_defaultData = malloc( getAllocSize() );
-      memset( m_defaultData, 0, getAllocSize() );
-      void const *memberDefaultData = m_memberImpl->getDefaultData();
-      for ( size_t i=0; i<m_length; ++i )
-        m_memberImpl->setData( memberDefaultData, getMutableMemberData( m_defaultData, i ) );
+      m_memberImpl->initializeDatas( m_length, m_memberImpl->getDefaultData(), 0, m_defaultData, m_memberSize );
     }
     
     FixedArrayImpl::~FixedArrayImpl()
     {
-      disposeData( m_defaultData );
+      m_memberImpl->disposeDatas( m_length, m_defaultData, m_memberSize );
       free( m_defaultData );
     }
     
     void const *FixedArrayImpl::getDefaultData() const
     {
       return m_defaultData;
+    }
+
+    void FixedArrayImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        m_memberImpl->initializeDatas( m_length, src, m_memberSize, dst, m_memberSize );
+        if ( src )
+          src += srcStride;
+        dst += dstStride;
+      }
     }
 
     void FixedArrayImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const

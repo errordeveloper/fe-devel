@@ -24,6 +24,26 @@ namespace Fabric
       return &defaultData;
     }
     
+    void StringImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+      while ( dst != dstEnd )
+      {
+        bits_t *&dstBits = *reinterpret_cast<bits_t **>( dst );
+        if ( src )
+        {
+          bits_t *srcBits = *reinterpret_cast<bits_t * const *>( src );
+          dstBits = srcBits;
+          if ( dstBits )
+            dstBits->refCount.increment();
+          src += srcStride;
+        }
+        else dstBits = 0;
+        dst += dstStride;
+      }
+    }
+    
     void StringImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );

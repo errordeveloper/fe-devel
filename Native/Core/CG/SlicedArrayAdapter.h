@@ -58,8 +58,6 @@ namespace Fabric
       SlicedArrayAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::SlicedArrayDesc> const &slicedArrayDesc );
       
       virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
-
-      static void DefaultAssign( SlicedArrayAdapter const *inst, void const *srcData, void *dstData );
       
     private:
     

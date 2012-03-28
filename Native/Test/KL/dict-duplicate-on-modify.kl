@@ -1,0 +1,12 @@
+operator entry() {
+  Byte a[Byte];
+  a[24] = 67;
+  a[98] = 2;
+  report "a = " + a;
+
+  Byte b[Byte] = a;
+  b[32] = 5;
+  b[24] = 9;
+  report "b = " + b;
+  report "a = " + a;
+}

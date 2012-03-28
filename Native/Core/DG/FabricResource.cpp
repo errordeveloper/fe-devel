@@ -76,8 +76,7 @@ namespace Fabric
       {
         size_t size = m_desc->getAllocSize();
         m_resource = malloc( size );
-        memset( m_resource, 0, size );
-        m_desc->setData( m_desc->getDefaultData(), m_resource );
+        m_desc->initializeData( m_desc->getDefaultData(), m_resource );
       }
     }
 

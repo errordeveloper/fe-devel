@@ -50,6 +50,23 @@ namespace Fabric
         return &defaultData;
       }
       
+      void initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+      {
+        FABRIC_ASSERT( dst );
+        uint8_t * const dstEnd = dst + count * dstStride;
+
+        while ( dst != dstEnd )
+        {
+          if ( src )
+          {
+            setValue( getValue( src ), dst );
+            src += srcStride;
+          }
+          else setValue( T(0), dst );
+          dst += dstStride;
+        }
+      }
+      
       void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
       {
         FABRIC_ASSERT( src );
