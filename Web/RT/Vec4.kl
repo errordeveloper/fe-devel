@@ -119,15 +119,6 @@ function Vec4. /= (Vec4 other) {
   this = this / other;
 }
 
-function Vec4 * (Vec4 vec4, Mat44 mat44) {
-  return Vec4(
-    mat44.row0.x * vec4.x + mat44.row1.x * vec4.y + mat44.row2.x * vec4.z + mat44.row3.x * vec4.t,
-    mat44.row0.y * vec4.x + mat44.row1.y * vec4.y + mat44.row2.y * vec4.z + mat44.row3.y * vec4.t,
-    mat44.row0.z * vec4.x + mat44.row1.z * vec4.y + mat44.row2.z * vec4.z + mat44.row3.z * vec4.t,
-    mat44.row0.t * vec4.x + mat44.row1.t * vec4.y + mat44.row2.t * vec4.z + mat44.row3.t * vec4.t
-  );
-}
-
 function Vec4 Vec4.negate() {
   return Vec4(-this.x, - this.y, - this.z, - this.t);
 }
