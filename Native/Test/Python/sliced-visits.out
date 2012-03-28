@@ -1,26 +1,10 @@
 [FABRIC] [MT] childEHPreOp begin
 [FABRIC] [MT]   Child Index: 0
 [FABRIC] [MT]   Child Output: 12
-[FABRIC] [MT]   Parent Index: 0
-[FABRIC] [MT]   Parent Output: 6
-[FABRIC] [MT] childEHPreOp end
-[FABRIC] [MT] childEHPreOp begin
-[FABRIC] [MT]   Child Index: 0
-[FABRIC] [MT]   Child Output: 12
-[FABRIC] [MT]   Parent Index: 1
-[FABRIC] [MT]   Parent Output: 14
 [FABRIC] [MT] childEHPreOp end
 [FABRIC] [MT] childEHPreOp begin
 [FABRIC] [MT]   Child Index: 1
 [FABRIC] [MT]   Child Output: 28
-[FABRIC] [MT]   Parent Index: 0
-[FABRIC] [MT]   Parent Output: 6
-[FABRIC] [MT] childEHPreOp end
-[FABRIC] [MT] childEHPreOp begin
-[FABRIC] [MT]   Child Index: 1
-[FABRIC] [MT]   Child Output: 28
-[FABRIC] [MT]   Parent Index: 1
-[FABRIC] [MT]   Parent Output: 14
 [FABRIC] [MT] childEHPreOp end
 [FABRIC] [MT] parentEHPreOp begin
 [FABRIC] [MT]   Index: 0
@@ -41,24 +25,8 @@
 [FABRIC] [MT] childEHPostOp begin
 [FABRIC] [MT]   Child Index: 0
 [FABRIC] [MT]   Child Output: 12
-[FABRIC] [MT]   Parent Index: 0
-[FABRIC] [MT]   Parent Output: 6
-[FABRIC] [MT] childEHPostOp end
-[FABRIC] [MT] childEHPostOp begin
-[FABRIC] [MT]   Child Index: 0
-[FABRIC] [MT]   Child Output: 12
-[FABRIC] [MT]   Parent Index: 1
-[FABRIC] [MT]   Parent Output: 14
 [FABRIC] [MT] childEHPostOp end
 [FABRIC] [MT] childEHPostOp begin
 [FABRIC] [MT]   Child Index: 1
 [FABRIC] [MT]   Child Output: 28
-[FABRIC] [MT]   Parent Index: 0
-[FABRIC] [MT]   Parent Output: 6
-[FABRIC] [MT] childEHPostOp end
-[FABRIC] [MT] childEHPostOp begin
-[FABRIC] [MT]   Child Index: 1
-[FABRIC] [MT]   Child Output: 28
-[FABRIC] [MT]   Parent Index: 1
-[FABRIC] [MT]   Parent Output: 14
 [FABRIC] [MT] childEHPostOp end
