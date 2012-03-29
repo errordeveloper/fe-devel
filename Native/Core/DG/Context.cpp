@@ -759,5 +759,11 @@ namespace Fabric
 
       return callbacks;
     }
+
+    void Context::logWarning( std::string warning )
+    {
+      if ( getLogCollector() )
+        getLogCollector()->add( ( "[WARNING] " + warning ).c_str() );
+    }
   };
 };

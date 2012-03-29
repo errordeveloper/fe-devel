@@ -149,13 +149,13 @@ namespace Fabric
       }
     };
     
-    Prototype::Prototype( RC::Handle<CG::Manager> const &cgManager )
-      : m_cgManager( cgManager )
-      , m_rtSizeDesc( cgManager->getRTManager()->getSizeDesc() )
+    Prototype::Prototype( RC::Handle<Context> const &context )
+      : m_context( context )
+      , m_rtSizeDesc( context->getCGManager()->getRTManager()->getSizeDesc() )
       , m_rtSizeImpl( m_rtSizeDesc->getImpl() )
-      , m_rtIndexDesc( cgManager->getRTManager()->getIndexDesc() )
+      , m_rtIndexDesc( context->getCGManager()->getRTManager()->getIndexDesc() )
       , m_rtIndexImpl( m_rtIndexDesc->getImpl() )
-      , m_rtContainerDesc( cgManager->getRTManager()->getContainerDesc() )
+      , m_rtContainerDesc( context->getCGManager()->getRTManager()->getContainerDesc() )
       , m_rtContainerImpl( m_rtContainerDesc->getImpl() )
     {
     }
@@ -242,8 +242,8 @@ namespace Fabric
       )
     {
       FABRIC_ASSERT( function );
-      
-      RC::ConstHandle<AST::ParamVector> astParamList = astOperator->getParams( m_cgManager );
+
+      RC::ConstHandle<AST::ParamVector> astParamList = astOperator->getParams( m_context->getCGManager() );
       size_t numASTParams = astParamList->size();
       size_t expectedNumASTParams = prefixCount + m_paramCount;
       if ( numASTParams != expectedNumASTParams )
@@ -280,7 +280,7 @@ namespace Fabric
               continue;
 
             RC::ConstHandle<AST::Param> astParam = astParamList->get( prefixCount + param->index() );
-            CG::ExprType astParamExprType = astParam->getExprType( m_cgManager );
+            CG::ExprType astParamExprType = astParam->getExprType( m_context->getCGManager() );
             RC::ConstHandle<RT::Desc> astParamDesc = astParamExprType.getDesc();
             RC::ConstHandle<RT::Impl> astParamImpl = astParamDesc->getImpl();
             
@@ -293,7 +293,7 @@ namespace Fabric
                 if( astParamExprType.getUsage() != CG::USAGE_RVALUE )
                   haveLValueContainerAccess = true;
                 if ( nodeName != "self" && astParamExprType.getUsage() == CG::USAGE_LVALUE )
-                  errors.push_back( parameterErrorPrefix + "dependency parameters must be 'in' type" );
+                  m_context->logWarning( parameterErrorPrefix + "dependency parameters should be 'in' type" );
 
                 result->setBaseAddress( prefixCount+param->index(), container->getRTContainerData() );
               }
@@ -324,7 +324,7 @@ namespace Fabric
                 std::string const memberErrorPrefix = parameterErrorPrefix + "member '" + memberName + "': ";
 
                 if ( nodeName != "self" && astParamExprType.getUsage() == CG::USAGE_LVALUE )
-                  errors.push_back( memberErrorPrefix + "dependency parameters must be 'in' type" );
+                  m_context->logWarning( memberErrorPrefix + "dependency parameters should be 'in' type" );
 
                 {
                   RC::ConstHandle<RT::SlicedArrayDesc> slicedArrayDesc;

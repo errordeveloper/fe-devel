@@ -145,6 +145,8 @@ namespace Fabric
       static std::string const &GetWrapFabricClientJSSource();
       
       static EDK::Callbacks GetCallbackStruct();
+      
+      void logWarning( std::string warning );
 
       void acquireMutex()
       {
