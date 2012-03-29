@@ -13,15 +13,12 @@ print op.getErrors()
 print op.getDiagnostics()
 
 op.setSourceCode( "operator entry( Float32 input, io String output ) { output = 'myoutput: ' + input; }" )
-print op.getErrors()
-print op.getDiagnostics()
 
 b = c.DG.createBinding()
 b.setOperator( op )
 b.setParameterLayout( [ "self.input", "self.output" ] )
 
 n.bindings.append( b )
-print n.getErrors()
 
 n.setData( "input", 0, 5.2 )
 print "input: " + str( n.getData( "input", 0 ) )

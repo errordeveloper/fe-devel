@@ -292,6 +292,8 @@ namespace Fabric
                   errors.push_back( parameterErrorPrefix + "'container' parmeters must bind to operator in parameters of type "+_(m_rtContainerDesc->getUserName()) );
                 if( astParamExprType.getUsage() != CG::USAGE_RVALUE )
                   haveLValueContainerAccess = true;
+                if ( nodeName != "self" && astParamExprType.getUsage() == CG::USAGE_LVALUE )
+                  errors.push_back( parameterErrorPrefix + "dependency parameters must be 'in' type" );
 
                 result->setBaseAddress( prefixCount+param->index(), container->getRTContainerData() );
               }
@@ -320,6 +322,10 @@ namespace Fabric
                 MemberParam const *memberParam = static_cast<MemberParam const *>(param);
                 std::string const &memberName = memberParam->name();
                 std::string const memberErrorPrefix = parameterErrorPrefix + "member '" + memberName + "': ";
+
+                if ( nodeName != "self" && astParamExprType.getUsage() == CG::USAGE_LVALUE )
+                  errors.push_back( memberErrorPrefix + "dependency parameters must be 'in' type" );
+
                 {
                   RC::ConstHandle<RT::SlicedArrayDesc> slicedArrayDesc;
                   void *slicedArrayData;
@@ -371,8 +377,6 @@ namespace Fabric
                       RC::ConstHandle<RT::SlicedArrayImpl> slicedArrayImpl = slicedArrayDesc->getImpl();
                       if ( astParamImpl != slicedArrayImpl )
                         errors.push_back( memberErrorPrefix + "parameter type mismatch: member array type is "+_(slicedArrayDesc->getUserName())+", operator parameter type is "+_(astParamDesc->getUserName()) );
-                      //if ( astParamExprType.getUsage() != CG::USAGE_LVALUE )
-                      //  throw Exception( "array parmeters must bind to operator io parameters" );
                       
                       result->setBaseAddress( prefixCount+param->index(), slicedArrayData );
                     }
