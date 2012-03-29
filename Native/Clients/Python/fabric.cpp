@@ -30,9 +30,9 @@ namespace Fabric
       }
     }
 
-    extern "C" FABRIC_CLI_EXPORT void createClient( void **ptr, int logWarnings )
+    extern "C" FABRIC_CLI_EXPORT void createClient( void **ptr, char const *opts )
     {
-      ClientWrap *client = new ClientWrap( logWarnings );
+      ClientWrap *client = new ClientWrap( opts );
 
 #ifdef FABRIC_PYTHON_DEBUG
       FABRIC_LOG( "calling createClient: %lx", client);

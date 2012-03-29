@@ -46,7 +46,7 @@ atexit.register( _waitForClose )
 _fabric.initialize.argtypes = []
 _fabric.createClient.argtypes = [
   ctypes.c_void_p,
-  ctypes.c_int
+  ctypes.c_char_p
 ]
 _fabric.jsonExec.argtypes = [
   ctypes.c_void_p,
@@ -229,12 +229,12 @@ class _CLIENT( object ):
     self.__fabric.runScheduledCallbacks( self.__fabricClient )
 
   def __createClient( self, opts ):
-    logWarnings = False
-    if type( opts ) is dict and 'logWarnings' in opts:
-      logWarnings = opts[ 'logWarnings' ]
+    optstr = None
+    if type( opts ) is dict:
+      optstr = json.dumps( opts )
 
     result = ctypes.c_void_p()
-    self.__fabric.createClient( ctypes.pointer( result ), logWarnings )
+    self.__fabric.createClient( ctypes.pointer( result ), optstr )
     return result
 
   def __jsonExec( self, data, length ):

@@ -8,6 +8,7 @@
 #include <Fabric/Clients/Python/IOManager.h>
 #include <Fabric/Core/DG/Context.h>
 #include <Fabric/Base/JSON/Encoder.h>
+#include <Fabric/Base/JSON/Decoder.h>
 #include <Fabric/Core/IO/Helpers.h>
 #include <Fabric/Core/IO/Manager.h>
 #include <Fabric/Core/IO/ResourceManager.h>
@@ -25,7 +26,7 @@ namespace Fabric
 {
   namespace Python
   {
-    ClientWrap::ClientWrap( int logWarnings )
+    ClientWrap::ClientWrap( char const *opts )
       : m_mutex( "Python ClientWrap" )
     {
       std::vector<std::string> pluginPaths;
@@ -62,7 +63,29 @@ namespace Fabric
 #if defined(FABRIC_MODULE_OPENCL)
       OCL::registerTypes( dgContext->getRTManager() );
 #endif
-      dgContext->setLogWarnings( logWarnings );
+
+      if ( opts )
+      {
+        JSON::Decoder decoder( opts, strlen( opts ) );
+        JSON::Entity entity;
+        if ( decoder.getNext( entity ) )
+        {
+          JSON::ObjectDecoder argObjectDecoder( entity );
+          JSON::Entity keyString, valueEntity;
+          while ( argObjectDecoder.getNext( keyString, valueEntity ) )
+          {
+            try
+            {
+              if ( keyString.stringIs( "logWarnings", 11 ) )
+              {
+                valueEntity.requireBoolean();
+                dgContext->setLogWarnings( valueEntity.booleanValue() );
+              }
+            }
+            catch ( Exception e ) {}
+          }
+        }
+      }
 
       Plug::Manager::Instance()->loadBuiltInPlugins( pluginPaths, dgContext->getCGManager(), DG::Context::GetCallbackStruct() );
 
