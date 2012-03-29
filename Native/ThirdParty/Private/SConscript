@@ -74,6 +74,8 @@ nodeFlags = {
 	  os.path.join( includeBaseDir, 'node', 'uv' ),
 	],
 };
+if buildOS == 'Windows':
+  nodeFlags['LIBS'] = archLibs( 'node', ['node'] )
 Export( 'nodeFlags' )
 
 # libedit
