@@ -61,7 +61,17 @@ namespace Fabric
     static v8::Handle<v8::Value> CreateClientV8FunctionCallback( v8::Arguments const &args )
     {
       v8::HandleScope handleScope;
-      
+
+      // andrew 2012-03-29
+      // we accept a map of options as our only parameter
+      if ( args.Length() > 0 && args[0]->IsObject() )
+      {
+        v8::Handle<v8::Object> opts = v8::Handle<v8::Object>::Cast( args[0] );
+        v8::Handle<v8::Value> logWarnings = opts->Get( v8::String::New( "logWarnings" ) );
+        if ( logWarnings->IsBoolean() )
+          ; // FIXME
+      }
+
       v8::Handle<v8::Object> clientWrapConstructorHolder = v8::Object::New();
       ClientWrap::Initialize( clientWrapConstructorHolder );
       

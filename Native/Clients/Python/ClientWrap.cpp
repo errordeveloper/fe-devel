@@ -25,7 +25,7 @@ namespace Fabric
 {
   namespace Python
   {
-    ClientWrap::ClientWrap()
+    ClientWrap::ClientWrap( int logWarnings )
       : m_mutex( "Python ClientWrap" )
     {
       std::vector<std::string> pluginPaths;
@@ -62,6 +62,7 @@ namespace Fabric
 #if defined(FABRIC_MODULE_OPENCL)
       OCL::registerTypes( dgContext->getRTManager() );
 #endif
+      dgContext->setLogWarnings( logWarnings );
 
       Plug::Manager::Instance()->loadBuiltInPlugins( pluginPaths, dgContext->getCGManager(), DG::Context::GetCallbackStruct() );
 

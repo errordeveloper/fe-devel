@@ -24,7 +24,7 @@ namespace Fabric
     public:
       REPORT_RC_LEAKS
     
-      ClientWrap();
+      ClientWrap( int logWarnings );
       virtual ~ClientWrap();
 
       virtual void notify( Util::SimpleString const &jsonEncodedNotifications ) const;
