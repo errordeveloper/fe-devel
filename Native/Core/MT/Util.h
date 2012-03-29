@@ -9,7 +9,7 @@
 
 #if defined(FABRIC_POSIX)
 # include <pthread.h>
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
 #include <windows.h>
 #endif
 
@@ -21,7 +21,7 @@ namespace Fabric
 
 #if defined(FABRIC_POSIX)
     typedef pthread_t ThreadID;
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
     typedef DWORD ThreadID;
 #else
 # error "Unsupported platform"
@@ -31,7 +31,7 @@ namespace Fabric
     {
 #if defined(FABRIC_POSIX)
       return pthread_self();
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       return (DWORD)::GetCurrentThreadId();
 #else
 # error "Unsupported platform"

@@ -28,7 +28,7 @@ public:
 
   SOLib( char const *libName )
   {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
     m_handle = LoadLibraryA( libName );
 #elif defined(FABRIC_POSIX)
     m_handle = dlopen( libName, RTLD_LAZY | RTLD_LOCAL );
@@ -39,7 +39,7 @@ public:
 
   ~SOLib()
   {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
     FreeLibrary( m_handle );
 #elif defined(FABRIC_POSIX)
     dlclose( m_handle );
@@ -51,7 +51,7 @@ public:
     void *result = 0;
     if ( m_handle )
     {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
       result = (void *)GetProcAddress( m_handle, symName );
 #elif defined(FABRIC_POSIX)
       result = (void *)dlsym( m_handle, symName );
@@ -64,7 +64,7 @@ public:
 
 private:
 
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
   HMODULE m_handle;
 #elif defined(FABRIC_POSIX)
   void *m_handle;

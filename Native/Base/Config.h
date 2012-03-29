@@ -18,13 +18,12 @@
 #elif defined( _MSC_VER )
 
 # define FABRIC_OS_WINDOWS
-# define FABRIC_WIN32
 
 # if !defined( FABRIC_INCLUDE_WINDOWS_UI )
 #  define WIN32_LEAN_AND_MEAN   // Avoid unnecessary cruft
 # endif
 # define NOMINMAX              // Don't define min/max as macros, stupid
-# if !defined( WIN32 )
+# if !defined( WIN32 ) //Note: WIN32 is defined for 64 bits too however WIN64 is only defined in 64 bits.
 #  define WIN32 1
 # endif
 
@@ -54,9 +53,14 @@ static inline float roundf( float x ) { return floorf(x+0.5f); }
 # else
 #  define FABRIC_ARCH_32BIT
 # endif
+#elif defined(FABRIC_OS_WINDOWS)
+# if defined(WIN64)
+#  define FABRIC_ARCH_64BIT
+# else
+#  define FABRIC_ARCH_32BIT
+# endif
 #else
-// [pzion 20111014] FIXME: we should properly detect Windows bit architecture
-# define FABRIC_ARCH_32BIT
+# error "missing FABRIC_PLATFORM_... definition"
 #endif
 
 // Build settings

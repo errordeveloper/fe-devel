@@ -7,7 +7,7 @@
 
 #include <Fabric/Base/Config.h>
 
-#if defined( FABRIC_WIN32 )
+#if defined( FABRIC_OS_WINDOWS )
 # include <intrin.h>
 # include <stddef.h>
 #elif defined( FABRIC_POSIX )
@@ -42,7 +42,7 @@ namespace Fabric
       
       void increment()
       {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
 # if defined(WIN64)
         ::_InterlockedIncrement64( (__int64 *)&m_value );
 # else
@@ -57,7 +57,7 @@ namespace Fabric
       
       size_t getValueAndIncrement()
       {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
 # if defined(WIN64)
         return ::_InterlockedExchangeAdd64( (__int64 *)&m_value, 1 );
 # else
@@ -72,7 +72,7 @@ namespace Fabric
       
       size_t decrementAndGetValue()
       {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
 # if defined(WIN64)
         return ::_InterlockedDecrement64( (__int64 *)&m_value );
 # else
@@ -87,7 +87,7 @@ namespace Fabric
       
       void decrement()
       {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
 # if defined(WIN64)
         ::_InterlockedDecrement64( (__int64 *)&m_value );
 # else

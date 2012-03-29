@@ -113,7 +113,8 @@ buildFlags = {
       'ccflags': [ ],
       'linkflags': [ ]
       },
-    'AMD64' : {
+    'x86_64' : {
+      'ccDefs': [ 'WIN64' ],
       'ccflags': [ ],
       'linkflags': [ ]
       },
@@ -138,7 +139,6 @@ if 'linkflags' in osFlags:
   nativeEnv.Append( LINKFLAGS = osFlags['linkflags'] )
 
 subTypes = [ buildArch, buildType ]
-
 for subType in subTypes:
   if subType in osFlags:
     osSubFlags = osFlags[subType]

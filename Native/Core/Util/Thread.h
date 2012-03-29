@@ -10,7 +10,7 @@
 
 #if defined(FABRIC_POSIX)
 # include <pthread.h>
-#elif defined(FABRIC_WIN32) 
+#elif defined(FABRIC_OS_WINDOWS) 
 # include <windows.h>
 # include <process.h>
 #else
@@ -34,7 +34,7 @@ namespace Fabric
         pthread_attr_setstacksize( &m_posixThreadAttr, s_stackSize );
 
         m_posixThread = 0;
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         m_windowsThread = NULL;
 #else
 # error "missing FABRIC_PLATFORM_... definition"
@@ -55,7 +55,7 @@ namespace Fabric
           m_posixThread = 0;
           throw Exception( "pthread_create(): unknown failure" );
         }
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         FABRIC_ASSERT( m_windowsThread == NULL );
         m_windowsThread = (HANDLE)_beginthreadex( NULL, s_stackSize, &Thread::Main, &m_startInfo, 0, NULL );
         if ( m_windowsThread == NULL )
@@ -73,7 +73,7 @@ namespace Fabric
           throw Exception( "pthread_join(): unknown failure" );
         delete m_posixThread;
         m_posixThread = 0;
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         FABRIC_ASSERT( m_windowsThread != NULL );
         if( ::WaitForSingleObject( m_windowsThread, INFINITE ) == WAIT_FAILED )
           throw Exception( "WaitForSingleObject(): unknown failure" );
@@ -90,7 +90,7 @@ namespace Fabric
         FABRIC_ASSERT( !m_posixThread );
       
         pthread_attr_destroy( &m_posixThreadAttr );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         FABRIC_ASSERT( m_windowsThread == NULL );
 #else
 # error "missing FABRIC_PLATFORM_... definition"
@@ -113,7 +113,7 @@ namespace Fabric
         pthread_exit(0);
         return 0;
       }
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       static unsigned __stdcall Main( void *userdata )
       {
         StartInfo const *startInfo = static_cast<StartInfo const *>( userdata );
@@ -127,7 +127,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
       pthread_attr_t m_posixThreadAttr;
       pthread_t *m_posixThread;
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       HANDLE m_windowsThread;
 #else
 # error "missing FABRIC_PLATFORM_... definition"
