@@ -176,6 +176,22 @@ FABRIC.RT.Mat44.prototype = {
       return temp.makeHomogeneousVec3();
     }
   },
+  
+  
+  preMultiplyVector: function(that) {
+    if(that.t !== undefined) {
+      return new FABRIC.RT.Vec4(
+        this.row0.x * that.x + this.row1.x * that.y + this.row2.x * that.z + this.row3.x * that.t,
+        this.row0.y * that.x + this.row1.y * that.y + this.row2.y * that.z + this.row3.y * that.t,
+        this.row0.z * that.x + this.row1.z * that.y + this.row2.z * that.z + this.row3.z * that.t,
+        this.row0.t * that.x + this.row1.t * that.y + this.row2.t * that.z + this.row3.t * that.t
+      );
+    }
+    else {
+      var temp = this.multiplyVector(new FABRIC.RT.Vec4(that.x, that.y, that.z, 1.0));
+      return temp.makeHomogeneousVec3();
+    }
+  },
 
   multiply: function(that) {
     return new FABRIC.RT.Mat44(

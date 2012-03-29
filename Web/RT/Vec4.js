@@ -128,6 +128,7 @@ FABRIC.RT.Vec4.prototype = {
     Math.checkDivisor(s, 'Vec4.divideScalar');
     return this.multiplyScalar(1.0 / s);
   },
+  
 
   negate: function() {
     return new FABRIC.RT.Vec4(-this.x, - this.y, - this.z, - this.t);
