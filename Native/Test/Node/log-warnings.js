@@ -37,4 +37,6 @@ var run = function( opts ) {
 
 run();
 run( { 'logWarnings': true } );
+run( 'foobar' );
+run( { 'logWarnings': 'yes' } );
 

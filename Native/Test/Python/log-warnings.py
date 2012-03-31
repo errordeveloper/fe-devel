@@ -38,4 +38,7 @@ def run( opts ):
 
 run( None )
 run( { 'logWarnings': True } )
+run( 'foobar' )
+run( { 'logWarnings': 'yes' } )
+
 
