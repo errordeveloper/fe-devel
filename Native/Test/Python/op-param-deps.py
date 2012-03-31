@@ -1,6 +1,6 @@
 import fabric
 
-c = fabric.createClient()
+c = fabric.createClient( { 'logWarnings': True } )
 
 pn = c.DG.createNode( "parent" )
 pn.addMember( "input", "String" )

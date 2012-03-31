@@ -18,8 +18,4 @@ node.addMember( "testBool", "Boolean" )
 node.addMember( "foo", "Integer" )
 node.bindings.append(binding)
 
-errors = node.getErrors()
-print len( errors )
-print errors[0]
-
 fabricClient.close()

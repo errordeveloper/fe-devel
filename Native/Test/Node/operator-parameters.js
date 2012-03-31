@@ -17,8 +17,4 @@ node.addMember( "testBool", "Boolean" );
 node.addMember( "foo", "Integer" );
 node.bindings.append(binding);
 
-var errors = node.getErrors();
-console.log( errors.length );
-console.log( errors[0] );
-
 FABRIC.close();
