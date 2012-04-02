@@ -1,11 +1,11 @@
 ag.getCount() = 10
 ag.produce(0) = 0
 ag.produce(1) = 1
-ag.produce(2) = 1.414213538169861
-ag.produce(3) = 1.732050776481628
+ag.produce(2) = 1.4142
+ag.produce(3) = 1.7321
 ag.produce(4) = 2
-ag.produce(5) = 2.2360680103302
-ag.produce(6) = 2.449489831924438
-ag.produce(7) = 2.645751237869263
-ag.produce(8) = 2.828427076339722
+ag.produce(5) = 2.2361
+ag.produce(6) = 2.4495
+ag.produce(7) = 2.6458
+ag.produce(8) = 2.8284
 ag.produce(9) = 3

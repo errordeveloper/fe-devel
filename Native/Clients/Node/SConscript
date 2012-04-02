@@ -34,8 +34,13 @@ fabricNodePackage = nodeEnv.Command(
     Copy( "$TARGET", "$SOURCE" )
   ])
 Export('fabricNodePackage')
+
+nodeDestModuleName = nodeLibraryName
+if buildOS == 'Windows':
+  nodeDestModuleName = 'Fabric.node'
+
 fabricNodeAddOn = nodeEnv.Command(
-  fabricNodeModuleDistDir.File( nodeLibraryName ),
+  fabricNodeModuleDistDir.File( nodeDestModuleName ),
   nodeLoadableModule,
   [
     Copy( "$TARGET", "$SOURCE" )

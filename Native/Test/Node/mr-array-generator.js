@@ -12,6 +12,6 @@ ag = FC.MR.createArrayGenerator(cv, ago);
 var count = ag.getCount();
 console.log("ag.getCount() = " + count);
 for (var i=0; i<count; ++i)
-  console.log("ag.produce("+i+") = "+ag.produce(i));
+  console.log("ag.produce("+i+") = "+Math.round(ag.produce(i)*10000)/10000);
 
 FC.close();

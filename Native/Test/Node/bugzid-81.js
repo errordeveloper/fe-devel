@@ -99,7 +99,18 @@ F = require('Fabric').createClient();
   for(var i=0;i<displayCount;i++)
     indices.push(i);
 
-  console.log(JSON.stringify(dgnode1.getSlicesBulkData(indices)));
-  console.log(JSON.stringify(dgnode2.getSlicesBulkData(indices)));
+  var data1 = dgnode1.getSlicesBulkData( indices );
+  for (var i in data1) {
+    data1[i].a = Math.round(data1[i].a * 10000)/10000;
+    data1[i].b = Math.round(data1[i].b * 10000)/10000;
+    data1[i].result = Math.round(data1[i].result * 10000)/10000;
+  }
+  console.log(JSON.stringify(data1));
+
+  var data2 = dgnode2.getSlicesBulkData( indices );
+  for (var i in data2) {
+    data2[i].result = Math.round(data2[i].result * 10000)/10000;
+  }
+  console.log(JSON.stringify(data2));
 
 F.close();
