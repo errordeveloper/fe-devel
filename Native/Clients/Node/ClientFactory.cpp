@@ -71,7 +71,7 @@ namespace Fabric
         constructorArgs[0] = v8::Null();
 
       v8::Handle<v8::Object> clientWrapConstructorHolder = v8::Object::New();
-      ClientWrap::Initialize( clientWrapConstructorHolder );
+      ClientWrap::Init( clientWrapConstructorHolder );
      
       v8::Handle<v8::Object> clientWrap = v8::Handle<v8::Function>::Cast( clientWrapConstructorHolder->Get( v8::String::New( "Client" ) ) )->NewInstance( 1, constructorArgs );
       
