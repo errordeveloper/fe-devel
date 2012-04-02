@@ -45,7 +45,8 @@ atexit.register( _waitForClose )
 # declare explicit prototypes for all the external library calls
 _fabric.initialize.argtypes = []
 _fabric.createClient.argtypes = [
-  ctypes.c_void_p
+  ctypes.c_void_p,
+  ctypes.c_char_p
 ]
 _fabric.jsonExec.argtypes = [
   ctypes.c_void_p,
@@ -71,8 +72,8 @@ _fabric.setJSONNotifyCallback.argtypes = [
 
 _fabric.initialize()
 
-def createClient():
-  return _INTERFACE( _fabric )
+def createClient( opts = None ):
+  return _INTERFACE( _fabric, opts )
 
 # used in unit tests
 def stringify( obj ):
@@ -134,8 +135,8 @@ def _typeToDict( obj ):
 
 # this is the interface object that gets returned to the user
 class _INTERFACE( object ):
-  def __init__( self, fabric ):
-    self.__client = _CLIENT( fabric )
+  def __init__( self, fabric, opts ):
+    self.__client = _CLIENT( fabric, opts )
     self.KLC = self.__client.klc
     self.MR = self.__client.mr
     self.RT = self.__client.rt
@@ -170,9 +171,9 @@ class _INTERFACE( object ):
     return memoryUsage[ '_' ]
 
 class _CLIENT( object ):
-  def __init__( self, fabric ):
+  def __init__( self, fabric, opts ):
     self.__fabric = fabric
-    self.__fabricClient = self.__createClient()
+    self.__fabricClient = self.__createClient( opts )
 
     self.__queuedCommands = []
     self.__queuedUnwinds = []
@@ -227,9 +228,13 @@ class _CLIENT( object ):
   def __runScheduledCallbacks( self ):
     self.__fabric.runScheduledCallbacks( self.__fabricClient )
 
-  def __createClient( self ):
+  def __createClient( self, opts ):
+    optstr = None
+    if type( opts ) is dict:
+      optstr = json.dumps( opts )
+
     result = ctypes.c_void_p()
-    self.__fabric.createClient( ctypes.pointer( result ) )
+    self.__fabric.createClient( ctypes.pointer( result ), optstr )
     return result
 
   def __jsonExec( self, data, length ):

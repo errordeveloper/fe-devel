@@ -137,6 +137,7 @@ namespace Fabric
         VPT_3D
       } viewPortType = VPT_EMPTY;
       bool compositing = false;
+      int logWarnings = -1;
       for ( int16_t i=0; i<argc; ++i )
       {
         if ( strcmp( argn[i], "windowType" ) == 0 )
@@ -150,6 +151,13 @@ namespace Fabric
           contextID = argv[i];
         else if ( strcmp( argn[i], "compositing" ) == 0 )
           compositing = true;
+        else if ( strcmp( argn[i], "logWarnings" ) == 0 )
+        {
+          if ( strcmp( argv[i], "true" ) == 0 )
+            logWarnings = 1;
+          else if ( strcmp( argv[i], "false" ) == 0 )
+            logWarnings = 0;
+        }
       }
       
       RC::Handle<Context> context;
@@ -298,6 +306,10 @@ namespace Fabric
         
         RC::Handle<IOManager> ioManager = IOManager::Create( npp );
         context = Context::Create( ioManager, pluginPaths );
+
+        if ( logWarnings > -1 )
+          context->setLogWarnings( logWarnings );
+
         ioManager->setContext( context );
         Plug::Manager::Instance()->loadBuiltInPlugins( pluginPaths, context->getCGManager(), DG::Context::GetCallbackStruct() );
         

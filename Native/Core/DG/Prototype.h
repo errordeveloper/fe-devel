@@ -25,11 +25,6 @@ namespace Fabric
     class Impl;
   };
   
-  namespace CG
-  {
-    class Manager;
-  };
-  
   namespace AST
   {
     class Operator;
@@ -39,12 +34,13 @@ namespace Fabric
   {
     class Scope;
     class Function;
+    class Context;
     
     class Prototype
     {
     public:
     
-      Prototype( RC::Handle<CG::Manager> const &cgManager );
+      Prototype( RC::Handle<Context> const &context );
       virtual ~Prototype();
       
       void setDescs( std::vector<std::string> const &descs );
@@ -76,7 +72,7 @@ namespace Fabric
       size_t m_paramCount;
       std::map< std::string, std::multimap< std::string, Param * > > m_params;
       
-      RC::Handle<CG::Manager> m_cgManager;
+      RC::Handle<Context> m_context;
       RC::ConstHandle<RT::Desc> m_rtSizeDesc;
       RC::ConstHandle<RT::Impl> m_rtSizeImpl;
       RC::ConstHandle<RT::Desc> m_rtIndexDesc;

@@ -145,6 +145,9 @@ namespace Fabric
       static std::string const &GetWrapFabricClientJSSource();
       
       static EDK::Callbacks GetCallbackStruct();
+      
+      void logWarning( std::string warning );
+      void setLogWarnings( bool );
 
       void acquireMutex()
       {
@@ -181,6 +184,7 @@ namespace Fabric
       std::string m_contextID;
     
       Util::Mutex m_mutex;
+      bool m_logWarnings;
       RC::Handle<MT::LogCollector> m_logCollector;
       RC::Handle<RT::Manager> m_rtManager;
       RC::Handle<IO::Manager> m_ioManager;

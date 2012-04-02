@@ -174,6 +174,15 @@ namespace Fabric
 
       v8::HandleScope v8HandleScope;
       ClientWrap *clientWrap = new ClientWrap( args.This() );
+
+      if ( args.Length() > 0 && args[0]->IsObject() )
+      {
+        v8::Handle<v8::Object> opts = v8::Handle<v8::Object>::Cast( args[0] );
+        v8::Handle<v8::Value> logWarnings = opts->Get( v8::String::New( "logWarnings" ) );
+        if ( logWarnings->IsBoolean() )
+          clientWrap->m_client->getContext()->setLogWarnings( logWarnings->BooleanValue() );
+      }
+
       FABRIC_ASSERT( clientWrap );
       
       return v8HandleScope.Close( args.This() );
