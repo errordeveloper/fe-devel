@@ -14,11 +14,15 @@ var ap = fabricClient.MR.createArrayGenerator(
   );
 
 ap.produceAsync(function (result) {
-  console.log(result);
+  for (var i in result) {
+    console.log('  ' + Math.round(result[i]*10000)/10000);
+  }
   ap.produceAsync(5, function (result) {
-    console.log(result);
+    console.log(Math.round(result*10000)/10000);
     ap.produceAsync(4, 8, function (result) {
-      console.log(result);
+      for (var i in result) {
+        console.log('  ' + Math.round(result[i]*10000)/10000);
+      }
       fabricClient.close();
       });
     });
