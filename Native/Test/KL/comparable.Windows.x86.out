@@ -1,0 +1,49 @@
+Boolean:
+gr.hash = 1
+sm.hash = 0
+gr.compare(gr) = 0
+gr.compare(sm) = 1
+sm.compare(gr) = -1
+sm.compare(sm) = 0
+Byte:
+gr.hash = 255
+sm.hash = 0
+gr.compare(gr) = 0
+gr.compare(sm) = 255
+sm.compare(gr) = -255
+sm.compare(sm) = 0
+Integer:
+gr.hash = 200000000
+sm.hash = 4274967296
+gr.compare(gr) = 0
+gr.compare(sm) = 220000000
+sm.compare(gr) = -220000000
+sm.compare(sm) = 0
+Size:
+gr.hash = 200000000
+sm.hash = 2000000
+gr.compare(gr) = 0
+gr.compare(sm) = 1
+sm.compare(gr) = -1
+sm.compare(sm) = 0
+Scalar:
+gr.hash = 1078523331
+sm.hash = 3224203428
+gr.compare(gr) = 0
+gr.compare(sm) = 1
+sm.compare(gr) = -1
+sm.compare(sm) = 0
+Float64:
+gr.hash = 300063655
+sm.hash = 3135564218
+gr.compare(gr) = 0
+gr.compare(sm) = 1
+sm.compare(gr) = -1
+sm.compare(sm) = 0
+String:
+gr.hash = 2087728727
+sm.hash = 5381
+gr.compare(gr) = 0
+gr.compare(sm) = 1
+sm.compare(gr) = -1
+sm.compare(sm) = 0
