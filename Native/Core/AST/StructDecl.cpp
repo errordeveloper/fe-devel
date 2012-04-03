@@ -51,7 +51,7 @@ namespace Fabric
       m_members->buildStructMemberInfoVector( rtManager, structMemberInfoVector );
       try
       {
-        rtManager->registerStruct( m_name, structMemberInfoVector );
+        rtManager->registerStruct( m_name, structMemberInfoVector, this );
       }
       catch ( Exception e )
       {

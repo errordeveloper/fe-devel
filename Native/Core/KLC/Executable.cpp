@@ -83,6 +83,10 @@ namespace Fabric
       LLVMLinkInJIT();
       
       RC::ConstHandle<RT::Manager> rtManager = cgManager->getRTManager();
+      m_ast = AST::GlobalList::Create(
+        cgManager->getRTManager()->getASTGlobals(),
+        m_ast
+        );
       
       AST::RequireNameToLocationMap requires;
       m_ast->collectRequires( requires );

@@ -10,6 +10,11 @@
 
 namespace Fabric
 {
+  namespace AST
+  {
+    class StructDecl;
+  }
+
   namespace RT
   {
     class StructImpl;
@@ -35,18 +40,23 @@ namespace Fabric
       
       virtual void jsonDesc( JSON::ObjectEncoder &resultObjectEncoder ) const;
 
+      RC::ConstHandle<AST::StructDecl> getASTStructDecl() const;
+
     protected:
     
       StructDesc(
         std::string const &userNameBase,
         std::string const &userNameArraySuffix,
-        RC::ConstHandle<StructImpl> const &structImpl
+        RC::ConstHandle<StructImpl> const &structImpl,
+        RC::ConstHandle<AST::StructDecl> const &existingStructDecl
         );
  
     private:
       
       RC::ConstHandle<StructImpl> m_structImpl;
       mutable RC::Handle<RC::Object> m_prototype;
+
+      RC::ConstHandle<AST::StructDecl> m_astStructDecl;
     };
   }
 }
