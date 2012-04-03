@@ -101,7 +101,7 @@ namespace Fabric
         RC::ConstHandle<CG::SizeAdapter> sizeAdapter = cgManager->getSizeAdapter();
         llvm::Value *zeroRValue = sizeAdapter->llvmConst( context, 0 );
         llvm::Value *oneRValue = sizeAdapter->llvmConst( context, 1 );
-        llvm::Value *numArgsRValue = sizeAdapter->llvmConst( context, numArgs );
+        //llvm::Value *numArgsRValue = sizeAdapter->llvmConst( context, numArgs );
 
         llvm::Value *startRValue = llvm::cast<llvm::Value>( start );
         llvm::Value *countRValue = llvm::cast<llvm::Value>( count );
@@ -122,7 +122,7 @@ namespace Fabric
 
         llvm::Function *realOp = llvm::cast<llvm::Function>( moduleBuilder->getFunction( getSymbolName( cgManager ) ) );
         std::vector<llvm::Value *>args;
-        for (int argIndex=0; argIndex<numArgs; argIndex++)
+        for ( size_t argIndex=0; argIndex<numArgs; argIndex++ )
         {
           llvm::BasicBlock *getStrideBB = functionBuilder.createBasicBlock( "getStrideBB" );
           llvm::BasicBlock *getValueBB = functionBuilder.createBasicBlock( "getValueBB" );
@@ -177,11 +177,13 @@ namespace Fabric
             llvm::Value *argValue = bbb->CreateAlloca( argType );
             bbb->CreateCondBr( bbb->CreateIsNotNull( argBaseRValue ), argNotNullBB, argNullBB );
             bbb->SetInsertPoint( argNotNullBB );
+            /*
             llvm::Value *typedArgLValue = bbb->CreatePointerCast(
               argLValue,
               argType->getPointerTo(),
               "typedArgLValue"
             );
+            */
             llvm::Value *typedArgRValue = bbb->CreateLoad( argValue, "typedArgRValue" );
             bbb->CreateStore( typedArgRValue, argValue );
             bbb->CreateBr( continueArgBB );
