@@ -65,7 +65,7 @@ namespace Fabric
       static const bool buildFunctions = true;
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -79,7 +79,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, byteAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, byteAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *byteLValue = functionBuilder[0];
@@ -93,7 +93,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, sizeAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, sizeAdapter, this, ConstructorBuilder::LowCost );
         if ( buildFunctions )
         {
           llvm::Value *sizeLValue = functionBuilder[0];
@@ -107,7 +107,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, fp32Adapter, this, ConstructorBuilder::MedLowCost );
+        ConstructorBuilder functionBuilder( moduleBuilder, fp32Adapter, this, ConstructorBuilder::MedHighCost );
         if ( buildFunctions )
         {
           llvm::Value *scalarLValue = functionBuilder[0];
@@ -121,7 +121,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, fp64Adapter, this, ConstructorBuilder::MedHighCost );
+        ConstructorBuilder functionBuilder( moduleBuilder, fp64Adapter, this, ConstructorBuilder::MedLowCost );
         if ( buildFunctions )
         {
           llvm::Value *scalarLValue = functionBuilder[0];
@@ -135,7 +135,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
