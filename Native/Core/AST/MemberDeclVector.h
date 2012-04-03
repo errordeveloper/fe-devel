@@ -38,7 +38,11 @@ namespace Fabric
     public:
       REPORT_RC_LEAKS
       
-      static RC::ConstHandle<MemberDeclVector> Create( RC::ConstHandle<MemberDecl> const &first = 0, RC::ConstHandle<MemberDeclVector> const &remaining = 0 );
+      static RC::ConstHandle<MemberDeclVector> Create(
+        RC::ConstHandle<MemberDecl> const &first = 0,
+        RC::ConstHandle<MemberDeclVector> const &remaining = 0,
+        RC::ConstHandle<MemberDecl> const &last = 0
+        );
 
       void appendJSON( JSON::Encoder const &encoder, bool includeLocation ) const;
       
