@@ -56,7 +56,7 @@ namespace Fabric
       
     protected:
     
-      ClientWrap();
+      ClientWrap( int compileGuarded );
       ~ClientWrap();
       
       // V8 callbacks

@@ -57,12 +57,7 @@ namespace Fabric
 
       CG::CompileOptions compileOptions;
       compileOptions.setGuarded( false );
-
-      RC::Handle<IO::Manager> ioManager = IOManager::Create( &ClientWrap::ScheduleAsyncUserCallback, this );
-      RC::Handle<DG::Context> dgContext = DG::Context::Create( ioManager, pluginPaths, compileOptions, true );
-#if defined(FABRIC_MODULE_OPENCL)
-      OCL::registerTypes( dgContext->getRTManager() );
-#endif
+      int logWarnings = -1;
 
       if ( opts )
       {
@@ -79,13 +74,27 @@ namespace Fabric
               if ( keyString.stringIs( "logWarnings", 11 ) )
               {
                 valueEntity.requireBoolean();
-                dgContext->setLogWarnings( valueEntity.booleanValue() );
+                logWarnings = valueEntity.booleanValue();
+              }
+              else if ( keyString.stringIs( "guarded", 7 ) )
+              {
+                valueEntity.requireBoolean();
+                compileOptions.setGuarded( valueEntity.booleanValue() );
               }
             }
             catch ( Exception e ) {}
           }
         }
       }
+
+      RC::Handle<IO::Manager> ioManager = IOManager::Create( &ClientWrap::ScheduleAsyncUserCallback, this );
+      RC::Handle<DG::Context> dgContext = DG::Context::Create( ioManager, pluginPaths, compileOptions, true );
+#if defined(FABRIC_MODULE_OPENCL)
+      OCL::registerTypes( dgContext->getRTManager() );
+#endif
+      
+      if ( logWarnings > -1 )
+        dgContext->setLogWarnings( logWarnings );
 
       Plug::Manager::Instance()->loadBuiltInPlugins( pluginPaths, dgContext->getCGManager(), DG::Context::GetCallbackStruct() );
 
