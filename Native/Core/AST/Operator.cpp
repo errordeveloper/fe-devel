@@ -58,15 +58,16 @@ namespace Fabric
       size_t numArgs = params->size();
 
       std::vector<llvm::Type const *> argTypes;
-      llvm::Type const *int64Type = llvm::Type::getInt64Ty( context->getLLVMContext() );
+      RC::ConstHandle<CG::SizeAdapter> sizeAdapter = cgManager->getSizeAdapter();
+      llvm::Type const *sizeType = sizeAdapter->llvmRawType( context );
       llvm::Type const *ptrType = llvm::Type::getInt8PtrTy( context->getLLVMContext() );
       llvm::Type const *ptrArrayType = llvm::ArrayType::get( ptrType, numArgs );
-      llvm::Type const *int64ArrayType = llvm::ArrayType::get( int64Type, numArgs );
+      llvm::Type const *sizeArrayType = llvm::ArrayType::get( sizeType, numArgs );
 
-      argTypes.push_back( int64Type ); // start
-      argTypes.push_back( int64Type ); // count
+      argTypes.push_back( sizeType ); // start
+      argTypes.push_back( sizeType ); // count
       argTypes.push_back( llvm::PointerType::getUnqual( ptrArrayType ) ); // bases
-      argTypes.push_back( llvm::PointerType::getUnqual( int64ArrayType ) ); // strides
+      argTypes.push_back( llvm::PointerType::getUnqual( sizeArrayType ) ); // strides
 
       llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
 
@@ -98,7 +99,6 @@ namespace Fabric
         llvm::BasicBlock *doneBB = functionBuilder.createBasicBlock( "done" );
 
         bbb->SetInsertPoint( entryBB );
-        RC::ConstHandle<CG::SizeAdapter> sizeAdapter = cgManager->getSizeAdapter();
         llvm::Value *zeroRValue = sizeAdapter->llvmConst( context, 0 );
         llvm::Value *oneRValue = sizeAdapter->llvmConst( context, 1 );
         llvm::Value *numArgsRValue = sizeAdapter->llvmConst( context, numArgs );
