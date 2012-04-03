@@ -37,8 +37,15 @@ namespace Fabric
     public:
       REPORT_RC_LEAKS
       
-      static RC::ConstHandle<GlobalList> Create( RC::ConstHandle<Global> const &first = 0, RC::ConstHandle<GlobalList> const &remaining = 0 );
-      static RC::ConstHandle<GlobalList> Create( RC::ConstHandle<GlobalList> const &lhs, RC::ConstHandle<GlobalList> const &rhs );
+      static RC::ConstHandle<GlobalList> Create(
+        RC::ConstHandle<GlobalList> const &before,
+        RC::ConstHandle<Global> const &global,
+        RC::ConstHandle<GlobalList> const &after
+        );
+      static RC::ConstHandle<GlobalList> Create();
+      static RC::ConstHandle<GlobalList> Create( RC::ConstHandle<GlobalList> const &lhs, RC::ConstHandle<GlobalList> const &after );
+      static RC::ConstHandle<GlobalList> Create( RC::ConstHandle<Global> const &global, RC::ConstHandle<GlobalList> const &rhs );
+      static RC::ConstHandle<GlobalList> Create( RC::ConstHandle<GlobalList> const &before, RC::ConstHandle<Global> const &global );
 
       Util::SimpleString toJSON( bool includeLocation ) const;
       void encodeJSON( bool includeLocation, JSON::Encoder &jg ) const;
