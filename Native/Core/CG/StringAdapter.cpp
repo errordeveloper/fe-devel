@@ -596,6 +596,11 @@ namespace Fabric
       RT::StringImpl::Append( dstLValue, srcLValue );
     }
     
+    void StringAdapter::Throw( void const *lValue )
+    {
+      throw Exception( RT::StringImpl::GetValueData( lValue ), RT::StringImpl::GetValueLength( lValue ) );
+    }
+    
     void StringAdapter::llvmReport( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {
       InternalFunctionBuilder functionBuilder(
@@ -607,12 +612,24 @@ namespace Fabric
       basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), rValue );
     }
     
+    void StringAdapter::llvmThrow( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
+    {
+      RC::Handle<Context> context = basicBlockBuilder.getContext();
+      std::vector< llvm::Type const * > argTypes;
+      argTypes.push_back( llvmRType( context ) );
+      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__String__Throw", funcType ); 
+      basicBlockBuilder->CreateCall( func, rValue );
+    }
+    
     void *StringAdapter::llvmResolveExternalFunction( std::string const &functionName ) const
     {
       if ( functionName == "__String__Append" )
         return (void *)&StringAdapter::Append;
       else if ( functionName == "__String__Cast" )
         return (void *)&StringAdapter::Cast;
+      else if ( functionName == "__String__Throw" )
+        return (void *)&StringAdapter::Throw;
       else return Adapter::llvmResolveExternalFunction( functionName );
     }
 

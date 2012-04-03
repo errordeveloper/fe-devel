@@ -446,6 +446,8 @@ namespace Fabric
             return createToken( TOKEN_CONST, sourceRange );
           if ( string == "false" )
             return createToken( TOKEN_FALSE, sourceRange );
+          if ( string == "throw" )
+            return createToken( TOKEN_THROW, sourceRange );
           if ( string == "while" )
             return createToken( TOKEN_WHILE, sourceRange );
           break;
