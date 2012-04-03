@@ -10,6 +10,8 @@
 #include <Fabric/Base/JSON/Decoder.h>
 #include <Fabric/Base/Util/SimpleString.h>
 
+#include <set>
+ 
 namespace Fabric
 {
   namespace RT
@@ -114,7 +116,7 @@ namespace Fabric
     {
       entity.requireObject();
         
-      size_t membersFound = 0;
+      std::set<std::string> membersFound;
       JSON::ObjectDecoder objectDecoder( entity );
       JSON::Entity keyString, valueEntity;
       while ( objectDecoder.getNext( keyString, valueEntity ) )
@@ -135,17 +137,32 @@ namespace Fabric
           size_t memberIndex = it->second;
           void *memberData = static_cast<uint8_t *>(data) + m_memberOffsets[memberIndex];
           m_memberInfos[memberIndex].desc->decodeJSON( valueEntity, memberData );
+
+          membersFound.insert( name );
         }
         catch ( Exception e )
         {
           throw _(name) + ": " + e;
         }
-
-        ++membersFound;
       }
       
-      if ( membersFound != m_numMembers )
-        throw Exception( "missing members" );
+      if ( membersFound.size() != m_numMembers )
+      {
+        std::string missingMembers = "";
+        for ( NameToIndexMap::const_iterator it = m_nameToIndexMap.begin(); it != m_nameToIndexMap.end(); ++it )
+        {
+          if ( membersFound.find( it->first ) == membersFound.end() )
+          {
+            if ( !missingMembers.empty() )
+              missingMembers += ", ";
+            missingMembers += _(it->first);
+          }
+        }
+        if ( membersFound.size() > 1 )
+          throw Exception( "missing members " + missingMembers );
+        else
+          throw Exception( "missing member " + missingMembers );
+      }
     }
 
     void StructImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
