@@ -61,6 +61,7 @@ for PLATFORM in Windows-x86 Darwin-universal Linux-i686 Linux-x86_64; do
   if [ "$PLATFORM" != "Windows-x86" ]; then
     rexec cp "$BIN_SRC_DIR/FabricEngine-NodeModule-$PLATFORM-$VERSION.tar.bz2" "$BIN_DIR/" || error
   else
+    rexec cp "$BIN_SRC_DIR/FabricEngine-NodeModule-$PLATFORM-$VERSION.zip" "$BIN_DIR/" || error
     rexec cp "$BIN_SRC_DIR/FabricEngine-KinectExt-$PLATFORM-$VERSION.$ARCH_EXT" "$BIN_DIR/" || error
   fi
   rexec cp "$BIN_SRC_DIR/FabricEngine-PythonModule-$PLATFORM-$VERSION.tar.bz2" "$BIN_DIR/" || error

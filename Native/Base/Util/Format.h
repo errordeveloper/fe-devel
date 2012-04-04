@@ -52,7 +52,7 @@ namespace Fabric
   inline std::string _( uint32_t uint32 )
   {
     char buffer[32];
-    snprintf( buffer, 32, "%d", (unsigned int)uint32 );
+    snprintf( buffer, 32, "%u", (unsigned int)uint32 );
     return std::string( buffer );
   }
 

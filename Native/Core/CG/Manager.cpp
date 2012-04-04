@@ -370,9 +370,9 @@ namespace Fabric
       // [pzion 20110923] Special case: several internal LLVM functions use
       // the String and ConstString adapters, so make sure they exist for when pulling 
       // optimized IR out of the cache
-      getSizeAdapter();
-      getStringAdapter();
-      getConstStringAdapter();
+      getStringAdapter()->llvmCompileToModule( moduleBuilder );
+      getConstStringAdapter()->llvmCompileToModule( moduleBuilder );
+      getSizeAdapter()->llvmCompileToModule( moduleBuilder );
 
       for ( DescToAdapterMap::const_iterator it=m_descToAdapterMap.begin(); it!=m_descToAdapterMap.end(); ++it )
         it->second->llvmCompileToModule( moduleBuilder );

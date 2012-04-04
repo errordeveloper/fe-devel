@@ -47,7 +47,7 @@ namespace Fabric
       memberLLVMTypes.push_back( llvmSizeTy ); // allocSize
       memberLLVMTypes.push_back( llvmSizeTy ); // length
       memberLLVMTypes.push_back( llvm::ArrayType::get( llvm::Type::getInt8Ty( llvmContext ), 0 ) );
-      llvm::Type const *implType = llvm::StructType::get( llvmContext, memberLLVMTypes );
+      llvm::Type const *implType = llvm::StructType::get( llvmContext, memberLLVMTypes, true );
       
       return implType->getPointerTo();
     }
