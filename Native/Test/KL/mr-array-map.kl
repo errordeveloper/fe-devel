@@ -7,7 +7,7 @@ operator map2(
   io Scalar output
   )
 {
-  report "map2: input=" + input;
+  report("map2: input=" + input);
   output = 1.0 / (Scalar(input + 1) * Scalar(input + 1));
 }
 
@@ -17,7 +17,7 @@ operator map3(
   Index index
   )
 {
-  report "map3: input=" + input + " index=" + index;
+  report("map3: input=" + input + " index=" + index);
   output = 1.0 / (Scalar(input + 1) * Scalar(input + 1));
 }
 
@@ -28,7 +28,7 @@ operator map4(
   Size count
   )
 {
-  report "map4: input=" + input + " index=" + index + " count=" + count;
+  report("map4: input=" + input + " index=" + index + " count=" + count);
   output = 1.0 / (Scalar(input + 1) * Scalar(input + 1));
 }
 
@@ -40,7 +40,7 @@ operator map5(
   String shared
   )
 {
-  report "map5: input=" + input + " index=" + index + " count=" + count + " shared=" + shared;
+  report("map5: input=" + input + " index=" + index + " count=" + count + " shared=" + shared);
   output = 1.0 / (Scalar(input + 1) * Scalar(input + 1));
 }
 
@@ -50,29 +50,29 @@ operator entry() {
     va.push(i);
 
   ArrayProducer<Integer> cap = createConstArray(va);
-  report "cap.getCount() = " + cap.getCount();
+  report("cap.getCount() = " + cap.getCount());
 
   ArrayProducer<Scalar> am2 = createArrayMap(cap, map2);
-  report am2;
-  report am2.getCount();
+  report(am2);
+  report(am2.getCount());
   for (Index i=0; i<10; ++i)
-    report am2.produce(i);
+    report(am2.produce(i));
 
   ArrayProducer<Scalar> am3 = createArrayMap(cap, map3);
-  report am3;
-  report am3.getCount();
+  report(am3);
+  report(am3.getCount());
   for (Index i=0; i<10; ++i)
-    report am3.produce(i);
+    report(am3.produce(i));
 
   ArrayProducer<Scalar> am4 = createArrayMap(cap, map4);
-  report am4;
-  report am4.getCount();
+  report(am4);
+  report(am4.getCount());
   for (Index i=0; i<10; ++i)
-    report am4.produce(i);
+    report(am4.produce(i));
 
   ArrayProducer<Scalar> am5 = createArrayMap(cap, map5, createConstValue("hello"));
-  report am5;
-  report am5.getCount();
+  report(am5);
+  report(am5.getCount());
   for (Index i=0; i<10; ++i)
-    report am5.produce(i);
+    report(am5.produce(i));
 }

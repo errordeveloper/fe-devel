@@ -5,35 +5,35 @@
 operator entry()
 {
   // Unary ops
-  report +Byte(42);
-  report -Byte(42);
+  report(+Byte(42));
+  report(-Byte(42));
 
   // Binary ops
-  report Byte(1) + Byte(2);
-  report Byte(3) - Byte(4);
-  report Byte(6) * Byte(2);
-  report Byte(6) / Byte(2);
-  report Byte(11) % Byte(5);
-  report Byte(11) << Byte(3);
-  report Byte(11) >> Byte(2);
+  report(Byte(1) + Byte(2));
+  report(Byte(3) - Byte(4));
+  report(Byte(6) * Byte(2));
+  report(Byte(6) / Byte(2));
+  report(Byte(11) % Byte(5));
+  report(Byte(11) << Byte(3));
+  report(Byte(11) >> Byte(2));
 
   // Assignment ops
-  var Byte x = 4; report x;
-  x = Byte(5); report x;
-  x += Byte(2); report x;
-  x -= Byte(3); report x;
-  x *= Byte(12); report x;
-  x /= Byte(2); report x;
-  x %= Byte(5); report x;
-  x <<= Byte(1); report x;
-  x >>= Byte(1); report x;
+  var Byte x = 4; report(x);
+  x = Byte(5); report(x);
+  x += Byte(2); report(x);
+  x -= Byte(3); report(x);
+  x *= Byte(12); report(x);
+  x /= Byte(2); report(x);
+  x %= Byte(5); report(x);
+  x <<= Byte(1); report(x);
+  x >>= Byte(1); report(x);
   
   // Bit ops
-  report Byte(7) & Byte(11);
-  report Byte(7) | Byte(11);
-  report Byte(7) ^ Byte(11);
+  report(Byte(7) & Byte(11));
+  report(Byte(7) | Byte(11));
+  report(Byte(7) ^ Byte(11));
   
   // Log ops
-  report Byte(0) && Byte(11);
-  report Byte(7) || Byte(0);
+  report(Byte(0) && Byte(11));
+  report(Byte(7) || Byte(0));
 }

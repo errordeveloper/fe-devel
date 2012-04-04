@@ -8,5 +8,5 @@ operator entry()
   for ( foo=0; foo<10; ++foo )
     if ( foo == 7 )
       break;
-  report foo;
+  report(foo);
 }

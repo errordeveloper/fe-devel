@@ -10,7 +10,7 @@ o.setEntryPoint("foo")
 o.setSourceCode("\
 operator foo( io String string )\n\
 {\n\
-  report string;\n\
+  report(string);\n\
 }\n\
 ")
 

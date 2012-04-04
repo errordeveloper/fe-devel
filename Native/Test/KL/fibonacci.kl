@@ -14,5 +14,5 @@ operator entry()
 {
   var Integer i;
   for ( i=0; i<10; ++i )
-    report fibonacci( i );
+    report(fibonacci( i ));
 }

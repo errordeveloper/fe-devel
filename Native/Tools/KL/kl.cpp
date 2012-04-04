@@ -199,6 +199,8 @@ void handleFile( std::string const &filename, FILE *fp, unsigned int runFlags )
     if ( !diagnostics.containsError() )
       globalList->registerTypes( cgManager, diagnostics );
     if ( !diagnostics.containsError() )
+      cgManager->llvmCompileToModule( moduleBuilder );
+    if ( !diagnostics.containsError() )
       globalList->llvmCompileToModule( moduleBuilder, diagnostics, false );
     if ( !diagnostics.containsError() )
       globalList->llvmCompileToModule( moduleBuilder, diagnostics, true );

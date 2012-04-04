@@ -7,7 +7,7 @@ operator entry()
   var Integer a[14];
   for ( var Size i=0; i<14; ++i )
     a[i] = 3*i+4;
-  report "a.size = " + a.size;
+  report("a.size = " + a.size);
   for ( var Size i=0; i<14; ++i )
-    report "a[" + i + "] = " + a[i];
+    report("a[" + i + "] = " + a[i]);
 }

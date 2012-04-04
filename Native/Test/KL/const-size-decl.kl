@@ -5,11 +5,11 @@
 operator entry()
 {
   const Byte constByte = 42;
-  report constByte;
+  report(constByte);
 
   const Integer constInteger = 17;
-  report constInteger;
+  report(constInteger);
 
   const Size constSize = 654;
-  report constSize;
+  report(constSize);
 }

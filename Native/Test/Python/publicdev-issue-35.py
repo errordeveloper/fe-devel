@@ -14,7 +14,7 @@ for i in range( 0, size ):
 
 pop = c.DG.createOperator( "parentOp" )
 pop.setEntryPoint( "parentOp" )
-pop.setSourceCode( "operator parentOp( String input, io String output ) { output = 'parent: ' + input; report 'parentOp: ' + input; }" )
+pop.setSourceCode( "operator parentOp( String input, io String output ) { output = 'parent: ' + input; report('parentOp: ' + input); }" )
 
 pb = c.DG.createBinding()
 pb.setOperator( pop )
@@ -30,7 +30,7 @@ n.setDependency( pn, 'parent' )
 # test normal parameters
 op = c.DG.createOperator( "childOp" )
 op.setEntryPoint( "childOp" )
-op.setSourceCode( "operator childOp( String input, io String output ) { output = 'child: ' + input; report 'childOp: '+input; }" )
+op.setSourceCode( "operator childOp( String input, io String output ) { output = 'child: ' + input; report('childOp: '+input); }" )
 
 b = c.DG.createBinding()
 b.setOperator( op )

@@ -1,9 +1,9 @@
 function display(Integer a) {
-  report "integer value is " + a;
+  report("integer value is " + a);
 }
 
 function display(String s) {
-  report "string value is '" + s + "'";
+  report("string value is '" + s + "'");
 }
 
 operator entry() {

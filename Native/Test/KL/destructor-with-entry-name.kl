@@ -7,7 +7,7 @@ struct Foo {
 };
 
 function ~Foo() = "myDestructorName" {
-  report this.bar;
+  report(this.bar);
 }
 
 operator entry() {

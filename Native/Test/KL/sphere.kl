@@ -110,7 +110,7 @@ operator entry() {
   Integer detail = 10;
   Size count;
   setSphereVertexCount( detail, count );
-  report "count = " + count;
+  report("count = " + count);
   
   Scalar radius = 10.0;
   Integer indices[];
@@ -118,8 +118,8 @@ operator entry() {
   Vec3 normals<>( count );
   Vec2 uvs<>( count );
   generateSphere( radius, detail, indices, positions, normals, uvs );
-  report "indices = " + indices;
-  report "positions = " + positions;
-  report "normals = " + normals;
-  report "uvs = " + uvs;
+  report("indices = " + indices);
+  report("positions = " + positions);
+  report("normals = " + normals);
+  report("uvs = " + uvs);
 }

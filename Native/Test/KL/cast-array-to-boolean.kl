@@ -5,7 +5,7 @@
 operator entry()
 {
   var Integer a[];
-  report Boolean(a);
+  report(Boolean(a));
   a.push(42);
-  report Boolean(a);
+  report(Boolean(a));
 }

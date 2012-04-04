@@ -4,25 +4,25 @@
 
 function simpleTest() {
   Scalar a[String];
-  report "a.size = " + a.size;
-  report "a.has('foo') = " + a.has('foo');
-  report "a['foo'] = " + a['foo'];
-  report "a = " + a;
+  report("a.size = " + a.size);
+  report("a.has('foo') = " + a.has('foo'));
+  report("a['foo'] = " + a['foo']);
+  report("a = " + a);
   a['foo'] = 3.14;
-  report "a.size = " + a.size;
-  report "a.has('foo') = " + a.has('foo');
-  report "a['foo'] = " + a['foo'];
-  report "a = " + a;
+  report("a.size = " + a.size);
+  report("a.has('foo') = " + a.has('foo'));
+  report("a['foo'] = " + a['foo']);
+  report("a = " + a);
   a['foo'] = 2.71;
-  report "a.size = " + a.size;
-  report "a.has('foo') = " + a.has('foo');
-  report "a['foo'] = " + a['foo'];
-  report "a = " + a;
+  report("a.size = " + a.size);
+  report("a.has('foo') = " + a.has('foo'));
+  report("a['foo'] = " + a['foo']);
+  report("a = " + a);
   a.delete('foo');
-  report "a.size = " + a.size;
-  report "a.has('foo') = " + a.has('foo');
-  report "a['foo'] = " + a['foo'];
-  report "a = " + a;
+  report("a.size = " + a.size);
+  report("a.has('foo') = " + a.has('foo'));
+  report("a['foo'] = " + a['foo']);
+  report("a = " + a);
 }
 
 function largeTest() {
@@ -31,26 +31,26 @@ function largeTest() {
     String key = "key " + i;
     a[key] = "value "+i;
   }
-  report "a = " + a;
-  report "a.size = " + a.size;
+  report("a = " + a);
+  report("a.size = " + a.size);
   for (Size i=0; i<32; ++i) {
     String key = "key " + (i*3)%1024;
-    report "a.has('" + key + "') = " + a.has(key);
+    report("a.has('" + key + "') = " + a.has(key));
   }
   for (Size i=0; i<32; ++i) {
     String key = "key " + (i*5)%1024;
     a.delete( key );
   }
-  report "a = " + a;
-  report "a.size = " + a.size;
+  report("a = " + a);
+  report("a.size = " + a.size);
   Size displayed = 0;
   for ( k, v in a ) {
-    report "a['" + k + "'] = " + v;
+    report("a['" + k + "'] = " + v);
     if ( ++displayed == 32 )
       break;
   }
   a.clear();
-  report "a = " + a;
+  report("a = " + a);
 }
 
 function nestedTest() {
@@ -65,11 +65,11 @@ function nestedTest() {
       a["key "+i][j] = b;
     }
   }
-  report "a = " + a;
-  report "a.size = " + a.size;
-  report "a['key 4'] = " + a['key 4'];
-  report "a['key 4'].size = " + a['key 4'].size;
-  report "a['key 4'][7] = " + a['key 4'][7];
+  report("a = " + a);
+  report("a.size = " + a.size);
+  report("a['key 4'] = " + a['key 4']);
+  report("a['key 4'].size = " + a['key 4'].size);
+  report("a['key 4'][7] = " + a['key 4'][7]);
 }
 
 operator entry() {

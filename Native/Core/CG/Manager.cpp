@@ -363,5 +363,19 @@ namespace Fabric
     {
       return m_rtManager->getStrongerTypeOrNone( lhsDesc, rhsDesc );
     }
-  };
-};
+
+
+    void Manager::llvmCompileToModule( CG::ModuleBuilder &moduleBuilder ) const
+    {
+      // [pzion 20110923] Special case: several internal LLVM functions use
+      // the String and ConstString adapters, so make sure they exist for when pulling 
+      // optimized IR out of the cache
+      getSizeAdapter();
+      getStringAdapter();
+      getConstStringAdapter();
+
+      for ( DescToAdapterMap::const_iterator it=m_descToAdapterMap.begin(); it!=m_descToAdapterMap.end(); ++it )
+        it->second->llvmCompileToModule( moduleBuilder );
+    }
+  }
+}

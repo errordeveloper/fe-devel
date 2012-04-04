@@ -7,7 +7,7 @@ operator entry()
   Size i=0;
   for (;;)
   {
-    report ++i;
+    report(++i);
     if ( i == 10 )
       break;
   }

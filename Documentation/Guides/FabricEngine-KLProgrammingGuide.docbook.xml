@@ -479,7 +479,6 @@ operator entry() {
             <member><code>in</code></member>
             <member><code>io</code></member>
             <member><code>operator</code></member>
-            <member><code>report</code></member>
             <member><code>require</code></member>
             <member><code>return</code></member>
             <member><code>struct</code></member>
@@ -1797,8 +1796,6 @@ function report(String message);
         <para>
           Within Fabric the report function is primarily used for debugging, whereas it is used for general output from the KL tool.
         </para>
-        
-        <note><simpara>The <code>report</code> function is actually a statement, but this will change in a future version of KL.  As such, even thought the parentheses around the <quote>argument</quote> of <code>report</code> are not strictly required, we recommend that you use them to avoid future syntax errors.</simpara></note>
       </section>
       <section xml:id="built-in-functions.numerical">
         <title>Numerical Functions</title>
@@ -4066,7 +4063,7 @@ operator generator(
   Float32 shared
   )
 {
-  report "generator: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  report("generator: value=" + value + " index=" + index + " count=" + count + " shared=" + shared);
   value = shared*index;
 }
 
@@ -4176,7 +4173,7 @@ operator transform(
   Float32 shared
   )
 {
-  report "transform: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  report("transform: value=" + value + " index=" + index + " count=" + count + " shared=" + shared);
   value *= shared * (index + 1);
 }
 
@@ -4279,7 +4276,7 @@ operator map(
   Float32 shared
   )
 {
-  report "map: inputValue=" + inputValue + " index=" + index + " count=" + count + " shared=" + shared;
+  report("map: inputValue=" + inputValue + " index=" + index + " count=" + count + " shared=" + shared);
   Float32 float32Value = inputValue * shared * (index + 1);
   if (abs(float32Value) < 1.0)
     outputValue = "small";

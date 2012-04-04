@@ -33,7 +33,7 @@ FABRIC_VERSION_SUFFIX='-alpha'
 # Choosing from the set 0-9, a-z,
 # A-Z, _, -  and . is safe and
 # recommended.
-FABRIC_CACHE_GENERATION='20-inherited'
+FABRIC_CACHE_GENERATION='21-report-function'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import os, platform, posixpath, glob, sys

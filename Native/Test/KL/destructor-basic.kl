@@ -8,11 +8,11 @@ struct Foo {
 
 function ~Foo() {
   this.bar = 3.14;
-  report "Ran ~Foo";
+  report("Ran ~Foo");
 }
 
 operator entry() {
-  report "Start of entry";
+  report("Start of entry");
   Foo foo;
-  report "End of entry";
+  report("End of entry");
 }

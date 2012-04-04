@@ -38,9 +38,9 @@ function Integer OGLShaderProgram.createAndCompileShader(OGLShaderSource shaders
   infoLen.resize(1);
   glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, infoLen);
 
-  if (infoLen[0] > 1) {// > 1: some drivers report 1 byte strings containing '\0' (should not be treated as warning)
+  if (infoLen[0] > 1) {// > 1: some drivers report(1 byte strings containing '\0' (should not be treated as warning)
     if (compiled[0] > 1) {
-      report(this.name + ' : Shader compilation succeeded with warnings:');
+      report(this.name + ' : Shader compilation succeeded with warnings:'));
     }
     var String infoLog;
     var Integer bufferSize[];

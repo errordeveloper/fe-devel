@@ -24,14 +24,14 @@ operator entry() {
     createConstValue( 42 ),
     multByTwo
     );
-  report vp;
-  report vp.produce();
+  report(vp);
+  report(vp.produce());
 
   vp = createValueTransform(
     createConstValue( 2 ),
     multByShared,
     createConstValue( 3 )
     );
-  report vp;
-  report vp.produce();
+  report(vp);
+  report(vp.produce());
 }

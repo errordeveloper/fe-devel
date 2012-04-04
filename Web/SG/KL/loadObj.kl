@@ -35,7 +35,7 @@ function decodeObj(
     String errors[];
     FabricOBJGetErrors( objParseHandle, errors );
     for( Integer i = 0; i < errors.size; i++ )
-      report 'Error while parsing obj file ' + resource.url + ': ' + errors[i];
+      report('Error while parsing obj file ' + resource.url + ': ' + errors[i]);
   }
   else{
     Size nbEntities;
@@ -56,12 +56,12 @@ function decodeObj(
     FabricOBJGetNbEntityPoints(objParseHandle, -1, nbPts);
     FabricOBJGetNbEntityTriangles(objParseHandle, -1, nbTris);
     FabricOBJGetNbEntities(objParseHandle, nbEntities);
-    report "OBJ " + resource.url + ": " + nbEntities + " entities: " + nbPts + " vertices, " + nbTris + " triangles";
+    report("OBJ " + resource.url + ": " + nbEntities + " entities: " + nbPts + " vertices, " + nbTris + " triangles");
     String values[];
     FabricOBJGetMaterialLibraries(objParseHandle, values);
-    report "  Materials libraries: " + values;
+    report("  Materials libraries: " + values);
     FabricOBJGetMaterialNames(objParseHandle, values);
-    report "  Materials: " + values;
+    report("  Materials: " + values);
     
     for( Size i = 0; i < nbEntities; ++i ) {
       String objName, groupName, matName;
@@ -70,7 +70,7 @@ function decodeObj(
       FabricOBJGetEntityMaterialName(objParseHandle, i, matName);
       FabricOBJGetNbEntityPoints(objParseHandle, i, nbPts);
       FabricOBJGetNbEntityTriangles(objParseHandle, i, nbTris);
-      report "  Entity #" + i + ": objName: " + (objName != "" ? objName : "(none)") + ", groupName: " + (groupName != "" ? groupName : "(none)") + ", matName: " + (matName != "" ? matName : "(none)") + ", " + nbPts + " vertices, " + nbTris + " triangles";
+      report("  Entity #" + i + ": objName: " + (objName != "" ? objName : "(none)") + ", groupName: " + (groupName != "" ? groupName : "(none)") + ", matName: " + (matName != "" ? matName : "(none)") + ", " + nbPts + " vertices, " + nbTris + " triangles");
     }
     
   }

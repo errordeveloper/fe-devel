@@ -7,8 +7,8 @@ operator entry() {
   for (Integer i=0; i<10; ++i)
     va.push(i);
   ArrayProducer<Integer> ap = createConstArray(va);
-  report ap;
-  report ap.getCount();
+  report(ap);
+  report(ap.getCount());
   for (Size i=0; i<10; ++i)
-    report ap.produce(i);
+    report(ap.produce(i));
 }

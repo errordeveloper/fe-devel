@@ -7,6 +7,6 @@ operator entry() {
   for ( Size i=0; i<16; ++i )
     slicedArray[i] = String(i);
   String subSlicedArray<>( slicedArray, Size(4), Size(8) );
-  report subSlicedArray[3];
-  report subSlicedArray[8];
+  report(subSlicedArray[3]);
+  report(subSlicedArray[8]);
 }

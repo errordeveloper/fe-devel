@@ -8,7 +8,7 @@ F = fabric.createClient()
 o = F.DG.createOperator("op")
 o.setSourceCode("\
 operator entry(io Size a, io String b) {\n\
-  report 'Hello ' + a + ' ' + b;\n\
+  report('Hello ' + a + ' ' + b);\n\
 }\n\
 ")
 o.setEntryPoint("entry")

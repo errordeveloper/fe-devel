@@ -6,5 +6,5 @@ operator entry()
 {
   var Data data;
   var Data otherData = data;
-  report data;
+  report(data);
 }

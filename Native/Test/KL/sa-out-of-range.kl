@@ -6,6 +6,6 @@ operator entry() {
   String slicedArray<>( Size(16) );
   for( Size i=0; i<16; ++i )
     slicedArray[i] = i;
-  report slicedArray[7];
-  report slicedArray[16];
+  report(slicedArray[7]);
+  report(slicedArray[16]);
 }

@@ -4,8 +4,8 @@
 
 operator entry()
 {
-  report Boolean(0);
-  report Boolean(2387423);
-  report Boolean(1);
-  report Boolean(-23874);
+  report(Boolean(0));
+  report(Boolean(2387423));
+  report(Boolean(1));
+  report(Boolean(-23874));
 }

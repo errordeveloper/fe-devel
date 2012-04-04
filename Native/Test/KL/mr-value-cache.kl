@@ -3,108 +3,108 @@
  */
 
 operator gen(io String output) {
-  report "  Running generator!";
+  report("  Running generator!");
   output = "Hello";
 }
 
 operator testCachedGenerator()
 {
-  report "--- Testing Cached Generator";
+  report("--- Testing Cached Generator");
   ValueProducer<String> vp = createValueCache(
     createValueGenerator( gen )
   );
-  report "vp = " + vp;
+  report("vp = " + vp);
 
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
 
-  report "Should not run generator (use cache)";
-  report " vp.produce() = " + vp.produce();
+  report("Should not run generator (use cache)");
+  report(" vp.produce() = " + vp.produce());
 
   vp.flush();
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
-  report " ";
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
+  report(" ");
 }
 
 operator multByTwo(
   io Integer value
   )
 {
-  report "  Running transform!";
+  report("  Running transform!");
   value *= 2;
 }
 
 operator testCachedTransform()
 {
-  report "--- Testing Cached Transform";
+  report("--- Testing Cached Transform");
   ValueProducer<Integer> vp = createValueCache(
     createValueTransform(
       createConstValue( 42 ),
       multByTwo
       )
     );
-  report "vp = " + vp;
+  report("vp = " + vp);
 
-  report "Should run transform";
-  report " vp.produce() = " + vp.produce();
+  report("Should run transform");
+  report(" vp.produce() = " + vp.produce());
 
-  report "Should not run transform (use cache)";
-  report " vp.produce() = " + vp.produce();
+  report("Should not run transform (use cache)");
+  report(" vp.produce() = " + vp.produce());
 
   vp.flush();
-  report "Should run transform";
-  report " vp.produce() = " + vp.produce();
-  report " ";
+  report("Should run transform");
+  report(" vp.produce() = " + vp.produce());
+  report(" ");
 }
 
 operator testNestedCache()
 {
-  report "--- Testing Nested Caches";
+  report("--- Testing Nested Caches");
   ValueProducer<String> vp = createValueCache(
     createValueCache(
       createValueGenerator( gen )
     )
   );
-  report "vp = " + vp;
+  report("vp = " + vp);
 
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
 
-  report "Should not run generator (use cache)";
-  report " vp.produce() = " + vp.produce();
+  report("Should not run generator (use cache)");
+  report(" vp.produce() = " + vp.produce());
 
   vp.flush();
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
-  report " ";
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
+  report(" ");
 }
 
 operator genInteger(io Integer output) {
-  report "  Running generator!";
+  report("  Running generator!");
   output = 123;
 }
 
 operator testTransformFlushPropagate()
 {
-  report "--- Testing Transform flush propagation";
+  report("--- Testing Transform flush propagation");
   ValueProducer<Integer> vp = 
     createValueTransform(
       createValueCache( createValueGenerator( genInteger ) ),
       multByTwo
     );
-  report "vp = " + vp;
+  report("vp = " + vp);
 
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
 
-  report "Should not run generator (use cache)";
-  report " vp.produce() = " + vp.produce();
+  report("Should not run generator (use cache)");
+  report(" vp.produce() = " + vp.produce());
 
   vp.flush();
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
-  report " ";
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
+  report(" ");
 }
 
 operator multByPi(
@@ -117,24 +117,24 @@ operator multByPi(
 
 operator testMapFlushPropagate()
 {
-  report "--- Testing Map flush propagation";
+  report("--- Testing Map flush propagation");
   ValueProducer<Scalar> vp = 
     createValueMap(
       createValueCache( createValueGenerator( genInteger ) ),
       multByPi
     );
-  report "vp = " + vp;
+  report("vp = " + vp);
 
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
 
-  report "Should not run generator (use cache)";
-  report " vp.produce() = " + vp.produce();
+  report("Should not run generator (use cache)");
+  report(" vp.produce() = " + vp.produce());
 
   vp.flush();
-  report "Should run generator";
-  report " vp.produce() = " + vp.produce();
-  report " ";
+  report("Should run generator");
+  report(" vp.produce() = " + vp.produce());
+  report(" ");
 }
 
 operator entry() {

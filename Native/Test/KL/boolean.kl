@@ -4,8 +4,8 @@
 
 operator entry()
 {
-  report true || false;
-  report true && false;
-  report true == false;
-  report true != false;
+  report(true || false);
+  report(true && false);
+  report(true == false);
+  report(true != false);
 } 

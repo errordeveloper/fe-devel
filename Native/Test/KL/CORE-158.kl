@@ -4,31 +4,31 @@
 
 operator entry()
 {
-  report "Integer:";
+  report("Integer:");
   for ( Integer n=5; n>=-5; --n )
   {
-    report "5/"+n+"="+(5/n);
-    report "5%"+n+"="+(5%n);
+    report("5/"+n+"="+(5/n));
+    report("5%"+n+"="+(5%n));
   }
 
-  report "Byte:";
+  report("Byte:");
   for ( Byte n=5; n--; )
   {
-    report "5/"+n+"="+Byte(5)/n;
-    report "5%"+n+"="+Byte(5)%n;
+    report("5/"+n+"="+Byte(5)/n);
+    report("5%"+n+"="+Byte(5)%n);
   }
 
-  report "Size:";
+  report("Size:");
   for ( Size n=5; n--; )
   {
-    report "5/"+n+"="+Size(5)/n;
-    report "5%"+n+"="+Size(5)%n;
+    report("5/"+n+"="+Size(5)/n);
+    report("5%"+n+"="+Size(5)%n);
   }
 
-  report "Scalar:";
+  report("Scalar:");
   for ( Scalar n=5; n>=-5; n-=1.0 )
   {
-    report "5/"+n+"="+Scalar(5)/n;
-    report "5%"+n+"="+Scalar(5)%n;
+    report("5/"+n+"="+Scalar(5)/n);
+    report("5%"+n+"="+Scalar(5)%n);
   }
 }

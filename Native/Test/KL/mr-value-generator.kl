@@ -12,10 +12,10 @@ operator gen2(io String output, String shared) {
 
 operator entry() {
   ValueProducer<String> vp1 = createValueGenerator(gen1);
-  report "vp1 = " + vp1;
-  report "vp1.produce() = " + vp1.produce();
+  report("vp1 = " + vp1);
+  report("vp1.produce() = " + vp1.produce());
 
   ValueProducer<String> vp2 = createValueGenerator(gen2, vp1);
-  report "vp2 = " + vp2;
-  report "vp2.produce() = " + vp2.produce();
+  report("vp2 = " + vp2);
+  report("vp2.produce() = " + vp2.produce());
 }

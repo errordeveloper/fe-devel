@@ -25,5 +25,5 @@ operator entry()
   vec3.y = 2;
   vec3.z = 3;
   vec3 = doubleVec3( vec3 );
-  report vec3;
+  report(vec3);
 }
