@@ -99,7 +99,10 @@ namespace Fabric
         return;
         
       FABRIC_ASSERT( m_ast );
-      RC::ConstHandle<AST::GlobalList> ast = m_ast;
+      RC::ConstHandle<AST::GlobalList> ast = AST::GlobalList::Create(
+        context->getRTManager()->getASTGlobals(),
+        m_ast
+        );
       CG::Diagnostics diagnostics;
       
       AST::RequireNameToLocationMap requires;

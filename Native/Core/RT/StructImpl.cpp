@@ -3,7 +3,7 @@
  */
 
 #include <Fabric/Core/RT/StructImpl.h>
-
+ 
 #include <Fabric/Core/RT/Desc.h>
 #include <Fabric/Base/Util/Format.h>
 #include <Fabric/Base/JSON/Encoder.h>
@@ -16,7 +16,10 @@ namespace Fabric
 {
   namespace RT
   {
-    StructImpl::StructImpl( std::string const &codeName, StructMemberInfoVector const &memberInfos )
+    StructImpl::StructImpl(
+      std::string const &codeName,
+      StructMemberInfoVector const &memberInfos
+      )
       : m_memberInfos( memberInfos )
       , m_numMembers( memberInfos.size() )
       , m_defaultData( 0 )

@@ -32,6 +32,8 @@
 #include "OpaqueDesc.h"
 #include "OpaqueImpl.h"
 
+#include <Fabric/Core/AST/GlobalList.h>
+#include <Fabric/Core/AST/StructDecl.h>
 #include <Fabric/Core/JSON/CommandChannel.h>
 #include <Fabric/Base/Config.h>
 #include <Fabric/Base/Util/Format.h>
@@ -158,9 +160,21 @@ namespace Fabric
       return m_types;
     }
 
-    RC::ConstHandle<StructDesc> Manager::registerStruct( std::string const &name, StructMemberInfoVector const &memberInfos )
+    RC::ConstHandle<StructDesc> Manager::registerStruct(
+      std::string const &name,
+      StructMemberInfoVector const &memberInfos,
+      RC::ConstHandle<AST::StructDecl> const &existingASTStructDecl
+      )
     {
-      RC::ConstHandle<StructDesc> structDesc = new StructDesc( name, "", new StructImpl( name, memberInfos ) );
+      RC::ConstHandle<StructDesc> structDesc = new StructDesc(
+        name,
+        "",
+        new StructImpl(
+          name,
+          memberInfos
+          ),
+        existingASTStructDecl
+        );
       return RC::ConstHandle<StructDesc>::StaticCast( registerDesc( structDesc ) );
     }
 
@@ -194,7 +208,12 @@ namespace Fabric
           aliasDesc = new OpaqueDesc( name, "", RC::ConstHandle<OpaqueImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_STRUCT:
-          aliasDesc = new StructDesc( name, "", RC::ConstHandle<StructImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new StructDesc(
+            name,
+            "",
+            RC::ConstHandle<StructImpl>::StaticCast( desc->getImpl() ),
+            RC::ConstHandle<StructDesc>::StaticCast( desc )->getASTStructDecl()
+            );
           break;
         case DT_VARIABLE_ARRAY:
           aliasDesc = new VariableArrayDesc( name, "", RC::ConstHandle<VariableArrayImpl>::StaticCast( desc->getImpl() ), RC::ConstHandle<VariableArrayDesc>::StaticCast( desc )->getMemberDesc() );
@@ -728,7 +747,7 @@ namespace Fabric
         throw "registerType(" + _(name) + "): " + e;
       }
       
-      RC::ConstHandle<RT::StructDesc> structDesc = registerStruct( name, memberInfos );
+      RC::ConstHandle<RT::StructDesc> structDesc = registerStruct( name, memberInfos, 0 );
 
       // [pzion 20110927] Special case: if we are registering a structure, replace
       // the default values.  This exists purely so that if a structure is registered
@@ -800,5 +819,24 @@ namespace Fabric
       }
       else return false;
     }
-  };
-};
+
+    RC::ConstHandle<AST::GlobalList> Manager::getASTGlobals() const
+    {
+      RC::ConstHandle<AST::GlobalList> globalList = AST::GlobalList::Create();
+      for ( Types::const_iterator it=m_types.begin(); it!=m_types.end(); ++it )
+      {
+        RC::ConstHandle<RT::Desc> const &desc = it->second;
+        if ( isStruct( desc->getType() ) )
+        {
+          RC::ConstHandle<RT::StructDesc> structDesc = RC::ConstHandle<RT::StructDesc>::StaticCast( desc );
+          globalList = AST::GlobalList::Create(
+            globalList,
+            structDesc->getASTStructDecl(),
+            0
+            );
+        }
+      }
+      return globalList;
+    }
+  }
+}
