@@ -34,7 +34,7 @@ namespace Fabric
         {
           if ( it->second.getLevel() == CG::Diagnostic::LEVEL_ERROR )
           {
-            firstErrorDesc = it->first.desc() + ":" + it->second.desc();
+            firstErrorDesc = it->first.desc() + ": " + it->second.desc();
             break;
           }
         }

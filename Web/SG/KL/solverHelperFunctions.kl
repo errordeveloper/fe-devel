@@ -244,8 +244,8 @@ function solveNCFIK(
       fkBoneAngle = acos(Math_clamp(boneLengthVector.dot(vecToIkGoal), -1.0, 1.0));
       if(fkBoneAngle < 0.0001){
         // If the bone is already pointing directly at the target, we can't work with it.
-        // in debug mode, report(and error. 
-        continue);
+        // in debug mode, report and error. 
+        continue;
       }
       
       Vec3 bendAxis = vecToIkGoal.cross(boneLengthVector);
