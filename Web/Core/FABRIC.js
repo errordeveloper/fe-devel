@@ -2415,6 +2415,9 @@ var requirejs, require, define;
         DG: context.DG,
         DependencyGraph: context.DG,
         IO: context.IO,
+        EX: context.EX,
+        KLC: context.KLC,
+        MR: context.MR,
         getContextID: function() {
           return context.getContextID();
         },
