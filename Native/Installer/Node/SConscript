@@ -3,7 +3,7 @@
 #
 
 import os
-Import( 'baseEnv', 'buildOS', 'buildArch', 'archDistDir', 'FABRIC_VERSION', 'fabricNodePackage', 'fabricNodeAddOn', 'nodeModuleReadMe', 'nodeModuleLicense', 'browserExtFiles', 'fileSystemExtFiles' )
+Import( 'baseEnv', 'buildOS', 'buildArch', 'archDistDir', 'FABRIC_VERSION', 'fabricNodePackage', 'fabricNodeAddOn', 'nodeModuleReadMe', 'nodeModuleLicense', 'browserExtFiles', 'fileSystemExtFiles', 'generateDistZip' )
 
 nodePackageName = "FabricEngine-NodeModule-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
 
@@ -41,12 +41,21 @@ installerFiles.append( Install(
   [browserExtFiles, fileSystemExtFiles]
 ) )
 
-nodeInstaller = baseEnv.Command(
-  archDistDir.File(nodePackageName+".tar.bz2"),
-  installerFiles,
-  [
-    [ "tar", "-C", archDistDir, "-jcf", "$TARGET", nodePackageName ]
-  ]
-)
+if buildOS == 'Windows':
+  installerEnv = baseEnv.Clone()
+  generateDistZip( installerEnv )
+  installerEnv.Append( DISTZIP_ROOTDIR = nodePackageDir )
+  nodeInstaller = installerEnv.DistZip(
+    archDistDir.File( nodePackageName+".zip" ),
+    installerFiles
+  )
+else:
+  nodeInstaller = baseEnv.Command(
+    archDistDir.File(nodePackageName+".tar.bz2"),
+    installerFiles,
+    [
+      [ "tar", "-C", archDistDir, "-jcf", "$TARGET", nodePackageName ]
+    ]
+  )
 Alias( 'nodeInstaller', nodeInstaller )
 Return( 'nodeInstaller' )

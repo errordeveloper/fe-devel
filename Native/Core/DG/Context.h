@@ -184,7 +184,6 @@ namespace Fabric
       std::string m_contextID;
     
       Util::Mutex m_mutex;
-      bool m_logWarnings;
       RC::Handle<MT::LogCollector> m_logCollector;
       RC::Handle<RT::Manager> m_rtManager;
       RC::Handle<IO::Manager> m_ioManager;
@@ -208,6 +207,7 @@ namespace Fabric
       KLC::Interface m_klcInterface;
       
       CompiledObject::GlobalData m_compiledObjectGlobalData;
+      bool m_logWarnings;
     };
   }
 }

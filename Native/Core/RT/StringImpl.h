@@ -50,7 +50,7 @@ namespace Fabric
       
       // StringImpl
       
-      char const *getValueData( void const *src ) const
+      static char const *GetValueData( void const *src )
       {
         FABRIC_ASSERT( src );
         bits_t const * const *bitsPtr = static_cast<bits_t const * const *>( src );
@@ -62,7 +62,12 @@ namespace Fabric
         return result;
       }
       
-      size_t getValueLength( void const *src ) const
+      char const *getValueData( void const *src ) const
+      {
+        return GetValueData( src );
+      }
+      
+      static size_t GetValueLength( void const *src )
       {
         FABRIC_ASSERT( src );
         bits_t const *bits = *static_cast<bits_t const * const *>( src );
@@ -71,6 +76,11 @@ namespace Fabric
           result = bits->length;
         else result = 0;
         return result;
+      }
+      
+      size_t getValueLength( void const *src ) const
+      {
+        return GetValueLength( src );
       }
 
       static void SetValue( char const *data, size_t length, void *dst )

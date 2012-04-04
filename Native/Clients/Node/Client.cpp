@@ -185,20 +185,29 @@ namespace Fabric
 
       v8::HandleScope v8HandleScope;
 
-      ClientWrap *clientWrap = new ClientWrap;
+      int compileGuarded = -1;
+      int logWarnings = -1;
       if ( args.Length() > 0 && args[0]->IsObject() )
       {
         v8::Handle<v8::Object> opts = v8::Handle<v8::Object>::Cast( args[0] );
-        v8::Handle<v8::Value> logWarnings = opts->Get( v8::String::New( "logWarnings" ) );
-        if ( logWarnings->IsBoolean() )
-          clientWrap->m_client->getContext()->setLogWarnings( logWarnings->BooleanValue() );
+        v8::Handle<v8::Value> logWarnings_ = opts->Get( v8::String::New( "logWarnings" ) );
+        if ( logWarnings_->IsBoolean() )
+          logWarnings = logWarnings_->BooleanValue();
+
+        v8::Handle<v8::Value> guarded = opts->Get( v8::String::New( "guarded" ) );
+        if ( guarded->IsBoolean() )
+          compileGuarded = guarded->BooleanValue();
       }
+      ClientWrap *clientWrap = new ClientWrap( compileGuarded );
       clientWrap->Wrap(args.This());
+
+      if ( logWarnings > -1 )
+        clientWrap->m_client->getContext()->setLogWarnings( logWarnings );
       
       return v8HandleScope.Close( args.This() );
     }
     
-    ClientWrap::ClientWrap()
+    ClientWrap::ClientWrap( int compileGuarded )
       : m_mutex("Node.js ClientWrap")
     {
       std::vector<std::string> pluginPaths;
@@ -228,7 +237,10 @@ namespace Fabric
 #endif
 
       CG::CompileOptions compileOptions;
-      compileOptions.setGuarded( false );
+      if ( compileGuarded > -1 )
+        compileOptions.setGuarded( compileGuarded );
+      else
+        compileOptions.setGuarded( false );
 
       RC::Handle<IO::Manager> ioManager = IOManager::Create( &ClientWrap::ScheduleAsyncUserCallback, this );
       RC::Handle<DG::Context> dgContext = DG::Context::Create( ioManager, pluginPaths, compileOptions, true );

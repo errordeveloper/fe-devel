@@ -24,6 +24,12 @@ namespace Fabric
   {
     class LogCollector;
   };
+
+  namespace AST
+  {
+    class GlobalList;
+    class StructDecl;
+  }
   
   namespace RT
   {
@@ -78,7 +84,11 @@ namespace Fabric
       RC::ConstHandle<OpaqueDesc> getDataDesc() const;
       RC::ConstHandle<ContainerDesc> getContainerDesc() const;
       
-      RC::ConstHandle<StructDesc> registerStruct( std::string const &name, StructMemberInfoVector const &memberInfos );
+      RC::ConstHandle<StructDesc> registerStruct(
+        std::string const &name,
+        StructMemberInfoVector const &memberInfos,
+        RC::ConstHandle<AST::StructDecl> const &existingASTStructDecl
+        );
       RC::ConstHandle<OpaqueDesc> registerOpaque( std::string const &name, size_t size );
       RC::ConstHandle<Desc> registerAlias( std::string const &name, RC::ConstHandle< Desc > const &desc );
             
@@ -109,6 +119,8 @@ namespace Fabric
       RC::ConstHandle<Desc> getStrongerTypeOrNone( RC::ConstHandle<Desc> const &lhsDesc, RC::ConstHandle<Desc> const &rhsDesc ) const;
       
       bool maybeGetASTForType( std::string const &typeName, RC::ConstHandle<RC::Object> &ast ) const;
+
+      RC::ConstHandle<AST::GlobalList> getASTGlobals() const;
 
     protected:
     

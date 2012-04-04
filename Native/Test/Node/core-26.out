@@ -1,0 +1,5 @@
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Fabric core exception: RT.registerType('{"name":"Vec2","members":[{"name...'): registerType('Vec2'): 'members': index 2: 'type': 'NotAType': type not registered

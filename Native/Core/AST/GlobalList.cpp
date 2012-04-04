@@ -13,9 +13,18 @@ namespace Fabric
 {
   namespace AST
   {
-    RC::ConstHandle<GlobalList> GlobalList::Create( RC::ConstHandle<Global> const &first, RC::ConstHandle<GlobalList> const &remaining )
+    RC::ConstHandle<GlobalList> GlobalList::Create(
+      RC::ConstHandle<GlobalList> const &before,
+      RC::ConstHandle<Global> const &global,
+      RC::ConstHandle<GlobalList> const &after
+      )
     {
-      return new GlobalList( 0, first, remaining );
+      return new GlobalList( before, global, after );
+    }
+    
+    RC::ConstHandle<GlobalList> GlobalList::Create()
+    {
+      return new GlobalList( 0, 0, 0 );
     }
     
     RC::ConstHandle<GlobalList> GlobalList::Create( RC::ConstHandle<GlobalList> const &lhs, RC::ConstHandle<GlobalList> const &rhs )
@@ -23,7 +32,21 @@ namespace Fabric
       return new GlobalList( lhs, 0, rhs );
     }
     
-    GlobalList::GlobalList( RC::ConstHandle<GlobalList> const &before, RC::ConstHandle<Global> const &global, RC::ConstHandle<GlobalList> const &after )
+    RC::ConstHandle<GlobalList> GlobalList::Create( RC::ConstHandle<Global> const &global, RC::ConstHandle<GlobalList> const &after )
+    {
+      return new GlobalList( 0, global, after );
+    }
+    
+    RC::ConstHandle<GlobalList> GlobalList::Create( RC::ConstHandle<GlobalList> const &before, RC::ConstHandle<Global> const &global )
+    {
+      return new GlobalList( before, global, 0 );
+    }
+    
+    GlobalList::GlobalList(
+      RC::ConstHandle<GlobalList> const &before,
+      RC::ConstHandle<Global> const &global,
+      RC::ConstHandle<GlobalList> const &after
+      )
       : m_before( before )
       , m_global( global )
       , m_after( after )

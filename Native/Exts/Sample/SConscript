@@ -2,6 +2,6 @@
 # Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
 #
 
-sampleExtFiles = SConscript( dirs=['Time','Except'] )
+sampleExtFiles = SConscript( dirs=['Time'] )
 
 Return( 'sampleExtFiles' )
