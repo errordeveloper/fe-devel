@@ -49,7 +49,7 @@ namespace Fabric
       RC::ConstHandle<IO::Dir> osDir = IO::Dir::Create( baseDir, buildOS );
       RC::ConstHandle<IO::Dir> archDir = IO::Dir::Create( osDir, runningArch );
       RC::ConstHandle<IO::Dir> compileOptionsDir = IO::Dir::Create( archDir, compileOptionsString );
-      m_dir = IO::Dir::Create( compileOptionsDir, _(buildCacheGeneration) );
+      m_dir = IO::Dir::Create( compileOptionsDir, buildCacheGeneration );
     }
     
     std::string BCCache::keyForAST( RC::ConstHandle<AST::GlobalList> const &ast ) const

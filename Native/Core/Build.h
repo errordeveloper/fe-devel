@@ -15,7 +15,7 @@ namespace Fabric
   extern char const *buildDesc;
   extern char const *buildCopyright;
   extern char const *buildURL;
-  extern size_t const buildCacheGeneration;
+  extern char const *buildCacheGeneration;
   extern char const *buildOS;
   extern char const *buildArch;
   extern char const *runningArch;

@@ -13,7 +13,7 @@ namespace Fabric
   char const *buildDesc = "{{FABRIC_DESC}}";
   char const *buildCopyright = "{{FABRIC_COPYRIGHT}}";
   char const *buildURL = "{{FABRIC_URL}}";
-  size_t const buildCacheGeneration = {{FABRIC_CACHE_GENERATION}};
+  char const *buildCacheGeneration = "{{FABRIC_CACHE_GENERATION}}";
   char const *buildOS = "{{FABRIC_OS}}";
   char const *buildArch = "{{FABRIC_ARCH}}";
 #if defined(FABRIC_OS_WINDOWS)
