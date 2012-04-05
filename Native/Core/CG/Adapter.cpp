@@ -350,7 +350,8 @@ namespace Fabric
       llvm::Value *defaultRValue = llvmDefaultRValue( basicBlockBuilder );
       llvmStore( basicBlockBuilder, lValue, defaultRValue );
     }
-    
+
+
     extern "C" void __KL__throwException( void *_stringAdapter, void *stringRValue )
     {
       StringAdapter const *stringAdapter = static_cast<StringAdapter const *>( _stringAdapter );

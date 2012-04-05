@@ -606,10 +606,10 @@ namespace Fabric
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
 
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( llvm::Type::getInt8PtrTy( context->getLLVMContext() ) );
       argTypes.push_back( sizeAdapter->llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::NoUnwind );
