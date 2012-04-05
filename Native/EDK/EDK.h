@@ -505,7 +505,7 @@ namespace Fabric
               {
                 if ( !newAllocSize )
                 {
-                  free( m_bits );
+                  ( *s_callbacks.m_free )( m_bits );
                   m_bits = 0;
                 }
                 else if ( !oldAllocSize )
