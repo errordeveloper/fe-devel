@@ -57,19 +57,19 @@ namespace Fabric
       CG::AdapterVector paramAdapters = params->getAdapters( cgManager );
       size_t numArgs = params->size();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       RC::ConstHandle<CG::SizeAdapter> sizeAdapter = cgManager->getSizeAdapter();
-      llvm::Type const *sizeType = sizeAdapter->llvmRawType( context );
-      llvm::Type const *ptrType = llvm::Type::getInt8PtrTy( context->getLLVMContext() );
-      llvm::Type const *ptrArrayType = llvm::ArrayType::get( ptrType, numArgs );
-      llvm::Type const *sizeArrayType = llvm::ArrayType::get( sizeType, numArgs );
+      llvm::Type *sizeType = sizeAdapter->llvmRawType( context );
+      llvm::Type *ptrType = llvm::Type::getInt8PtrTy( context->getLLVMContext() );
+      llvm::Type *ptrArrayType = llvm::ArrayType::get( ptrType, numArgs );
+      llvm::Type *sizeArrayType = llvm::ArrayType::get( sizeType, numArgs );
 
       argTypes.push_back( sizeType ); // start
       argTypes.push_back( sizeType ); // count
       argTypes.push_back( llvm::PointerType::getUnqual( ptrArrayType ) ); // bases
       argTypes.push_back( llvm::PointerType::getUnqual( sizeArrayType ) ); // strides
 
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
 
       std::string name = getStubName( cgManager );
       llvm::Function *func = llvm::cast<llvm::Function>( moduleBuilder->getFunction( name ) );
@@ -133,13 +133,13 @@ namespace Fabric
           argArrayIdx.push_back( zeroRValue );
           argArrayIdx.push_back( argIndexRValue );
 
-          llvm::Value *argBaseLValue = bbb->CreateGEP( basesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argBaseLValue" );
+          llvm::Value *argBaseLValue = bbb->CreateGEP( basesLValue, argArrayIdx, "argBaseLValue" );
           llvm::Value *argBaseRValue = bbb->CreateLoad( argBaseLValue, "argBaseRValue" );
           sizeAdapter->llvmAssign( bbb, stepLValue, zeroRValue );
           bbb->CreateCondBr( bbb->CreateIsNotNull( stridesLValue ), getStrideBB, getValueBB );
 
           bbb->SetInsertPoint( getStrideBB );
-          llvm::Value *argStrideLValue = bbb->CreateGEP( stridesLValue, argArrayIdx.begin(), argArrayIdx.end(), "argStrideLValue" );
+          llvm::Value *argStrideLValue = bbb->CreateGEP( stridesLValue, argArrayIdx, "argStrideLValue" );
           llvm::Value *stepRValue = bbb->CreateMul(
             sizeAdapter->llvmLValueToRValue( bbb, argStrideLValue ),
             sizeAdapter->llvmLValueToRValue( bbb, indexLValue ),
@@ -153,7 +153,7 @@ namespace Fabric
             argBaseRValue,
             sizeAdapter->llvmLValueToRValue( bbb, stepLValue ),
             "argLValue" );
-          const llvm::Type *argType = paramAdapters[argIndex]->llvmRawType( context );
+          llvm::Type *argType = paramAdapters[argIndex]->llvmRawType( context );
    
           if ( paramAdapters[argIndex]->isPassByReference()
                 || params->get(argIndex)->getUsage() == CG::USAGE_LVALUE )
@@ -211,7 +211,7 @@ namespace Fabric
             args.push_back( typedArgRValue );
           }
         }
-        bbb->CreateCall( realOp, args.begin(), args.end() );
+        bbb->CreateCall( realOp, args );
 
         llvm::Value *nextIndexRValue = bbb->CreateAdd(
           sizeAdapter->llvmLValueToRValue( bbb, indexLValue ),

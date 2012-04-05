@@ -67,7 +67,7 @@ namespace Fabric
       llvmNodeTypeMembers.push_back( llvmAbstractNodeType->getPointerTo() ); // bucketNextNode
       llvmNodeTypeMembers.push_back( llvmSizeTy ); // keyHash
       llvmNodeTypeMembers.push_back( llvm::ArrayType::get( llvm::Type::getInt8Ty( llvmContext ), 0 ) );
-      llvm::StructType *llvmNodeType = llvm::StructType::create( llvmContext, llvmNodeTypeMembers, getCodeName() + "Node", true );
+      llvm::StructType *llvmNodeType = llvm::StructType::create( llvmContext, llvmNodeTypeMembers, getCodeName() + ".Node", true );
 
       //Note: this no longer exists in LLVM3.0 and actually asserted because llvmAbstractNodeType is not abstract.
       //I think it was doing nothing in fact...?
@@ -84,7 +84,7 @@ namespace Fabric
       std::vector<llvm::Type *> llvmBucketTypeMembers;
       llvmBucketTypeMembers.push_back( llvmNodeType->getPointerTo() ); // firstNode
       llvmBucketTypeMembers.push_back( llvmNodeType->getPointerTo() ); // lastNode
-      llvm::Type *llvmBucketType = llvm::StructType::create( llvmContext, llvmBucketTypeMembers, getCodeName() + "Bucket", true );
+      llvm::Type *llvmBucketType = llvm::StructType::create( llvmContext, llvmBucketTypeMembers, getCodeName() + ".Bucket", true );
       
       /*
       struct bits_t
@@ -104,7 +104,7 @@ namespace Fabric
       llvmBitsTypeMembers.push_back( llvmNodeType->getPointerTo() ); // numMembers
       llvmBitsTypeMembers.push_back( llvmNodeType->getPointerTo() ); // numMembers
       llvmBitsTypeMembers.push_back( llvmBucketType->getPointerTo() ); // numMembers
-      llvm::Type *implType = llvm::StructType::create( llvmContext, llvmBitsTypeMembers, getCodeName() + "Bits", true );
+      llvm::Type *implType = llvm::StructType::create( llvmContext, llvmBitsTypeMembers, getCodeName() + ".Bits", true );
       
       return implType->getPointerTo();
     }
@@ -125,13 +125,6 @@ namespace Fabric
       RC::ConstHandle<StringAdapter> stringAdapter = getManager()->getStringAdapter();
       stringAdapter->llvmCompileToModule( moduleBuilder );
 
-      llvm::PointerType const *rawType = static_cast<llvm::PointerType const *>( llvmRawType( context ) );
-      moduleBuilder->addTypeName( getCodeName(), rawType );
-      llvm::StructType const *llvmBitsType = static_cast<llvm::StructType const *>( rawType->getElementType() );
-      moduleBuilder->addTypeName( getCodeName() + ".Bits", llvmBitsType );
-      llvm::PointerType const *llvmBucketPtrType = static_cast<llvm::PointerType const *>( llvmBitsType->getTypeAtIndex( 5 ) );
-      moduleBuilder->addTypeName( getCodeName() + ".Bucket", llvmBucketType );
-      moduleBuilder->addTypeName( getCodeName() + ".Node", llvmNodeType );
       static const bool buildFunctions = true;
       
       {
@@ -574,7 +567,7 @@ namespace Fabric
     
     llvm::Constant *DictAdapter::llvmDefaultValue( BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
+      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
     }
       
     llvm::Constant *DictAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const

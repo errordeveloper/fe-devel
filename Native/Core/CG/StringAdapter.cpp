@@ -47,7 +47,7 @@ namespace Fabric
       memberLLVMTypes.push_back( llvmSizeTy ); // allocSize
       memberLLVMTypes.push_back( llvmSizeTy ); // length
       memberLLVMTypes.push_back( llvm::ArrayType::get( llvm::Type::getInt8Ty( llvmContext ), 0 ) );
-      llvm::Type *implType = llvm::StructType::create( llvmContext, memberLLVMTypes, getCodeName() + "Bits", true );
+      llvm::Type *implType = llvm::StructType::create( llvmContext, memberLLVMTypes, getCodeName() + ".Bits", true );
 
       return implType->getPointerTo();
     }
@@ -95,7 +95,6 @@ namespace Fabric
       RC::ConstHandle<OpaqueAdapter> dataAdapter = getManager()->getDataAdapter();
       dataAdapter->llvmCompileToModule( moduleBuilder );
             
-      moduleBuilder->addTypeName( getCodeName() + ".Bits", implType );
       static const bool buildFunctions = true;
 
       llvm::Function *reportFunction;
@@ -613,9 +612,9 @@ namespace Fabric
     void StringAdapter::llvmThrow( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__String__Throw", funcType ); 
       basicBlockBuilder->CreateCall( func, rValue );
     }
