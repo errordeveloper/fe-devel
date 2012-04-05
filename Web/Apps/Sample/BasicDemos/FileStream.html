@@ -58,7 +58,7 @@ FABRIC.SceneGraph.registerNodeType('TrianglesIONode', {
         "self.objectNames",
         "self.seekOffsets"
       ],
-      entryFunctionName: 'initFileStreamFromString',
+      entryPoint: 'initFileStreamFromString',
       async: false,
       mainThreadOnly: true
     }));
@@ -88,7 +88,7 @@ FABRIC.SceneGraph.registerNodeType('TrianglesIONode', {
           "self.normals<>",
           "uniforms.indices"
         ],
-        entryFunctionName: 'saveTrianglesToStream',
+        entryPoint: 'saveTrianglesToStream',
         mainThreadOnly: true,
         async: false,
       }));
@@ -114,7 +114,7 @@ FABRIC.SceneGraph.registerNodeType('TrianglesIONode', {
           "self.normals<>",
           "uniforms.indices"
         ],
-        entryFunctionName: 'loadTrianglesFromStream',
+        entryPoint: 'loadTrianglesFromStream',
         mainThreadOnly: true,
         async: false
       }));

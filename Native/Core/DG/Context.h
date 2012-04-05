@@ -145,6 +145,9 @@ namespace Fabric
       static std::string const &GetWrapFabricClientJSSource();
       
       static EDK::Callbacks GetCallbackStruct();
+      
+      void logWarning( std::string warning );
+      void setLogWarnings( bool );
 
       void acquireMutex()
       {
@@ -204,6 +207,7 @@ namespace Fabric
       KLC::Interface m_klcInterface;
       
       CompiledObject::GlobalData m_compiledObjectGlobalData;
+      bool m_logWarnings;
     };
   }
 }

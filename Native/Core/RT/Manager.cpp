@@ -32,6 +32,8 @@
 #include "OpaqueDesc.h"
 #include "OpaqueImpl.h"
 
+#include <Fabric/Core/AST/GlobalList.h>
+#include <Fabric/Core/AST/StructDecl.h>
 #include <Fabric/Core/JSON/CommandChannel.h>
 #include <Fabric/Base/Config.h>
 #include <Fabric/Base/Util/Format.h>
@@ -158,9 +160,21 @@ namespace Fabric
       return m_types;
     }
 
-    RC::ConstHandle<StructDesc> Manager::registerStruct( std::string const &name, StructMemberInfoVector const &memberInfos )
+    RC::ConstHandle<StructDesc> Manager::registerStruct(
+      std::string const &name,
+      StructMemberInfoVector const &memberInfos,
+      RC::ConstHandle<AST::StructDecl> const &existingASTStructDecl
+      )
     {
-      RC::ConstHandle<StructDesc> structDesc = new StructDesc( name, "", new StructImpl( name, memberInfos ) );
+      RC::ConstHandle<StructDesc> structDesc = new StructDesc(
+        name,
+        "",
+        new StructImpl(
+          name,
+          memberInfos
+          ),
+        existingASTStructDecl
+        );
       return RC::ConstHandle<StructDesc>::StaticCast( registerDesc( structDesc ) );
     }
 
@@ -194,7 +208,12 @@ namespace Fabric
           aliasDesc = new OpaqueDesc( name, "", RC::ConstHandle<OpaqueImpl>::StaticCast( desc->getImpl() ) );
           break;
         case DT_STRUCT:
-          aliasDesc = new StructDesc( name, "", RC::ConstHandle<StructImpl>::StaticCast( desc->getImpl() ) );
+          aliasDesc = new StructDesc(
+            name,
+            "",
+            RC::ConstHandle<StructImpl>::StaticCast( desc->getImpl() ),
+            RC::ConstHandle<StructDesc>::StaticCast( desc )->getASTStructDecl()
+            );
           break;
         case DT_VARIABLE_ARRAY:
           aliasDesc = new VariableArrayDesc( name, "", RC::ConstHandle<VariableArrayImpl>::StaticCast( desc->getImpl() ), RC::ConstHandle<VariableArrayDesc>::StaticCast( desc )->getMemberDesc() );
@@ -549,17 +568,12 @@ namespace Fabric
     
     void Manager::jsonExecRegisterType( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder )
     {
-      std::string name;
-      bool haveMembers = false;
-      RT::StructMemberInfoVector memberInfos;
-      std::map< std::string, size_t > memberNameToIndexMap;
-      JSON::Entity defaultValueObject;
-      RC::ConstHandle<RC::Object> klBindingsAST;
-      
       arg.requireObject();
-      JSON::ObjectDecoder argObjectDecoder( arg );
       JSON::Entity keyString, valueEntity;
-      while ( argObjectDecoder.getNext( keyString, valueEntity ) )
+
+      std::string name;
+      JSON::ObjectDecoder nameArgObjectDecoder( arg );
+      while ( nameArgObjectDecoder.getNext( keyString, valueEntity ) )
       {
         try
         {
@@ -567,138 +581,173 @@ namespace Fabric
           {
             valueEntity.requireString();
             name = valueEntity.stringToStdString();
-          }
-          else if ( keyString.stringIs( "members", 7 ) )
-          {
-            valueEntity.requireArray();
-            JSON::ArrayDecoder membersArrayDecoder( valueEntity );
-            JSON::Entity memberEntity;
-            while ( membersArrayDecoder.getNext( memberEntity ) )
-            {
-              try
-              {
-                RT::StructMemberInfo memberInfo;
-                
-                memberEntity.requireObject();
-                JSON::ObjectDecoder memberObjectDecoder( memberEntity );
-                JSON::Entity memberKeyString, memberValueEntity;
-                while ( memberObjectDecoder.getNext( memberKeyString, memberValueEntity ) )
-                {
-                  try
-                  {
-                    if ( memberKeyString.stringIs( "name", 4 ) )
-                    {
-                      memberValueEntity.requireString();
-                      memberInfo.name = memberValueEntity.stringToStdString();
-                    }
-                    else if ( memberKeyString.stringIs( "type", 4 ) )
-                    {
-                      memberValueEntity.requireString();
-                      std::string typeName = memberValueEntity.stringToStdString();
-                      if ( typeName.empty() )
-                        throw Exception( "must be non-empty" );
-                      memberInfo.desc = getDesc( typeName );
-                    }
-                  }
-                  catch ( Exception e )
-                  {
-                    memberObjectDecoder.rethrow( e );
-                  }
-                }
-                
-                size_t memberIndex = memberInfos.size();
-                memberInfos.push_back( memberInfo );
-                memberNameToIndexMap.insert( std::map< std::string, size_t >::value_type( memberInfo.name, memberIndex ) );
-              }
-              catch ( Exception e )
-              {
-                membersArrayDecoder.rethrow( e );
-              }
-            }
-            
-            haveMembers = true;
-          }
-          else if ( keyString.stringIs( "defaultValue", 12 ) )
-          {
-            valueEntity.requireObject();
-            defaultValueObject = valueEntity;
-          }
-          else if ( keyString.stringIs( "klBindings", 10 ) )
-          {
-            std::string filename;
-            std::string sourceCode;
-
-            valueEntity.requireObject();
-            JSON::ObjectDecoder klBindingsObjectDecoder( valueEntity );
-            JSON::Entity klBindingsKeyString, klBindingsValueEntity;
-            while ( klBindingsObjectDecoder.getNext( klBindingsKeyString, klBindingsValueEntity ) )
-            {
-              try
-              {
-                if ( klBindingsKeyString.stringIs( "filename", 8 ) )
-                {
-                  klBindingsValueEntity.requireString();
-                  filename = klBindingsValueEntity.stringToStdString();
-                }
-                else if ( klBindingsKeyString.stringIs( "sourceCode", 10 ) )
-                {
-                  klBindingsValueEntity.requireString();
-                  sourceCode = klBindingsValueEntity.stringToStdString();
-                }
-              }
-              catch ( Exception e )
-              {
-                klBindingsObjectDecoder.rethrow( e );
-              }
-            }
-
-            klBindingsAST = m_klCompiler->compile( filename, sourceCode );
+            if ( name.empty() )
+              throw Exception("must be non-empty");
+            break;
           }
         }
         catch ( Exception e )
         {
-          argObjectDecoder.rethrow( e );
+          nameArgObjectDecoder.rethrow( e );
         }
       }
-      
-      if ( name.empty() )
-        throw Exception( "missing 'name'" );
-      if ( !haveMembers )
-        throw Exception( "missing or empty 'members'" );
+
+      bool haveMembers = false;
+      RT::StructMemberInfoVector memberInfos;
+      std::map< std::string, size_t > memberNameToIndexMap;
+      JSON::Entity defaultValueObject;
+      RC::ConstHandle<RC::Object> klBindingsAST;
       
       try
       {
-        JSON::ObjectDecoder defaultValueObjectDecoder( defaultValueObject );
-        JSON::Entity defaultValueKeyString, defaultValueValueEntity;
-        while ( defaultValueObjectDecoder.getNext( defaultValueKeyString, defaultValueValueEntity ) )
+        arg.requireObject();
+        JSON::ObjectDecoder argObjectDecoder( arg );
+        JSON::Entity keyString, valueEntity;
+        while ( argObjectDecoder.getNext( keyString, valueEntity ) )
         {
           try
           {
-            std::string memberName = defaultValueKeyString.stringToStdString();
-            std::map< std::string, size_t >::const_iterator it = memberNameToIndexMap.find( memberName );
-            if ( it == memberNameToIndexMap.end() )
+            if ( keyString.stringIs( "name", 4 ) )
             {
-              // [pzion 20120124] for historical reasons we silent drop unknown members...
-              //throw Exception( "no such member" );
-              continue;
+              valueEntity.requireString();
+              name = valueEntity.stringToStdString();
             }
-            RT::StructMemberInfo &memberInfo = memberInfos[it->second];
+            else if ( keyString.stringIs( "members", 7 ) )
+            {
+              valueEntity.requireArray();
+              JSON::ArrayDecoder membersArrayDecoder( valueEntity );
+              JSON::Entity memberEntity;
+              while ( membersArrayDecoder.getNext( memberEntity ) )
+              {
+                try
+                {
+                  RT::StructMemberInfo memberInfo;
+                  
+                  memberEntity.requireObject();
+                  JSON::ObjectDecoder memberObjectDecoder( memberEntity );
+                  JSON::Entity memberKeyString, memberValueEntity;
+                  while ( memberObjectDecoder.getNext( memberKeyString, memberValueEntity ) )
+                  {
+                    try
+                    {
+                      if ( memberKeyString.stringIs( "name", 4 ) )
+                      {
+                        memberValueEntity.requireString();
+                        memberInfo.name = memberValueEntity.stringToStdString();
+                      }
+                      else if ( memberKeyString.stringIs( "type", 4 ) )
+                      {
+                        memberValueEntity.requireString();
+                        std::string typeName = memberValueEntity.stringToStdString();
+                        if ( typeName.empty() )
+                          throw Exception( "must be non-empty" );
+                        memberInfo.desc = getDesc( typeName );
+                      }
+                    }
+                    catch ( Exception e )
+                    {
+                      memberObjectDecoder.rethrow( e );
+                    }
+                  }
+                  
+                  size_t memberIndex = memberInfos.size();
+                  memberInfos.push_back( memberInfo );
+                  memberNameToIndexMap.insert( std::map< std::string, size_t >::value_type( memberInfo.name, memberIndex ) );
+                }
+                catch ( Exception e )
+                {
+                  membersArrayDecoder.rethrow( e );
+                }
+              }
               
-            memberInfo.defaultData.resize( memberInfo.desc->getAllocSize() );
-            memberInfo.desc->decodeJSON( defaultValueValueEntity, &memberInfo.defaultData[0] );
+              haveMembers = true;
+            }
+            else if ( keyString.stringIs( "defaultValue", 12 ) )
+            {
+              valueEntity.requireObject();
+              defaultValueObject = valueEntity;
+            }
+            else if ( keyString.stringIs( "klBindings", 10 ) )
+            {
+              std::string filename;
+              std::string sourceCode;
+
+              valueEntity.requireObject();
+              JSON::ObjectDecoder klBindingsObjectDecoder( valueEntity );
+              JSON::Entity klBindingsKeyString, klBindingsValueEntity;
+              while ( klBindingsObjectDecoder.getNext( klBindingsKeyString, klBindingsValueEntity ) )
+              {
+                try
+                {
+                  if ( klBindingsKeyString.stringIs( "filename", 8 ) )
+                  {
+                    klBindingsValueEntity.requireString();
+                    filename = klBindingsValueEntity.stringToStdString();
+                  }
+                  else if ( klBindingsKeyString.stringIs( "sourceCode", 10 ) )
+                  {
+                    klBindingsValueEntity.requireString();
+                    sourceCode = klBindingsValueEntity.stringToStdString();
+                  }
+                }
+                catch ( Exception e )
+                {
+                  klBindingsObjectDecoder.rethrow( e );
+                }
+              }
+
+              klBindingsAST = m_klCompiler->compile( filename, sourceCode );
+            }
           }
           catch ( Exception e )
           {
-            defaultValueObjectDecoder.rethrow( e );
+            argObjectDecoder.rethrow( e );
           }
+        }
+
+        if ( name.empty() )
+          throw Exception( "missing 'name'" );
+        if ( !haveMembers )
+          throw Exception( "missing or empty 'members'" );
+        
+        try
+        {
+          JSON::ObjectDecoder defaultValueObjectDecoder( defaultValueObject );
+          JSON::Entity defaultValueKeyString, defaultValueValueEntity;
+          while ( defaultValueObjectDecoder.getNext( defaultValueKeyString, defaultValueValueEntity ) )
+          {
+            try
+            {
+              std::string memberName = defaultValueKeyString.stringToStdString();
+              std::map< std::string, size_t >::const_iterator it = memberNameToIndexMap.find( memberName );
+              if ( it == memberNameToIndexMap.end() )
+              {
+                // [pzion 20120124] for historical reasons we silent drop unknown members...
+                //throw Exception( "no such member" );
+                continue;
+              }
+              RT::StructMemberInfo &memberInfo = memberInfos[it->second];
+                
+              memberInfo.defaultData.resize( memberInfo.desc->getAllocSize() );
+              memberInfo.desc->decodeJSON( defaultValueValueEntity, &memberInfo.defaultData[0] );
+            }
+            catch ( Exception e )
+            {
+              defaultValueObjectDecoder.rethrow( e );
+            }
+          }
+        }
+        catch ( Exception e )
+        {
+          throw "'defaultValue': " + e;
         }
       }
       catch ( Exception e )
       {
-        throw "'defaultValue': " + e;
+        throw "registerType(" + _(name) + "): " + e;
       }
       
-      RC::ConstHandle<RT::StructDesc> structDesc = registerStruct( name, memberInfos );
+      RC::ConstHandle<RT::StructDesc> structDesc = registerStruct( name, memberInfos, 0 );
 
       // [pzion 20110927] Special case: if we are registering a structure, replace
       // the default values.  This exists purely so that if a structure is registered
@@ -770,5 +819,24 @@ namespace Fabric
       }
       else return false;
     }
-  };
-};
+
+    RC::ConstHandle<AST::GlobalList> Manager::getASTGlobals() const
+    {
+      RC::ConstHandle<AST::GlobalList> globalList = AST::GlobalList::Create();
+      for ( Types::const_iterator it=m_types.begin(); it!=m_types.end(); ++it )
+      {
+        RC::ConstHandle<RT::Desc> const &desc = it->second;
+        if ( isStruct( desc->getType() ) )
+        {
+          RC::ConstHandle<RT::StructDesc> structDesc = RC::ConstHandle<RT::StructDesc>::StaticCast( desc );
+          globalList = AST::GlobalList::Create(
+            globalList,
+            structDesc->getASTStructDecl(),
+            0
+            );
+        }
+      }
+      return globalList;
+    }
+  }
+}

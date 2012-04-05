@@ -30,17 +30,11 @@ namespace Fabric
       friend class Impl;
       friend class CG::SlicedArrayAdapter;
       
-      struct ref_counted_va_t
-      {
-        size_t refCount;
-        VariableArrayImpl::bits_t varArray;
-      };
-      
       struct bits_t
       {
         size_t offset;
         size_t size;
-        ref_counted_va_t *rcva;
+        uint8_t va;
       };
     
     public:
@@ -72,7 +66,9 @@ namespace Fabric
     protected:
     
       SlicedArrayImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &memberImpl );
+      ~SlicedArrayImpl();
 
+      virtual void initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
       virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
       virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
 
@@ -81,6 +77,7 @@ namespace Fabric
       RC::ConstHandle<Impl> m_memberImpl;
       size_t m_memberSize;
       RC::ConstHandle<VariableArrayImpl> m_variableArrayImpl;
+      void *m_defaultData;
     };
   }
 }

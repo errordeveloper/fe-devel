@@ -78,11 +78,20 @@ namespace Fabric
         return it->second;
       }
 
+      StructMemberInfoVector const &getMemberInfos() const
+      {
+        return m_memberInfos;
+      }
+
     protected:
     
-      StructImpl( std::string const &codeName, StructMemberInfoVector const &memberInfos );
+      StructImpl(
+        std::string const &codeName,
+        StructMemberInfoVector const &memberInfos
+        );
       ~StructImpl();
 
+      virtual void initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
       virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
       virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t impl ) const;
       

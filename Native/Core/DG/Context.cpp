@@ -86,6 +86,7 @@ namespace Fabric
       , m_gcContainer( this )
       , m_mrInterface( &m_gcContainer, m_rtManager )
       , m_klcInterface( &m_gcContainer, m_cgManager, m_compileOptions )
+      , m_logWarnings( false )
     {
       registerCoreTypes();
       
@@ -758,6 +759,17 @@ namespace Fabric
       callbacks.m_fileHandleEnsureTargetExists = FileHandleEnsureTargetExists;
 
       return callbacks;
+    }
+
+    void Context::logWarning( std::string warning )
+    {
+      if ( m_logWarnings && getLogCollector() )
+        getLogCollector()->add( ( "[WARNING] " + warning ).c_str() );
+    }
+
+    void Context::setLogWarnings( bool logWarnings )
+    {
+      m_logWarnings = logWarnings;
     }
   };
 };

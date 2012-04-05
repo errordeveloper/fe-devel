@@ -59,11 +59,26 @@ namespace Fabric
       return m_impl->getDefaultData();
     }
     
+    void Desc::initializeData( void const *initialData, void *data ) const
+    {
+      m_impl->initializeData( initialData, data );
+    }
+
+    void Desc::initializeDatas( size_t count, void const *initialData, size_t initialStride, void *data, size_t stride ) const
+    {
+      m_impl->initializeDatas( count, initialData, initialStride, data, stride );
+    }
+
     void Desc::setData( void const *srcData, void *dstData ) const
     {
       m_impl->setData( srcData, dstData );
     }
     
+    void Desc::setDatas( size_t count, void const *srcData, size_t srcStride, void *dstData, size_t dstStride ) const
+    {
+      m_impl->setDatas( count, srcData, srcStride, dstData, dstStride );
+    }
+
     bool Desc::equalsData( void const *lhs, void const *rhs ) const
     {
       return m_impl->equalsData( lhs, rhs );

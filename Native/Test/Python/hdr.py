@@ -6,7 +6,7 @@ import fabric
 fabricClient = fabric.createClient()
 
 op = fabricClient.DependencyGraph.createOperator("op")
-op.setEntryFunctionName("load")
+op.setEntryPoint("load")
 op.setSourceCode('\
 require FabricHDR;\n\
 \n\

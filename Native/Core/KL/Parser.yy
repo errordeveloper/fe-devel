@@ -123,6 +123,7 @@ typedef struct YYLTYPE
 #include <Fabric/Core/AST/StructMemberOp.h>
 #include <Fabric/Core/AST/SwitchStatement.h>
 #include <Fabric/Core/AST/TernaryOp.h>
+#include <Fabric/Core/AST/ThrowStatement.h>
 #include <Fabric/Core/AST/Var.h>
 #include <Fabric/Core/AST/VarDecl.h>
 #include <Fabric/Core/AST/VarDeclStatement.h>
@@ -225,6 +226,7 @@ int kl_lex( YYSTYPE *yys, YYLTYPE *yyl, KL::Context &context );
 %token TOKEN_BREAK "break"
 %token TOKEN_CONST "const"
 %token TOKEN_FALSE "false"
+%token TOKEN_THROW "throw"
 %token TOKEN_WHILE "while"
 %token TOKEN_REPORT "report"
 %token TOKEN_RETURN "return"
@@ -317,6 +319,7 @@ int kl_lex( YYSTYPE *yys, YYLTYPE *yyl, KL::Context &context );
 %type <astParamPtr> io_parameter
 %type <usage> in_parameter_usage
 %type <usage> io_parameter_usage
+%type <usage> this_type
 %type <astParamListPtr> parameter_list
 %type <astGlobalPtr> global
 %type <astGlobalPtr> function
@@ -507,6 +510,21 @@ require
   }
 ;
 
+this_type
+  : TOKEN_EXCL
+  {
+    $$ = CG::USAGE_LVALUE;
+  }
+  | TOKEN_QUESTION_MARK
+  {
+    $$ = CG::USAGE_RVALUE;
+  }
+  | /* empty */
+  {
+    $$ = CG::USAGE_UNSPECIFIED;
+  }
+;
+
 function
   : TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
   {
@@ -533,24 +551,24 @@ function
     delete $6;
     $7->release();
   }
-  | TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
+  | TOKEN_FUNCTION compound_type TOKEN_IDENTIFIER TOKEN_DOT TOKEN_IDENTIFIER this_type TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
   {
-    $$ = AST::MethodOpImpl::Create( RTLOC, *$2, *$3, *$5, $7, $9, $10 ).take();
+    $$ = AST::MethodOpImpl::Create( RTLOC, *$2, *$3, *$5, $6, $8, $10, $11 ).take();
     delete $2;
     delete $3;
     delete $5;
+    $8->release();
+    delete $10;
+    $11->release();
+  }
+  | TOKEN_FUNCTION compound_type TOKEN_DOT TOKEN_IDENTIFIER this_type TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
+  {
+    $$ = AST::MethodOpImpl::Create( RTLOC, "", *$2, *$4, $5, $7, $9, $10 ).take();
+    delete $2;
+    delete $4;
     $7->release();
     delete $9;
     $10->release();
-  }
-  | TOKEN_FUNCTION compound_type TOKEN_DOT TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN symbol_name compound_statement
-  {
-    $$ = AST::MethodOpImpl::Create( RTLOC, "", *$2, *$4, $6, $8, $9 ).take();
-    delete $2;
-    delete $4;
-    $6->release();
-    delete $8;
-    $9->release();
   }
   | TOKEN_FUNCTION compound_type binary_operator TOKEN_LPAREN in_parameter TOKEN_COMMA in_parameter TOKEN_RPAREN symbol_name compound_statement
   {
@@ -1056,6 +1074,11 @@ statement
   | TOKEN_REPORT expression TOKEN_SEMICOLON
   {
     $$ = AST::Report::Create( RTLOC, $2 ).take();
+    $2->release();
+  }
+  | TOKEN_THROW expression TOKEN_SEMICOLON
+  {
+    $$ = AST::ThrowStatement::Create( RTLOC, $2 ).take();
     $2->release();
   }
   | TOKEN_BREAK TOKEN_SEMICOLON

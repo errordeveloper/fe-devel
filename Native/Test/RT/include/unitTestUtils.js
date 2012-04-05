@@ -298,7 +298,7 @@ FABRIC.UnitTestUtils.runTests = function(type, localVariables, unitTestsCode)
   }
   var klCode = klCodePrefix + unitTestsCode + '\n}\n';
   var klOp = FABRIC.DependencyGraph.createOperator(testFuncName);
-  klOp.setEntryFunctionName(testFuncName);
+  klOp.setEntryPoint(testFuncName);
   klOp.setSourceCode(klCode);
 
   var diagnostics = klOp.getDiagnostics();

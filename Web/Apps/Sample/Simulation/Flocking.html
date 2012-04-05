@@ -53,7 +53,7 @@ FABRIC.SceneGraph.registerNodeType('Flock', {
     flockNode.getAttributesDGNode().bindings.append(scene.constructOperator({
       operatorName: 'simulateParticles',
       srcFile: 'KL/flocking.kl',
-      entryFunctionName: 'simulateFlock',
+      entryPoint: 'simulateFlock',
       parameterLayout: [
         'self.index',
         'self.initialized',

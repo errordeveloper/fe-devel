@@ -10,7 +10,7 @@ myvars['completed'] = 0
 def launchTest( fabricClient ):
   o = fabricClient.DG.createOperator("o"+str(testIndex))
   o.setSourceCode("inline", "operator entry(in Size index, io Scalar result) { for (Size i=0; i<4096; ++i) result = log(1+index+i); }")
-  o.setEntryFunctionName("entry")
+  o.setEntryPoint("entry")
 
   b = fabricClient.DG.createBinding();
   b.setOperator(o)

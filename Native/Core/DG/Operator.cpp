@@ -143,7 +143,7 @@ namespace Fabric
       FABRIC_ASSERT( m_entryFunctionName.length() > 0 );
       FABRIC_ASSERT( m_astOperator );
       
-      m_function = Function::Create( m_code, m_astOperator->getSymbolName( m_context->getCGManager() ) );
+      m_function = Function::Create( m_code, m_astOperator->getStubName( m_context->getCGManager() ) );
       
       markForRecompile();
     }
@@ -173,18 +173,18 @@ namespace Fabric
       return result;
     }
     
-    std::string const &Operator::getEntryFunctionName() const
+    std::string const &Operator::getEntryPoint() const
     {
       return m_entryFunctionName;
     }
     
-    void Operator::setEntryFunctionName( std::string const &entryFunctionName )
+    void Operator::setEntryPoint( std::string const &entryPoint )
     {
-      if ( entryFunctionName != m_entryFunctionName )
+      if ( entryPoint != m_entryFunctionName )
       {
         m_function = 0;
         
-        m_entryFunctionName = entryFunctionName;
+        m_entryFunctionName = entryPoint;
         
         if ( m_entryFunctionName.length() > 0
           && m_code
@@ -199,7 +199,7 @@ namespace Fabric
           JSON::Encoder jg( &json );
           jsonDescEntryFunctionName( jg );
         }
-        jsonNotifyMemberDelta( "entryFunctionName", 17, json );
+        jsonNotifyMemberDelta( "entryPoint", 10, json );
       }
     }
     
@@ -320,7 +320,7 @@ namespace Fabric
         jsonDescSourceCode( memberEncoder );
       }
       {
-        JSON::Encoder memberEncoder = resultObjectEncoder.makeMember( "entryFunctionName", 17 );
+        JSON::Encoder memberEncoder = resultObjectEncoder.makeMember( "entryPoint", 10 );
         jsonDescEntryFunctionName( memberEncoder );
       }
       {
@@ -339,8 +339,8 @@ namespace Fabric
       JSON::ArrayEncoder &resultArrayEncoder
       )
     {
-      if ( cmd.stringIs( "setEntryFunctionName", 20 ) )
-        jsonExecSetEntryFunctionName( arg, resultArrayEncoder );
+      if ( cmd.stringIs( "setEntryPoint", 13 ) )
+        jsonExecsetEntryPoint( arg, resultArrayEncoder );
       else if ( cmd.stringIs( "setSourceCode", 13 ) )
         jsonExecSetSourceCode( arg, resultArrayEncoder );
       else if ( cmd.stringIs( "setMainThreadOnly", 17 ) )
@@ -391,10 +391,10 @@ namespace Fabric
       setFilenameAndSourceCode( filename, sourceCode );
     }
       
-    void Operator::jsonExecSetEntryFunctionName( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder )
+    void Operator::jsonExecsetEntryPoint( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder )
     {
       arg.requireString();
-      setEntryFunctionName( arg.stringToStdString() );
+      setEntryPoint( arg.stringToStdString() );
     }
     
     void Operator::jsonExecSetMainThreadOnly( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder )

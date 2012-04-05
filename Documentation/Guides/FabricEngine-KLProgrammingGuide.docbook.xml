@@ -457,7 +457,7 @@ operator entry() {
         A KL program is <glossterm>parsed</glossterm> as a sequence of tokens.  A token is a sequence of characters that begins with something other than whitespace and is not a comment.  There are four categories of tokens in KL: keywords, identifiers, symbols, and constants.
       </para>
       
-      <section xml:id="syntax.tokens.keywords">
+      <section xml:id="keywords">
         <title>Keywords</title>
         
         <para>
@@ -484,6 +484,7 @@ operator entry() {
             <member><code>return</code></member>
             <member><code>struct</code></member>
             <member><code>switch</code></member>
+            <member><code>throw</code></member>
             <member><code>true</code></member>
             <member><code>var</code></member>
             <member><code>while</code></member>
@@ -1276,8 +1277,7 @@ String c<>[];   // A sliced array of variable-size
               </para></listitem>
             
               <listitem><para>
-                Variable-size arrays are copied when they are assigned.
-                <warning><simpara>This means that there is no inexpensive way to assign variable-size arrays; this will probably be fixed in a future version of Fabric.</simpara></warning>
+                Variable-size arrays are <glossterm>duplicate-on-modify</glossterm>, meaning that it is inexpensive to assign one variable-size array to another but as soon as one of the <quote>copies</quote> is modified the contents are duplciated.
               </para></listitem>
             
               <listitem><para>
@@ -1453,8 +1453,7 @@ Boolean integerToBoolean[Integer];  // An Integer-to-Boolean dictionary
         
           <itemizedlist>
             <listitem><para>
-              Dictionaries are copied on assignment.  However, they are always passed by reference to functions.
-              <note><para>The copy-on-assignment property of dictionaries is likely to change in a future version of KL.</para></note>
+              Dictionaries are <glossterm>duplicate-on-modify</glossterm>, meaning that it is inexpensive to assign one dictionary to another but as soon as one of the <quote>copies</quote> is modified the contents are duplciated.
             </para></listitem>
           
             <listitem><para>
@@ -2233,25 +2232,24 @@ function <replaceable>Type</replaceable>.<replaceable>methodName</replaceable>(<
           </programlisting>
         
           Within the method body, <code>this</code> refers to the value on which the method is called.  <code>this</code> is read-only if the method returns a value and is read-write if the method does not return a value.
-        
-          <note><para>A future version of Fabric will allow the read-only versus read-write status of <code>this</code> to be explicitly specified.</para></note>
         </para>
       </section>
       
       <section xml:id="method-calls">
         <title>Method Invocation</title>
 
-      <para>
-        If <code><replaceable>value</replaceable></code> is a value of type <code><replaceable>Type</replaceable></code> then the method <code><replaceable>methodName</replaceable></code> can be invoked on <code><replaceable>value</replaceable></code> using the expression <code><replaceable>value</replaceable>.<replaceable>methodName</replaceable>(<replaceable>argument list</replaceable>)</code>.  If a method takes no parameters, then it is optional to use parentheses when calling it.
-      </para>
-      
-      <para>
-        Just as there can be multiple functions with the same name, a given type can have multiple methods with the same name.  When deciding which method to invoke, the usual best-match rules apply.
-      </para>
+        <para>
+          If <code><replaceable>value</replaceable></code> is a value of type <code><replaceable>Type</replaceable></code> then the method <code><replaceable>methodName</replaceable></code> can be invoked on <code><replaceable>value</replaceable></code> using the expression <code><replaceable>value</replaceable>.<replaceable>methodName</replaceable>(<replaceable>argument list</replaceable>)</code>.  If a method takes no parameters, then it is optional to use parentheses when calling it.
+        </para>
+        
+        <para>
+          Just as there can be multiple functions with the same name, a given type can have multiple methods with the same name.  When deciding which method to invoke, the usual best-match rules apply.
+        </para>
 
-      <example xml:id="methods.ex">
-        <title>Method definition and invocation</title>
-        <programlisting language="kl"><![CDATA[
+        <example xml:id="methods.ex">
+          <?dbfo keep-together="auto" ?>
+          <title>Method definition and invocation</title>
+          <programlisting language="kl"><![CDATA[
 struct Type {
   Integer a;
   Float32 b;
@@ -2270,15 +2268,79 @@ operator entry() {
   report(t.desc());
   report(t.desc);
 }
-        ]]></programlisting>
-      </example>
-      <informalfigure xml:id="methods.ex.out">
-        <simpara>Output:</simpara>
-        <screen><![CDATA[
+          ]]></programlisting>
+          <simpara>Output:</simpara>
+          <screen><![CDATA[
 a:1; b:3.14
 a:1; b:3.14
-        ]]></screen>
-      </informalfigure>
+          ]]></screen>
+        </example>
+      </section>
+      <section>
+        <title>Methods Taking Read-Only or Read-Write Values for <code>this</code></title>
+
+        <para>
+          Whether <code>this</code> is read-only or read-write (in compiler terms, an r-value or an l-value) can be controlled on a per-method basis.  By default, <code>this</code> is read-only when the method returns a value and read-write when the method does not return a value.  This can be controlled by suffixing the method name with <code>!</code> (exclamation mark) to force <code>this</code> to be read-write or <code>?</code> (question mark) to force <code>this</code> to be read-only.
+        </para>
+
+        <example>
+          <?dbfo keep-together="auto" ?>
+          <title>Explicit read-only or read-write <code>this</code> in methods</title>
+          <programlisting language="kl"><![CDATA[
+struct Vec2 {
+  Float64 x;
+  Float64 y;
+};
+
+function Vec2(in Float64 x, in Float64 y) {
+  this.x = x;
+  this.y = y;
+}
+
+// Explicitly make 'this' read-only
+function Vec2.getComponents?(io Float64 x, io Float64 y) {
+  x = this.x;
+  y = this.y;
+}
+
+function Float64 Vec2.normSq() {
+  return this.x*this.x + this.y*this.y;
+}
+
+function Float64 Vec2.norm() {
+  return sqrt(this.normSq());
+}
+
+function Vec2./=(in Float64 value) {
+  this.x /= value;
+  this.y /= value;
+}
+
+// Explicitly make 'this' read-write
+function Float64 Vec2.normalizeAndReturnOldNorm!() {
+  Float64 oldNorm = this.norm();
+  this /= oldNorm;
+  return oldNorm;
+}
+
+operator entry() {
+  Vec2 vec2(3.14, 2.71);
+
+  Float64 x, y;
+  vec2.getComponents(x, y);
+  report("vec2.getComponents: x=" + x + ", y=" + y);
+
+  report("vec2.normalizeAndReturnOldNorm returned " + vec2.normalizeAndReturnOldNorm());
+  report("vec2 is now " + vec2);
+}
+          ]]></programlisting>
+          <simpara>Output:</simpara>
+          <screen><![CDATA[
+vec2.getComponents: x=3.14, y=2.71
+vec2.normalizeAndReturnOldNorm returned 4.147734321289154
+vec2 is now {x:0.7570398093926274,y:0.6533687526923632}
+          ]]></screen>
+        </example>
       </section>
     </section>
     <section xml:id="op-overloads">
@@ -3101,7 +3163,7 @@ destroying T; s = entryT
         <title>Expression Statements</title>
 
         <para>
-          Any expression, followed by a <code>;</code> (semicolon), is a statement.  The statement operates by evaluating the expression and then discarding the resulting value (if any).
+          Any expression, followed by a <code>;</code> (semicolon), is a statement.  The statement operates by evaluating the expression and then discarding the resulting value (if any).  The most common form of an expression statement is one that invokes a function call (eg. <code>report</code>).
         </para>
 
         <example>
@@ -3122,6 +3184,41 @@ operator entry() {
             ]]>
           </programlisting>
         </example>
+      </section>
+
+      <section xml:id="throw-statement">
+        <title>The <code>throw</code> Statement</title>
+
+        <para>
+          The keyword <code>throw</code>, followed by any argument, causes the argument to a string and then throws an exception whose value is the string.  This can be used to throw an exception, exiting out of the KL environment entirely and returning the exception to the calling environment (ie. the dynamic language using KL).
+        </para>
+
+        <note><para>
+          Currently there is no way of catching exceptions from within KL itself. This functionality will be added in a later version of Fabric Engine.
+        </para></note>
+
+        <example>
+          <title>The <code>throw</code> statement</title>
+          <programlisting language="kl">
+            <![CDATA[
+operator entry() {
+  report("before throw");
+  throw "Test Exception";
+  report("after throw");
+}
+            ]]>
+          </programlisting>
+        </example>
+
+        <informalfigure>
+          <simpara>Output:</simpara>
+          <screen>
+            <![CDATA[
+before throw
+Caught exception: Test Exception
+          ]]>
+          </screen>
+        </informalfigure>
       </section>
 
       <section xml:id="empty-statement">

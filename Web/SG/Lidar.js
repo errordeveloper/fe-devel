@@ -57,7 +57,7 @@ FABRIC.SceneGraph.registerNodeType('LidarLoadNode', {
         'self.resource',
         'self.lidar'
       ],
-      entryFunctionName: 'lidarLoad',
+      entryPoint: 'lidarLoad',
       srcFile: 'FABRIC_ROOT/SG/KL/loadLidar.kl',
       async: false
     }));
@@ -78,7 +78,7 @@ FABRIC.SceneGraph.registerNodeType('LidarLoadNode', {
           'self.positions<>',
           'self.vertexColors<>'
         ],
-        entryFunctionName: 'lidarGetPoints',
+        entryPoint: 'lidarGetPoints',
         srcFile: 'FABRIC_ROOT/SG/KL/loadLidar.kl',
         async: false
       }));

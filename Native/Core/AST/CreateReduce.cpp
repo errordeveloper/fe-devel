@@ -102,7 +102,7 @@ namespace Fabric
         throw CG::Error( getLocation(), "input must be a value producer" );
       RC::ConstHandle<CG::ArrayProducerAdapter> inputArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( inputExprType.getAdapter() );
       RC::ConstHandle<CG::Adapter> inputAdapter = inputArrayProducerAdapter->getElementAdapter();
-      if ( operatorParams[0].getAdapter() != inputAdapter )
+      if ( !operatorParams[0].getAdapter()->isEquivalentTo( inputAdapter ) )
         throw CG::Error( getLocation(), "operator input value parameter type (" + operatorParams[0].getAdapter()->getUserName() + ") does not match input array producer element type (" + inputAdapter->getUserName() + ")" );
       if ( operatorParams[0].getUsage() != CG::USAGE_RVALUE )
         throw CG::Error( getLocation(), "operator input value parameter must be an 'in' parameter" );
@@ -128,17 +128,17 @@ namespace Fabric
       bool needCall = true;
       if ( operatorParams.size() >= 3 )
       {
-        if ( operatorParams[2].getAdapter() != sizeAdapter )
-          throw CG::Error( getLocation(), "operator index parameter type (" + operatorParams[2].getAdapter()->getUserName() + ") must be 'Size'" );
+        if ( !operatorParams[2].getAdapter()->isEquivalentTo( sizeAdapter ) )
+          throw CG::Error( getLocation(), "operator index parameter type (" + operatorParams[2].getAdapter()->getUserName() + ") must be 'Index'" );
         if ( operatorParams[2].getUsage() != CG::USAGE_RVALUE )
           throw CG::Error( getLocation(), "operator index parameter must be an 'in' parameter" );
           
         if ( operatorParams.size() >= 4 )
         {
-          if ( operatorParams[3].getAdapter() != sizeAdapter )
-            throw CG::Error( getLocation(), "operator index parameter type (" + operatorParams[3].getAdapter()->getUserName() + ") must be 'Size'" );
+          if ( !operatorParams[3].getAdapter()->isEquivalentTo( sizeAdapter ) )
+            throw CG::Error( getLocation(), "operator count parameter type (" + operatorParams[3].getAdapter()->getUserName() + ") must be 'Size'" );
           if ( operatorParams[3].getUsage() != CG::USAGE_RVALUE )
-            throw CG::Error( getLocation(), "operator index parameter must be an 'in' parameter" );
+            throw CG::Error( getLocation(), "operator count parameter must be an 'in' parameter" );
             
           if ( operatorParams.size() >= 5 )
           {

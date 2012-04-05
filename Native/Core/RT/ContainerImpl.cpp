@@ -26,6 +26,26 @@ namespace Fabric
       return &defaultData;
     }
     
+    void ContainerImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        RC::Handle<DG::Container> srcContainer;
+        if ( src )
+        {
+          srcContainer = (*reinterpret_cast<RC::WeakHandle<DG::Container> * const *>( src ))->makeStrong();
+          src += srcStride;
+        }
+
+        RC::WeakHandle<DG::Container> *&dstBits = *reinterpret_cast<RC::WeakHandle<DG::Container> **>( dst );
+        dstBits = new RC::WeakHandle<DG::Container>( srcContainer );
+        dst += dstStride;
+      }
+    }
+    
     void ContainerImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );

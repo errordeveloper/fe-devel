@@ -49,6 +49,7 @@ namespace Fabric
       // StringAdapter
 
       void llvmReport( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *stringRValue ) const;
+      void llvmThrow( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *stringRValue ) const;
 
       llvm::Value *llvmCallLength( BasicBlockBuilder &basicBlockBuilder, llvm::Value *stringRValue ) const;
       void llvmCallCast( BasicBlockBuilder &basicBlockBuilder, RC::ConstHandle<Adapter> const &adapter, llvm::Value *srcLValue, llvm::Value *dstLValue ) const;
@@ -69,6 +70,7 @@ namespace Fabric
       
       static void Append( void *dstLValue, void const *srcRValue );
       static void Cast( Adapter const *adapter, void const *srcLValue, void *dstLValue );
+      static void Throw( void const *lValue );
       
       RC::ConstHandle<RT::StringDesc> m_stringDesc;
     };

@@ -39,7 +39,7 @@ namespace Fabric
       RC::ConstHandle<DictImpl> dictImpl = dictImplWeakHandle.makeStrong();
       if ( !dictImpl )
       {
-        dictImpl = new DictImpl( m_codeName + "_D_" + comparableImpl->getCodeName(), comparableImpl, this );
+        dictImpl = new DictImpl( m_codeName + ".Dict_" + comparableImpl->getCodeName(), comparableImpl, this );
         dictImplWeakHandle = dictImpl;
       }
       return dictImpl;
@@ -51,7 +51,7 @@ namespace Fabric
       RC::ConstHandle<FixedArrayImpl> fixedArrayImpl = fixedArrayImplWeakHandle.makeStrong();
       if ( !fixedArrayImpl )
       {
-        fixedArrayImpl = new FixedArrayImpl( m_codeName + "_FA" + _(length), this, length );
+        fixedArrayImpl = new FixedArrayImpl( m_codeName + ".FixArray_" + _(length), this, length );
         fixedArrayImplWeakHandle = fixedArrayImpl;
       }
       return fixedArrayImpl;
@@ -63,7 +63,7 @@ namespace Fabric
       RC::ConstHandle<VariableArrayImpl> variableArrayImpl = variableArrayImplWeakHandle.makeStrong();
       if ( !variableArrayImpl )
       {
-        std::string name = m_codeName + "_VA";
+        std::string name = m_codeName + ".VarArray";
         variableArrayImpl = new VariableArrayImpl( name, this );
         variableArrayImplWeakHandle = variableArrayImpl;
       }
@@ -75,7 +75,7 @@ namespace Fabric
       RC::ConstHandle<SlicedArrayImpl> slicedArrayImpl = m_slicedArrayImpl.makeStrong();
       if ( !slicedArrayImpl )
       {
-        slicedArrayImpl = new SlicedArrayImpl( m_codeName + "_SA", this );
+        slicedArrayImpl = new SlicedArrayImpl( m_codeName + ".SliceArray", this );
         m_slicedArrayImpl = slicedArrayImpl;
       }
       return slicedArrayImpl;
@@ -87,7 +87,7 @@ namespace Fabric
       RC::ConstHandle<ValueProducerImpl> valueProducerImpl = valueProducerImplWeakHandle.makeStrong();
       if ( !valueProducerImpl )
       {
-        std::string name = m_codeName + "_VP";
+        std::string name = m_codeName + ".ValueProducer";
         valueProducerImpl = new ValueProducerImpl( name, this );
         valueProducerImplWeakHandle = valueProducerImpl;
       }
@@ -100,7 +100,7 @@ namespace Fabric
       RC::ConstHandle<ArrayProducerImpl> arrayProducerImpl = arrayProducerImplWeakHandle.makeStrong();
       if ( !arrayProducerImpl )
       {
-        std::string name = m_codeName + "_AP";
+        std::string name = m_codeName + ".ArrayProducer";
         arrayProducerImpl = new ArrayProducerImpl( name, this );
         arrayProducerImplWeakHandle = arrayProducerImpl;
       }

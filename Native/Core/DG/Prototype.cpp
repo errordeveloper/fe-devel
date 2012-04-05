@@ -149,13 +149,13 @@ namespace Fabric
       }
     };
     
-    Prototype::Prototype( RC::Handle<CG::Manager> const &cgManager )
-      : m_cgManager( cgManager )
-      , m_rtSizeDesc( cgManager->getRTManager()->getSizeDesc() )
+    Prototype::Prototype( RC::Handle<Context> const &context )
+      : m_context( context )
+      , m_rtSizeDesc( context->getCGManager()->getRTManager()->getSizeDesc() )
       , m_rtSizeImpl( m_rtSizeDesc->getImpl() )
-      , m_rtIndexDesc( cgManager->getRTManager()->getIndexDesc() )
+      , m_rtIndexDesc( context->getCGManager()->getRTManager()->getIndexDesc() )
       , m_rtIndexImpl( m_rtIndexDesc->getImpl() )
-      , m_rtContainerDesc( cgManager->getRTManager()->getContainerDesc() )
+      , m_rtContainerDesc( context->getCGManager()->getRTManager()->getContainerDesc() )
       , m_rtContainerImpl( m_rtContainerDesc->getImpl() )
     {
     }
@@ -242,13 +242,14 @@ namespace Fabric
       )
     {
       FABRIC_ASSERT( function );
-      
-      RC::ConstHandle<AST::ParamVector> astParamList = astOperator->getParams( m_cgManager );
+
+      RC::ConstHandle<AST::ParamVector> astParamList = astOperator->getParams( m_context->getCGManager() );
       size_t numASTParams = astParamList->size();
       size_t expectedNumASTParams = prefixCount + m_paramCount;
       if ( numASTParams != expectedNumASTParams )
         errors.push_back( "operator takes incorrect number of parameters (expected "+_(expectedNumASTParams)+", actual "+_(numASTParams)+")" );
 
+      unsigned numAdjustments = 0;
       RC::Handle<MT::ParallelCall> result = MT::ParallelCall::Create( function, prefixCount+m_paramCount, astOperator->getDeclaredName() );
       for ( unsigned i=0; i<prefixCount; ++i )
         result->setBaseAddress( i, prefixes[i] );
@@ -263,7 +264,7 @@ namespace Fabric
             errors.push_back( nodeErrorPrefix + "not found" );
             continue;
           }
-          
+
           bool haveAdjustmentIndex = false;
           unsigned adjustmentIndex = 0;
           
@@ -280,7 +281,7 @@ namespace Fabric
               continue;
 
             RC::ConstHandle<AST::Param> astParam = astParamList->get( prefixCount + param->index() );
-            CG::ExprType astParamExprType = astParam->getExprType( m_cgManager );
+            CG::ExprType astParamExprType = astParam->getExprType( m_context->getCGManager() );
             RC::ConstHandle<RT::Desc> astParamDesc = astParamExprType.getDesc();
             RC::ConstHandle<RT::Impl> astParamImpl = astParamDesc->getImpl();
             
@@ -292,6 +293,8 @@ namespace Fabric
                   errors.push_back( parameterErrorPrefix + "'container' parmeters must bind to operator in parameters of type "+_(m_rtContainerDesc->getUserName()) );
                 if( astParamExprType.getUsage() != CG::USAGE_RVALUE )
                   haveLValueContainerAccess = true;
+                if ( nodeName != "self" && astParamExprType.getUsage() == CG::USAGE_LVALUE )
+                  m_context->logWarning( parameterErrorPrefix + "dependency parameters should be 'in' type" );
 
                 result->setBaseAddress( prefixCount+param->index(), container->getRTContainerData() );
               }
@@ -306,12 +309,18 @@ namespace Fabric
                   result->setBaseAddress( prefixCount+param->index(), (void *)0 );
                   if ( container->size() != 1 )
                   {
-                    if ( !haveAdjustmentIndex )
+                    if ( numAdjustments > 0 && !haveAdjustmentIndex )
+                      errors.push_back( parameterErrorPrefix + "cannot bind per-slice to multiple sliced nodes at once" );
+                    else
                     {
-                      adjustmentIndex = result->addAdjustment( container->size(), std::max<size_t>( 1, container->size()/(4*MT::getNumCores()) ) );
-                      haveAdjustmentIndex = true;
+                      if ( !haveAdjustmentIndex )
+                      {
+                        adjustmentIndex = result->addAdjustment( container->size() );
+                        haveAdjustmentIndex = true;
+                        numAdjustments++;
+                      }
+                      result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), 1 );
                     }
-                    result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), 1 );
                   }
                 }
               }
@@ -320,6 +329,10 @@ namespace Fabric
                 MemberParam const *memberParam = static_cast<MemberParam const *>(param);
                 std::string const &memberName = memberParam->name();
                 std::string const memberErrorPrefix = parameterErrorPrefix + "member '" + memberName + "': ";
+
+                if ( nodeName != "self" && astParamExprType.getUsage() == CG::USAGE_LVALUE )
+                  m_context->logWarning( memberErrorPrefix + "dependency parameters should be 'in' type" );
+
                 {
                   RC::ConstHandle<RT::SlicedArrayDesc> slicedArrayDesc;
                   void *slicedArrayData;
@@ -346,8 +359,6 @@ namespace Fabric
                         RC::ConstHandle<RT::Impl> memberImpl = memberDesc->getImpl();
                         if ( astParamImpl != memberImpl )
                           errors.push_back( memberErrorPrefix + "parameter type mismatch: member element type is "+_(memberDesc->getUserName())+", operator parameter type is "+_(astParamDesc->getUserName()) );
-                        if ( astParamExprType.getUsage() != CG::USAGE_LVALUE )
-                          errors.push_back( memberErrorPrefix + "element parmeters must bind to operator io parameters" );
                         void *baseAddress;
                         if ( slicedArrayDesc->getNumMembers( slicedArrayData ) > 0 )
                           baseAddress = slicedArrayImpl->getMutableMemberData( slicedArrayData, 0 );
@@ -355,12 +366,18 @@ namespace Fabric
                         result->setBaseAddress( prefixCount+param->index(), baseAddress );
                         if ( container->size() != 1 )
                         {
-                          if ( !haveAdjustmentIndex )
+                          if ( numAdjustments > 0 && !haveAdjustmentIndex )
+                            errors.push_back( memberErrorPrefix + "cannot bind per-slice to multiple sliced nodes at once" );
+                          else
                           {
-                            adjustmentIndex = result->addAdjustment( container->size(), std::max<size_t>( 1, container->size()/(4*MT::getNumCores()) ) );
-                            haveAdjustmentIndex = true;
+                            if ( !haveAdjustmentIndex )
+                            {
+                              adjustmentIndex = result->addAdjustment( container->size() );
+                              haveAdjustmentIndex = true;
+                              numAdjustments++;
+                            }
+                            result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), memberImpl->getAllocSize() );
                           }
-                          result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), memberImpl->getAllocSize() );
                         }
                       }
                     }
@@ -373,8 +390,6 @@ namespace Fabric
                       RC::ConstHandle<RT::SlicedArrayImpl> slicedArrayImpl = slicedArrayDesc->getImpl();
                       if ( astParamImpl != slicedArrayImpl )
                         errors.push_back( memberErrorPrefix + "parameter type mismatch: member array type is "+_(slicedArrayDesc->getUserName())+", operator parameter type is "+_(astParamDesc->getUserName()) );
-                      //if ( astParamExprType.getUsage() != CG::USAGE_LVALUE )
-                      //  throw Exception( "array parmeters must bind to operator io parameters" );
                       
                       result->setBaseAddress( prefixCount+param->index(), slicedArrayData );
                     }

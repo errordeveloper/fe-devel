@@ -47,7 +47,7 @@ op.setSourceCode(
 );
 
 
-op.setEntryFunctionName('writeReadStringArray');
+op.setEntryPoint('writeReadStringArray');
 if (op.getErrors().length > 0) {
   if (op.getDiagnostics().length > 0)
     console.log(JSON.stringify(op.getDiagnostics()));

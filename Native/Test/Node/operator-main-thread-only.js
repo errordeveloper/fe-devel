@@ -6,7 +6,7 @@ F = require('Fabric').createClient();
 
 o = F.DG.createOperator("op");
 o.setSourceCode("operator entry( io Integer foo ) { report 'Hello'; }");
-o.setEntryFunctionName("entry");
+o.setEntryPoint("entry");
 console.log(o.getMainThreadOnly());
 o.setMainThreadOnly(true);
 console.log(o.getMainThreadOnly());

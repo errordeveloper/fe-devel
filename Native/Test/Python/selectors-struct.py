@@ -42,7 +42,7 @@ eventHandler.setScope( 'self', node )
 nodeOne = FABRIC.DependencyGraph.createNode( "nodeOne" )
 
 operatorOne = FABRIC.DependencyGraph.createOperator( "operatorOne" )
-operatorOne.setEntryFunctionName('test')
+operatorOne.setEntryPoint('test')
 operatorOne.setSourceCode("operator test( io Boolean select, io Vec3 value ) { select = true; value.x = 7; }")
 
 bindingOne = FABRIC.DependencyGraph.createBinding()
@@ -56,7 +56,7 @@ eventHandler.appendChildEventHandler( eventHandlerOne )
 
 nodeTwo = FABRIC.DependencyGraph.createNode( "nodeTwo" )
 operatorTwo = FABRIC.DependencyGraph.createOperator( "operatorTwo" )
-operatorTwo.setEntryFunctionName('test')
+operatorTwo.setEntryPoint('test')
 operatorTwo.setSourceCode("operator test( io Boolean select, io Vec3 value ) { value.x = 4; }")
 bindingTwo = FABRIC.DependencyGraph.createBinding()
 bindingTwo.setOperator( operatorTwo )

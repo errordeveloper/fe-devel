@@ -304,9 +304,13 @@ namespace Fabric
       return RC::ConstHandle<ArrayProducerAdapter>::StaticCast( getAdapter( arrayProducerDesc ) );
     }
     
-    RC::ConstHandle<StructAdapter> Manager::registerStruct( std::string const &name, RT::StructMemberInfoVector const &structMemberInfoVector )
+    RC::ConstHandle<StructAdapter> Manager::registerStruct(
+      std::string const &name,
+      RT::StructMemberInfoVector const &structMemberInfoVector,
+      RC::ConstHandle<AST::StructDecl> const &existingASTStructDecl
+      )
     {
-      return RC::ConstHandle<StructAdapter>::StaticCast( getAdapter( m_rtManager->registerStruct( name, structMemberInfoVector ) ) );
+      return RC::ConstHandle<StructAdapter>::StaticCast( getAdapter( m_rtManager->registerStruct( name, structMemberInfoVector, existingASTStructDecl ) ) );
     }
     
     RC::ConstHandle<Adapter> Manager::registerAlias( std::string const &name, RC::ConstHandle<Adapter> const &adapter )

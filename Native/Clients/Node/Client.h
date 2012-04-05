@@ -11,7 +11,7 @@
 
 #include <v8.h>
 #include <uv.h>
-#include <handle_wrap.h>
+#include <node_object_wrap.h>
 #include <vector>
 #include <string>
 
@@ -46,17 +46,17 @@ namespace Fabric
       ClientWrap *m_clientWrap;
     };
     
-    class ClientWrap : public node::HandleWrap
+    class ClientWrap : public node::ObjectWrap
     {
     public:
     
-      static void Initialize( v8::Handle<v8::Object> target );
+      static void Init( v8::Handle<v8::Object> target );
       
       void notify( char const *data, size_t length );
       
     protected:
     
-      ClientWrap( v8::Handle<v8::Object> target );
+      ClientWrap( int compileGuarded );
       ~ClientWrap();
       
       // V8 callbacks
@@ -86,7 +86,7 @@ namespace Fabric
       std::vector<AsyncCallbackData> m_bufferedAsyncUserCallbacks;
       v8::Persistent<v8::Function> m_notifyCallback;
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_V8_CLIENT_H

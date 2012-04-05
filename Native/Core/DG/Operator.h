@@ -64,8 +64,8 @@ namespace Fabric
 
       virtual bool isOperator() const { return true; }
 
-      std::string const &getEntryFunctionName() const;
-      void setEntryFunctionName( std::string const &entryFunctionName );
+      std::string const &getEntryPoint() const;
+      void setEntryPoint( std::string const &entryPoint );
       
       std::string const &getFilename() const;
       std::string const &getSourceCode() const;
@@ -100,7 +100,7 @@ namespace Fabric
       virtual void jsonExec( JSON::Entity const &cmd, JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder );
       static void jsonExecCreate( JSON::Entity const &arg, RC::Handle<Context> const &context, JSON::ArrayEncoder &resultArrayEncoder );
       void jsonExecSetSourceCode( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder );
-      void jsonExecSetEntryFunctionName( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder );
+      void jsonExecsetEntryPoint( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder );
       void jsonExecSetMainThreadOnly( JSON::Entity const &arg, JSON::ArrayEncoder &resultArrayEncoder );
       void jsonDesc( JSON::Encoder &resultEncoder ) const;
       virtual void jsonDesc( JSON::ObjectEncoder &resultObjectEncoder ) const;

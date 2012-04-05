@@ -19,7 +19,7 @@ http.createServer(function (req, res) {
 
     var computeTermOp = fabricClient.DG.createOperator("computeTermOp");
     computeTermOp.setSourceCode('computeTerm.kl', fs.readFileSync('computeTerm.kl', 'utf8'));
-    computeTermOp.setEntryFunctionName('computeTerm');
+    computeTermOp.setEntryPoint('computeTerm');
 
     // Create the binding that binds the computeTermOp to the
     // terms node.  A binding binds the members of the node
@@ -46,7 +46,7 @@ http.createServer(function (req, res) {
 
     var sumTermsOp = fabricClient.DG.createOperator("sumTermsOp");
     sumTermsOp.setSourceCode('sumTerms.kl', fs.readFileSync('sumTerms.kl', 'utf8'));
-    sumTermsOp.setEntryFunctionName('sumTerms');
+    sumTermsOp.setEntryPoint('sumTerms');
 
     // Create the binding that binds sumTermsOp to the members of
     // sumNode
@@ -54,8 +54,9 @@ http.createServer(function (req, res) {
     var sumTermsBinding = fabricClient.DG.createBinding();
     sumTermsBinding.setOperator(sumTermsOp);
     sumTermsBinding.setParameterLayout([
-      "terms.count",      // terms.count is special: the slice count of
-                          // the dependency called "terms"
+      "terms",            // terms is special: it is a Container object
+                          // that allows you to get and set the slice
+                          // count of the node
       "terms.result<>",   // the <> syntax specifies that we want to bind
                           // to all the slices at once
       "self.result" 

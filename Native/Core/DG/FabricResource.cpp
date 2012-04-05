@@ -3,6 +3,7 @@
  */
 
 #include <Fabric/Core/DG/FabricResource.h>
+#include <Fabric/Core/AST/StructDecl.h>
 #include <Fabric/Core/RT/Manager.h>
 #include <Fabric/Core/RT/IntegerDesc.h>
 #include <Fabric/Core/RT/StructDesc.h>
@@ -42,7 +43,7 @@ namespace Fabric
       memberInfos[FABRIC_RESOURCE_DATAEXTERNALLOCATION_MEMBER_INDEX].name = "dataExternalLocation";
       memberInfos[FABRIC_RESOURCE_DATAEXTERNALLOCATION_MEMBER_INDEX].desc = stringDesc;
 
-      rtManager->registerStruct( "FabricResource", memberInfos );
+      rtManager->registerStruct( "FabricResource", memberInfos, 0 );
     }
 
     RC::ConstHandle<RT::StructDesc> getFabricResourceDesc( RC::ConstHandle<RT::Manager> const &rtManager )
@@ -76,8 +77,7 @@ namespace Fabric
       {
         size_t size = m_desc->getAllocSize();
         m_resource = malloc( size );
-        memset( m_resource, 0, size );
-        m_desc->setData( m_desc->getDefaultData(), m_resource );
+        m_desc->initializeData( m_desc->getDefaultData(), m_resource );
       }
     }
 

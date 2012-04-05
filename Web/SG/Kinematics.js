@@ -43,7 +43,7 @@ FABRIC.SceneGraph.registerNodeType('Transform', {
             'parent.globalXfo',
             'self.globalXfo'
           ],
-          entryFunctionName: 'calcGlobalXfo'
+          entryPoint: 'calcGlobalXfo'
         }));
 
       transformNode.addMemberInterface(dgnode, 'localXfo', true);
@@ -159,7 +159,7 @@ FABRIC.SceneGraph.registerNodeType('TransformTexture', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'matchCount',
       srcCode: 'operator matchCount(in Container parentContainer, io Container selfContainer) { selfContainer.resize( parentContainer.size() ); }',
-      entryFunctionName: 'matchCount',
+      entryPoint: 'matchCount',
       parameterLayout: [
         'transforms',
         'self'
@@ -177,7 +177,7 @@ FABRIC.SceneGraph.registerNodeType('TransformTexture', {
         'self.textureMatrix',
         'self.index',
       ],
-      entryFunctionName: 'calcGlobalTransposedMatrix'
+      entryPoint: 'calcGlobalTransposedMatrix'
     }));
         
     var redrawEventHandler = textureNode.constructEventHandlerNode('Redraw');
@@ -196,7 +196,7 @@ FABRIC.SceneGraph.registerNodeType('TransformTexture', {
       preProcessorDefinitions: {
         TRANSFORM_TEXTURE_HEIGHT_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('transformTextureHeight')
       },
-      entryFunctionName: 'prepareTextureMatrix',
+      entryPoint: 'prepareTextureMatrix',
       parameterLayout: [
         'textureMatrix.textureMatrix<>',
         'self.matricesTempBuffer',
@@ -252,7 +252,7 @@ FABRIC.SceneGraph.registerNodeType('AimTransform', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'aimTransform',
       srcFile: 'FABRIC_ROOT/SG/KL/aimTransform.kl',
-      entryFunctionName: 'aimTransform',
+      entryPoint: 'aimTransform',
       parameterLayout: [
         'self.globalXfo',
         'self.target'

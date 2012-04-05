@@ -68,6 +68,11 @@ namespace Fabric
       else return m_entry;
     }
 
+    std::string Dir::getFullFilePath( std::string const &entry ) const
+    {
+      return JoinPath( getFullPath(), entry );
+    }
+
     std::vector<std::string> Dir::getFiles() const
     {
       std::vector<std::string> result;

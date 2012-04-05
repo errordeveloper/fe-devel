@@ -5,10 +5,7 @@
 Import( 'buildOS' )
 
 SConscript( dirs=['NPAPI'] )
-
-if buildOS != 'Windows':
-  SConscript( dirs=['Node'] )
-
+SConscript( dirs=['Node'] )
 SConscript( dirs=['Python'] )
 
 Alias('cliClients', ['node', 'python'])

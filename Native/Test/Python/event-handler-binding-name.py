@@ -6,7 +6,7 @@ import fabric
 F = fabric.createClient()
 
 o = F.DG.createOperator("o")
-o.setEntryFunctionName("foo")
+o.setEntryPoint("foo")
 o.setSourceCode("\
 operator foo( io String string )\n\
 {\n\

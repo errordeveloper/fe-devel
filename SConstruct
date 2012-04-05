@@ -4,19 +4,36 @@
 
 # [pzion 20110726] !!!!!!!!!!!!!!!!!!!!
 # When you change the version number,
-# don't forget to consider the expiry
-# and cache generation!!
+# don't forget to consider the 
+# cache generation!!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 FABRIC_NAME='Fabric Engine'
 FABRIC_COMPANY_NAME='Fabric Engine Inc.'
 FABRIC_DESC='High Performance Computing for the Web'
 FABRIC_COPYRIGHT_YEARS='2010-2012'
-FABRIC_URL="http://fabric-engine.com"
+FABRIC_URL="http://fabricengine.com"
 FABRIC_VERSION_MAJ='1'
-FABRIC_VERSION_MIN='0'
-FABRIC_VERSION_REV='22'
-FABRIC_VERSION_SUFFIX='-release'
-FABRIC_CACHE_GENERATION='19'
+FABRIC_VERSION_MIN='1'
+FABRIC_VERSION_REV='0'
+FABRIC_VERSION_SUFFIX='-alpha'
+# [pzion 20120404]
+# IMPORTANT: Put a cache generation
+# with format 'number-description' here
+# so that we get merge conflicts if the
+# cache generation has been bumped to
+# the same number but with different
+# changes on different branches.  Such
+# conflicts should be resolved by
+# incrementing the number again and
+# forming a common description of the
+# changes.
+# WARNING: the cache generation must
+# be a valid filename on all of the
+# Fabric platforms (including Windows)
+# Choosing from the set 0-9, a-z,
+# A-Z, _, -  and . is safe and
+# recommended.
+FABRIC_CACHE_GENERATION='21-windows-fix-op-stubs'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import os, platform, posixpath, glob, sys

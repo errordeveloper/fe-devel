@@ -178,40 +178,44 @@
       %simpara JavaScript:
       %screen<
         :cdata
+          // Registered types
           > Vec3 = function(x, y, z) {
-          ...   if (typeof x === 'number' && typeof y === 'number' && typeof z === 'number') {
-          .....     this.x = x;
-          .....     this.y = y;
-          .....     this.z = z;
-          .....   }
-          ...   else if (x === undefined && y === undefined && z === undefined) {
-          .....     this.x = 0;
-          .....     this.y = 0;
-          .....     this.z = 0;
-          .....   }
-          ...   else throw'new Vec3: invalid arguments';
-          ... };
-          [Function]
+            if (typeof x === 'number' && typeof y === 'number' && typeof z === 'number') {
+              this.x = x;
+              this.y = y;
+              this.z = z;
+            }
+            else if (x === undefined && y === undefined && z === undefined) {
+              this.x = 0;
+              this.y = 0;
+              this.z = 0;
+            }
+            else throw'new Vec3: invalid arguments';
+          };
+
           > vec3KLBindings = "\n\
-          ... // Construct a Vec3 from three Scalars\n\
-          ... function Vec3(Scalar x, Scalar y, Scalar z) {\n\
-          ...   this.x = x;\n\
-          ...   this.y = y;\n\
-          ...   this.z = z;\n\
-          ... }\n\
-          ... \n\
-          ... // Add two Vec3s\n\
-          ... function Vec3 + (Vec3 a, Vec3 b) {\n\
-          ...   return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);\n\
-          ... }\n\
-          ... ";
-          '\n// Construct a Vec3 from three Scalars\nfunction Vec3(Scalar x, Scalar y, Scalar z) {\nself.x = x;\nself.y = y;\nself.z = z;\n}\n\n// Add two Vec3s\nfunction Vec3 + (Vec3 a, Vec3 b) {\nreturn Vec3(a.x + b.x, a.y + b.y, a.z + b.z);\n}\n'
+          // Construct a Vec3 from three Scalars\n\
+          function Vec3(Scalar x, Scalar y, Scalar z) {\n\
+            this.x = x;\n\
+            this.y = y;\n\
+            this.z = z;\n\
+          }\n\
+          \n\
+          // Add two Vec3s\n\
+          function Vec3 + (Vec3 a, Vec3 b) {\n\
+            return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);\n\
+          }\n\
+          ";
+
           > FABRIC.RT.registerType('Vec3', {
-          ...   members: [{x: 'Scalar'}, {y: 'Scalar'}, {z: 'Scalar'}],
-          ...   constructor: Vec3,
-          ...   kBindings: vec3KLBindings
-          ... });
-          undefined
+            members: [{x: 'Scalar'}, {y: 'Scalar'}, {z: 'Scalar'}],
+            constructor: Vec3,
+            klBindings: {
+              filename: "inline",
+              sourceCode: vec3KLBindings
+            }
+          });
+
           > FABRIC.RT.getRegisteredTypes().Vec3;
           { name: 'Vec3',
             size: 12,
@@ -225,38 +229,44 @@
       %simpara Python:
       %screen<
         :cdata
-          >>> class Vec3():
-          ...   def __init__( self, x = None, y = None, z = None ):
-          ...     if type( x ) is float and type( y ) is float and type( z ) is float:
-          ...       self.x = x
-          ...       self.y = y
-          ...       self.z = z
-          ...     elif x is None and y is None and z is None:
-          ...       self.x = 0
-          ...       self.y = 0
-          ...       self.z = 0
-          ...     else:
-          ...       raise Exception( 'Vec3: invalid arguments' )
-          ...
+          >>> # Registered types
+          class Vec3():
+            def __init__( self, x = None, y = None, z = None ):
+              if type( x ) is float and type( y ) is float and type( z ) is float:
+                self.x = x
+                self.y = y
+                self.z = z
+              elif x is None and y is None and z is None:
+                self.x = 0
+                self.y = 0
+                self.z = 0
+              else:
+                raise Exception( 'Vec3: invalid arguments' )
+
           >>> vec3KLBindings = """
-          ... // Construct a Vec3 from three Scalars
-          ... function Vec3(Scalar x, Scalar y, Scalar z) {
-          ...   self.x = x;
-          ...   self.y = y;
-          ...   self.z = z;
-          ... }
-          ... 
-          ... // Add two Vec3s
-          ... function Vec3 + (Vec3 a, Vec3 b) {
-          ...   return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
-          ... }
-          ... """
+          // Construct a Vec3 from three Scalars
+          function Vec3(Scalar x, Scalar y, Scalar z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+          }
+          // Add two Vec3s
+          function Vec3 + (Vec3 a, Vec3 b) {
+            return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
+          }
+          """
+
           >>> vec3TypeDesc = {
-          ...   'members': [{'x': 'Scalar'}, {'y': 'Scalar'}, {'z': 'Scalar'}],
-          ...   'constructor': Vec3,
-          ...   'kBindings': vec3KLBindings
-          ... };
+            'members': [{'x': 'Scalar'}, {'y': 'Scalar'}, {'z': 'Scalar'}],
+            'constructor': Vec3,
+            'klBindings': {
+              'filename': "(inline)",
+              'sourceCode': vec3KLBindings
+             }
+          }
+
           >>> FABRIC.RT.registerType('Vec3', vec3TypeDesc)
+
           >>> FABRIC.RT.getRegisteredTypes()['Vec3']
           {u'defaultValue': {u'y': 0, u'x': 0, u'z': 0}, u'internalType': u'struct', u'name': u'Vec3', u'members': [{u'type': u'Scalar', u'name': u'x'}, {u'type': u'Scalar', u'name': u'y'}, {u'type': u'Scalar', u'name': u'z'}], u'size': 12}
           >>> 
@@ -508,9 +518,9 @@
             { getName: [Function],
               getErrors: [Function],
             ...
-              setEntryFunctionName: [Function],
+              setEntryPoint: [Function],
               getDiagnostics: [Function] }
-            > op.setEntryFunctionName( "offset" );
+            > op.setEntryPoint( "offset" );
             undefined
             > op.setSourceCode( "require Vec3; operator offset( io Vec3 position, io Vec3 newPosition ) { newPosition = position + Vec3(1.0,1.0,1.0); }" );
             undefined
@@ -540,7 +550,7 @@
         %screen<
           :cdata
             >>> op = FABRIC.DG.createOperator("offsetPosition")
-            >>> op.setEntryFunctionName("offset")
+            >>> op.setEntryPoint("offset")
             >>> op.setSourceCode("require Vec3; operator offset(io Vec3 position, io Vec3 newPosition) { newPosition = position + Vec3(1.0,1.0,1.0); }")
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(op)
@@ -639,11 +649,11 @@
             { getName: [Function],
               getErrors: [Function],
             ...
-              setEntryFunctionName: [Function],
+              setEntryPoint: [Function],
               getDiagnostics: [Function] }
             > op.setSourceCode("operator entry() { report 'Ran trivialOperator'; }");
             undefined
-            > op.setEntryFunctionName('entry');
+            > op.setEntryPoint('entry');
             undefined
             > binding = FABRIC.DG.createBinding();
             { getOperator: [Function],
@@ -663,11 +673,11 @@
             { getName: [Function],
               getErrors: [Function],
             ...
-              setEntryFunctionName: [Function],
+              setEntryPoint: [Function],
               getDiagnostics: [Function] }
             > anotherOp.setSourceCode("operator entry() { report 'Ran trivialOperatorTwo'; }");
             undefined
-            > anotherOp.setEntryFunctionName('entry');
+            > anotherOp.setEntryPoint('entry');
             undefined
             > binding = FABRIC.DG.createBinding();
             { getOperator: [Function],
@@ -690,7 +700,7 @@
           :cdata
             >>> op = FABRIC.DG.createOperator("trivialOperator")
             >>> op.setSourceCode("operator entry() { report 'Ran trivialOperator'; }")
-            >>> op.setEntryFunctionName('entry')
+            >>> op.setEntryPoint('entry')
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(op)
             >>> binding.setParameterLayout([])
@@ -699,7 +709,7 @@
             [FABRIC] [MT] Ran trivialOperator
             >>> anotherOp = FABRIC.DG.createOperator("trivialOperatorTwo")
             >>> anotherOp.setSourceCode("operator entry() { report 'Ran trivialOperatorTwo'; }")
-            >>> anotherOp.setEntryFunctionName('entry')
+            >>> anotherOp.setEntryPoint('entry')
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(anotherOp)
             >>> binding.setParameterLayout([])
@@ -782,11 +792,11 @@
             { getName: [Function],
               getErrors: [Function],
             ...
-              setEntryFunctionName: [Function],
+              setEntryPoint: [Function],
               getDiagnostics: [Function] }
             > squareOp.setSourceCode("operator entry( io Scalar x, io Scalar y ) { y = x * x; }");
             undefined
-            > squareOp.setEntryFunctionName("entry");
+            > squareOp.setEntryPoint("entry");
             undefined
             > binding = FABRIC.DG.createBinding();
             { getOperator: [Function],
@@ -803,11 +813,11 @@
             { getName: [Function],
               getErrors: [Function],
             ...
-              setEntryFunctionName: [Function],
+              setEntryPoint: [Function],
               getDiagnostics: [Function] }
             > displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report x + ' squared is ' + y; }" );
             undefined
-            > displayOp.setEntryFunctionName("entry");
+            > displayOp.setEntryPoint("entry");
             undefined
             > binding = FABRIC.DG.createBinding();
             { getOperator: [Function],
@@ -845,14 +855,14 @@
             >>> node.addMember( "y", "Scalar" )
             >>> squareOp = FABRIC.DG.createOperator("squareOp")
             >>> squareOp.setSourceCode("operator entry( io Scalar x, io Scalar y ) { y = x * x; }")
-            >>> squareOp.setEntryFunctionName("entry")
+            >>> squareOp.setEntryPoint("entry")
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(squareOp)
             >>> binding.setParameterLayout(['self.x','self.y'])
             >>> node.bindings.append(binding)
             >>> displayOp = FABRIC.DG.createOperator("displayOp")
             >>> displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report x + ' squared is ' + y; }" )
-            >>> displayOp.setEntryFunctionName("entry")
+            >>> displayOp.setEntryPoint("entry")
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(displayOp)
             >>> binding.setParameterLayout(['mynode.x','mynode.y'])
@@ -981,7 +991,7 @@
             { getName: [Function],
               getErrors: [Function],
             ...
-              setEntryFunctionName: [Function],
+              setEntryPoint: [Function],
               getDiagnostics: [Function] }
             > 
         %simpara Python:
@@ -1039,7 +1049,7 @@
         In addition to source code, an operator needs an entry point, which is the name of the KL operator (see the
         <link condition="pdf" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.pdf">KL Programming Guide</link>
         <link condition="html" xlink:href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.html">KL Programming Guide</link>
-        ) in the source code that should be called when the operator is invoked.  Note that this <emphasis>must</emphasis> be an KL operator and not a KL function.  The entry point is specified by calling the <code>setEntryFunctionName</code> method.  By specifying the source code and entry point separately, it is possible to have multiple possible entry points into the same source code.
+        ) in the source code that should be called when the operator is invoked.  Note that this <emphasis>must</emphasis> be an KL operator and not a KL function.  The entry point is specified by calling the <code>setEntryPoint</code> method.  By specifying the source code and entry point separately, it is possible to have multiple possible entry points into the same source code.
 
       %example
         :plain
@@ -1048,16 +1058,16 @@
         %simpara JavaScript:
         %screen<
           :cdata
-            > op.setEntryFunctionName('entry');
+            > op.setEntryPoint('entry');
             undefined
-            > op.getEntryFunctionName();
+            > op.getEntryPoint();
             'entry'
             > 
         %simpara Python:
         %screen<
           :cdata
-            >>> op.setEntryFunctionName('entry')
-            >>> op.getEntryFunctionName()
+            >>> op.setEntryPoint('entry')
+            >>> op.getEntryPoint()
             'entry'
             >>> 
 
@@ -1090,7 +1100,7 @@
             { getName: [Function],
               getErrors: [Function],
             ...
-              setEntryFunctionName: [Function],
+              setEntryPoint: [Function],
               getDiagnostics: [Function] }
             > 
         %simpara Python:

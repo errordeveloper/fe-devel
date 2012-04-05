@@ -1,9 +1,18 @@
 {
 	"folders":
 	[
-		{
-			"path": "."
-		}
+    {
+      "path": ".",
+      "folder_exclude_patterns": [
+        ".git",
+        "build",
+        "dist",
+        "Fabric.xcodeproj"
+      ],
+      "file_exclude_patterns": [
+        ".sconsign.dblite"
+      ]
+    }
 	],
   "settings":
   {

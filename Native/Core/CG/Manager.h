@@ -25,6 +25,11 @@ namespace Fabric
     class Desc;
     class Manager;
   };
+
+  namespace AST
+  {
+    class StructDecl;
+  }
   
   namespace CG
   {
@@ -79,7 +84,11 @@ namespace Fabric
       RC::ConstHandle<ValueProducerAdapter> getValueProducerOf( RC::ConstHandle<Adapter> const &adapter ) const;
       RC::ConstHandle<ArrayProducerAdapter> getArrayProducerOf( RC::ConstHandle<Adapter> const &adapter ) const;
       
-      RC::ConstHandle<StructAdapter> registerStruct( std::string const &name, RT::StructMemberInfoVector const &structMemberInfoVector );
+      RC::ConstHandle<StructAdapter> registerStruct(
+        std::string const &name,
+        RT::StructMemberInfoVector const &structMemberInfoVector,
+        RC::ConstHandle<AST::StructDecl> const &existingASTStructDecl
+        );
       RC::ConstHandle<Adapter> registerAlias( std::string const &name, RC::ConstHandle<Adapter> const &adapter );
       
       void *llvmResolveExternalFunction( std::string const &functionName ) const;

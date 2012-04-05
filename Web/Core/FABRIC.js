@@ -2415,6 +2415,9 @@ var requirejs, require, define;
         DG: context.DG,
         DependencyGraph: context.DG,
         IO: context.IO,
+        EX: context.EX,
+        KLC: context.KLC,
+        MR: context.MR,
         getContextID: function() {
           return context.getContextID();
         },
@@ -2457,7 +2460,7 @@ var requirejs, require, define;
         
         // operator to query the open gl version
         var queryOpVersion = context.DG.createOperator('getOpenGLVersion');
-        queryOpVersion.setEntryFunctionName('getOpenGLVersion');
+        queryOpVersion.setEntryPoint('getOpenGLVersion');
         queryOpVersion.setSourceCode('use FabricOGL; operator getOpenGLVersion(io String version){\n' +
           '  glGetVersion(version);\n' +
           '}');
@@ -2468,7 +2471,7 @@ var requirejs, require, define;
         
         // operator to query the support glew features
         var queryOpGlew = context.DG.createOperator('getGlewSupported');
-        queryOpGlew.setEntryFunctionName('getGlewSupported');
+        queryOpGlew.setEntryPoint('getGlewSupported');
         queryOpGlew.setSourceCode('use FabricOGL; operator getGlewSupported(io String token, io Boolean supported){\n' +
           '  if(token.length() > 0) glewIsSupported(token,supported);\n' +
           '}');

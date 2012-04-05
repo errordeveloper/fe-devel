@@ -86,6 +86,7 @@ namespace Fabric
       Util::SimpleString const &memberDeltaJSON
       ) const
     {
+      FABRIC_ASSERT( strlen(memberData) == memberLength );
       Util::SimpleString json;
       {
         JSON::Encoder jsonEncoder( &json );
@@ -109,6 +110,16 @@ namespace Fabric
     void NamedObject::jsonGetMemoryUsage( JSON::Encoder &jg ) const
     {
       jg.makeInteger( 0 );
+    }
+
+    void NamedObject::destroy()
+    {
+      RC::Handle<NamedObject> ensureWeLive( this );
+      Context::NamedObjectMap &namedObjectMap = m_context->getNamedObjectRegistry();
+      Context::NamedObjectMap::iterator it = namedObjectMap.find( getName() );
+      if ( it != namedObjectMap.end() )
+        namedObjectMap.erase( it );
+      jsonNotify( "destroy", 7 );
     }
   };
 };

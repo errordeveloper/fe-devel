@@ -36,7 +36,7 @@ FABRIC.SceneGraph.registerNodeType('RenderTargetBufferTexture', {
       srcCode: 'use OGLRenderTarget; operator bindTexture( io OGLRenderTarget renderTarget, io Integer bufferIndex, io Integer textureUnit ) {\n' +
                    ' renderTarget.textures[bufferIndex].texture.bind(textureUnit);\n\
                 }',
-      entryFunctionName: 'bindTexture',
+      entryPoint: 'bindTexture',
       parameterLayout: [
         'deferredDraw.renderTarget',
         'self.bufferIndex',
@@ -131,7 +131,7 @@ FABRIC.SceneGraph.registerNodeType('Image2D', {
             'self.pixels<>'
           ],
           preProcessorDefinitions: { PIXELFORMAT: options.format },
-          entryFunctionName: 'loadSlicedImage'+options.format,
+          entryPoint: 'loadSlicedImage'+options.format,
           srcFile: 'FABRIC_ROOT/SG/KL/loadTexture.kl'
         }));
       };
@@ -158,7 +158,7 @@ FABRIC.SceneGraph.registerNodeType('Image2D', {
             'self.pixels<>'
           ],
           preProcessorDefinitions: { PIXELFORMAT: options.format },
-          entryFunctionName: 'initImageFrom'+options.format,
+          entryPoint: 'initImageFrom'+options.format,
           srcFile: 'FABRIC_ROOT/SG/KL/loadTexture.kl'
         }));
 
@@ -185,7 +185,7 @@ FABRIC.SceneGraph.registerNodeType('Image2D', {
           operatorName: 'bindTexture'+options.format,
           srcFile: 'FABRIC_ROOT/SG/KL/loadTexture.kl',
           preProcessorDefinitions: { PIXELFORMAT: options.format },
-          entryFunctionName: 'bindTexture'+options.format,
+          entryPoint: 'bindTexture'+options.format,
           parameterLayout: [
             'uniforms.width',
             'uniforms.height',
@@ -201,7 +201,7 @@ FABRIC.SceneGraph.registerNodeType('Image2D', {
           operatorName: 'loadAndBindTexture'+options.format,
           srcFile: 'FABRIC_ROOT/SG/KL/loadTexture.kl',
           preProcessorDefinitions: { PIXELFORMAT: options.format },
-          entryFunctionName: 'loadAndBindTexture'+options.format,
+          entryPoint: 'loadAndBindTexture'+options.format,
           parameterLayout: [
             'resource.resource',
             'self.oglTexture2D',
@@ -315,7 +315,7 @@ FABRIC.SceneGraph.registerNodeType('Image3D', {
             'self.pixels',
             'self.xfoMat'
           ],
-          entryFunctionName: 'load3DImageUShortData',
+          entryPoint: 'load3DImageUShortData',
           srcFile: 'FABRIC_ROOT/SG/KL/load3DTexture.kl'
         }));
       };
@@ -344,7 +344,7 @@ FABRIC.SceneGraph.registerNodeType('Image3D', {
             'self.pixels',
             'self.initiated'
           ],
-          entryFunctionName: 'initImageFrom' + options.format,
+          entryPoint: 'initImageFrom' + options.format,
           srcFile: 'FABRIC_ROOT/SG/KL/load3DTexture.kl'
         }));
       };
@@ -386,7 +386,7 @@ FABRIC.SceneGraph.registerNodeType('Image3D', {
                           '  if(prevUrl != resource.url && (resource.data.size() != 0 || Boolean(resource.dataExternalLocation))){' +
                           '    prevUrl = resource.url;\n' +
                           '    refresh = true;} }',
-            entryFunctionName: 'detectResourceChange',
+            entryPoint: 'detectResourceChange',
             parameterLayout: [
               'resource.resource',
               'self.currUrl',
@@ -399,7 +399,7 @@ FABRIC.SceneGraph.registerNodeType('Image3D', {
         redrawEventHandler.preDescendBindings.append(scene.constructOperator({
           operatorName: 'bind' + options.format + 'Texture3D',
           srcFile: 'FABRIC_ROOT/SG/KL/load3DTexture.kl',
-          entryFunctionName: 'bind' + options.format + 'Texture3D',
+          entryPoint: 'bind' + options.format + 'Texture3D',
           parameterLayout: [
             'image.width',
             'image.height',
@@ -416,7 +416,7 @@ FABRIC.SceneGraph.registerNodeType('Image3D', {
         redrawEventHandler.preDescendBindings.append(scene.constructOperator({
           operatorName: 'loadAndBindUShortTexture',
           srcFile: 'FABRIC_ROOT/SG/KL/load3DTexture.kl',
-          entryFunctionName: 'loadAndBindUShortTexture',
+          entryPoint: 'loadAndBindUShortTexture',
           parameterLayout: [
             'resource.resource',
             'self.oglTexture3D',
@@ -489,7 +489,7 @@ FABRIC.SceneGraph.registerNodeType('CubeMap', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
         operatorName: 'bindCubeMap',
         srcFile: 'FABRIC_ROOT/SG/KL/loadCubeMap.kl',
-        entryFunctionName: 'bindCubeMap',
+        entryPoint: 'bindCubeMap',
         parameterLayout: [
           'resource0.resource',
           'resource1.resource',
@@ -543,7 +543,7 @@ FABRIC.SceneGraph.registerNodeType('Video', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'videoLoadResource',
       srcFile: 'FABRIC_ROOT/SG/KL/loadVideo.kl',
-      entryFunctionName: 'videoLoadResource',
+      entryPoint: 'videoLoadResource',
       parameterLayout: [
         'self.resource',
         'self.handle'
@@ -571,7 +571,7 @@ FABRIC.SceneGraph.registerNodeType('Video', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'videoSetTimeRange',
       srcFile: 'FABRIC_ROOT/SG/KL/loadVideo.kl',
-      entryFunctionName: 'videoSetTimeRange',
+      entryPoint: 'videoSetTimeRange',
       parameterLayout: [
         'self.handle',
         'controller.timeRange',
@@ -581,7 +581,7 @@ FABRIC.SceneGraph.registerNodeType('Video', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'videoSeekTimeCached',
       srcFile: 'FABRIC_ROOT/SG/KL/loadVideo.kl',
-      entryFunctionName: 'videoSeekTime',
+      entryPoint: 'videoSeekTime',
       parameterLayout: [
         'self.handle',
         'controller.localTime',
@@ -598,7 +598,7 @@ FABRIC.SceneGraph.registerNodeType('Video', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
         operatorName: 'videoLoadToGPU',
         srcFile: 'FABRIC_ROOT/SG/KL/loadVideo.kl',
-        entryFunctionName: 'videoLoadToGPU',
+        entryPoint: 'videoLoadToGPU',
         parameterLayout: [
           'video.handle',
           'video.pixels',
@@ -642,7 +642,7 @@ FABRIC.SceneGraph.registerNodeType('PointSpriteTexture', {
     redrawEventHandler.preDescendBindings.append(scene.constructOperator({
             operatorName: 'createSpriteTexture',
             srcFile: 'FABRIC_ROOT/SG/KL/loadTexture.kl',
-            entryFunctionName: 'createSpriteTexture',
+            entryPoint: 'createSpriteTexture',
             preProcessorDefinitions: { PIXELFORMAT: 'RGBA' },
             parameterLayout: [
               'image.resolution',
@@ -684,7 +684,7 @@ FABRIC.SceneGraph.registerNodeType('ScreenGrab', {
     screenGrabEventHandler.postDescendBindings.append(scene.constructOperator({
       operatorName: 'grabViewport',
       srcFile: 'FABRIC_ROOT/SG/KL/grabViewport.kl',
-      entryFunctionName: 'grabViewport',
+      entryPoint: 'grabViewport',
       parameterLayout: [
         'self.width',
         'self.height',
@@ -697,7 +697,7 @@ FABRIC.SceneGraph.registerNodeType('ScreenGrab', {
     screenGrabEventHandler.postDescendBindings.append(scene.constructOperator({
       operatorName: 'encodeImage',
       srcFile: 'FABRIC_ROOT/SG/KL/encodeImage.kl',
-      entryFunctionName: 'encodeImageLDR',
+      entryPoint: 'encodeImageLDR',
       parameterLayout: [
         'self.width',
         'self.height',
@@ -723,7 +723,7 @@ FABRIC.SceneGraph.registerNodeType('ScreenGrab', {
         screenGrabEventHandler.postDescendBindings.append(scene.constructOperator({
           operatorName: 'writeFile',
           srcFile: 'FABRIC_ROOT/SG/KL/writeFile.kl',
-          entryFunctionName: 'writeFile',
+          entryPoint: 'writeFile',
           parameterLayout: [
             'self.resource',
             'self.path'

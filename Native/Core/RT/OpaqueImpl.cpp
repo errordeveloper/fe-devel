@@ -15,7 +15,7 @@ namespace Fabric
   {
     OpaqueImpl::OpaqueImpl( std::string const &codeName, size_t size )
     {
-      initialize( codeName, DT_OPAQUE, size, FlagShallow );
+      initialize( codeName, DT_OPAQUE, size, FlagShallow | FlagExportable );
 
       m_defaultData = malloc( size );
       memset( m_defaultData, 0, size );
@@ -29,6 +29,25 @@ namespace Fabric
     void const *OpaqueImpl::getDefaultData() const
     {
       return m_defaultData;
+    }
+    
+    void OpaqueImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      size_t allocSize = getAllocSize();
+      
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        if ( src )
+        {
+          memcpy( dst, src, allocSize );
+          src += srcStride;
+        }
+        else memset( dst, 0, allocSize );
+        dst += dstStride;
+      }
     }
     
     void OpaqueImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
@@ -53,13 +72,12 @@ namespace Fabric
     
     void OpaqueImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
     {
-      encoder.makeNull();
+      encoder.makeBoolean( memcmp( data, m_defaultData, getAllocSize() ) != 0 );
     }
     
     void OpaqueImpl::decodeJSON( JSON::Entity const &entity, void *dst ) const
     {
-      entity.requireNull();
-      memset( dst, 0, getAllocSize() );
+      entity.requireNullOrBoolean();
     }
     
     std::string OpaqueImpl::descData( void const *src ) const

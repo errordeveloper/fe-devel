@@ -27,7 +27,7 @@ namespace Fabric
     {
       std::string result;
       for ( ExprTypeVector::const_iterator it=paramTypes.begin(); it!=paramTypes.end(); ++it )
-        result += "__" + std::string( EncodeUsage( it->getUsage() ) ) + "_" + it->getAdapter()->getCodeName();
+        result += "." + std::string( EncodeUsage( it->getUsage() ) ) + "." + it->getAdapter()->getCodeName();
       return result;
     }
     
@@ -65,7 +65,7 @@ namespace Fabric
       ExprTypeVector const &paramTypes
       )
     {
-      return "__function_" + functionName + EncodeParametersForDefaultSymbolName( paramTypes );
+      return "function." + functionName + EncodeParametersForDefaultSymbolName( paramTypes );
     }
 
     std::string FunctionFullDesc(
@@ -105,7 +105,7 @@ namespace Fabric
       paramTypes.push_back( CG::ExprType( thisAdapter, CG::USAGE_LVALUE ) );
       for ( AdapterVector::const_iterator it = otherParamAdapters.begin(); it != otherParamAdapters.end(); ++it )
         paramTypes.push_back( CG::ExprType( *it, CG::USAGE_RVALUE ) );
-      return "__constructor" + EncodeParametersForDefaultSymbolName( paramTypes );
+      return "constructor" + EncodeParametersForDefaultSymbolName( paramTypes );
     }
     
     std::string ConstructorFullDesc(
@@ -135,7 +135,7 @@ namespace Fabric
     {
       CG::ExprTypeVector paramTypes;
       paramTypes.push_back( CG::ExprType( thisAdapter, CG::USAGE_LVALUE ) );
-      return "__destructor" + EncodeParametersForDefaultSymbolName( paramTypes );
+      return "destructor" + EncodeParametersForDefaultSymbolName( paramTypes );
     }
 
     std::string DestructorDesc( RC::ConstHandle<CG::Adapter> const &thisAdapter )
@@ -159,7 +159,7 @@ namespace Fabric
       CG::ExprTypeVector paramTypes;
       paramTypes.push_back( CG::ExprType( thisAdapter, CG::USAGE_LVALUE ) );
       paramTypes.push_back( CG::ExprType( thatAdapter, CG::USAGE_RVALUE ) );
-      return "__assop_" + assignOpCodeName( type ) + EncodeParametersForDefaultSymbolName( paramTypes );
+      return "assop." + assignOpCodeName( type ) + EncodeParametersForDefaultSymbolName( paramTypes );
     }
 
     std::string AssignOpFullDesc(
@@ -194,7 +194,7 @@ namespace Fabric
     {
       CG::ExprTypeVector paramTypes;
       paramTypes.push_back( thisExprType );
-      return "__uniop_" + uniOpCodeName(type) + EncodeParametersForDefaultSymbolName( paramTypes );
+      return "uniop." + uniOpCodeName(type) + EncodeParametersForDefaultSymbolName( paramTypes );
     }
 
     std::string UniOpFullDesc(
@@ -230,7 +230,7 @@ namespace Fabric
       CG::ExprTypeVector paramTypes;
       paramTypes.push_back( CG::ExprType( lhsAdapter, CG::USAGE_RVALUE ) );
       paramTypes.push_back( CG::ExprType( rhsAdapter, CG::USAGE_RVALUE ) );
-      return "__binop_" + binOpCodeName(type) + EncodeParametersForDefaultSymbolName( paramTypes );
+      return "binop." + binOpCodeName(type) + EncodeParametersForDefaultSymbolName( paramTypes );
     }
 
     std::string BinOpFullDesc(
@@ -276,7 +276,7 @@ namespace Fabric
       paramTypes.push_back( thisType );
       for ( CG::ExprTypeVector::const_iterator it=otherParamTypes.begin(); it!=otherParamTypes.end(); ++it )
         paramTypes.push_back( *it );
-      return "__method_" + methodName + EncodeParametersForDefaultSymbolName( paramTypes );
+      return "method." + methodName + EncodeParametersForDefaultSymbolName( paramTypes );
     }
 
     std::string MethodFullDesc(

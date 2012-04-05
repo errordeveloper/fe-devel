@@ -26,7 +26,7 @@ myStructDesc = {
 fabricClient.RegisteredTypesManager.registerType( "MyStruct", myStructDesc )
 
 op = fabricClient.DependencyGraph.createOperator( "op" )
-op.setEntryFunctionName("entry")
+op.setEntryPoint("entry")
 op.setSourceCode("\n\
 operator entry( io MyStruct arg<>[] )\n\
 {\n\

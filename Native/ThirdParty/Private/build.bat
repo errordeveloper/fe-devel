@@ -21,6 +21,7 @@ set JPEG_NAME=jpeg-8d
 set OPENCV_NAME=OpenCV-2.3.1
 set OPENCV_SOURCE=OpenCV-2.3.1a
 set OPENCV_VER=231
+set NODE_NAME=node-v0.6.14
 
 if "%1" NEQ "" goto %1
 
@@ -73,6 +74,54 @@ if NOT EXIST %BUILD_DIR% mkdir %BUILD_DIR%
 if NOT EXIST %CHECKPOINT_DIR% mkdir %CHECKPOINT_DIR%
 if NOT EXIST %LIB_ARCH_DEBUG_DIR% mkdir %LIB_ARCH_DEBUG_DIR%
 if NOT EXIST %LIB_ARCH_RELEASE_DIR% mkdir %LIB_ARCH_RELEASE_DIR%
+
+rem ============ NODEJS =============
+if EXIST %CHECKPOINT_DIR%\node_unpack goto node_unpack_done
+echo node - Unpacking
+cd %BUILD_DIR%
+type "%TOP%\SourcePackages\%NODE_NAME%.tar.gz" | gzip -d -c | tar -x -f- 2> NUL:
+touch %CHECKPOINT_DIR%\node_unpack
+:node_unpack_done
+
+if EXIST %CHECKPOINT_DIR%\node_create_files goto node_create_files_done
+echo node - Generating project files
+cd %BUILD_DIR%\%NODE_NAME%
+call .\vcbuild.bat nobuild
+touch %CHECKPOINT_DIR%\node_create_files
+:node_create_files_done
+
+if EXIST %CHECKPOINT_DIR%\node_patch goto node_patch_done
+echo node - Patching
+cd %BUILD_DIR%
+type "%TOP%\Patches\Windows\%NODE_NAME%-patch.tar.bz2" | bzip2 -d -c | tar -x -f- 2> NUL:
+touch %CHECKPOINT_DIR%\node_patch
+:node_patch_done
+
+if EXIST %CHECKPOINT_DIR%\node_compile_debug goto node_compile_debug_done
+echo node - Compiling debug
+cd %BUILD_DIR%\%NODE_NAME%
+call .\vcbuild.bat Debug
+rem call it again because the first one fails for no reason
+call .\vcbuild.bat Debug
+touch %CHECKPOINT_DIR%\node_compile_debug
+:node_compile_debug_done
+
+if EXIST %CHECKPOINT_DIR%\node_compile_release goto node_compile_release_done
+echo node - Compiling release
+cd %BUILD_DIR%\%NODE_NAME%
+call .\vcbuild.bat Release
+rem call it again because the first one fails for no reason
+call .\vcbuild.bat Release
+touch %CHECKPOINT_DIR%\node_compile_release
+:node_compile_release_done
+
+if EXIST %CHECKPOINT_DIR%\node_install goto node_install_done
+echo node - Installing
+cd %BUILD_DIR%\%NODE_NAME%
+echo F | xcopy Debug\node.lib %LIB_ARCH_DEBUG_DIR%\node\node.lib /Y > NUL:
+echo F | xcopy Release\node.lib %LIB_ARCH_RELEASE_DIR%\node\node.lib /Y > NUL:
+touch %CHECKPOINT_DIR%\node_install
+:node_install_done
 
 rem ============= ZLIB ==============
 if EXIST %CHECKPOINT_DIR%\zlib_unpack goto zlib_unpack_done

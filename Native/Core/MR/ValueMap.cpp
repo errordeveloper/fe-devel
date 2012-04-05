@@ -103,7 +103,7 @@ namespace Fabric
     {
       size_t elementSize = m_inputDesc->getAllocSize();
       void *inputData = alloca( elementSize );
-      memset( inputData, 0, elementSize );
+      m_inputDesc->initializeData( m_inputDesc->getDefaultData(), inputData );
       m_inputComputeState->produce( inputData );
       
       if ( m_operator->takesSharedValue() )

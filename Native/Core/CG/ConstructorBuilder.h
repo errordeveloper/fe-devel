@@ -29,7 +29,7 @@ namespace Fabric
         ModuleBuilder &moduleBuilder,
         RC::ConstHandle<Adapter> const &thisAdapter,
         RC::ConstHandle<Adapter> const &thatAdapter,
-        Cost cost = ConstructorBuilder::HighCost
+        Cost cost
         )
         : FunctionBuilder(
           moduleBuilder,

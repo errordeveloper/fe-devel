@@ -62,7 +62,7 @@ FABRIC.SceneGraph.registerNodeType('Cross', {
       scene.constructOperator({
         operatorName: 'generateCross',
         srcFile: 'FABRIC_ROOT/SG/KL/generateCross.kl',
-        entryFunctionName: 'generateCross',
+        entryPoint: 'generateCross',
         parameterLayout: [
           'self.positions<>',
           'uniforms.indices',
@@ -93,7 +93,7 @@ FABRIC.SceneGraph.registerNodeType('Axes', {
       scene.constructOperator({
         operatorName: 'generateAxes',
         srcFile: 'FABRIC_ROOT/SG/KL/generateAxes.kl',
-        entryFunctionName: 'generateAxes',
+        entryPoint: 'generateAxes',
         parameterLayout: [
           'self',
           'self.positions<>',
@@ -129,7 +129,7 @@ FABRIC.SceneGraph.registerNodeType('Rectangle', {
       scene.constructOperator({
         operatorName: 'generateRectangle',
         srcFile: 'FABRIC_ROOT/SG/KL/generateRectangle.kl',
-        entryFunctionName: 'generateRectangle',
+        entryPoint: 'generateRectangle',
         parameterLayout: [
           'self.positions<>',
           'uniforms.indices',
@@ -166,7 +166,7 @@ FABRIC.SceneGraph.registerNodeType('BoundingBox', {
       scene.constructOperator({
         operatorName: 'generateBoundingBox',
         srcFile: 'FABRIC_ROOT/SG/KL/generateBoundingBox.kl',
-        entryFunctionName: 'generateBoundingBox',
+        entryPoint: 'generateBoundingBox',
         parameterLayout: [
           'self.positions<>',
           'uniforms.indices',
@@ -213,7 +213,7 @@ FABRIC.SceneGraph.registerNodeType('Grid', {
       scene.constructOperator({
         operatorName: 'generateGrid',
         srcFile: 'FABRIC_ROOT/SG/KL/generateGrid.kl',
-        entryFunctionName: 'generateGrid',
+        entryPoint: 'generateGrid',
         parameterLayout: [
           'self',
           'self.positions<>',
@@ -251,7 +251,7 @@ FABRIC.SceneGraph.registerNodeType('CameraPrimitive', {
       scene.constructOperator({
         operatorName: 'generateCameraPrim',
         srcFile: 'FABRIC_ROOT/SG/KL/generateCameraPrim.kl',
-        entryFunctionName: 'generateCameraPrim',
+        entryPoint: 'generateCameraPrim',
         parameterLayout: [
           'self',
           'self.positions<>',
@@ -288,7 +288,7 @@ FABRIC.SceneGraph.registerNodeType('Circle', {
       scene.constructOperator({
         operatorName: 'generateCircle',
         srcFile: 'FABRIC_ROOT/SG/KL/generateCircle.kl',
-        entryFunctionName: 'generateCircle',
+        entryPoint: 'generateCircle',
         parameterLayout: [
           'self',
           'self.positions<>',
@@ -303,6 +303,63 @@ FABRIC.SceneGraph.registerNodeType('Circle', {
   }});
 
 
+FABRIC.SceneGraph.registerNodeType('Spline', {
+  briefDesc: 'The Spline primitive draws a spline between two points using line segments.',
+  detailedDesc: 'The Spline primitive draws a hermite curve using line segments. The number of segments can be specified.',
+  parentNodeDesc: 'Lines',
+  optionsDesc: {
+    p1:         'The starting position of the spline',
+    t1:         'The tangent at the starting position',
+    p2:         'The ending position of the spline',
+    t2:         'The tangent at the end position',
+    numSegments: 'The number of line segments to use when drawing the spline.'
+  },
+  factoryFn: function(options, scene) {
+    // create a default spline on z=0 plane
+    scene.assignDefaults(options, {
+        p1: new FABRIC.RT.Vec3(0, 0, 0),
+        t1: new FABRIC.RT.Vec3(0, -10, 0),
+        p2: new FABRIC.RT.Vec3(10, 0, 0),
+        t2: new FABRIC.RT.Vec3(0, -10, 0),
+        numSegments: 24
+      });
+
+    var splineNode = scene.constructNode('Lines', options);
+    splineNode.pub.addUniformValue('p1', 'Vec3', options.p1);
+    splineNode.pub.addUniformValue('t1', 'Vec3', options.t1);
+    splineNode.pub.addUniformValue('p2', 'Vec3', options.p2);
+    splineNode.pub.addUniformValue('t2', 'Vec3', options.t2);
+    splineNode.pub.addUniformValue('numSegments', 'Integer', options.numSegments);
+
+    // getters and setters
+    var uniforms = splineNode.getUniformsDGNode();
+    splineNode.addMemberInterface(uniforms, 'p1', true);
+    splineNode.addMemberInterface(uniforms, 't1', true);
+    splineNode.addMemberInterface(uniforms, 'p2', true);
+    splineNode.addMemberInterface(uniforms, 't2', true);
+    splineNode.addMemberInterface(uniforms, 'numSegments', true);
+    
+    splineNode.setGeneratorOps([
+      scene.constructOperator({
+        operatorName: 'generateSpline',
+        srcFile: 'FABRIC_ROOT/SG/KL/generateSpline.kl',
+        entryPoint: 'generateSpline',
+        parameterLayout: [
+          'self',
+          'self.positions<>',
+          'uniforms.indices',
+          'uniforms.p1',
+          'uniforms.t1',
+          'uniforms.p2',
+          'uniforms.t2',
+          'uniforms.numSegments'
+          ]
+      })
+    ]);
+    return splineNode;
+  }});
+
+  
 FABRIC.SceneGraph.registerNodeType('Plane', {
   briefDesc: 'The Plane primitive draws a plane or arc using triangles.',
   detailedDesc: 'The Plane primitive draws a plane or arc using triangles.',
@@ -333,7 +390,7 @@ FABRIC.SceneGraph.registerNodeType('Plane', {
       scene.constructOperator({
         operatorName: 'generatePlane',
         srcFile: 'FABRIC_ROOT/SG/KL/generatePlane.kl',
-        entryFunctionName: 'generatePlane',
+        entryPoint: 'generatePlane',
         parameterLayout: [
           'self',
           'uniforms.indices',
@@ -386,7 +443,7 @@ FABRIC.SceneGraph.registerNodeType('Cuboid', {
       scene.constructOperator({
         operatorName: 'generateCuboid',
         srcFile: 'FABRIC_ROOT/SG/KL/generateCuboid.kl',
-        entryFunctionName: 'generateCuboid',
+        entryPoint: 'generateCuboid',
         parameterLayout: [
           'self.positions<>',
           'self.normals<>',
@@ -426,7 +483,7 @@ FABRIC.SceneGraph.registerNodeType('Sphere', {
       scene.constructOperator({
         operatorName: 'generateSphere',
         srcFile: 'FABRIC_ROOT/SG/KL/generateSphere.kl',
-        entryFunctionName: 'generateSphere',
+        entryPoint: 'generateSphere',
         parameterLayout: [
           'self',
           'uniforms.radius',
@@ -468,7 +525,7 @@ FABRIC.SceneGraph.registerNodeType('Torus', {
       scene.constructOperator({
         operatorName: 'generateTorus',
         srcFile: 'FABRIC_ROOT/SG/KL/generateTorus.kl',
-        entryFunctionName: 'generateTorus',
+        entryPoint: 'generateTorus',
         parameterLayout: [
           'self',
           'uniforms.outerRadius',
@@ -513,7 +570,7 @@ FABRIC.SceneGraph.registerNodeType('Cone', {
       scene.constructOperator({
         operatorName: 'generateCone',
         srcFile: 'FABRIC_ROOT/SG/KL/generateCone.kl',
-        entryFunctionName: 'generateCone',
+        entryPoint: 'generateCone',
         parameterLayout: [
           'self',
           'uniforms.radius',
@@ -562,7 +619,7 @@ FABRIC.SceneGraph.registerNodeType('Cylinder', {
       scene.constructOperator({
         operatorName: 'generateCylinder',
         srcFile: 'FABRIC_ROOT/SG/KL/generateCylinder.kl',
-        entryFunctionName: 'generateCylinder',
+        entryPoint: 'generateCylinder',
         parameterLayout: [
           'self',
           'uniforms.radius',
@@ -610,7 +667,7 @@ FABRIC.SceneGraph.registerNodeType('Teapot', {
       scene.constructOperator({
         operatorName: 'generateTeapot',
         srcFile: 'FABRIC_ROOT/SG/KL/generateTeapot.kl',
-        entryFunctionName: 'generateTeapot',
+        entryPoint: 'generateTeapot',
         parameterLayout: [
           'self',
           'uniforms.size',

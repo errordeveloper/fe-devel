@@ -48,7 +48,7 @@ namespace Fabric
         {
           RC::ConstHandle<AST::Param> indexParam = params->get(2);
           if ( indexParam->getUsage() != CG::USAGE_RVALUE
-            || indexParam->getAdapter( cgManager ) != cgManager->getSizeAdapter()
+            || !indexParam->getAdapter( cgManager )->isEquivalentTo( cgManager->getSizeAdapter() )
             )
             throw GetPrototypeException();
         
@@ -56,7 +56,7 @@ namespace Fabric
           {
             RC::ConstHandle<AST::Param> countParam = params->get(3);
             if ( countParam->getUsage() != CG::USAGE_RVALUE
-              || countParam->getAdapter( cgManager ) != cgManager->getSizeAdapter()
+              || !countParam->getAdapter( cgManager )->isEquivalentTo( cgManager->getSizeAdapter() )
               )
               throw GetPrototypeException();
           

@@ -55,7 +55,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeSlices', {
              'textureTransform.' + options.textureXfoMat44Member,
              'self.localXfo'
            ],
-           entryFunctionName: 'setFromTexture3DSource',
+           entryPoint: 'setFromTexture3DSource',
            srcCode: 'use Xfo; operator setFromTexture3DSource(io Mat44 src, io Xfo dst){dst.setFromMat44(src);}'
          }),0);
 
@@ -76,7 +76,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeSlices', {
       scene.constructOperator({
         operatorName: 'generateVolumeSlices',
         srcFile: 'FABRIC_ROOT/SG/KL/generateVolumeSlices.kl',
-        entryFunctionName: 'generateVolumeSlices',
+        entryPoint: 'generateVolumeSlices',
         parameterLayout: [
           'self',
           'uniforms.cropMin',
@@ -192,7 +192,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
             'self.depth',
             'self.pixels'
           ],
-          entryFunctionName: 'reduceOpacityTexture',
+          entryPoint: 'reduceOpacityTexture',
           srcFile: 'FABRIC_ROOT/SG/KL/generateVolumeSlices.kl'
         }));
         var sourceOpacityDGNodeForGradient = reducedOpacityDGNode;
@@ -209,7 +209,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
           'opacity.depth',
           'self'
         ],
-        entryFunctionName: 'initCount',
+        entryPoint: 'initCount',
         srcCode: 'operator initCount(io Size depth, io Container container){container.resize( depth );}',
         mainThreadOnly: true
       }));
@@ -224,7 +224,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
           'self.sliceGradients',
           'self.index'
         ],
-        entryFunctionName: 'computeGradients_depthSliced',
+        entryPoint: 'computeGradients_depthSliced',
         srcFile: 'FABRIC_ROOT/SG/KL/generateVolumeSlices.kl'
       }));
 
@@ -240,7 +240,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
             'self.smoothedSliceGradients',
             'self.index'
           ],
-          entryFunctionName: 'smoothGradients_depthSliced',
+          entryPoint: 'smoothGradients_depthSliced',
           srcFile: 'FABRIC_ROOT/SG/KL/generateVolumeSlices.kl'
         }));
       }
@@ -271,7 +271,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
           'self.pixels',
           'self.version'
         ],
-        entryFunctionName: 'setGradients',
+        entryPoint: 'setGradients',
         srcCode: 'operator setGradients(io Size inW, io Size inH, io Size inD, io RGBA sliceGradients<>[], io Size W, io Size H, io Size D, io RGBA pixels[], io Integer version) {\n' +
                                 'version = version+1;\n' +
                                 'W = inW; H = inH; D = inD;\n' +
@@ -296,7 +296,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
                       '  if(version != srcVersion){' +
                       '    version = srcVersion;\n' +
                       '    refresh = true;} }',
-        entryFunctionName: 'detectChange',
+        entryPoint: 'detectChange',
         parameterLayout: [
           'image.version',
           'self.version',
@@ -326,7 +326,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
         'self.nbSlices',
         'self.halfPixelCrop'
       ],
-      entryFunctionName: 'setNbSlicesFrom3DImage',
+      entryPoint: 'setNbSlicesFrom3DImage',
       srcFile: 'FABRIC_ROOT/SG/KL/generateVolumeSlices.kl'
     }));
 
@@ -359,7 +359,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
       scene.constructOperator({
           operatorName: 'setResolutionFactor',
           srcCode: 'use OGLRenderTarget; operator setResolutionFactor(io Scalar factor, io OGLRenderTarget renderTarget){ renderTarget.resolution = (factor < 0.95 ? factor : 1.0); }',
-          entryFunctionName: 'setResolutionFactor',
+          entryPoint: 'setResolutionFactor',
           parameterLayout: [
             'volumeUniforms.resolutionFactor',
             'self.renderTarget'
@@ -370,7 +370,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
       scene.constructOperator({
           operatorName: 'bindScreenRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'bindScreenRenderTarget',
+          entryPoint: 'bindScreenRenderTarget',
           parameterLayout: [
             'window.width',
             'window.height',
@@ -382,7 +382,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
       scene.constructOperator({
           operatorName: 'unbindRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'unbindRenderTarget',
+          entryPoint: 'unbindRenderTarget',
           parameterLayout: [
             'self.renderTarget'
           ]
@@ -392,7 +392,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
       scene.constructOperator({
           operatorName: 'setVolumeRenderTextureID',
           srcCode: 'use OGLRenderTarget; operator setVolumeRenderTextureID(io OGLRenderTarget renderTarget, io Integer textureID){ textureID = renderTarget.textures[0].texture.bufferID; }',
-          entryFunctionName: 'setVolumeRenderTextureID',
+          entryPoint: 'setVolumeRenderTextureID',
           parameterLayout: [
             'self.renderTarget',
             'volumeRootRedraw.volumeRenderTextureID'
@@ -435,7 +435,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
           'opacityColors.values',
           'self.pixels<>'
         ],
-        entryFunctionName: 'updateTransferFunctionImage',
+        entryPoint: 'updateTransferFunctionImage',
         srcFile: 'FABRIC_ROOT/SG/KL/generateVolumeSlices.kl'
       }));
     }
@@ -476,7 +476,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
                     'Scalar brightnessExp = log( opacityPerSlice ) / log( 0.5 );' + //We modulate by an exponential function else all the interesting values are close to brightness 0.5
                     'Scalar ajustedAlphaPerSlice = pow( ajustedBrightness, brightnessExp);' +
                     'alphaFactor = ajustedAlphaPerSlice / (1.0 - pow(ajustedAlphaPerSlice, Scalar(nbSlices))*0.99999);}\n',
-      entryFunctionName: 'setFactors',
+      entryPoint: 'setFactors',
       parameterLayout: [
         'self.invertColor',
         'self.specularFactor',
@@ -512,7 +512,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeOpacityInstance', {
           srcCode:  'use FabricOGL; operator setTextureID(io Integer textureID){ \n' +
                     '  glActiveTexture(GL_TEXTURE0);\n' +
                     '  glBindTexture(GL_TEXTURE_2D, textureID);}',
-          entryFunctionName: 'setTextureID',
+          entryPoint: 'setTextureID',
           parameterLayout: [
             'volumeRootRedraw.volumeRenderTextureID'
           ]
@@ -611,7 +611,7 @@ FABRIC.SceneGraph.registerNodeType('DrawRectangle', {
       scene.constructOperator({
           operatorName: 'drawTexture',
           srcFile: 'FABRIC_ROOT/SG/KL/drawTexture.kl',
-          entryFunctionName: 'drawTextureAt',
+          entryPoint: 'drawTextureAt',
           parameterLayout: [
             'self.tl',
             'self.br',
@@ -718,7 +718,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeSliceRender', {
         srcCode: 'operator copyParams(io Integer srcInvertColor, io Integer dstInvertColor, io Scalar srcBrightness, io Scalar dstBrightness){ \n' +
                       'dstInvertColor = srcInvertColor;\n' +
                       'dstBrightness = srcBrightness;}\n',
-        entryFunctionName: 'copyParams',
+        entryPoint: 'copyParams',
         parameterLayout: [
           'source.invertColor',
           'self.invertColor',
@@ -747,7 +747,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeSliceRender', {
         scene.constructOperator({
             operatorName: 'preSliceRender',
             srcFile: 'FABRIC_ROOT/SG/KL/drawVolume2DSlice.kl',
-            entryFunctionName: 'preSliceRender',
+            entryPoint: 'preSliceRender',
             preProcessorDefinitions: preProcessorDefinitions,
             parameterLayout: [
               'shader.shaderProgram'
@@ -758,7 +758,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeSliceRender', {
         scene.constructOperator({
             operatorName: 'postSliceRender',
             srcFile: 'FABRIC_ROOT/SG/KL/drawVolume2DSlice.kl',
-            entryFunctionName: 'postSliceRender',
+            entryPoint: 'postSliceRender',
             preProcessorDefinitions: preProcessorDefinitions
           }));
     }
@@ -795,7 +795,7 @@ FABRIC.SceneGraph.registerNodeType('VolumeSliceRender', {
     sliceGeomRedrawEventHandler.preDescendBindings.append(scene.constructOperator({
       operatorName: 'drawVolumeSlice',
       srcFile: 'FABRIC_ROOT/SG/KL/drawVolume2DSlice.kl',
-      entryFunctionName: 'draw2DVolumeSlice',
+      entryPoint: 'draw2DVolumeSlice',
       preProcessorDefinitions: preProcessorDefinitions,
       parameterLayout: [
         'transform.globalXfo',

@@ -61,7 +61,7 @@ FABRIC.SceneGraph.registerNodeType('KinectCamera', {
       parameterLayout: [
         'self.camera'
       ],
-      entryFunctionName: 'initKinectCamera',
+      entryPoint: 'initKinectCamera',
       srcFile: 'FABRIC_ROOT/SG/KL/kinect.kl'
     }));
 
@@ -72,7 +72,7 @@ FABRIC.SceneGraph.registerNodeType('KinectCamera', {
         'self.camera',
         'self.tiltAngle'
       ],
-      entryFunctionName: 'tiltKinectCamera',
+      entryPoint: 'tiltKinectCamera',
       srcFile: 'FABRIC_ROOT/SG/KL/kinect.kl'
     }));
 
@@ -83,7 +83,7 @@ FABRIC.SceneGraph.registerNodeType('KinectCamera', {
         'self.camera',
         'globals.time'
       ],
-      entryFunctionName: 'getKinectCameraAllPixels',
+      entryPoint: 'getKinectCameraAllPixels',
       srcFile: 'FABRIC_ROOT/SG/KL/kinect.kl'
     }));
     
@@ -113,7 +113,7 @@ FABRIC.SceneGraph.registerNodeType('KinectCamera', {
             'uniforms.height',
             'self.pixels<>'
           ],
-          entryFunctionName: 'getKinectCameraColorPixels',
+          entryPoint: 'getKinectCameraColorPixels',
           srcFile: 'FABRIC_ROOT/SG/KL/kinect.kl'
         }));
         
@@ -150,7 +150,7 @@ FABRIC.SceneGraph.registerNodeType('KinectCamera', {
             'kinect.depthMin',
             'kinect.depthMax'
           ],
-          entryFunctionName: 'getKinectCameraDepthAsColorPixels',
+          entryPoint: 'getKinectCameraDepthAsColorPixels',
           srcFile: 'FABRIC_ROOT/SG/KL/kinect.kl'
         }));
 
@@ -221,7 +221,7 @@ FABRIC.SceneGraph.registerNodeType('KinectCamera', {
             'self.positions<>',
             'self.vertexColors<>'
           ],
-          entryFunctionName: 'getKinectCameraLines',
+          entryPoint: 'getKinectCameraLines',
           srcFile: 'FABRIC_ROOT/SG/KL/kinect.kl'
         }));
         return linesNode.pub;
@@ -246,7 +246,7 @@ FABRIC.SceneGraph.registerNodeType('KinectCamera', {
           'self.positions<>',
           'self.vertexColors<>'
         ],
-        entryFunctionName: 'getKinectCameraPoints',
+        entryPoint: 'getKinectCameraPoints',
         srcFile: 'FABRIC_ROOT/SG/KL/kinect.kl'
       }));
 

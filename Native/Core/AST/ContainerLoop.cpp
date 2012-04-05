@@ -102,7 +102,7 @@ namespace Fabric
         }
         entryBB.getInstList().insert( it, nodePtrPtr );
         
-        llvm::Value *bitsPtr = dictExprValue.getValue();
+        llvm::Value *bitsPtr = basicBlockBuilder->CreateLoad( dictExprValue.getValue() );
         
         llvm::BasicBlock *startBB = parentBasicBlockBuilder.getFunctionBuilder().createBasicBlock( "containerLoopStart" );
         llvm::BasicBlock *checkBB = parentBasicBlockBuilder.getFunctionBuilder().createBasicBlock( "containerLoopCheck" );
@@ -110,11 +110,15 @@ namespace Fabric
         llvm::BasicBlock *stepBB = parentBasicBlockBuilder.getFunctionBuilder().createBasicBlock( "containerLoopStep" );
         llvm::BasicBlock *endBB = parentBasicBlockBuilder.getFunctionBuilder().createBasicBlock( "containerLoopEnd" );
         
-        basicBlockBuilder->CreateBr( startBB );
+        basicBlockBuilder->CreateCondBr(
+          basicBlockBuilder->CreateIsNotNull( bitsPtr ),
+          startBB,
+          endBB
+          );
         
         // [pzion 20111019] Load bits->firstNode into llvmNodePtrPtr
         basicBlockBuilder->SetInsertPoint( startBB );
-        llvm::Value *firstNodePtrPtr = basicBlockBuilder->CreateStructGEP( bitsPtr, 2 );
+        llvm::Value *firstNodePtrPtr = basicBlockBuilder->CreateStructGEP( bitsPtr, 3 );
         llvm::Value *firstNodePtr = basicBlockBuilder->CreateLoad( firstNodePtrPtr );
         basicBlockBuilder->CreateStore( firstNodePtr, nodePtrPtr );
         basicBlockBuilder->CreateBr( checkBB );

@@ -24,6 +24,29 @@ namespace Fabric
       return &defaultData;
     }
     
+    void ArrayProducerImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t *dstEnd = dst + dstStride * count;
+
+      while ( dst != dstEnd )
+      {
+        MR::ArrayProducer const *srcBits;
+        if ( src )
+        {
+          srcBits = *reinterpret_cast<MR::ArrayProducer const * const *>( src );
+          src += srcStride;
+        }
+        else srcBits = 0;
+
+        MR::ArrayProducer const *&dstBits = *reinterpret_cast<MR::ArrayProducer const **>( dst );
+        dstBits = srcBits;
+        if ( dstBits )
+          dstBits->retain();
+        dst += dstStride;
+      }
+    }
+    
     void ArrayProducerImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );

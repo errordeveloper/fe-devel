@@ -6,7 +6,7 @@ import fabric
 fabricClient = fabric.createClient()
 
 loadOp = fabricClient.DependencyGraph.createOperator("load")
-loadOp.setEntryFunctionName("load")
+loadOp.setEntryPoint("load")
 loadOp.setSourceCode('\
 require FabricOBJ;\n\
 \n\
@@ -39,7 +39,7 @@ rlnode.bindings.append(loadOpBinding)
 rlnode.setData("url", 0, "testfile://test.obj")
 
 resizeOp = fabricClient.DependencyGraph.createOperator("resize")
-resizeOp.setEntryFunctionName("resize")
+resizeOp.setEntryPoint("resize")
 resizeOp.setSourceCode('\
 require FabricOBJ;\n\
 operator resize(\n\
@@ -65,7 +65,7 @@ resizeBinding.setParameterLayout([
 ])
 
 setDataOp = fabricClient.DependencyGraph.createOperator("setData")
-setDataOp.setEntryFunctionName("setData")
+setDataOp.setEntryPoint("setData")
 setDataOp.setSourceCode('\
 require FabricOBJ;\n\
 operator setData(\n\
