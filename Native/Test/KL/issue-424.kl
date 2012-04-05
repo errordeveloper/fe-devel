@@ -9,5 +9,5 @@ function Scalar foo() {
 }
 
 operator entry() {
-  report foo();
+  report(foo());
 }

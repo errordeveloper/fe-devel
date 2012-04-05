@@ -6,7 +6,7 @@ operator generator1(
   io Integer value
   )
 {
-  report "generator1: value=" + value;
+  report("generator1: value=" + value);
   value = 42;
 }
 
@@ -15,7 +15,7 @@ operator generator2(
   Index index
   )
 {
-  report "generator2: value=" + value + " index=" + index;
+  report("generator2: value=" + value + " index=" + index);
   value = 2*index;
 }
 
@@ -25,7 +25,7 @@ operator generator3(
   Size count
   )
 {
-  report "generator3: value=" + value + " index=" + index + " count=" + count;
+  report("generator3: value=" + value + " index=" + index + " count=" + count);
   value = 2*index;
 }
 
@@ -36,7 +36,7 @@ operator generator4(
   String shared
   )
 {
-  report "generator4: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  report("generator4: value=" + value + " index=" + index + " count=" + count + " shared=" + shared);
   value = 2*index;
 }
 
@@ -44,26 +44,26 @@ operator entry() {
   ValueProducer<Size> cvg = createConstValue(Size(10));
 
   ArrayProducer<Integer> ag1 = createArrayGenerator(cvg, generator1);
-  report ag1;
-  report ag1.getCount();
+  report(ag1);
+  report(ag1.getCount());
   for (Index i=0; i<10; ++i)
-    report ag1.produce(i);
+    report(ag1.produce(i));
 
   ArrayProducer<Integer> ag2 = createArrayGenerator(cvg, generator2);
-  report ag2;
-  report ag2.getCount();
+  report(ag2);
+  report(ag2.getCount());
   for (Index i=0; i<10; ++i)
-    report ag2.produce(i);
+    report(ag2.produce(i));
 
   ArrayProducer<Integer> ag3 = createArrayGenerator(cvg, generator3);
-  report ag3;
-  report ag3.getCount();
+  report(ag3);
+  report(ag3.getCount());
   for (Index i=0; i<10; ++i)
-    report ag3.produce(i);
+    report(ag3.produce(i));
 
   ArrayProducer<Integer> ag4 = createArrayGenerator(cvg, generator4, createConstValue("hello"));
-  report ag4;
-  report ag4.getCount();
+  report(ag4);
+  report(ag4.getCount());
   for (Index i=0; i<10; ++i)
-    report ag4.produce(i);
+    report(ag4.produce(i));
 }

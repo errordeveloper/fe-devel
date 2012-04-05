@@ -5,15 +5,15 @@
 operator entry()
 {
   var Scalar scalar = 0;
-  report scalar;
+  report(scalar);
   scalar = 1.0;
-  report scalar;
+  report(scalar);
   scalar = -2.0;
-  report scalar;
+  report(scalar);
   scalar = 3.141596535;
-  report scalar;
+  report(scalar);
   scalar = 4.5e-23;
-  report scalar;
+  report(scalar);
   scalar = -5.6e9;
-  report scalar;
+  report(scalar);
 }

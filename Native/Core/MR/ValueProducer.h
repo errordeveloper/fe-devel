@@ -63,6 +63,7 @@ namespace Fabric
     protected:
     
       ValueProducer();
+      virtual ~ValueProducer() {}
     };
   }
 }

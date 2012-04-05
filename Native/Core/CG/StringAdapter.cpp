@@ -85,7 +85,7 @@ namespace Fabric
       RC::Handle<Context> context = moduleBuilder.getContext();
       
       llvm::Type *implType = getLLVMImplType( context );
-
+  
       RC::ConstHandle<BooleanAdapter> booleanAdapter = getManager()->getBooleanAdapter();
       booleanAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<IntegerAdapter> integerAdapter = getManager()->getIntegerAdapter();
@@ -96,55 +96,58 @@ namespace Fabric
       dataAdapter->llvmCompileToModule( moduleBuilder );
             
       static const bool buildFunctions = true;
-
-      llvm::Function *reportFunction;
+     
       {
         std::vector< llvm::Type * > argTypes;
-        argTypes.push_back( llvm::Type::getInt8PtrTy( context->getLLVMContext() ) );
-        argTypes.push_back( sizeAdapter->llvmRType( context ) );
-        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
-        
-        llvm::AttributeWithIndex AWI[1];
-        AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
-        llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 1 );
-        
-        reportFunction = llvm::cast<llvm::Function>( moduleBuilder->getOrInsertFunction( "report", funcType, attrListPtr ) ); 
-      }
-      
-      {
-        InternalFunctionBuilder functionBuilder(
+        std::string name = "report";
+        ParamVector params(
+          FunctionParam(
+            "stringRValue",
+            this,
+            USAGE_RVALUE
+            )
+          );
+        ExprTypeVector exprTypes = params.getTypes();
+        FunctionBuilder functionBuilder(
           moduleBuilder,
-          0, "__String__Report",
-          "string", this, USAGE_RVALUE,
-          0 );
-        if ( buildFunctions )
-        {
-          BasicBlockBuilder basicBlockBuilder( functionBuilder );
+          CG::FunctionPencilKey( name ),
+          CG::FunctionDefaultSymbolName(
+            name,
+            exprTypes
+            ),
+          CG::FunctionFullDesc(
+            0,
+            name,
+            exprTypes
+            ),
+          0,
+          params,
+          0
+          );
 
-          llvm::Value *rValue = functionBuilder[0];
+        BasicBlockBuilder basicBlockBuilder( functionBuilder );
 
-          llvm::BasicBlock *entryBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "entry" );
-          llvm::BasicBlock *notNullBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "notNull" );
-          llvm::BasicBlock *doneBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "done" );
-          
-          basicBlockBuilder->SetInsertPoint( entryBB );
-          llvm::Value *bitsLValue = basicBlockBuilder->CreateLoad( rValue );
-          llvm::Value *isNotNullRValue = basicBlockBuilder->CreateIsNotNull( bitsLValue );
-          basicBlockBuilder->CreateCondBr( isNotNullRValue, notNullBB, doneBB );
-          
-          basicBlockBuilder->SetInsertPoint( notNullBB );
-          llvm::Value *dataLValue = basicBlockBuilder->CreateStructGEP( bitsLValue, 3 );
-          llvm::Value *dataRValue = basicBlockBuilder->CreateConstGEP2_32( dataLValue, 0, 0 );
-          llvm::Value *lengthLValue = basicBlockBuilder->CreateStructGEP( bitsLValue, 2 );
-          llvm::Value *lengthRValue = sizeAdapter->llvmLValueToRValue( basicBlockBuilder, lengthLValue );
-          basicBlockBuilder->CreateCall2( reportFunction, dataRValue, lengthRValue );
-          basicBlockBuilder->CreateBr( doneBB );
-          
-          basicBlockBuilder->SetInsertPoint( doneBB );
-          basicBlockBuilder->CreateRetVoid();
-        }
+        llvm::Value *rValue = functionBuilder[0];
+
+        llvm::BasicBlock *entryBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "entry" );
+        llvm::BasicBlock *notNullBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "notNull" );
+        llvm::BasicBlock *doneBB = basicBlockBuilder.getFunctionBuilder().createBasicBlock( "done" );
+        
+        basicBlockBuilder->SetInsertPoint( entryBB );
+        llvm::Value *bitsLValue = basicBlockBuilder->CreateLoad( rValue );
+        llvm::Value *isNotNullRValue = basicBlockBuilder->CreateIsNotNull( bitsLValue );
+        basicBlockBuilder->CreateCondBr( isNotNullRValue, notNullBB, doneBB );
+        
+        basicBlockBuilder->SetInsertPoint( notNullBB );
+        llvmReport( basicBlockBuilder, rValue );
+        basicBlockBuilder->CreateBr( doneBB );
+        
+        basicBlockBuilder->SetInsertPoint( doneBB );
+        basicBlockBuilder->CreateRetVoid();
+
+        moduleBuilder.getScope().put( "report", functionBuilder.getPencil() );
       }
-   
+ 
       {
         ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
@@ -600,13 +603,28 @@ namespace Fabric
     
     void StringAdapter::llvmReport( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {
-      InternalFunctionBuilder functionBuilder(
-        basicBlockBuilder.getModuleBuilder(),
-        0, "__String__Report",
-        "string", this, USAGE_RVALUE,
-        0
+      RC::Handle<Context> context = basicBlockBuilder.getContext();
+      RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
+
+      std::vector< llvm::Type const * > argTypes;
+      argTypes.push_back( llvm::Type::getInt8PtrTy( context->getLLVMContext() ) );
+      argTypes.push_back( sizeAdapter->llvmRType( context ) );
+      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      
+      llvm::AttributeWithIndex AWI[1];
+      AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::NoUnwind );
+      llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 1 );
+      
+      llvm::Function *llvmReportFunction = llvm::cast<llvm::Function>(
+        basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "report", funcType, attrListPtr )
         );
-      basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), rValue );
+
+      llvm::Value *bitsLValue = basicBlockBuilder->CreateLoad( rValue );
+      llvm::Value *dataLValue = basicBlockBuilder->CreateStructGEP( bitsLValue, 3 );
+      llvm::Value *dataRValue = basicBlockBuilder->CreateConstGEP2_32( dataLValue, 0, 0 );
+      llvm::Value *lengthLValue = basicBlockBuilder->CreateStructGEP( bitsLValue, 2 );
+      llvm::Value *lengthRValue = sizeAdapter->llvmLValueToRValue( basicBlockBuilder, lengthLValue );
+      basicBlockBuilder->CreateCall2( llvmReportFunction, dataRValue, lengthRValue );
     }
     
     void StringAdapter::llvmThrow( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const

@@ -12,5 +12,5 @@ function S foo() {
 }
 
 operator entry() {
-  report foo();
+  report(foo());
 }

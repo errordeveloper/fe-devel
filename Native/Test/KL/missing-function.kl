@@ -3,5 +3,5 @@
  */
 
 operator entry() {
-  report foo("Hello", 42, true);
+  report(foo("Hello", 42, true));
 }

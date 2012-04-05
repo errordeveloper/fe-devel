@@ -457,8 +457,6 @@ namespace Fabric
             return createToken( TOKEN_STRUCT, sourceRange );
           if ( string == "switch" )
             return createToken( TOKEN_SWITCH, sourceRange );
-          if ( string == "report" )
-            return createToken( TOKEN_REPORT, sourceRange );
           if ( string == "return" )
             return createToken( TOKEN_RETURN, sourceRange );
           break;

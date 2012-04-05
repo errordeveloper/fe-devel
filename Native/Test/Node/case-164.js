@@ -8,7 +8,7 @@ operator = F.DG.createOperator("op");
 operator.setEntryPoint("entry");
 operator.setSourceCode("\
 operator entry( io Size foo ) {\n\
-  report 'foo = ' + foo;\n\
+  report('foo = ' + foo);\n\
 }\n\
 ");
 if (operator.getDiagnostics().length > 0 )

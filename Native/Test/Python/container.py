@@ -24,22 +24,22 @@ operator op(\n\
   io String s<>\n\
   )\n\
 {\n\
-  report "Container string: " + c + " Count: " + c.size() + " Is valid: " + Boolean(c);\n\
+  report("Container string: " + c + " Count: " + c.size() + " Is valid: " + Boolean(c));\n\
   Container otherC;\n\
-  report "Uninitialized Container string: " + otherC + " Is valid: " + Boolean(otherC);\n\
-  report "Member sizes: " + i.size;\n\
-  report "Members: " + i + " " + s;\n\
+  report("Uninitialized Container string: " + otherC + " Is valid: " + Boolean(otherC));\n\
+  report("Member sizes: " + i.size);\n\
+  report("Members: " + i + " " + s);\n\
   otherC = c;\n\
   otherC.resize(Size(3));\n\
-  report "Container string: " + otherC + " Count: " + otherC.size + " Is valid: " + Boolean(otherC);\n\
-  report "To fix: i.size is wrong! LLVM doesn\'t know about aliasing!";\n\
+  report("Container string: " + otherC + " Count: " + otherC.size + " Is valid: " + Boolean(otherC));\n\
+  report("To fix: i.size is wrong! LLVM doesn\'t know about aliasing!");\n\
   i[2] = 1;\n\
   s[2] = "test";\n\
-  report "Member sizes: " + s.size;\n\
-  report "Members: " + i + " " + s;\n\
+  report("Member sizes: " + s.size);\n\
+  report("Members: " + i + " " + s);\n\
   //Now test accessing uninitialized Container\n\
   Container bad;\n\
-  report bad.size();\n\
+  report(bad.size());\n\
 }\n\
 ');
 if len( op.getDiagnostics() ) > 0:

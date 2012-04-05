@@ -4,12 +4,12 @@
 
 function doSomething()
 {
-  report "Did something";
+  report("Did something");
 }
 
 function doSomethingElse()
 {
-  report "Did something else";
+  report("Did something else");
 }
 
 

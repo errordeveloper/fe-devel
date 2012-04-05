@@ -3,11 +3,11 @@
  */
 
 function testRValue( Boolean boolean ) {
-  report "testRValue: " + boolean;
+  report("testRValue: " + boolean);
 }
 
 function testLValue( io Boolean boolean ) {
-  report "testLValue: " + boolean;
+  report("testLValue: " + boolean);
 }
 
 operator entry() {

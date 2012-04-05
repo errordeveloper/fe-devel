@@ -14,5 +14,5 @@ function Scalar check( Boolean foo )
 
 operator entry( )
 {
-	report check( true );
+	report(check( true ));
 }

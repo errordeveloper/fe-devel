@@ -9,5 +9,5 @@ operator entry()
     result = 1;
   else
     result = 0;
-  report result;
+  report(result);
 }

@@ -5,6 +5,6 @@ struct MyType {
 operator entry() {
   MyType myType;
   if (myType) {
-    report "blah";
+    report("blah");
   }
 }

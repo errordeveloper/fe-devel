@@ -62,5 +62,5 @@ operator entry()
 	for( var Size i = 0; i < 30; i++ )
 		a.push( Scalar( Integer( rand( seed ) * 1000.0 ) ) );
 	
-	report quicksort( a );
+	report(quicksort( a ));
 }

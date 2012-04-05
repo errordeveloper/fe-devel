@@ -4,20 +4,20 @@
 
 operator entry() {
   Scalar x = 3.141, y = 2.718, z = 0.1;
-  report sqrt(x);
-  report abs(x);
-  report round(x);
-  report ceil(x);
-  report floor(x);
-  report pow(x, y);
-  report sin(x);
-  report cos(x);
-  report tan(x);
-  report log10(x);
-  report log(x);
-  report exp(x);
-  report asin(z);
-  report acos(z);
-  report atan(z);
-  report atan2(x, y);
+  report(sqrt(x));
+  report(abs(x));
+  report(round(x));
+  report(ceil(x));
+  report(floor(x));
+  report(pow(x, y));
+  report(sin(x));
+  report(cos(x));
+  report(tan(x));
+  report(log10(x));
+  report(log(x));
+  report(exp(x));
+  report(asin(z));
+  report(acos(z));
+  report(atan(z));
+  report(atan2(x, y));
 }

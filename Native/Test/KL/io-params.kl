@@ -11,5 +11,5 @@ operator entry()
 {
   var Scalar x = 2;
   double( x );
-  report x;
+  report(x);
 }

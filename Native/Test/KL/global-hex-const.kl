@@ -4,5 +4,5 @@
 
 const Size foo = 0x1234;
 operator entry() {
-  report foo;
+  report(foo);
 }

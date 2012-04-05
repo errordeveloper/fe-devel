@@ -8,15 +8,15 @@ operator entry()
   var Scalar scl;
   var String str;
   
-  int = true ? 1.5 : 2.5; report int;
-  scl = true ? 1.5 : 2.5; report scl;
+  int = true ? 1.5 : 2.5; report(int);
+  scl = true ? 1.5 : 2.5; report(scl);
   
-  int = 0 ? 1 : 2.5; report int;
-  scl = (0*10) ? 2 : 3.5; report int;
+  int = 0 ? 1 : 2.5; report(int);
+  scl = (0*10) ? 2 : 3.5; report(int);
     
-  str = true ? "foo" : "bar"; report str;
-  str = false ? "foo" : "bar"; report str;
+  str = true ? "foo" : "bar"; report(str);
+  str = false ? "foo" : "bar"; report(str);
   
-  str = true ? 1 : "bar"; report str;
-  str = true ? 1.5 : "bar"; report str;
+  str = true ? 1 : "bar"; report(str);
+  str = true ? 1.5 : "bar"; report(str);
 }

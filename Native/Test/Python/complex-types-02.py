@@ -30,7 +30,7 @@ op.setEntryPoint("entry")
 op.setSourceCode("\n\
 operator entry( io MyStruct arg<>[] )\n\
 {\n\
-  report 'parent data: ' + arg;\n\
+  report('parent data: ' + arg);\n\
 }\n\
 ")
 diagnostics = op.getDiagnostics()

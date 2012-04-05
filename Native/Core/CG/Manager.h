@@ -90,6 +90,8 @@ namespace Fabric
         RC::ConstHandle<AST::StructDecl> const &existingASTStructDecl
         );
       RC::ConstHandle<Adapter> registerAlias( std::string const &name, RC::ConstHandle<Adapter> const &adapter );
+
+      void llvmCompileToModule( CG::ModuleBuilder &moduleBuilder ) const;
       
       void *llvmResolveExternalFunction( std::string const &functionName ) const;
       void llvmAddGlobalMappingsToExecutionEngine( llvm::ExecutionEngine *executionEngine, llvm::Module &module ) const;

@@ -12,6 +12,6 @@ operator entry()
   var Integer a[];
   a.push( 17 );
 
-  report doIndex( a, 0 );
-  report doIndex( a, 1 );
+  report(doIndex( a, 0 ));
+  report(doIndex( a, 1 ));
 }

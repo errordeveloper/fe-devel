@@ -41,5 +41,5 @@ operator entry()
   var Scalar time = 0.5;
   var Scalar value;
   var Integer keyIndex = 0;
-  report evaluateLinearKeyframeAnimationTrack( track, time, value, keyIndex );
+  report(evaluateLinearKeyframeAnimationTrack( track, time, value, keyIndex ));
 }

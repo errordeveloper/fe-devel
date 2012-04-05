@@ -45,7 +45,7 @@ printErrors( childNode )
 
 parentEHPreOp = fabricClient.DependencyGraph.createOperator( "parentEHPreOp" )
 parentEHPreOp.setEntryPoint('entry')
-parentEHPreOp.setSourceCode("operator entry( Size index, io Scalar output ) { report 'parentEHPreOp begin'; report '  Index: ' + index; report '  Output: ' +output; report 'parentEHPreOp end'; }")
+parentEHPreOp.setSourceCode("operator entry( Size index, io Scalar output ) { report('parentEHPreOp begin'); report('  Index: ' + index); report('  Output: ' +output); report('parentEHPreOp end'); }")
 
 printErrors( parentEHPreOp )
 
@@ -55,7 +55,7 @@ parentEHPreBinding.setParameterLayout( [ "node.index", "node.output" ] )
 
 parentEHPostOp = fabricClient.DependencyGraph.createOperator( "parentEHPostOp" )
 parentEHPostOp.setEntryPoint('entry')
-parentEHPostOp.setSourceCode("operator entry( Size index, io Scalar output ) { report 'parentEHPostOp begin'; report '  Index: ' + index; report '  Output: ' +output; report 'parentEHPostOp end'; }")
+parentEHPostOp.setSourceCode("operator entry( Size index, io Scalar output ) { report('parentEHPostOp begin'); report('  Index: ' + index); report('  Output: ' +output); report('parentEHPostOp end'); }")
 
 printErrors( parentEHPostOp )
 
@@ -70,7 +70,7 @@ parentEH.postDescendBindings.append( parentEHPostBinding )
 
 childEHPreOp = fabricClient.DependencyGraph.createOperator( "childEHPreOp" )
 childEHPreOp.setEntryPoint('entry')
-childEHPreOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput) { report 'childEHPreOp begin'; report '  Child Index: ' + childIndex; report '  Child Output: ' + childOutput; report 'childEHPreOp end'; }")
+childEHPreOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput) { report('childEHPreOp begin'); report('  Child Index: ' + childIndex); report('  Child Output: ' + childOutput); report('childEHPreOp end'); }")
 
 childEHPreBinding = fabricClient.DependencyGraph.createBinding()
 childEHPreBinding.setOperator( childEHPreOp )
@@ -78,7 +78,7 @@ childEHPreBinding.setParameterLayout( [ "child.index", "child.output" ] )
 
 childEHPostOp = fabricClient.DependencyGraph.createOperator( "childEHPostOp" )
 childEHPostOp.setEntryPoint('entry')
-childEHPostOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput ) { report 'childEHPostOp begin'; report '  Child Index: ' + childIndex; report '  Child Output: ' + childOutput; report 'childEHPostOp end'; }")
+childEHPostOp.setSourceCode("operator entry( Size childIndex, io Scalar childOutput ) { report('childEHPostOp begin'); report('  Child Index: ' + childIndex); report('  Child Output: ' + childOutput); report('childEHPostOp end'); }")
 
 printErrors( childEHPostOp )
 

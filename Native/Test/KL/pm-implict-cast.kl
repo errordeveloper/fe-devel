@@ -3,7 +3,7 @@
  */
 
 function testRValue( Boolean boolean ) {
-  report "testRValue: " + boolean;
+  report("testRValue: " + boolean);
 }
 
 operator entry() {

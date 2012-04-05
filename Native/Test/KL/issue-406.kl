@@ -10,5 +10,5 @@ struct Vec3 {
 
 operator entry() {
   Vec3 vec3;
-  report vec3;
+  report(vec3);
 }

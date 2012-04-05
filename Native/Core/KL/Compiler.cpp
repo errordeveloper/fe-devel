@@ -28,7 +28,18 @@ namespace Fabric
       CG::Diagnostics diagnostics;
       RC::ConstHandle<AST::GlobalList> ast = KL::Parse( scanner, diagnostics );
       if ( diagnostics.containsError() )
-        throw Exception( "KL compile failed" );
+      {
+        std::string firstErrorDesc = "";
+        for ( CG::Diagnostics::const_iterator it=diagnostics.begin(); it!=diagnostics.end(); ++it )
+        {
+          if ( it->second.getLevel() == CG::Diagnostic::LEVEL_ERROR )
+          {
+            firstErrorDesc = it->first.desc() + ": " + it->second.desc();
+            break;
+          }
+        }
+        throw Exception( "KL compile failed: " + firstErrorDesc );
+      }
       return ast;
     }
   }

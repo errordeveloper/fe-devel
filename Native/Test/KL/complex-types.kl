@@ -23,5 +23,5 @@ operator entry()
   var StructArrayArray structArrayArray;
   structArrayArray.push( structArray );
 
-  report structArrayArray;
+  report(structArrayArray);
 }

@@ -9,21 +9,21 @@ operator entry()
     switch ( i )
     {
       case 7:
-        report "Found 7";
+        report("Found 7");
         break;
       case 4:
-        report "Found 4; will drop through to 9";
+        report("Found 4; will drop through to 9");
       case 9:
-        report "Found 9";
+        report("Found 9");
         break;
       case 3:
-        report "Found 3; will drop through to something else";
+        report("Found 3; will drop through to something else");
       default:
-        report "Something else";
+        report("Something else");
         break;
       case 8:
       case 1:
-        report "Found 8 or 1";
+        report("Found 8 or 1");
         break;
     }
   }

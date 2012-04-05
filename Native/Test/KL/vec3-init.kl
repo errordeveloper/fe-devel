@@ -12,12 +12,12 @@ struct Vec3
 operator entry()
 {
   Vec3 a;
-  a.x = 1; report a.x;
-  a.y = 2; report a.y;
-  a.z = 3; report a.z;
+  a.x = 1; report(a.x);
+  a.y = 2; report(a.y);
+  a.z = 3; report(a.z);
 
   Vec3 b = a;
-  report b.x;
-  report b.y;
-  report b.z;
+  report(b.x);
+  report(b.y);
+  report(b.z);
 }

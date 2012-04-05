@@ -9,7 +9,7 @@ client = fabric.createClient()
 gen = client.MR.createValueCache(
     client.MR.createValueGenerator(
       client.KLC.createValueGeneratorOperator(
-        "xfo.kl", "operator xfo(io Integer value) { report 'Running generator'; value = 121; }", "xfo"
+        "xfo.kl", "operator xfo(io Integer value) { report('Running generator'); value = 121; }", "xfo"
         )
       )
     )

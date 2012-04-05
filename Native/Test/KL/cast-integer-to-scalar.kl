@@ -4,5 +4,5 @@
 
 operator entry()
 {
-  report 9.34 + 10;
+  report(9.34 + 10);
 }

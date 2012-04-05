@@ -1,2 +1,2 @@
-operator entry() { report 'Hello'; }
+operator entry() { report('Hello'); }
 entry

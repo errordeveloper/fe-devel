@@ -9,20 +9,20 @@ function Float64 truncate( Float64 x ) {
 operator entry() {
   Float64 x = 0.1;
   Float64 y = 1.0;
-  report truncate( sqrt(x) );
-  report truncate( abs(x) );
-  report truncate( round(x) );
-  report truncate( ceil(x) );
-  report truncate( floor(x) );
-  report truncate( pow(x, x) );
-  report truncate( sin(x) );
-  report truncate( cos(x) );
-  report truncate( tan(x) );
-  report truncate( log10(x) );
-  report truncate( log(x) );
-  report truncate( exp(x) );
-  report truncate( asin( sin(x) ) );
-  report truncate( acos( cos(x) ) );
-  report truncate( atan( tan(x) ) );
-  report truncate( atan2( tan(x), y ) );
+  report(truncate( sqrt(x) ));
+  report(truncate( abs(x) ));
+  report(truncate( round(x) ));
+  report(truncate( ceil(x) ));
+  report(truncate( floor(x) ));
+  report(truncate( pow(x, x) ));
+  report(truncate( sin(x) ));
+  report(truncate( cos(x) ));
+  report(truncate( tan(x) ));
+  report(truncate( log10(x) ));
+  report(truncate( log(x) ));
+  report(truncate( exp(x) ));
+  report(truncate( asin( sin(x) ) ));
+  report(truncate( acos( cos(x) ) ));
+  report(truncate( atan( tan(x) ) ));
+  report(truncate( atan2( tan(x), y ) ));
 }

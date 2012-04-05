@@ -5,5 +5,5 @@ struct MyType {
 
 operator entry() {
   MyType myType;
-  report myType;
+  report(myType);
 }

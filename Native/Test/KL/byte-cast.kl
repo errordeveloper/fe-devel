@@ -4,6 +4,6 @@
 
 operator entry()
 {
-  report Byte(42);
-  report Byte(3.14);
+  report(Byte(42));
+  report(Byte(3.14));
 }
