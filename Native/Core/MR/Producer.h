@@ -17,6 +17,8 @@ namespace Fabric
     {
     public:
         virtual void flush() = 0;
+    protected:
+        virtual ~Producer() {}
     };
   }
 }
