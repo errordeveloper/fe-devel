@@ -15,11 +15,13 @@
 |*   [u]int(32|64)_t : typedefs for signed and unsigned 32/64 bit system types*|
 |*   [U]INT(8|16|32|64)_(MIN|MAX) : Constants for the min and max values.     *|
 |*                                                                            *|
-|* No library is required when using these functinons.                        *|
+|* No library is required when using these functions.                         *|
 |*                                                                            *|
 |*===----------------------------------------------------------------------===*/
 
 /* Please leave this file C-compatible. */
+
+/* Please keep this file in sync with DataTypes.h.in */
 
 #ifndef SUPPORT_DATATYPES_H
 #define SUPPORT_DATATYPES_H
@@ -36,7 +38,7 @@
 #include <math.h>
 #endif
 
-#if !defined( _MSC_VER ) || _MSC_VER >= 1600
+#ifndef _MSC_VER
 
 /* Note that this header's correct operation depends on __STDC_LIMIT_MACROS
    being defined.  We would define it here, but in order to prevent Bad Things
@@ -131,7 +133,8 @@ typedef signed int ssize_t;
 # define INT32_MAX 2147483647
 #endif
 #ifndef INT32_MIN
-# define INT32_MIN -2147483648
+/* MSC treats -2147483648 as -(2147483648U). */
+# define INT32_MIN (-INT32_MAX - 1)
 #endif
 #ifndef UINT32_MAX
 # define UINT32_MAX 4294967295U
@@ -163,6 +166,11 @@ typedef signed int ssize_t;
 #ifndef UINT64_C
 # define UINT64_C(C) C##ui64
 #endif
+
+#ifndef PRIx64
+# define PRIx64 "I64x"
+#endif
+
 #endif /* _MSC_VER */
 
 /* Set defaults for constants which we cannot find. */

@@ -33,7 +33,7 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *ByteAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *ByteAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       return llvm::Type::getInt8Ty( context->getLLVMContext() );
     }

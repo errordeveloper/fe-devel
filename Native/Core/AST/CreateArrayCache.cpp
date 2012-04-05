@@ -81,10 +81,10 @@ namespace Fabric
           )
         );
     
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( inputArrayProducerAdapter->llvmLType( context ) );
       argTypes.push_back( inputArrayProducerAdapter->llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateArrayCache", funcType );
 
       basicBlockBuilder->CreateCall2(

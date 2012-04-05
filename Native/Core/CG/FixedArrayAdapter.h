@@ -54,7 +54,7 @@ namespace Fabric
     
       FixedArrayAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::FixedArrayDesc> const &fixedArrayDesc );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
 
     private:
     

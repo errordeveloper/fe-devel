@@ -9,7 +9,7 @@ set PNG_NAME=libpng-1.4.4
 set ILMBASE_NAME=ilmbase-1.0.2
 set OPENEXR_NAME=openexr-1.7.0
 set V8_NAME=v8-1.3.18.22
-set LLVM_NAME=llvm-2.9
+set LLVM_NAME=llvm-3.0
 set FFMPEG_NAME=ffmpeg-0.6.3
 set BOOST_NAME=boost_1_47_0
 set HDF5_NAME=hdf5-1.8.7
@@ -42,6 +42,7 @@ set BOOSTJAMDIR=bin.ntx86
 set BOOSTADDRMODELSUBDIR=
 set PROCESSOR_ARCHITECTURE=x86
 set ALEMBICOUT=x86
+set LLVMTARGETOPTION=
 @call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
 goto start_build
 
@@ -55,6 +56,7 @@ set BOOSTJAMDIR=bin.ntx86_64
 set BOOSTADDRMODELSUBDIR=address-model-64\
 echo %PROCESSOR_ARCHITECTURE%
 set ALEMBICOUT=i64
+set LLVMTARGETOPTION=-DLLVM_TARGET_ARCH=amd64
 @call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" amd64
 goto start_build
 
@@ -295,7 +297,7 @@ if EXIST %CHECKPOINT_DIR%\llvm_cmake goto llvm_cmake_done
 echo LLVM - Creating build files
 if NOT EXIST %BUILD_DIR%\llvm-build mkdir %BUILD_DIR%\llvm-build
 cd %BUILD_DIR%\llvm-build
-cmake -G %CMAKEGENERATOR% ..\%LLVM_NAME%
+cmake -G %CMAKEGENERATOR% ..\%LLVM_NAME% %LLVMTARGETOPTION%
 touch %CHECKPOINT_DIR%\llvm_cmake
 :llvm_cmake_done
 
@@ -470,7 +472,7 @@ if EXIST %CHECKPOINT_DIR%\alembic_install goto alembic_install_done
 echo alembic - Installing
 cd %BUILD_DIR%\%ALEMBIC_NAME%
 robocopy Output\%ALEMBICOUT%\alembic\Debug %LIB_ARCH_DEBUG_DIR%\alembic *.* > NUL:
-robocopy Output\%ALEMBICOUT%\alembic\RelWithDebInfo %LIB_ARCH_RELEASE_DIR%\alembic *.lib > NUL:
+robocopy Output\%ALEMBICOUT%\alembic\Release %LIB_ARCH_RELEASE_DIR%\alembic *.lib > NUL:
 robocopy lib %TOP%\include\alembic *.h /S > NUL:
 touch %CHECKPOINT_DIR%\alembic_install
 :alembic_install_done

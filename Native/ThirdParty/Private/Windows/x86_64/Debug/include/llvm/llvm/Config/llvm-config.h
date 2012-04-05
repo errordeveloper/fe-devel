@@ -31,6 +31,9 @@
 /* Installation directory for config files */
 /* #undef LLVM_ETCDIR */
 
+/* Has gcc/MSVC atomic intrinsics */
+#define LLVM_HAS_ATOMICS 1
+
 /* Host triple we were built on */
 #define LLVM_HOSTTRIPLE "x86_64-pc-win32"
 
@@ -46,11 +49,14 @@
 /* Installation directory for man pages */
 /* #undef LLVM_MANDIR */
 
-/* Build multithreading support into LLVM */
-#define LLVM_MULTITHREADED 1
-
 /* LLVM architecture name for the native architecture, if available */
 #define LLVM_NATIVE_ARCH X86
+
+/* LLVM name for the native AsmParser init function, if available */
+/* #undef LLVM_NATIVE_ASMPARSER */
+
+/* LLVM name for the native AsmPrinter init function, if available */
+#define LLVM_NATIVE_ASMPRINTER LLVMInitializeX86AsmPrinter
 
 /* LLVM name for the native Target init function, if available */
 #define LLVM_NATIVE_TARGET LLVMInitializeX86Target
@@ -58,8 +64,8 @@
 /* LLVM name for the native TargetInfo init function, if available */
 #define LLVM_NATIVE_TARGETINFO LLVMInitializeX86TargetInfo
 
-/* LLVM name for the native AsmPrinter init function, if available */
-#define LLVM_NATIVE_ASMPRINTER LLVMInitializeX86AsmPrinter
+/* LLVM name for the native target MC init function, if available */
+#define LLVM_NATIVE_TARGETMC LLVMInitializeX86TargetMC
 
 /* Define if this is Unixish platform */
 /* #undef LLVM_ON_UNIX */

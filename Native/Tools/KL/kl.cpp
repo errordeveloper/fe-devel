@@ -29,22 +29,22 @@
 #include <llvm/Support/Host.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FormattedStream.h>
-#include <llvm/Target/TargetRegistry.h>
-#include <llvm/Analysis/Verifier.h>
-#include <llvm/Target/TargetSelect.h>
+#include <llvm/Support/TargetRegistry.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/MC/SubtargetFeature.h>
+#include <llvm/Transforms/IPO/PassManagerBuilder.h>
 #include <llvm/Target/TargetData.h>
+#include <llvm/Analysis/Verifier.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/Module.h>
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Transforms/IPO.h>
 #include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/PassManager.h>
-#include <llvm/Support/StandardPasses.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Module.h>
 #include <llvm/Function.h>
 #include <llvm/Target/TargetData.h>
-#include <llvm/Target/TargetSelect.h>
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/Assembly/Parser.h>
@@ -54,7 +54,6 @@
 #include <llvm/Transforms/IPO.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/PassManager.h>
-#include <llvm/Support/StandardPasses.h>
 
 #include <getopt.h>
 
@@ -224,7 +223,11 @@ void handleFile( std::string const &filename, FILE *fp, unsigned int runFlags )
         if( !target )
           throw Exception( errorStr );
 
-        llvm::TargetMachine *targetMachine = target->createTargetMachine( targetTriple, "" );
+        llvm::SubtargetFeatures targetFeatures;
+        targetFeatures.getDefaultSubtargetFeatures(llvm::Triple(targetTriple));
+        std::string featureString = targetFeatures.getString();
+        llvm::TargetMachine *targetMachine = target->createTargetMachine(targetTriple, "", featureString);
+
         targetMachine->setAsmVerbosityDefault( true );
 
         if ( runFlags & RF_Verbose )
@@ -263,10 +266,13 @@ void handleFile( std::string const &filename, FILE *fp, unsigned int runFlags )
 
       llvm::OwningPtr<llvm::PassManager> passManager( new llvm::PassManager );
       passManager->add( llvm::createVerifierPass() );
-      llvm::createStandardAliasAnalysisPasses( passManager.get() );
-      llvm::createStandardFunctionPasses( passManager.get(), 3 );
-      llvm::createStandardModulePasses( passManager.get(), 3, false, true, true, true, false, llvm::createFunctionInliningPass() );
-      llvm::createStandardLTOPasses( passManager.get(), true, true, false );
+
+      llvm::PassManagerBuilder passBuilder;
+      passBuilder.Inliner = llvm::createFunctionInliningPass();
+      passBuilder.OptLevel = 3;
+      passBuilder.populateModulePassManager( *passManager.get() );
+      passBuilder.populateLTOPassManager( *passManager.get(), true, true );
+
       passManager->run( *module );
 
       if( runFlags & RF_ShowOptASM )
@@ -277,7 +283,11 @@ void handleFile( std::string const &filename, FILE *fp, unsigned int runFlags )
         if( !target )
           throw Exception( errorStr );
 
-        llvm::TargetMachine *targetMachine = target->createTargetMachine( targetTriple, "" );
+        llvm::SubtargetFeatures targetFeatures;
+        targetFeatures.getDefaultSubtargetFeatures( llvm::Triple( targetTriple ) );
+        std::string featureString = targetFeatures.getString();
+        llvm::TargetMachine *targetMachine = target->createTargetMachine(targetTriple, "", featureString);
+
         targetMachine->setAsmVerbosityDefault( true );
 
         if ( runFlags & RF_Verbose )

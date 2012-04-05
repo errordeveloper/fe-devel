@@ -160,7 +160,7 @@ namespace Fabric
       for ( size_t i=0; i<args.size(); ++i )
         argValues.push_back( args[i].getValue() );
       
-      llvm::Value *resultValue = basicBlockBuilder->CreateCall( m_llvmFunction, argValues.begin(), argValues.end() );
+      llvm::Value *resultValue = basicBlockBuilder->CreateCall( m_llvmFunction, argValues );
       if( !m_returnInfo.usesReturnLValue() )
         returnValue = resultValue;
 

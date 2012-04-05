@@ -160,14 +160,14 @@ namespace Fabric
 
             CG::ExprValue sharedExprRValue = m_shared->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, lValueErrorDesc );
 
-            std::vector<llvm::Type const *> argTypes;
+            std::vector<llvm::Type *> argTypes;
             argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) ); // function
             argTypes.push_back( sizeAdapter->llvmRType( context ) ); // numParams
             argTypes.push_back( countValueProducerAdapter->llvmLType( context ) ); // count value producer
             argTypes.push_back( sharedValueProducerAdapter->llvmLType( context ) ); // shared value producer
             argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) ); // output array producer adapter
             argTypes.push_back( outputArrayProducerAdapter->llvmLType( context ) ); // output array producer
-            llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+            llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
             llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateArrayGenerator_4", funcType );
             
             std::vector<llvm::Value *> args;
@@ -180,7 +180,7 @@ namespace Fabric
             args.push_back( sharedExprRValue.getValue() );
             args.push_back( outputArrayProducerAdapter->llvmAdapterPtr( basicBlockBuilder ) );
             args.push_back( resultLValue );
-            basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+            basicBlockBuilder->CreateCall( func, args );
             
             needCall = false;
           }
@@ -189,13 +189,13 @@ namespace Fabric
       
       if ( needCall )
       {
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) ); // function
         argTypes.push_back( sizeAdapter->llvmRType( context ) ); // numParams
         argTypes.push_back( countValueProducerAdapter->llvmLType( context ) ); // count value producer
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) ); // output array producer adapter
         argTypes.push_back( outputArrayProducerAdapter->llvmLType( context ) ); // output array producer
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateArrayGenerator_3", funcType );
         
         std::vector<llvm::Value *> args;
@@ -207,7 +207,7 @@ namespace Fabric
         args.push_back( countValueProducerExprValue.getValue() );
         args.push_back( outputArrayProducerAdapter->llvmAdapterPtr( basicBlockBuilder ) );
         args.push_back( resultLValue );
-        basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+        basicBlockBuilder->CreateCall( func, args );
       }
 
       return CG::ExprValue(

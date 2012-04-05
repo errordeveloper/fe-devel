@@ -41,7 +41,7 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *ValueProducerAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *ValueProducerAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
       return llvm::Type::getInt8Ty( llvmContext )->getPointerTo()->getPointerTo();
@@ -61,8 +61,6 @@ namespace Fabric
       stringAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<ConstStringAdapter> constStringAdapter = getManager()->getConstStringAdapter();
       constStringAdapter->llvmCompileToModule( moduleBuilder );
-      
-      moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
       
       static const bool buildFunctions = true;
       
@@ -211,7 +209,7 @@ namespace Fabric
 
     void ValueProducerAdapter::llvmInit( BasicBlockBuilder &basicBlockBuilder, llvm::Value *lValue ) const
     {
-      llvm::PointerType const *rawType = static_cast<llvm::PointerType const *>( llvmRawType( basicBlockBuilder.getContext() ) );
+      llvm::PointerType *rawType = static_cast<llvm::PointerType *>( llvmRawType( basicBlockBuilder.getContext() ) );
       basicBlockBuilder->CreateStore(
         llvm::ConstantPointerNull::get( rawType ),
         lValue
@@ -221,9 +219,9 @@ namespace Fabric
     void ValueProducerAdapter::llvmRetain( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {    
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__Retain", funcType ); 
       basicBlockBuilder->CreateCall( func, rValue );
     }
@@ -231,9 +229,9 @@ namespace Fabric
     void ValueProducerAdapter::llvmRelease( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {    
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__Release", funcType ); 
       basicBlockBuilder->CreateCall( func, rValue );
     }
@@ -241,9 +239,9 @@ namespace Fabric
     void ValueProducerAdapter::llvmFlush( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *valueProducerRValue ) const
     {    
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__Flush", funcType ); 
       basicBlockBuilder->CreateCall( func, valueProducerRValue );
     }
@@ -251,10 +249,10 @@ namespace Fabric
     void ValueProducerAdapter::llvmProduce( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *valueProducerRValue, llvm::Value *dstLValue ) const
     {    
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
       argTypes.push_back( m_valueAdapter->llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__Produce", funcType ); 
       basicBlockBuilder->CreateCall2( func, valueProducerRValue, dstLValue );
     }
@@ -262,10 +260,10 @@ namespace Fabric
     void ValueProducerAdapter::llvmDefaultAssign( BasicBlockBuilder &basicBlockBuilder, llvm::Value *dstLValue, llvm::Value *srcRValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__DefaultAssign", funcType ); 
       basicBlockBuilder->CreateCall2( func, srcRValue, dstLValue );
     }
@@ -282,7 +280,7 @@ namespace Fabric
     
     llvm::Constant *ValueProducerAdapter::llvmDefaultValue( BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
+      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
     }
       
     llvm::Constant *ValueProducerAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const

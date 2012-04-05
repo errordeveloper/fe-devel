@@ -59,7 +59,7 @@ namespace Fabric
     
       StructAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::StructDesc> const &structDesc );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
 
     private:
     

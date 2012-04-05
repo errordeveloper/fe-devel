@@ -30,7 +30,6 @@
 #include <llvm/Module.h>
 #include <llvm/Function.h>
 #include <llvm/Target/TargetData.h>
-#include <llvm/Target/TargetSelect.h>
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/Assembly/Parser.h>
@@ -40,7 +39,8 @@
 #include <llvm/Transforms/IPO.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/PassManager.h>
-#include <llvm/Support/StandardPasses.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Transforms/IPO/PassManagerBuilder.h>
 
 namespace Fabric
 {
@@ -182,10 +182,11 @@ namespace Fabric
           llvm::OwningPtr<llvm::PassManager> passManager( new llvm::PassManager );
           if ( optimize )
           {
-            llvm::createStandardAliasAnalysisPasses( passManager.get() );
-            llvm::createStandardFunctionPasses( passManager.get(), 3 );
-            llvm::createStandardModulePasses( passManager.get(), 3, false, true, true, true, false, llvm::createFunctionInliningPass() );
-            llvm::createStandardLTOPasses( passManager.get(), true, true, false );
+            llvm::PassManagerBuilder passBuilder;
+            passBuilder.Inliner = llvm::createFunctionInliningPass();
+            passBuilder.OptLevel = 3;
+            passBuilder.populateModulePassManager( *passManager.get() );
+            passBuilder.populateLTOPassManager( *passManager.get(), true, true );
           }
 #if defined(FABRIC_BUILD_DEBUG)
           passManager->add( llvm::createVerifierPass() );

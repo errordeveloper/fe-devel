@@ -55,24 +55,25 @@ namespace Fabric
       RC::ConstHandle<StringAdapter> stringAdapter = basicBlockBuilder.getManager()->getStringAdapter();
       RC::ConstHandle<ConstStringAdapter> constStringAdapter = basicBlockBuilder.getManager()->getConstStringAdapter();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( constStringAdapter->llvmRType( context ) );
       argTypes.push_back( sizeAdapter->llvmRType( context ) );
       argTypes.push_back( sizeAdapter->llvmRType( context ) );
       argTypes.push_back( constStringAdapter->llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
       
+      /*      
       llvm::AttributeWithIndex AWI[1];
-      AWI[0] = llvm::AttributeWithIndex::get( ~0u, 0 /*llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind*/ );
+      AWI[0] = llvm::AttributeWithIndex::get( ~0u, 0 llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
       llvm::AttrListPtr attrListPtr = llvm::AttrListPtr::get( AWI, 1 );
-
+      */
       std::string name = "__ThrowOutOfRangeException";
       llvm::Function *func = llvm::cast<llvm::Function>( basicBlockBuilder.getModuleBuilder()->getFunction( name ) );
       if ( !func )
       {
         ModuleBuilder &mb = basicBlockBuilder.getModuleBuilder();
         
-        func = llvm::cast<llvm::Function>( mb->getOrInsertFunction( name, funcType, attrListPtr ) ); 
+        func = llvm::cast<llvm::Function>( mb->getOrInsertFunction( name, funcType /*, attrListPtr(*/ ) ); 
         func->setLinkage( llvm::GlobalValue::PrivateLinkage );
         
         FunctionBuilder fb( mb, funcType, func );
@@ -115,7 +116,7 @@ namespace Fabric
           subBasicBlockBuilder->CreateBr( goBB );
 
           subBasicBlockBuilder->SetInsertPoint( goBB );
-          llvm::PHINode *errorDescConstStringRValue = subBasicBlockBuilder->CreatePHI( haveErrorDescConstStringRValue->getType(), "errorDescConstStringRValue" );
+          llvm::PHINode *errorDescConstStringRValue = subBasicBlockBuilder->CreatePHI( haveErrorDescConstStringRValue->getType(), 2, "errorDescConstStringRValue" );
           errorDescConstStringRValue->addIncoming( haveErrorDescConstStringRValue, haveErrorDescBB );
           errorDescConstStringRValue->addIncoming( noErrorDescConstStringRValue, noErrorDescBB );
 
@@ -236,7 +237,7 @@ namespace Fabric
       args.push_back( indexRValue );
       args.push_back( sizeRValue );
       args.push_back( errorDescRValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
 
     llvm::Value *ArrayAdapter::llvmLocationConstStringRValue(

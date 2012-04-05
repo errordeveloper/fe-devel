@@ -86,7 +86,7 @@ namespace Fabric
         RC::ConstHandle<CG::ComparableAdapter> keyAdapter = dictAdapter->getKeyAdapter();
         RC::ConstHandle<CG::Adapter> valueAdapter = dictAdapter->getValueAdapter();
 
-        llvm::Type const *nodePtrType = dictAdapter->getLLVMNodePtrType( context );
+        llvm::Type *nodePtrType = dictAdapter->getLLVMNodePtrType( context );
         llvm::Instruction *nodePtrPtr = new llvm::AllocaInst( nodePtrType );
         nodePtrPtr->setName( m_keyName );
         

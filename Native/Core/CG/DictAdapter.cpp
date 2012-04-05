@@ -41,11 +41,11 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *DictAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *DictAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
       
-      llvm::Type const *llvmSizeTy = llvmSizeType( context );
+      llvm::Type *llvmSizeTy = llvmSizeType( context );
       
       /*
       struct node_t
@@ -60,15 +60,18 @@ namespace Fabric
       */
       
       llvm::StructType *llvmAbstractNodeType = llvm::StructType::get( llvmContext, true );
-      std::vector<llvm::Type const *> llvmNodeTypeMembers;
+      std::vector<llvm::Type *> llvmNodeTypeMembers;
       llvmNodeTypeMembers.push_back( llvmAbstractNodeType->getPointerTo() ); // bitsPrevNode
       llvmNodeTypeMembers.push_back( llvmAbstractNodeType->getPointerTo() ); // bitsNextNode
       llvmNodeTypeMembers.push_back( llvmAbstractNodeType->getPointerTo() ); // bucketPrevNode
       llvmNodeTypeMembers.push_back( llvmAbstractNodeType->getPointerTo() ); // bucketNextNode
       llvmNodeTypeMembers.push_back( llvmSizeTy ); // keyHash
       llvmNodeTypeMembers.push_back( llvm::ArrayType::get( llvm::Type::getInt8Ty( llvmContext ), 0 ) );
-      llvm::StructType *llvmNodeType = llvm::StructType::get( llvmContext, llvmNodeTypeMembers, true );
-      llvmNodeType->refineAbstractType( llvmAbstractNodeType, llvmNodeType );
+      llvm::StructType *llvmNodeType = llvm::StructType::create( llvmContext, llvmNodeTypeMembers, getCodeName() + "Node", true );
+
+      //Note: this no longer exists in LLVM3.0 and actually asserted because llvmAbstractNodeType is not abstract.
+      //I think it was doing nothing in fact...?
+      //llvmNodeType->refineAbstractType( llvmAbstractNodeType, llvmNodeType );
       
       /*
       struct bucket_t
@@ -78,10 +81,10 @@ namespace Fabric
       };
       */
 
-      std::vector<llvm::Type const *> llvmBucketTypeMembers;
+      std::vector<llvm::Type *> llvmBucketTypeMembers;
       llvmBucketTypeMembers.push_back( llvmNodeType->getPointerTo() ); // firstNode
       llvmBucketTypeMembers.push_back( llvmNodeType->getPointerTo() ); // lastNode
-      llvm::Type const *llvmBucketType = llvm::StructType::get( llvmContext, llvmBucketTypeMembers, true );
+      llvm::Type *llvmBucketType = llvm::StructType::create( llvmContext, llvmBucketTypeMembers, getCodeName() + "Bucket", true );
       
       /*
       struct bits_t
@@ -94,13 +97,13 @@ namespace Fabric
       };
       */
 
-      std::vector<llvm::Type const *> llvmBitsTypeMembers;
+      std::vector<llvm::Type *> llvmBitsTypeMembers;
       llvmBitsTypeMembers.push_back( llvmSizeTy ); // bucketCount
       llvmBitsTypeMembers.push_back( llvmSizeTy ); // nodeCount
       llvmBitsTypeMembers.push_back( llvmNodeType->getPointerTo() ); // numMembers
       llvmBitsTypeMembers.push_back( llvmNodeType->getPointerTo() ); // numMembers
       llvmBitsTypeMembers.push_back( llvmBucketType->getPointerTo() ); // numMembers
-      llvm::Type const *implType = llvm::StructType::get( llvmContext, llvmBitsTypeMembers, true );
+      llvm::Type *implType = llvm::StructType::create( llvmContext, llvmBitsTypeMembers, getCodeName() + "Bits", true );
       
       return implType;
     }
@@ -120,16 +123,7 @@ namespace Fabric
       sizeAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<StringAdapter> stringAdapter = getManager()->getStringAdapter();
       stringAdapter->llvmCompileToModule( moduleBuilder );
-      
-      llvm::StructType const *llvmBitsType = static_cast<llvm::StructType const *>( llvmRawType( context ) );
-      moduleBuilder->addTypeName( getCodeName() + "Bits", llvmBitsType );
-      llvm::PointerType const *llvmBucketPtrType = static_cast<llvm::PointerType const *>( llvmBitsType->getTypeAtIndex( 4 ) );
-      llvm::StructType const *llvmBucketType = static_cast<llvm::StructType const *>( llvmBucketPtrType->getElementType() );
-      moduleBuilder->addTypeName( getCodeName() + "Bucket", llvmBucketType );
-      llvm::PointerType const *llvmNodePtrType = static_cast<llvm::PointerType const *>( llvmBucketType->getTypeAtIndex( unsigned(0) ) );
-      llvm::Type const *llvmNodeType = static_cast<llvm::PointerType const *>( llvmNodePtrType->getElementType() );
-      moduleBuilder->addTypeName( getCodeName() + "Node", llvmNodeType );
-      
+
       static const bool buildFunctions = true;
       
       {
@@ -174,11 +168,11 @@ namespace Fabric
           
           basicBlockBuilder->SetInsertPoint( entryBB );
 
-          std::vector< llvm::Type const * > argTypes;
+          std::vector< llvm::Type * > argTypes;
           argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
           argTypes.push_back( llvmLType( context ) );
           argTypes.push_back( m_keyAdapter->llvmLType( context ) );
-          llvm::FunctionType const *funcType = llvm::FunctionType::get( booleanAdapter->llvmRType( context ), argTypes, false );
+          llvm::FunctionType *funcType = llvm::FunctionType::get( booleanAdapter->llvmRType( context ), argTypes, false );
           
           llvm::AttributeWithIndex AWI[1];
           AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -194,7 +188,7 @@ namespace Fabric
           args.push_back( dictLValue );
           args.push_back( keyLValue );
           basicBlockBuilder->CreateRet(
-            basicBlockBuilder->CreateCall( func, args.begin(), args.end() )
+            basicBlockBuilder->CreateCall( func, args )
             );
         }
       }
@@ -218,11 +212,11 @@ namespace Fabric
           
           basicBlockBuilder->SetInsertPoint( entryBB );
 
-          std::vector< llvm::Type const * > argTypes;
+          std::vector< llvm::Type * > argTypes;
           argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
           argTypes.push_back( llvmLType( context ) );
           argTypes.push_back( m_keyAdapter->llvmLType( context ) );
-          llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+          llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
           
           llvm::AttributeWithIndex AWI[1];
           AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -236,7 +230,7 @@ namespace Fabric
           args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
           args.push_back( dictLValue );
           args.push_back( keyLValue );
-          basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+          basicBlockBuilder->CreateCall( func, args );
           basicBlockBuilder->CreateRetVoid();
         }
       }
@@ -258,10 +252,10 @@ namespace Fabric
           
           basicBlockBuilder->SetInsertPoint( entryBB );
 
-          std::vector< llvm::Type const * > argTypes;
+          std::vector< llvm::Type * > argTypes;
           argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
           argTypes.push_back( llvmLType( context ) );
-          llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+          llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
           
           llvm::AttributeWithIndex AWI[1];
           AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -272,7 +266,7 @@ namespace Fabric
           std::vector<llvm::Value *> args;
           args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
           args.push_back( dictLValue );
-          basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+          basicBlockBuilder->CreateCall( func, args );
           basicBlockBuilder->CreateRetVoid();
         }
       }
@@ -362,7 +356,7 @@ namespace Fabric
           
           basicBlockBuilder->SetInsertPoint( accessBB );
           llvm::Value *keyHashRValue = llvmHash( basicBlockBuilder, keyRValue );
-          llvm::PHINode *bucketCountRVaule = basicBlockBuilder->CreatePHI( sizeAdapter->llvmRType( context ) );
+          llvm::PHINode *bucketCountRVaule = basicBlockBuilder->CreatePHI( sizeAdapter->llvmRType( context ), 2 );
           phi->addIncoming( oldBucketCountRValue, entryBB );
           phi->addIncoming( newBucketCountRValue, resizeBB );
           llvm::Value *bucketIndexRValue = basicBlockBuilder->CreateAnd(
@@ -469,7 +463,7 @@ namespace Fabric
           basicBlockBuilder->CreateBr( loopCheckBB );
           
           basicBlockBuilder->SetInsertPoint( loopCheckBB );
-          llvm::PHINode *nodeLValue = basicBlockBuilder->CreatePHI( llvmNodePtrType );
+          llvm::PHINode *nodeLValue = basicBlockBuilder->CreatePHI( llvmNodePtrType, 2 );
           nodeLValue->addIncoming( firstNodeLValue, accessBB );
           nodeLValue->addIncoming( nodeLValue, loopStepBB );
           basicBlockBuilder->CreateCondBr(
@@ -516,10 +510,10 @@ namespace Fabric
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -530,18 +524,18 @@ namespace Fabric
       std::vector<llvm::Value *> args;
       args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( lValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
 
     void DictAdapter::llvmDefaultAssign( BasicBlockBuilder &basicBlockBuilder, llvm::Value *dstLValue, llvm::Value *srcRValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
       argTypes.push_back( llvmLType( context ) );
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -554,7 +548,7 @@ namespace Fabric
       args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( llvmRValueToLValue( basicBlockBuilder, srcRValue ) );
       args.push_back( dstLValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
     
     llvm::Constant *DictAdapter::llvmDefaultValue( BasicBlockBuilder &basicBlockBuilder ) const
@@ -562,10 +556,10 @@ namespace Fabric
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
 
-      llvm::StructType const *llvmBitsType = static_cast<llvm::StructType const *>( llvmRawType( context ) );
-      llvm::PointerType const *llvmBucketPtrType = static_cast<llvm::PointerType const *>( llvmBitsType->getTypeAtIndex( 4 ) );
-      llvm::StructType const *llvmBucketType = static_cast<llvm::StructType const *>( llvmBucketPtrType->getElementType() );
-      llvm::PointerType const *llvmNodePtrType = static_cast<llvm::PointerType const *>( llvmBucketType->getTypeAtIndex( unsigned(0) ) );
+      llvm::StructType *llvmBitsType = static_cast<llvm::StructType *>( llvmRawType( context ) );
+      llvm::PointerType *llvmBucketPtrType = static_cast<llvm::PointerType *>( llvmBitsType->getTypeAtIndex( 4 ) );
+      llvm::StructType *llvmBucketType = static_cast<llvm::StructType *>( llvmBucketPtrType->getElementType() );
+      llvm::PointerType *llvmNodePtrType = static_cast<llvm::PointerType *>( llvmBucketType->getTypeAtIndex( unsigned(0) ) );
 
       std::vector<llvm::Constant *> nodeDefaultRValues;
       nodeDefaultRValues.push_back( sizeAdapter->llvmConst( context, 0 ) );
@@ -575,7 +569,7 @@ namespace Fabric
       nodeDefaultRValues.push_back( llvmNodePtrNull );
       llvm::Constant *llvmBucketPtrNull = llvm::ConstantPointerNull::get( llvmBucketPtrType );
       nodeDefaultRValues.push_back( llvmBucketPtrNull );
-      return llvm::ConstantStruct::get( context->getLLVMContext(), nodeDefaultRValues, true );
+      return llvm::ConstantStruct::get( llvmBitsType, nodeDefaultRValues );
     }
       
     llvm::Constant *DictAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const
@@ -621,11 +615,11 @@ namespace Fabric
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
       argTypes.push_back( llvmLType( context ) );
       argTypes.push_back( m_keyAdapter->llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( m_valueAdapter->llvmLType( context ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( m_valueAdapter->llvmLType( context ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -640,7 +634,7 @@ namespace Fabric
       args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( dictLValue );
       args.push_back( keyLValue );
-      llvm::Value *resultLValue = basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      llvm::Value *resultLValue = basicBlockBuilder->CreateCall( func, args );
       return m_valueAdapter->llvmLValueToRValue( basicBlockBuilder, resultLValue );
     }
 
@@ -652,11 +646,11 @@ namespace Fabric
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
       argTypes.push_back( llvmLType( context ) );
       argTypes.push_back( m_keyAdapter->llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( m_valueAdapter->llvmLType( context ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( m_valueAdapter->llvmLType( context ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -670,7 +664,7 @@ namespace Fabric
       args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( dictLValue );
       args.push_back( keyLValue );
-      return basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      return basicBlockBuilder->CreateCall( func, args );
     }
 
     bool DictAdapter::Has( void *_dictAdapter, void const *dictLValue, void const *keyLValue )
@@ -725,29 +719,29 @@ namespace Fabric
       return m_valueAdapter;
     }
     
-    llvm::StructType const *DictAdapter::getLLVMBitsType( RC::Handle<Context> const &context ) const
+    llvm::StructType *DictAdapter::getLLVMBitsType( RC::Handle<Context> const &context ) const
     {
-      return static_cast<llvm::StructType const *>( llvmRawType( context ) );
+      return static_cast<llvm::StructType *>( llvmRawType( context ) );
     }
     
-    llvm::PointerType const *DictAdapter::getLLVMBucketPtrType( RC::Handle<Context> const &context ) const
+    llvm::PointerType *DictAdapter::getLLVMBucketPtrType( RC::Handle<Context> const &context ) const
     {
-      return static_cast<llvm::PointerType const *>( getLLVMBitsType(context )->getTypeAtIndex( 4 ) );
+      return static_cast<llvm::PointerType *>( getLLVMBitsType(context )->getTypeAtIndex( 4 ) );
     }
     
-    llvm::StructType const *DictAdapter::getLLVMBucketType( RC::Handle<Context> const &context ) const
+    llvm::StructType *DictAdapter::getLLVMBucketType( RC::Handle<Context> const &context ) const
     {
-      return static_cast<llvm::StructType const *>( getLLVMBucketPtrType( context )->getElementType() );
+      return static_cast<llvm::StructType *>( getLLVMBucketPtrType( context )->getElementType() );
     }
     
-    llvm::PointerType const *DictAdapter::getLLVMNodePtrType( RC::Handle<Context> const &context ) const
+    llvm::PointerType *DictAdapter::getLLVMNodePtrType( RC::Handle<Context> const &context ) const
     {
-      return static_cast<llvm::PointerType const *>( getLLVMBitsType(context )->getTypeAtIndex( 2 ) );
+      return static_cast<llvm::PointerType *>( getLLVMBitsType(context )->getTypeAtIndex( 2 ) );
     }
     
-    llvm::StructType const *DictAdapter::getLLVMNodeType( RC::Handle<Context> const &context ) const
+    llvm::StructType *DictAdapter::getLLVMNodeType( RC::Handle<Context> const &context ) const
     {
-      return static_cast<llvm::StructType const *>( getLLVMNodePtrType( context )->getElementType() );
+      return static_cast<llvm::StructType *>( getLLVMNodePtrType( context )->getElementType() );
     }
   };
 };

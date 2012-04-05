@@ -40,15 +40,16 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *VariableArrayAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *VariableArrayAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
-      llvm::Type const *llvmSizeTy = llvmSizeType( context );
+      llvm::Type *llvmSizeTy = llvmSizeType( context );
       
-      std::vector<llvm::Type const *> memberLLVMTypes;
+      std::vector<llvm::Type *> memberLLVMTypes;
       memberLLVMTypes.push_back( llvmSizeTy ); // allocNumMembers
       memberLLVMTypes.push_back( llvmSizeTy ); // numMembers
       memberLLVMTypes.push_back( m_memberAdapter->llvmRawType( context )->getPointerTo() );
-      return llvm::StructType::get( context->getLLVMContext(), memberLLVMTypes, true );
+
+      return llvm::StructType::create( context->getLLVMContext(), memberLLVMTypes, getCodeName(), true );
     }
     
     void VariableArrayAdapter::llvmCompileToModule( ModuleBuilder &moduleBuilder ) const
@@ -58,7 +59,7 @@ namespace Fabric
       
       RC::Handle<Context> context = moduleBuilder.getContext();
       
-      llvm::Type const *implType = llvmRawType( context );
+      llvm::Type *implType = llvmRawType( context );
 
       m_memberAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<BooleanAdapter> booleanAdapter = getManager()->getBooleanAdapter();
@@ -73,8 +74,6 @@ namespace Fabric
       dataAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<ConstStringAdapter> constStringAdapter = getManager()->getConstStringAdapter();
       constStringAdapter->llvmCompileToModule( moduleBuilder );
-      
-      moduleBuilder->addTypeName( getCodeName(), implType );
       
       static const bool buildFunctions = true;
       bool const guarded = moduleBuilder.getCompileOptions()->getGuarded();
@@ -185,7 +184,7 @@ namespace Fabric
             dstMemberDatasRValue
             );
           basicBlockBuilder->CreateStore(
-            llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( dstMemberDatasRValue->getType() ) ), dstMemberDatasLValue );
+            llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( dstMemberDatasRValue->getType() ) ), dstMemberDatasLValue );
           basicBlockBuilder->CreateBr( doneBB );
            
           basicBlockBuilder->SetInsertPoint( nonZeroBB );
@@ -346,7 +345,7 @@ namespace Fabric
               )
             );
           basicBlockBuilder->CreateStore(
-            llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( memberDatasRValue->getType() ) ),
+            llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( memberDatasRValue->getType() ) ),
             memberDatasLValue
             );
           basicBlockBuilder->CreateBr( zeroDoneBB );
@@ -391,7 +390,7 @@ namespace Fabric
           basicBlockBuilder->CreateBr( expandDoneBB );
           
           basicBlockBuilder->SetInsertPoint( expandDoneBB );
-          llvm::PHINode *expandMemberDatasRValue = basicBlockBuilder->CreatePHI( memberDatasRValue->getType(), "expandMemberDatasRValue" );
+          llvm::PHINode *expandMemberDatasRValue = basicBlockBuilder->CreatePHI( memberDatasRValue->getType(), 2, "expandMemberDatasRValue" );
           expandMemberDatasRValue->addIncoming( expandedMemberDatasRValue, expandBB );
           expandMemberDatasRValue->addIncoming( memberDatasRValue, nonZeroBB );
           sizeAdapter->llvmDefaultAssign( basicBlockBuilder, indexLValue, oldSizeRValue );
@@ -628,11 +627,11 @@ namespace Fabric
       
       llvm::Function *assignAddFunction;
       {
-        std::vector< llvm::Type const * > argTypes;
+        std::vector< llvm::Type * > argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( context->getLLVMContext() ) );
         argTypes.push_back( llvmLType( context ) );
         argTypes.push_back( llvmRType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
         llvm::Constant *func = moduleBuilder->getOrInsertFunction( "__"+getCodeName()+"__Append", funcType ); 
 
         AssOpBuilder functionBuilder( moduleBuilder, this, ASSIGN_OP_ADD, this );
@@ -646,7 +645,7 @@ namespace Fabric
           args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
           args.push_back( lhsLValue );
           args.push_back( rhsRValue );
-          basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+          basicBlockBuilder->CreateCall( func, args );
           basicBlockBuilder->CreateRetVoid();
         }
         assignAddFunction = functionBuilder.getLLVMFunction();
@@ -853,7 +852,7 @@ namespace Fabric
       args.push_back( indexRValue );
       if ( guarded )
         args.push_back( llvmLocationConstStringRValue( basicBlockBuilder, constStringAdapter, location ) );
-      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args.begin(), args.end() );
+      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args );
     }
 
     llvm::Value *VariableArrayAdapter::llvmNonConstIndexOp(
@@ -882,7 +881,7 @@ namespace Fabric
       args.push_back( indexRValue );
       if ( guarded )
         args.push_back( llvmLocationConstStringRValue( basicBlockBuilder, constStringAdapter, location ) );
-      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args.begin(), args.end() );
+      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args );
     }
 
     llvm::Value *VariableArrayAdapter::llvmConstIndexOp_NoCheck( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayRValue, llvm::Value *indexRValue ) const
@@ -938,11 +937,11 @@ namespace Fabric
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
       argTypes.push_back( llvmLType( context ) );
       argTypes.push_back( m_memberAdapter->llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
       
       llvm::AttributeWithIndex AWI[4];
       AWI[0] = llvm::AttributeWithIndex::get( 1, llvm::Attribute::NoCapture );
@@ -957,7 +956,7 @@ namespace Fabric
       args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( arrayLValue );
       args.push_back( memberLValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
     
     llvm::Value *VariableArrayAdapter::llvmCallSize( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayRValue ) const
@@ -977,9 +976,9 @@ namespace Fabric
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       RC::ConstHandle<SizeAdapter> sizeAdapter = getManager()->getSizeAdapter();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -1069,8 +1068,9 @@ namespace Fabric
       std::vector<llvm::Constant *> memberDefaultRValues;
       memberDefaultRValues.push_back( sizeAdapter->llvmConst( context, 0 ) );
       memberDefaultRValues.push_back( sizeAdapter->llvmConst( context, 0 ) );
-      memberDefaultRValues.push_back( llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( m_memberAdapter->llvmLType( context ) ) ) );
-      return llvm::ConstantStruct::get( context->getLLVMContext(), memberDefaultRValues, true );
+      memberDefaultRValues.push_back( llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( m_memberAdapter->llvmLType( context ) ) ) );
+      llvm::StructType *rawType = static_cast<llvm::StructType *>( llvmRawType( basicBlockBuilder.getContext() ) );
+      return llvm::ConstantStruct::get( rawType, memberDefaultRValues );
     }
       
     llvm::Constant *VariableArrayAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const
@@ -1096,9 +1096,9 @@ namespace Fabric
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       RC::ConstHandle<SizeAdapter> sizeAdapter = getManager()->getSizeAdapter();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( basicBlockBuilder->getVoidTy(), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -1128,7 +1128,7 @@ namespace Fabric
         llvm::Value *sizeLValue = bbb->CreateStructGEP( selfLValue, SizeIndex );
         sizeAdapter->llvmDefaultAssign( bbb, sizeLValue, sizeAdapter->llvmConst( context, 0 ) );
         llvm::Value *memberDatasLValue = bbb->CreateStructGEP( selfLValue, MemberDatasIndex );
-        bbb->CreateStore( llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( m_memberAdapter->llvmLType( context ) ) ), memberDatasLValue );
+        bbb->CreateStore( llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( m_memberAdapter->llvmLType( context ) ) ), memberDatasLValue );
         bbb->CreateRetVoid();
       }
       

@@ -19,7 +19,11 @@
 //#include <Fabric/Core/OGL/OGL.h>
 
 #if defined( FABRIC_OS_WINDOWS )
+# if defined( WIN64 )
 extern "C" void __chkstk( );
+# else
+extern "C" void _chkstk( );
+# endif
 #endif
 
 namespace Fabric

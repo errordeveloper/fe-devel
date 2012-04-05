@@ -42,7 +42,7 @@ namespace Fabric
 
       SizeAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::NumericDesc> const &sizeDesc );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
       
     private:
     

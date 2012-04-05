@@ -40,20 +40,20 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *SlicedArrayAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *SlicedArrayAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
-      llvm::Type const *llvmSizeTy = llvmSizeType( context );
+      llvm::Type *llvmSizeTy = llvmSizeType( context );
       
-      std::vector<llvm::Type const *> rcvaMemberLLVMTypes;
+      std::vector<llvm::Type *> rcvaMemberLLVMTypes;
       rcvaMemberLLVMTypes.push_back( llvmSizeTy ); // refCount
       rcvaMemberLLVMTypes.push_back( m_variableArrayAdapter->llvmRawType( context ) ); // varArray
       llvm::Type *rcvaType = llvm::StructType::get( context->getLLVMContext(), rcvaMemberLLVMTypes, true );
       
-      std::vector<llvm::Type const *> memberLLVMTypes;
+      std::vector<llvm::Type *> memberLLVMTypes;
       memberLLVMTypes.push_back( llvmSizeTy ); // offset
       memberLLVMTypes.push_back( llvmSizeTy ); // size
       memberLLVMTypes.push_back( rcvaType->getPointerTo() ); // rcva *
-      return llvm::StructType::get( context->getLLVMContext(), memberLLVMTypes, true );
+      return llvm::StructType::create( context->getLLVMContext(), memberLLVMTypes, getCodeName(), true );
     }
 
     void SlicedArrayAdapter::llvmCompileToModule( ModuleBuilder &moduleBuilder ) const
@@ -63,8 +63,6 @@ namespace Fabric
       
       RC::Handle<Context> context = moduleBuilder.getContext();
         
-      moduleBuilder->addTypeName( getCodeName(), llvmRawType(context) );
-
       RC::ConstHandle<BooleanAdapter> booleanAdapter = getManager()->getBooleanAdapter();
       booleanAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<SizeAdapter> sizeAdapter = getManager()->getSizeAdapter();
@@ -99,7 +97,7 @@ namespace Fabric
           llvm::Value *sizeLValue = basicBlockBuilder->CreateStructGEP( slicedArayLValue, 1 );
           sizeAdapter->llvmDefaultAssign( basicBlockBuilder, sizeLValue, sizeRValue );
           llvm::Value *rcvaPtrLValue = basicBlockBuilder->CreateStructGEP( slicedArayLValue, 2 );
-          llvm::Type const *rcvaPtrType = static_cast<llvm::PointerType const *>( rcvaPtrLValue->getType() )->getElementType();
+          llvm::Type *rcvaPtrType = static_cast<llvm::PointerType *>( rcvaPtrLValue->getType() )->getElementType();
           llvm::Value *rcvaPtrRValue = basicBlockBuilder->CreatePointerCast(
             llvmCallMalloc(
               basicBlockBuilder,
@@ -175,7 +173,7 @@ namespace Fabric
             constStringAdapter->llvmConst( basicBlockBuilder, "offset+size" ),
             offsetPlusSizeRValue,
             srcSizeRValue,
-            llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( constStringAdapter->llvmRType( context ) ) )
+            llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( constStringAdapter->llvmRType( context ) ) )
             );
           basicBlockBuilder->CreateRetVoid();
         }
@@ -448,7 +446,7 @@ namespace Fabric
       args.push_back( indexRValue );
       if ( guarded )
         args.push_back( llvmLocationConstStringRValue( basicBlockBuilder, constStringAdapter, location ) );
-      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args.begin(), args.end() );
+      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction() );
     }
 
 
@@ -478,7 +476,7 @@ namespace Fabric
       args.push_back( indexRValue );
       if ( guarded )
         args.push_back( llvmLocationConstStringRValue( basicBlockBuilder, constStringAdapter, location ) );
-      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args.begin(), args.end() );
+      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction() );
     }
 
     void SlicedArrayAdapter::llvmDisposeImpl( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *lValue ) const
@@ -517,8 +515,8 @@ namespace Fabric
       std::vector<llvm::Constant *> elementDefaultRValues;
       elementDefaultRValues.push_back( sizeAdapter->llvmDefaultValue( basicBlockBuilder ) );
       elementDefaultRValues.push_back( sizeAdapter->llvmDefaultValue( basicBlockBuilder ) );
-      elementDefaultRValues.push_back( llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( m_variableArrayAdapter->llvmRType( basicBlockBuilder.getContext() ) ) ) );
-      return llvm::ConstantStruct::get( (llvm::StructType const *)llvmRawType( basicBlockBuilder.getContext() ), elementDefaultRValues );
+      elementDefaultRValues.push_back( llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( m_variableArrayAdapter->llvmRType( basicBlockBuilder.getContext() ) ) ) );
+      return llvm::ConstantStruct::get( (llvm::StructType *)llvmRawType( basicBlockBuilder.getContext() ), elementDefaultRValues );
     }
       
     llvm::Constant *SlicedArrayAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const
@@ -543,11 +541,11 @@ namespace Fabric
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( basicBlockBuilder->getInt8PtrTy() );
       argTypes.push_back( llvmLType( context ) );
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -560,7 +558,7 @@ namespace Fabric
       args.push_back( llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( llvmRValueToLValue( basicBlockBuilder, srcRValue ) );
       args.push_back( dstLValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
   };
 };

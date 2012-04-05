@@ -106,11 +106,11 @@ namespace Fabric
           )
           throw CG::Error( getLocation(), "operator must take parameters: io " + valueAdapter->getUserName() + " value" );
       
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( valueProducerAdapter->llvmLType( context ) );
         argTypes.push_back( valueProducerAdapter->llvmLType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateValueTransform_1", funcType );
         
         basicBlockBuilder->CreateCall3(
@@ -140,12 +140,12 @@ namespace Fabric
           )
           throw CG::Error( getLocation(), "operator must take parameters: io " + valueAdapter->getUserName() + " value, in " + sharedAdapter->getUserName() + " shared" );
       
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( valueProducerAdapter->llvmLType( context ) );
         argTypes.push_back( sharedValueProducerAdapter->llvmLType( context ) );
         argTypes.push_back( valueProducerAdapter->llvmLType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateValueTransform_2", funcType );
         
         basicBlockBuilder->CreateCall4(
