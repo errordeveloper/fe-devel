@@ -58,12 +58,21 @@ if buildType == 'Release':
 if buildOS == 'Windows' and buildType == 'Debug':
   nativeEnv.Append( PDB='${TARGET.base}.pdb' )
 
+# [pzion 20120403] Core issue 44
+# Xcode SDK path changed somewhere around Xcode 4.3.2
+if buildOS == 'Darwin':
+  darwinSysRoot = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk'
+  if not os.path.isdir(darwinSysRoot):
+    darwinSysRoot = '/Developer/SDKs/MacOSX10.6.sdk'
+  if not os.path.isdir(darwinSysRoot):
+    raise Exception("Xcode 4.0.0 or later does not appear to be installed, exiting.")
+
 # check for buildOS specific flags
 buildFlags = { 
   # === OSX ===
   'Darwin': {
-    'ccflags': [ '-Wall', '-fvisibility=hidden', '-isysroot', '/Developer/SDKs/MacOSX10.6.sdk' ],
-    'linkflags' : [ '-w', '-isysroot', '/Developer/SDKs/MacOSX10.6.sdk' ],
+    'ccflags': [ '-Wall', '-fvisibility=hidden', '-isysroot', darwinSysRoot ],
+    'linkflags' : [ '-w', '-isysroot', darwinSysRoot ],
     'universal' : {
       'ccflags': [ '-arch', 'i386', '-arch', 'x86_64' ],
       'linkflags': [ '-arch', 'i386', '-arch', 'x86_64' ]
