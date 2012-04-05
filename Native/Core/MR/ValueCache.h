@@ -60,7 +60,7 @@ namespace Fabric
       ValueCache(
         RC::ConstHandle<ValueProducer> const &input
         );
-      ~ValueCache();
+      virtual ~ValueCache();
     
     private:
 

@@ -59,7 +59,7 @@ namespace Fabric
       ArrayCache(
         RC::ConstHandle<ArrayProducer> const &inputArrayProducer
         );
-      ~ArrayCache();
+      virtual ~ArrayCache();
     
     private:
     
