@@ -6,7 +6,7 @@ operator transform1(
   io Integer value
   )
 {
-  report "transform1: value=" + value;
+  report("transform1: value=" + value);
   value *= 2;
 }
 
@@ -15,7 +15,7 @@ operator transform2(
   Index index
   )
 {
-  report "transform2: value=" + value + " index=" + index;
+  report("transform2: value=" + value + " index=" + index);
   value *= 2;
 }
 
@@ -25,7 +25,7 @@ operator transform3(
   Size count
   )
 {
-  report "transform3: value=" + value + " index=" + index + " count=" + count;
+  report("transform3: value=" + value + " index=" + index + " count=" + count);
   value *= 2;
 }
 
@@ -36,7 +36,7 @@ operator transform4(
   String shared
   )
 {
-  report "transform4: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  report("transform4: value=" + value + " index=" + index + " count=" + count + " shared=" + shared);
   value *= 2;
 }
 
@@ -46,29 +46,29 @@ operator entry() {
     va.push(i);
 
   ArrayProducer<Integer> cap = createConstArray(va);
-  report "cap.getCount() = " + cap.getCount();
+  report("cap.getCount() = " + cap.getCount());
 
   ArrayProducer<Integer> am1 = createArrayTransform(cap, transform1);
-  report am1;
-  report am1.getCount();
+  report(am1);
+  report(am1.getCount());
   for (Index i=0; i<10; ++i)
-    report am1.produce(i);
+    report(am1.produce(i));
 
   ArrayProducer<Integer> am2 = createArrayTransform(cap, transform2);
-  report am2;
-  report am2.getCount();
+  report(am2);
+  report(am2.getCount());
   for (Index i=0; i<10; ++i)
-    report am2.produce(i);
+    report(am2.produce(i));
 
   ArrayProducer<Integer> am3 = createArrayTransform(cap, transform3);
-  report am3;
-  report am3.getCount();
+  report(am3);
+  report(am3.getCount());
   for (Index i=0; i<10; ++i)
-    report am3.produce(i);
+    report(am3.produce(i));
 
   ArrayProducer<Integer> am4 = createArrayTransform(cap, transform4, createConstValue("hello"));
-  report am4;
-  report am4.getCount();
+  report(am4);
+  report(am4.getCount());
   for (Index i=0; i<10; ++i)
-    report am4.produce(i);
+    report(am4.produce(i));
 }

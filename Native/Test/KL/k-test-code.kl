@@ -11,5 +11,5 @@ operator entry()
 {
   var Scalar input = 4.0, output;
   double( input, output );
-  report output;
+  report(output);
 }

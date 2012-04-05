@@ -154,13 +154,11 @@ namespace Fabric
         {
           m_ast->registerTypes( cgManager, m_diagnostics );
           if ( !m_diagnostics.containsError() )
-          {
-            m_ast->llvmCompileToModule( moduleBuilder, m_diagnostics, false );
-          }
+            cgManager->llvmCompileToModule( moduleBuilder );
           if ( !m_diagnostics.containsError() )
-          {
+            m_ast->llvmCompileToModule( moduleBuilder, m_diagnostics, false );
+          if ( !m_diagnostics.containsError() )
             m_ast->llvmCompileToModule( moduleBuilder, m_diagnostics, true );
-          }
           if ( !m_diagnostics.containsError() )
           {
           /*

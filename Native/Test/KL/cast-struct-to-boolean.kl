@@ -12,5 +12,5 @@ struct Vec3
 operator entry()
 {
   var Vec3 vec3;
-  report Boolean(vec3);
+  report(Boolean(vec3));
 }

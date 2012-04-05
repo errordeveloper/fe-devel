@@ -8,7 +8,7 @@ client = fabric.createClient()
 
 cv = client.MR.createConstValue("Size", 10)
 
-ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Size index) { report 'Running generator'; output = sqrt(Scalar(index)); }", "foo");
+ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Size index) { report('Running generator'); output = sqrt(Scalar(index)); }", "foo");
 ag = client.MR.createArrayGenerator(cv, ago)
 
 cache = client.MR.createArrayCache(ag)

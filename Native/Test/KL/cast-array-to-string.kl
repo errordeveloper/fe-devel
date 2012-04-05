@@ -6,8 +6,8 @@ operator entry()
 {
   var Scalar scalars[];
   scalars.push( 3.141 );
-  report scalars[0];
+  report(scalars[0]);
   scalars.push( 2.7182 );
-  report scalars[1];
-  report scalars;
+  report(scalars[1]);
+  report(scalars);
 }

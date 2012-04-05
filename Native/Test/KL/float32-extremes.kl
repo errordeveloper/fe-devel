@@ -14,8 +14,8 @@ operator entry()
   {
     for ( Size j=0; j<scalars.size; ++j )
     {
-      report scalars[i]+" * "+scalars[j]+" = "+(scalars[i]*scalars[j]);
-      report scalars[i]+" / "+scalars[j]+" = "+(scalars[i]/scalars[j]);
+      report(scalars[i]+" * "+scalars[j]+" = "+(scalars[i]*scalars[j]));
+      report(scalars[i]+" / "+scalars[j]+" = "+(scalars[i]/scalars[j]));
     }
   }
 }

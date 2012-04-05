@@ -173,13 +173,11 @@ namespace Fabric
 
         ast->registerTypes( cgManager, diagnostics );
         if ( !diagnostics.containsError() )
-        {
-          ast->llvmCompileToModule( moduleBuilder, diagnostics, false );
-        }
+          cgManager->llvmCompileToModule( moduleBuilder );
         if ( !diagnostics.containsError() )
-        {
+          ast->llvmCompileToModule( moduleBuilder, diagnostics, false );
+        if ( !diagnostics.containsError() )
           ast->llvmCompileToModule( moduleBuilder, diagnostics, true );
-        }
         if ( !diagnostics.containsError() )
         {
 #if defined(FABRIC_BUILD_DEBUG)

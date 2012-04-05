@@ -12,5 +12,5 @@ operator entry()
   var Integer a, b;
   a = 1;
   foo( a || b );
-  report b;
+  report(b);
 }

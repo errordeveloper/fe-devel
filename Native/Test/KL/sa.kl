@@ -4,28 +4,28 @@
 
 operator entry() {
   String slicedArray<>( Size(16) );
-  report slicedArray.size;
-  report slicedArray;
+  report(slicedArray.size);
+  report(slicedArray);
   for ( Size i=0; i<16; ++i )
     slicedArray[i] = String(i);
-  report slicedArray[7];
+  report(slicedArray[7]);
   String subSlicedArray<>( slicedArray, Size(4), Size(8) );
-  report subSlicedArray;
+  report(subSlicedArray);
   subSlicedArray[3] = "foo";
-  report slicedArray;
+  report(slicedArray);
 
   Integer intSlicedArray<>( Size(16) );
-  report intSlicedArray.size;
-  report intSlicedArray;
+  report(intSlicedArray.size);
+  report(intSlicedArray);
   for ( Size i=0; i<16; ++i )
     intSlicedArray[i] = Integer(i);
-  report intSlicedArray[7];
-  report "intSlicedArray.dataSize = " + intSlicedArray.dataSize;
-  report "intSlicedArray.data = " + intSlicedArray.data;
+  report(intSlicedArray[7]);
+  report("intSlicedArray.dataSize = " + intSlicedArray.dataSize);
+  report("intSlicedArray.data = " + intSlicedArray.data);
   Integer subIntSlicedArray<>( intSlicedArray, Size(4), Size(8) );
-  report subIntSlicedArray;
+  report(subIntSlicedArray);
   subIntSlicedArray[3] = 42;
-  report intSlicedArray;
-  report "subIntSlicedArray.dataSize = " + subIntSlicedArray.dataSize;
-  report "subIntSlicedArray.data = " + subIntSlicedArray.data;
+  report(intSlicedArray);
+  report("subIntSlicedArray.dataSize = " + subIntSlicedArray.dataSize);
+  report("subIntSlicedArray.data = " + subIntSlicedArray.data);
 }

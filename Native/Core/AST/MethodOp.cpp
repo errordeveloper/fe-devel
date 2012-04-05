@@ -85,7 +85,7 @@ namespace Fabric
         adapter->llvmCompileToModule( basicBlockBuilder.getModuleBuilder() );
         return CG::ExprType( adapter, CG::USAGE_RVALUE );
       }
-      else return CG::ExprType();
+      else return m_expr->getExprType( basicBlockBuilder );
     }
     
     CG::ExprValue MethodOp::buildExprValue( CG::BasicBlockBuilder &basicBlockBuilder, CG::Usage usage, std::string const &lValueErrorDesc ) const

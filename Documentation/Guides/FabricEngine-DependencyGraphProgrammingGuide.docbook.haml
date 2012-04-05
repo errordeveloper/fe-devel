@@ -651,7 +651,7 @@
             ...
               setEntryPoint: [Function],
               getDiagnostics: [Function] }
-            > op.setSourceCode("operator entry() { report 'Ran trivialOperator'; }");
+            > op.setSourceCode("operator entry() { report('Ran trivialOperator'); }");
             undefined
             > op.setEntryPoint('entry');
             undefined
@@ -675,7 +675,7 @@
             ...
               setEntryPoint: [Function],
               getDiagnostics: [Function] }
-            > anotherOp.setSourceCode("operator entry() { report 'Ran trivialOperatorTwo'; }");
+            > anotherOp.setSourceCode("operator entry() { report('Ran trivialOperatorTwo'); }");
             undefined
             > anotherOp.setEntryPoint('entry');
             undefined
@@ -699,7 +699,7 @@
         %screen<
           :cdata
             >>> op = FABRIC.DG.createOperator("trivialOperator")
-            >>> op.setSourceCode("operator entry() { report 'Ran trivialOperator'; }")
+            >>> op.setSourceCode("operator entry() { report('Ran trivialOperator'); }")
             >>> op.setEntryPoint('entry')
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(op)
@@ -708,7 +708,7 @@
             >>> event.fire()
             [FABRIC] [MT] Ran trivialOperator
             >>> anotherOp = FABRIC.DG.createOperator("trivialOperatorTwo")
-            >>> anotherOp.setSourceCode("operator entry() { report 'Ran trivialOperatorTwo'; }")
+            >>> anotherOp.setSourceCode("operator entry() { report('Ran trivialOperatorTwo'); }")
             >>> anotherOp.setEntryPoint('entry')
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(anotherOp)
@@ -815,7 +815,7 @@
             ...
               setEntryPoint: [Function],
               getDiagnostics: [Function] }
-            > displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report x + ' squared is ' + y; }" );
+            > displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report(x + ' squared is ' + y); }" );
             undefined
             > displayOp.setEntryPoint("entry");
             undefined
@@ -861,7 +861,7 @@
             >>> binding.setParameterLayout(['self.x','self.y'])
             >>> node.bindings.append(binding)
             >>> displayOp = FABRIC.DG.createOperator("displayOp")
-            >>> displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report x + ' squared is ' + y; }" )
+            >>> displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report(x + ' squared is ' + y); }" )
             >>> displayOp.setEntryPoint("entry")
             >>> binding = FABRIC.DG.createBinding()
             >>> binding.setOperator(displayOp)

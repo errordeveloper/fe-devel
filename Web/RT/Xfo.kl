@@ -69,7 +69,7 @@ function Xfo.setFromMat44(Mat44 m) {
 
   // Grab the X scale and normalize the first column
   this.sc.x = col0.length();
-  if( Math_badDivisor( this.sc.x ) )//Perf: check first to avoid building the report string
+  if( Math_badDivisor( this.sc.x ) )//Perf: check first to avoid building the report(string
     Math_reportBadDivisor( this.sc.x, "Mat44.setFromMat44: Matrix is singular" );
   col0 /= this.sc.x;
 
@@ -78,7 +78,7 @@ function Xfo.setFromMat44(Mat44 m) {
 
   // Grab the Y scale and normalize
   this.sc.y = col1.length();
-  if( Math_badDivisor( this.sc.y ) )//Perf: check first to avoid building the report string
+  if( Math_badDivisor( this.sc.y ) )//Perf: check first to avoid building the report(string
     Math_reportBadDivisor( this.sc.y, "Mat44.setFromMat44: Matrix is singular" );
   col1 /= this.sc.y;
 
@@ -87,7 +87,7 @@ function Xfo.setFromMat44(Mat44 m) {
   col2 -= col1 * col1.dot(col2);
 
   this.sc.z = col2.length();
-  if( Math_badDivisor( this.sc.z ) )//Perf: check first to avoid building the report string
+  if( Math_badDivisor( this.sc.z ) )//Perf: check first to avoid building the report(string
     Math_reportBadDivisor( this.sc.z, "Mat44.setFromMat44: Matrix is singular" );
   col2 /= this.sc.z;
 

@@ -8,6 +8,6 @@ operator entry()
   {
     if ( i % 2 == 0 )
       continue;
-    report i;
+    report(i);
   }
 }

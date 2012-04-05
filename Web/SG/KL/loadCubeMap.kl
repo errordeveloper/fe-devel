@@ -19,7 +19,7 @@ operator bindCubeMap(
     Size width, height;
     RGBA imageLDR[];
     var Data NULL;
-    report resource0;
+    report(resource0);
     if((resource0.data.size() != 0 || Boolean(resource0.dataExternalLocation)) && !cubeMap.isFaceDataStored(0)){
       decodeRGBAImageData(resource0, width, height, imageLDR);
       cubeMap.storeData(imageLDR, width, height, 0);

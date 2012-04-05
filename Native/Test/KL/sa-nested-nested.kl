@@ -6,11 +6,11 @@ operator entry() {
   Integer sa<>(10);
   for (Size i=0; i<10; ++i)
     sa[i] = i;
-  report sa;
+  report(sa);
 
   Integer nsa<>(sa, 2, 5);
-  report nsa;
+  report(nsa);
 
   Integer nnsa<>(nsa, 2, 2);
-  report nnsa;
+  report(nnsa);
 }

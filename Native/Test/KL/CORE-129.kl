@@ -10,6 +10,6 @@ struct S
 operator entry()
 {
   S s;
-  report s.dataSize;
-  report s.data;
+  report(s.dataSize);
+  report(s.data);
 }

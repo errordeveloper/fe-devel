@@ -5,5 +5,5 @@
 operator entry()
 {
   var Integer a[];
-  report a + "; size " + a.size;
+  report(a + "; size " + a.size);
 }

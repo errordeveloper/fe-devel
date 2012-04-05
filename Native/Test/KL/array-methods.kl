@@ -6,36 +6,36 @@ operator entry()
 {
   var Integer i;
   var Integer a[];
-  report a + "; size " + a.size;
+  report(a + "; size " + a.size);
   for ( i=0; i<5; ++i )
   {
     a.push( i );
-    report a + "; size " + a.size;
+    report(a + "; size " + a.size);
   }
   a.resize( 10 );
-  report a + "; size " + a.size;
+  report(a + "; size " + a.size);
   for ( i=0; i<5; ++i )
   {
     a.push( i );
-    report a + "; size " + a.size;
+    report(a + "; size " + a.size);
   }
   for ( i=0; i<15; ++i )
   {
     var Integer temp = a[14-i];
     a[14-i] = a[i];
     a[i] = temp;
-    report a + "; size " + a.size;
+    report(a + "; size " + a.size);
   }
   for ( i=0; i<5; ++i )
   {
-    report a.pop();
-    report a + "; size " + a.size;
+    report(a.pop());
+    report(a + "; size " + a.size);
   }
   a.resize( 5 );
-  report a + "; size " + a.size;
+  report(a + "; size " + a.size);
   for ( i=0; i<5; ++i )
   {
-    report a.pop();
-    report a + "; size " + a.size;
+    report(a.pop());
+    report(a + "; size " + a.size);
   }
 }

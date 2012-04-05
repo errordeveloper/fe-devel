@@ -7,26 +7,26 @@ operator entry()
   var Integer x;
 
   // Binary ops
-  x = 1 + 2; report x;
-  x = 3 - 4; report x;
-  x = 3 * 4; report x;
-  x = -6 / 2; report x;
-  x = 11 % 5; report x;
-  x = 11 << 2; report x;
-  x = -76 >> 3; report x;
+  x = 1 + 2; report(x);
+  x = 3 - 4; report(x);
+  x = 3 * 4; report(x);
+  x = -6 / 2; report(x);
+  x = 11 % 5; report(x);
+  x = 11 << 2; report(x);
+  x = -76 >> 3; report(x);
 
   // Assignment ops
-  x = 5; report x;
-  x += 2; report x;
-  x -= 3; report x;
-  x *= 12; report x;
-  x /= 2; report x;
-  x %= 5; report x;
-  x <<= 1; report x;
-  x >>= 1; report x;
+  x = 5; report(x);
+  x += 2; report(x);
+  x -= 3; report(x);
+  x *= 12; report(x);
+  x /= 2; report(x);
+  x %= 5; report(x);
+  x <<= 1; report(x);
+  x >>= 1; report(x);
   
   // Bit ops
-  x =  7 & 11; report x;
-  x =  7 | 11; report x;
-  x =  7 ^ 11; report x;
+  x =  7 & 11; report(x);
+  x =  7 | 11; report(x);
+  x =  7 ^ 11; report(x);
 }

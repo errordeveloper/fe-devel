@@ -7,6 +7,6 @@ operator entry()
   Size i=0;
   do
   {
-    report ++i;
+    report(++i);
   } while ( i < 10 );
 }

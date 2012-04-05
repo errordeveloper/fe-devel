@@ -4,6 +4,6 @@
 
 operator entry()
 {
-  report 4294967295;
-  report 0xFFFFFFFF;
+  report(4294967295);
+  report(0xFFFFFFFF);
 }

@@ -26,14 +26,14 @@ operator entry() {
     createConstValue( 42 ),
     multByPi
     );
-  report vp;
-  report vp.produce();
+  report(vp);
+  report(vp.produce());
 
   vp = createValueMap(
     createConstValue( 2 ),
     multByShared,
     createConstValue( Scalar(2.71) )
     );
-  report vp;
-  report vp.produce();
+  report(vp);
+  report(vp.produce());
 }

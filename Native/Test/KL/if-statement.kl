@@ -9,5 +9,5 @@ operator entry()
     foo = 17;
   else
     foo = 24;
-  report foo;
+  report(foo);
 }

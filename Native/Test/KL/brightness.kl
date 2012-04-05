@@ -36,5 +36,5 @@ operator entry()
 
   var RGBA rgba;
   brightness( index, rgba, sourceRGBA, brightnessTable );
-  report rgba;
+  report(rgba);
 }

@@ -19,7 +19,7 @@ function Integer S.lc(Integer x) {
 
 operator entry() {
   S s(3, -2);
-  report s.lc(1);
-  report s.lc(3);
-  report s.lc(-2);
+  report(s.lc(1));
+  report(s.lc(3));
+  report(s.lc(-2));
 }

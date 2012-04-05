@@ -5,8 +5,8 @@
 operator entry()
 {
   if ( false )
-    report "BAD 1";
+    report("BAD 1");
   else if ( false )
-    report "BAD 2";
-  else report "GOOD";
+    report("BAD 2");
+  else report("GOOD");
 }

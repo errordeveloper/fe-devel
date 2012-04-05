@@ -8,5 +8,5 @@ struct Foo {
 
 operator entry() {
   Foo foo;
-  report foo.baz("Hello", 42, true);
+  report(foo.baz("Hello", 42, true));
 }

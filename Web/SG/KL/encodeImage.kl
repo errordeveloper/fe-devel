@@ -23,7 +23,7 @@ function encodeImageLDRInternal(
       resource.mimeType = 'image/png';
       break;
     default:
-      report "Error, encoding is not supported for image type " + ext;
+      report("Error, encoding is not supported for image type " + ext);
   }
 }
 

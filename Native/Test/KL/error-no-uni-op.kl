@@ -10,5 +10,5 @@ struct S
 operator entry()
 {
   var S s;
-  report -s;
+  report(-s);
 }

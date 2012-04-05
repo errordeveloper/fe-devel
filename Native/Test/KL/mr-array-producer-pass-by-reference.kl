@@ -8,5 +8,5 @@ operator gen(io String output, Size index) {
 
 operator entry() {
   ArrayProducer<String> vp = createArrayGenerator(createConstValue(Size(2)), gen);
-  report vp.produce(Size(1));
+  report(vp.produce(Size(1)));
 }

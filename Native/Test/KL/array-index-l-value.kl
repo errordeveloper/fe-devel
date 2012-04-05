@@ -6,5 +6,5 @@ operator entry()
 {
   var Integer a[];
   a.push( 17 );
-  report a[0];
+  report(a[0]);
 }
