@@ -60,6 +60,7 @@ if buildOS == 'Windows' and buildType == 'Debug':
 
 # [pzion 20120403] Core issue 44
 # Xcode SDK path changed somewhere around Xcode 4.3.2
+darwinSysRoot = ''
 if buildOS == 'Darwin':
   darwinSysRoot = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk'
   if not os.path.isdir(darwinSysRoot):
