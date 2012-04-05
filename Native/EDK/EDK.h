@@ -510,13 +510,13 @@ namespace Fabric
                 }
                 else if ( !oldAllocSize )
                 {
-                  m_bits = static_cast<bits_t *>( malloc( sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
+                  m_bits = static_cast<bits_t *>( ( *s_callbacks.m_malloc )( sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
                   m_bits->refCount.setValue( 1 );
                   m_bits->allocSize = newAllocSize;
                 }
                 else if ( m_bits )
                 {
-                  m_bits = static_cast<bits_t *>( realloc( m_bits, sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
+                  m_bits = static_cast<bits_t *>( ( *s_callbacks.m_realloc )( m_bits, sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
                   m_bits->allocSize = newAllocSize;
                 }
               }
