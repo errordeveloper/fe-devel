@@ -132,7 +132,7 @@ function OGLRenderTarget.prebind(
     this.height = currHeight * this.resolution;
   }
   else {
-    if (this.width != currWidth * this.resolution || this.height != currHeight * this.resolution) {
+    if (this.width != Size(currWidth * this.resolution) || this.height != Size(currHeight * this.resolution) ) {
       // If this FBO is a full screen FBO, then we check to see
       // if the viewport dimensions have changed, and rebuild
       // the textures if they have.
