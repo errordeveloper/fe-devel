@@ -54,7 +54,7 @@ namespace Fabric
       
         RC::ConstHandle<ValueCache> m_valueCache;
         RC::ConstHandle<ValueProducer::ComputeState> m_inputValueProducerComputeState;
-        mutable Util::Mutex m_mutex;
+        Util::Mutex &m_mutex;
       };
       
       ValueCache(
@@ -68,7 +68,7 @@ namespace Fabric
       
       RC::ConstHandle<RT::Desc> m_valueDesc;
       mutable std::vector<uint8_t> m_cacheData;
-      Util::Mutex m_mutex;
+      mutable Util::Mutex m_mutex;
     };
   }
 }

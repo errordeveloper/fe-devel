@@ -53,7 +53,7 @@ namespace Fabric
       
         RC::ConstHandle<ArrayCache> m_arrayCache;
         RC::ConstHandle<ArrayProducer::ComputeState> m_inputArrayProducerComputeState;
-        mutable Util::Mutex m_mutex;
+        Util::Mutex &m_mutex;
       };
     
       ArrayCache(
