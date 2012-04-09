@@ -52,6 +52,8 @@ namespace Fabric
     CG::Function const *MethodOp::getFunction( CG::BasicBlockBuilder &basicBlockBuilder ) const
     {
       CG::ExprType thisType = m_expr->getExprType( basicBlockBuilder );
+      if ( !thisType )
+        throw CG::Error( getLocation(), "expression to left of . has no value" );
       
       CG::ExprTypeVector argTypes;
       m_args->appendExprTypes( basicBlockBuilder, argTypes );
