@@ -5,13 +5,13 @@
 operator entry()
 {
   var String string = "Hello, world!";
-  report "string.length = " + string.length;
-  report "string.dataSize = " + string.dataSize;
-  report "string.data = " + string.data;
+  report("string.length = " + string.length);
+  report("string.dataSize = " + string.dataSize);
+  report("string.data = " + string.data);
 
   var Integer a[];
   a.push(42);
   a.push(17);
-  report "a.dataSize = " + a.dataSize;
-  report "a.data = " + a.data;
+  report("a.dataSize = " + a.dataSize);
+  report("a.data = " + a.data);
 }

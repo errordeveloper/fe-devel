@@ -17,7 +17,7 @@ function Integer lookupDataIndex(
       return i;
     }
   }
-  report "ERROR: data index not found :" + dataName;
+  report("ERROR: data index not found :" + dataName);
   return -1;
 }
 
@@ -101,7 +101,7 @@ function Boolean seekData(
         return true;
       }
     }
-    report "ERROR: Data not found in file:"+dataName;
+    report("ERROR: Data not found in file:"+dataName);
     return false;
   }
 }
@@ -143,7 +143,7 @@ operator readMemberFromStream(
       String storedMemberType;
       stream.readString(storedMemberType);
       if(storedMemberType != "DATA_TYPE"){
-        report "ERROR: Stored type : '"+storedMemberType+"' does not match current type:'DATA_TYPE'";
+        report("ERROR: Stored type : '"+storedMemberType+"' does not match current type:'DATA_TYPE'");
         stream.close();
         return;
       }
@@ -168,7 +168,7 @@ operator readArrayFromStream(
     String storedMemberType;
     stream.readString(storedMemberType);
     if(storedMemberType != "DATA_TYPE"){
-      report "ERROR: Stored type : '"+storedMemberType+"' does not match current type:'DATA_TYPE'";
+      report("ERROR: Stored type : '"+storedMemberType+"' does not match current type:'DATA_TYPE'");
       stream.close();
       return;
     }

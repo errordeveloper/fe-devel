@@ -26,7 +26,7 @@ operator map4(
   Size count
   )
 {
-  report "map4: count=" + count;
+  report("map4: count=" + count);
   output += input;
 }
 
@@ -38,7 +38,7 @@ operator map5(
   String shared
   )
 {
-  report "map5: count=" + count + " shared=" + shared;
+  report("map5: count=" + count + " shared=" + shared);
   output += input;
 }
 
@@ -48,21 +48,21 @@ operator entry() {
     va.push(i);
 
   ArrayProducer<Integer> cap = createConstArray(va);
-  report "cap.getCount() = " + cap.getCount();
+  report("cap.getCount() = " + cap.getCount());
 
   ValueProducer<Scalar> am2 = createReduce(cap, map2);
-  report am2;
-  report am2.produce();
+  report(am2);
+  report(am2.produce());
 
   ValueProducer<Scalar> am3 = createReduce(cap, map3);
-  report am3;
-  report am3.produce();
+  report(am3);
+  report(am3.produce());
 
   ValueProducer<Scalar> am4 = createReduce(cap, map4);
-  report am4;
-  report am4.produce();
+  report(am4);
+  report(am4.produce());
 
   ValueProducer<Scalar> am5 = createReduce(cap, map5, createConstValue("hello"));
-  report am5;
-  report am5.produce();
+  report(am5);
+  report(am5.produce());
 }

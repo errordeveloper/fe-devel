@@ -4,13 +4,13 @@
 
 function displayRValue( Scalar a[String] ) {
   for ( k, v in a ) {
-    report "a['" + k + "'] = " + v;
+    report("a['" + k + "'] = " + v);
   }
 }
 
 function displayLValue( io Scalar a[String] ) {
   for ( k, v in a ) {
-    report "a['" + k + "'] = " + v;
+    report("a['" + k + "'] = " + v);
   }
 }
 
@@ -19,7 +19,7 @@ operator entry() {
   a['pi'] = 3.14;
   a['e'] = 2.71;
   for ( k in a ) {
-    report "a['" + k + "'] = " + a[k];
+    report("a['" + k + "'] = " + a[k]);
   }
   displayRValue( a );
   displayLValue( a );

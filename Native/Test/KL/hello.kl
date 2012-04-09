@@ -3,5 +3,5 @@
  */
 
 operator entry() {
-  report "Hello, world!";
+  report("Hello, world!");
 }

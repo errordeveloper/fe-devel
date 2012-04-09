@@ -11,6 +11,7 @@ op.setSourceCode("operator foo( Boolean testBool, io Integer foo ) { if(testBool
 binding = FABRIC.DependencyGraph.createBinding();
 binding.setOperator( op );
 binding.setParameterLayout( [ "self.testBool", "self.foo" ] );
+console.log(binding.getParameterLayout());
 
 node = FABRIC.DependencyGraph.createNode("foo");
 node.addMember( "testBool", "Boolean" );

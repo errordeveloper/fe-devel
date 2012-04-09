@@ -1,0 +1,3 @@
+parent input: input0
+parent input: input1
+[u"binding 0: operator 'childOp': node 'self': parameter 2: member 'output': cannot bind per-slice to multiple sliced nodes at once"]

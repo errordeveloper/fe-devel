@@ -7,23 +7,23 @@ operator produceAndFlush(
   String method
   )
 {
-  report ap;
-  report "  ap.getCount() = " + ap.getCount();
-  report "  ap.produce() = " + ap.produce(10);
-  report " ";
+  report(ap);
+  report("  ap.getCount() = " + ap.getCount());
+  report("  ap.produce() = " + ap.produce(10));
+  report(" ");
 }
 
 operator generator(
   io Integer value
   )
 {
-  report " running generator";
+  report(" running generator");
   value = 42;
 }
 
 operator entry()
 {
-  report "--- Testing Generator Cache";
+  report("--- Testing Generator Cache");
   ValueProducer<Size> cvg = createConstValue(Size(10));
   ArrayProducer<Integer> gen = createArrayCache(
     createArrayGenerator(cvg, generator)

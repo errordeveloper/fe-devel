@@ -232,7 +232,7 @@ function Boolean decodeRGBAImageData(
       }
       break;
     default:
-      report "ERROR: unsupported file type(" + ext + ") :"+resource.url;
+      report("ERROR: unsupported file type(" + ext + ") :"+resource.url);
       resource.data.resize(0);
       return false;
   }
@@ -272,7 +272,7 @@ function Boolean decodeColorImageData(
       }
       break;
     default:
-      report "ERROR: unsupported file type(" + ext + ") :"+resource.url;
+      report("ERROR: unsupported file type(" + ext + ") :"+resource.url);
       resource.data.resize(0);
       return false;
   }

@@ -16,5 +16,5 @@ operator entry()
   vec3Array[1].y = 42.0;
   vec3Array[1].z = 9.34;
   vec3Array[0] = vec3Array[1];
-  report vec3Array;
+  report(vec3Array);
 }

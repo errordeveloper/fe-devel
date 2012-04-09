@@ -113,7 +113,6 @@ typedef struct YYLTYPE
 #include <Fabric/Core/AST/OrOp.h>
 #include <Fabric/Core/AST/Param.h>
 #include <Fabric/Core/AST/ParamVector.h>
-#include <Fabric/Core/AST/Report.h>
 #include <Fabric/Core/AST/Require.h>
 #include <Fabric/Core/AST/RequireGlobal.h>
 #include <Fabric/Core/AST/RequireVector.h>
@@ -123,6 +122,7 @@ typedef struct YYLTYPE
 #include <Fabric/Core/AST/StructMemberOp.h>
 #include <Fabric/Core/AST/SwitchStatement.h>
 #include <Fabric/Core/AST/TernaryOp.h>
+#include <Fabric/Core/AST/ThrowStatement.h>
 #include <Fabric/Core/AST/Var.h>
 #include <Fabric/Core/AST/VarDecl.h>
 #include <Fabric/Core/AST/VarDeclStatement.h>
@@ -225,8 +225,8 @@ int kl_lex( YYSTYPE *yys, YYLTYPE *yyl, KL::Context &context );
 %token TOKEN_BREAK "break"
 %token TOKEN_CONST "const"
 %token TOKEN_FALSE "false"
+%token TOKEN_THROW "throw"
 %token TOKEN_WHILE "while"
-%token TOKEN_REPORT "report"
 %token TOKEN_RETURN "return"
 %token TOKEN_STRUCT "struct"
 %token TOKEN_SWITCH "switch"
@@ -1069,9 +1069,9 @@ statement
     $5->release();
   }
   | loop_statement
-  | TOKEN_REPORT expression TOKEN_SEMICOLON
+  | TOKEN_THROW expression TOKEN_SEMICOLON
   {
-    $$ = AST::Report::Create( RTLOC, $2 ).take();
+    $$ = AST::ThrowStatement::Create( RTLOC, $2 ).take();
     $2->release();
   }
   | TOKEN_BREAK TOKEN_SEMICOLON

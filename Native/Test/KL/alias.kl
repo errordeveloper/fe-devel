@@ -9,5 +9,5 @@ operator entry()
   var IntArray a;
   a.push( 17 );
   a.push( 42 );
-  report a;
+  report(a);
 }

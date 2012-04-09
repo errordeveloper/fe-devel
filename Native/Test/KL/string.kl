@@ -4,7 +4,7 @@
 
 function reportString( String string )
 {
-  report "'" + string + "' (length " + string.length + ")";
+  report("'" + string + "' (length " + string.length + ")");
 }
 
 operator entry()

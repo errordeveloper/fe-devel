@@ -107,6 +107,7 @@ namespace Fabric
     protected:
     
       ArrayProducer();
+      virtual ~ArrayProducer() {}
     };
   }
 }

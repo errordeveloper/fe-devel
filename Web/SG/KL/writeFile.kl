@@ -16,7 +16,7 @@ operator writeFile(
   io FabricResource resource,
   io String path
 ) {
-  report "writeFile:" + path;
+  report("writeFile:" + path);
   
   FabricFileHandleWrapper handle;
   handle.setAbsolutePath(path);

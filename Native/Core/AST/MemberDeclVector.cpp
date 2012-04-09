@@ -12,7 +12,11 @@ namespace Fabric
 {
   namespace AST
   {
-    RC::ConstHandle<MemberDeclVector> MemberDeclVector::Create( RC::ConstHandle<MemberDecl> const &first, RC::ConstHandle<MemberDeclVector> const &remaining )
+    RC::ConstHandle<MemberDeclVector> MemberDeclVector::Create(
+      RC::ConstHandle<MemberDecl> const &first,
+      RC::ConstHandle<MemberDeclVector> const &remaining,
+      RC::ConstHandle<MemberDecl> const &last
+      )
     {
       MemberDeclVector *result = new MemberDeclVector;
       if ( first )
@@ -22,6 +26,8 @@ namespace Fabric
         for ( MemberDeclVector::const_iterator it=remaining->begin(); it!=remaining->end(); ++it )
           result->push_back( *it );
       }
+      if ( last )
+        result->push_back( last );
       return result;
     }
     

@@ -15,5 +15,5 @@ operator entry()
   vec3.x = 1;
   vec3.y = -2.71;
   vec3.z = 3.1e21;
-  report vec3;
+  report(vec3);
 }

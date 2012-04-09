@@ -457,7 +457,7 @@ operator entry() {
         A KL program is <glossterm>parsed</glossterm> as a sequence of tokens.  A token is a sequence of characters that begins with something other than whitespace and is not a comment.  There are four categories of tokens in KL: keywords, identifiers, symbols, and constants.
       </para>
       
-      <section xml:id="syntax.tokens.keywords">
+      <section xml:id="keywords">
         <title>Keywords</title>
         
         <para>
@@ -479,11 +479,11 @@ operator entry() {
             <member><code>in</code></member>
             <member><code>io</code></member>
             <member><code>operator</code></member>
-            <member><code>report</code></member>
             <member><code>require</code></member>
             <member><code>return</code></member>
             <member><code>struct</code></member>
             <member><code>switch</code></member>
+            <member><code>throw</code></member>
             <member><code>true</code></member>
             <member><code>var</code></member>
             <member><code>while</code></member>
@@ -1796,8 +1796,6 @@ function report(String message);
         <para>
           Within Fabric the report function is primarily used for debugging, whereas it is used for general output from the KL tool.
         </para>
-        
-        <note><simpara>The <code>report</code> function is actually a statement, but this will change in a future version of KL.  As such, even thought the parentheses around the <quote>argument</quote> of <code>report</code> are not strictly required, we recommend that you use them to avoid future syntax errors.</simpara></note>
       </section>
       <section xml:id="built-in-functions.numerical">
         <title>Numerical Functions</title>
@@ -3162,7 +3160,7 @@ destroying T; s = entryT
         <title>Expression Statements</title>
 
         <para>
-          Any expression, followed by a <code>;</code> (semicolon), is a statement.  The statement operates by evaluating the expression and then discarding the resulting value (if any).
+          Any expression, followed by a <code>;</code> (semicolon), is a statement.  The statement operates by evaluating the expression and then discarding the resulting value (if any).  The most common form of an expression statement is one that invokes a function call (eg. <code>report</code>).
         </para>
 
         <example>
@@ -3183,6 +3181,41 @@ operator entry() {
             ]]>
           </programlisting>
         </example>
+      </section>
+
+      <section xml:id="throw-statement">
+        <title>The <code>throw</code> Statement</title>
+
+        <para>
+          The keyword <code>throw</code>, followed by any argument, causes the argument to a string and then throws an exception whose value is the string.  This can be used to throw an exception, exiting out of the KL environment entirely and returning the exception to the calling environment (ie. the dynamic language using KL).
+        </para>
+
+        <note><para>
+          Currently there is no way of catching exceptions from within KL itself. This functionality will be added in a later version of Fabric Engine.
+        </para></note>
+
+        <example>
+          <title>The <code>throw</code> statement</title>
+          <programlisting language="kl">
+            <![CDATA[
+operator entry() {
+  report("before throw");
+  throw "Test Exception";
+  report("after throw");
+}
+            ]]>
+          </programlisting>
+        </example>
+
+        <informalfigure>
+          <simpara>Output:</simpara>
+          <screen>
+            <![CDATA[
+before throw
+Caught exception: Test Exception
+          ]]>
+          </screen>
+        </informalfigure>
       </section>
 
       <section xml:id="empty-statement">
@@ -4030,7 +4063,7 @@ operator generator(
   Float32 shared
   )
 {
-  report "generator: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  report("generator: value=" + value + " index=" + index + " count=" + count + " shared=" + shared);
   value = shared*index;
 }
 
@@ -4140,7 +4173,7 @@ operator transform(
   Float32 shared
   )
 {
-  report "transform: value=" + value + " index=" + index + " count=" + count + " shared=" + shared;
+  report("transform: value=" + value + " index=" + index + " count=" + count + " shared=" + shared);
   value *= shared * (index + 1);
 }
 
@@ -4243,7 +4276,7 @@ operator map(
   Float32 shared
   )
 {
-  report "map: inputValue=" + inputValue + " index=" + index + " count=" + count + " shared=" + shared;
+  report("map: inputValue=" + inputValue + " index=" + index + " count=" + count + " shared=" + shared);
   Float32 float32Value = inputValue * shared * (index + 1);
   if (abs(float32Value) < 1.0)
     outputValue = "small";

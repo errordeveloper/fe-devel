@@ -6,7 +6,7 @@ FABRIC = require('Fabric').createClient();
 
 op = FABRIC.DependencyGraph.createOperator( "op" );
 op.setEntryPoint('entry');
-op.setSourceCode("operator entry( io Scalar input ) { String foo; report foo; }");
+op.setSourceCode("operator entry( io Scalar input ) { String foo; report(foo); }");
 
 binding = FABRIC.DependencyGraph.createBinding();
 binding.setOperator( op );

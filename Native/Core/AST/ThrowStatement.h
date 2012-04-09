@@ -2,8 +2,8 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
-#ifndef _FABRIC_AST_REPORT_H
-#define _FABRIC_AST_REPORT_H
+#ifndef _FABRIC_AST_THROW_STATEMENT_H
+#define _FABRIC_AST_THROW_STATEMENT_H
 
 #include <Fabric/Core/AST/Statement.h>
 #include <Fabric/Core/AST/Expr.h>
@@ -17,16 +17,16 @@ namespace Fabric
   
   namespace AST
   {
-    class Report: public Statement
+    class ThrowStatement: public Statement
     {
-      FABRIC_AST_NODE_DECL( Report );
+      FABRIC_AST_NODE_DECL( ThrowStatement );
 
     public:
       REPORT_RC_LEAKS
 
-      static RC::ConstHandle<Report> Create( CG::Location const &location, RC::ConstHandle<Expr> const &expr )
+      static RC::ConstHandle<ThrowStatement> Create( CG::Location const &location, RC::ConstHandle<Expr> const &expr )
       {
-        return new Report( location, expr );
+        return new ThrowStatement( location, expr );
       }
 
       virtual void registerTypes( RC::Handle<CG::Manager> const &cgManager, CG::Diagnostics &diagnostics ) const;
@@ -35,7 +35,7 @@ namespace Fabric
      
     protected:
     
-      Report( CG::Location const &location, RC::ConstHandle<Expr> const &expr);
+      ThrowStatement( CG::Location const &location, RC::ConstHandle<Expr> const &expr);
       
       virtual void appendJSONMembers( JSON::ObjectEncoder const &jsonObjectEncoder, bool includeLocation ) const;
     
@@ -43,7 +43,7 @@ namespace Fabric
     
       RC::ConstHandle<Expr> m_expr;
     };
-  };
-};
+  }
+}
 
-#endif //_FABRIC_AST_REPORT_H
+#endif //_FABRIC_AST_THROW_STATEMENT_H

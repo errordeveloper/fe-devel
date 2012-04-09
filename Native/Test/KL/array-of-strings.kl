@@ -5,15 +5,15 @@
 operator entry()
 {
   var String a[];
-  report a;
+  report(a);
   a.push( "foo" );
-  report a;
-  report a[0];
+  report(a);
+  report(a[0]);
   a.push( "bar" );
-  report a;
-  report a[1];
-  report a.pop();
-  report a;
-  report a.pop();
-  report a;
+  report(a);
+  report(a[1]);
+  report(a.pop());
+  report(a);
+  report(a.pop());
+  report(a);
 }

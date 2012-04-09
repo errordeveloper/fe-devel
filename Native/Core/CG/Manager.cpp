@@ -304,9 +304,13 @@ namespace Fabric
       return RC::ConstHandle<ArrayProducerAdapter>::StaticCast( getAdapter( arrayProducerDesc ) );
     }
     
-    RC::ConstHandle<StructAdapter> Manager::registerStruct( std::string const &name, RT::StructMemberInfoVector const &structMemberInfoVector )
+    RC::ConstHandle<StructAdapter> Manager::registerStruct(
+      std::string const &name,
+      RT::StructMemberInfoVector const &structMemberInfoVector,
+      RC::ConstHandle<AST::StructDecl> const &existingASTStructDecl
+      )
     {
-      return RC::ConstHandle<StructAdapter>::StaticCast( getAdapter( m_rtManager->registerStruct( name, structMemberInfoVector ) ) );
+      return RC::ConstHandle<StructAdapter>::StaticCast( getAdapter( m_rtManager->registerStruct( name, structMemberInfoVector, existingASTStructDecl ) ) );
     }
     
     RC::ConstHandle<Adapter> Manager::registerAlias( std::string const &name, RC::ConstHandle<Adapter> const &adapter )
@@ -359,5 +363,19 @@ namespace Fabric
     {
       return m_rtManager->getStrongerTypeOrNone( lhsDesc, rhsDesc );
     }
-  };
-};
+
+
+    void Manager::llvmCompileToModule( CG::ModuleBuilder &moduleBuilder ) const
+    {
+      // [pzion 20110923] Special case: several internal LLVM functions use
+      // the String and ConstString adapters, so make sure they exist for when pulling 
+      // optimized IR out of the cache
+      getStringAdapter()->llvmCompileToModule( moduleBuilder );
+      getConstStringAdapter()->llvmCompileToModule( moduleBuilder );
+      getSizeAdapter()->llvmCompileToModule( moduleBuilder );
+
+      for ( DescToAdapterMap::const_iterator it=m_descToAdapterMap.begin(); it!=m_descToAdapterMap.end(); ++it )
+        it->second->llvmCompileToModule( moduleBuilder );
+    }
+  }
+}

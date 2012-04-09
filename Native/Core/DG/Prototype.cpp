@@ -249,6 +249,7 @@ namespace Fabric
       if ( numASTParams != expectedNumASTParams )
         errors.push_back( "operator takes incorrect number of parameters (expected "+_(expectedNumASTParams)+", actual "+_(numASTParams)+")" );
 
+      unsigned numAdjustments = 0;
       RC::Handle<MT::ParallelCall> result = MT::ParallelCall::Create( function, prefixCount+m_paramCount, astOperator->getDeclaredName() );
       for ( unsigned i=0; i<prefixCount; ++i )
         result->setBaseAddress( i, prefixes[i] );
@@ -263,7 +264,7 @@ namespace Fabric
             errors.push_back( nodeErrorPrefix + "not found" );
             continue;
           }
-          
+
           bool haveAdjustmentIndex = false;
           unsigned adjustmentIndex = 0;
           
@@ -308,12 +309,18 @@ namespace Fabric
                   result->setBaseAddress( prefixCount+param->index(), (void *)0 );
                   if ( container->size() != 1 )
                   {
-                    if ( !haveAdjustmentIndex )
+                    if ( numAdjustments > 0 && !haveAdjustmentIndex )
+                      errors.push_back( parameterErrorPrefix + "cannot bind per-slice to multiple sliced nodes at once" );
+                    else
                     {
-                      adjustmentIndex = result->addAdjustment( container->size() );
-                      haveAdjustmentIndex = true;
+                      if ( !haveAdjustmentIndex )
+                      {
+                        adjustmentIndex = result->addAdjustment( container->size() );
+                        haveAdjustmentIndex = true;
+                        numAdjustments++;
+                      }
+                      result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), 1 );
                     }
-                    result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), 1 );
                   }
                 }
               }
@@ -359,12 +366,18 @@ namespace Fabric
                         result->setBaseAddress( prefixCount+param->index(), baseAddress );
                         if ( container->size() != 1 )
                         {
-                          if ( !haveAdjustmentIndex )
+                          if ( numAdjustments > 0 && !haveAdjustmentIndex )
+                            errors.push_back( memberErrorPrefix + "cannot bind per-slice to multiple sliced nodes at once" );
+                          else
                           {
-                            adjustmentIndex = result->addAdjustment( container->size() );
-                            haveAdjustmentIndex = true;
+                            if ( !haveAdjustmentIndex )
+                            {
+                              adjustmentIndex = result->addAdjustment( container->size() );
+                              haveAdjustmentIndex = true;
+                              numAdjustments++;
+                            }
+                            result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), memberImpl->getAllocSize() );
                           }
-                          result->setAdjustmentOffset( adjustmentIndex, prefixCount+param->index(), memberImpl->getAllocSize() );
                         }
                       }
                     }

@@ -4,9 +4,9 @@
 
 operator entry()
 {
-  report round( 1.9 );
-  report round( 1.1 );
-  report round( 0.0 );
-  report round( -1.1 );
-  report round( -1.9 );
+  report(round( 1.9 ));
+  report(round( 1.1 ));
+  report(round( 0.0 ));
+  report(round( -1.1 ));
+  report(round( -1.9 ));
 }

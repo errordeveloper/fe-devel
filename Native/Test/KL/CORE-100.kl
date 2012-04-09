@@ -18,5 +18,5 @@ operator entry()
   var S s;
   s.a.push( 17 );
   s.b = 3.14;
-  report getB( s );
+  report(getB( s ));
 }

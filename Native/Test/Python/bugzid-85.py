@@ -12,7 +12,7 @@ dgnode1.resize(32)
 operatorInit = F.DG.createOperator("initiate")
 operatorInit.setSourceCode(
   'operator initiate(in Size index, io Size a[]) {\n'+
-  '  report "Setting index " + index;\n'+
+  '  report("Setting index " + index);\n'+
   '  a.push(index);\n'+
   '}\n')
 operatorInit.setEntryPoint('initiate')
@@ -55,7 +55,7 @@ dgnode1.bindings.append(bindingInit2)
 reportOp = F.DG.createOperator('reportOp')
 reportOp.setSourceCode("\
 operator reportValues(io Size a<>[]) {\n\
-report a;\n\
+report(a);\n\
 }\n\
 ")
 reportOp.setEntryPoint('reportValues')

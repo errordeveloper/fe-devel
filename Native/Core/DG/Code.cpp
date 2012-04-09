@@ -99,7 +99,10 @@ namespace Fabric
         return;
         
       FABRIC_ASSERT( m_ast );
-      RC::ConstHandle<AST::GlobalList> ast = m_ast;
+      RC::ConstHandle<AST::GlobalList> ast = AST::GlobalList::Create(
+        context->getRTManager()->getASTGlobals(),
+        m_ast
+        );
       CG::Diagnostics diagnostics;
       
       AST::RequireNameToLocationMap requires;
@@ -170,13 +173,11 @@ namespace Fabric
 
         ast->registerTypes( cgManager, diagnostics );
         if ( !diagnostics.containsError() )
-        {
-          ast->llvmCompileToModule( moduleBuilder, diagnostics, false );
-        }
+          cgManager->llvmCompileToModule( moduleBuilder );
         if ( !diagnostics.containsError() )
-        {
+          ast->llvmCompileToModule( moduleBuilder, diagnostics, false );
+        if ( !diagnostics.containsError() )
           ast->llvmCompileToModule( moduleBuilder, diagnostics, true );
-        }
         if ( !diagnostics.containsError() )
         {
 #if defined(FABRIC_BUILD_DEBUG)

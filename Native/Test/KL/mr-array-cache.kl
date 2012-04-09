@@ -7,36 +7,36 @@ operator produceAndFlush(
   String method
   )
 {
-  report ap;
-  report "  ap.getCount() = " + ap.getCount();
+  report(ap);
+  report("  ap.getCount() = " + ap.getCount());
 
-  report "Should run " + method + " 10x";
+  report("Should run " + method + " 10x");
   for (Size i=0; i<10; ++i)
-    report "  ap.produce() = " + ap.produce(i);
+    report("  ap.produce() = " + ap.produce(i));
 
-  report "Should not run " + method + " 10x";
+  report("Should not run " + method + " 10x");
   for (Size i=0; i<10; ++i)
-    report "  ap.produce() = " + ap.produce(i);
+    report("  ap.produce() = " + ap.produce(i));
 
   ap.flush();
-  report "Should run " + method + " 10x";
+  report("Should run " + method + " 10x");
   for (Size i=0; i<10; ++i)
-    report "  ap.produce() = " + ap.produce(i);
+    report("  ap.produce() = " + ap.produce(i));
 
-  report " ";
+  report(" ");
 }
 
 operator generator(
   io Integer value
   )
 {
-  report " running generator";
+  report(" running generator");
   value = 42;
 }
 
 operator testGeneratorCache()
 {
-  report "--- Testing Generator Cache";
+  report("--- Testing Generator Cache");
   ValueProducer<Size> cvg = createConstValue(Size(10));
   ArrayProducer<Integer> gen = createArrayCache(
     createArrayGenerator(cvg, generator)
@@ -48,13 +48,13 @@ operator transform(
   io Integer value
   )
 {
-  report " running transform";
+  report(" running transform");
   value *= 2;
 }
 
 operator testTransformCache()
 {
-  report "--- Testing Transform Cache";
+  report("--- Testing Transform Cache");
   Integer va[];
   for (Integer i=0; i<10; ++i)
     va.push(i);
@@ -69,7 +69,7 @@ operator testTransformCache()
 
 operator testNestedCache()
 {
-  report "--- Testing Nested Caches";
+  report("--- Testing Nested Caches");
   ValueProducer<Size> cvg = createConstValue(Size(10));
   ArrayProducer<Integer> gen = createArrayCache(
     createArrayCache(
@@ -81,7 +81,7 @@ operator testNestedCache()
 
 operator testTransformFlushPropagate()
 {
-  report "--- Testing Transform flush propagation";
+  report("--- Testing Transform flush propagation");
   ValueProducer<Size> cvg = createConstValue(Size(10));
   ArrayProducer<Integer> gen = createArrayGenerator(cvg, generator);
   ArrayProducer<Integer> tr = createArrayTransform(
@@ -102,7 +102,7 @@ operator map(
 
 operator testMapFlushPropagate()
 {
-  report "--- Testing Map flush propagation";
+  report("--- Testing Map flush propagation");
   ValueProducer<Size> cvg = createConstValue(Size(10));
   ArrayProducer<Integer> gen = createArrayGenerator(cvg, generator);
   ArrayProducer<Integer> tr = createArrayMap(

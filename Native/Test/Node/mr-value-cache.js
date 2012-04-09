@@ -8,7 +8,7 @@ var gen =
   FC.MR.createValueCache(
     FC.MR.createValueGenerator(
       FC.KLC.createValueGeneratorOperator(
-        "xfo.kl", "operator xfo(io Integer value) { report 'Running generator'; value = 121; }", "xfo"
+        "xfo.kl", "operator xfo(io Integer value) { report('Running generator'); value = 121; }", "xfo"
         )
       )
     );

@@ -15,8 +15,25 @@ FABRIC_URL="http://fabricengine.com"
 FABRIC_VERSION_MAJ='1'
 FABRIC_VERSION_MIN='2'
 FABRIC_VERSION_REV='0'
-FABRIC_VERSION_SUFFIX='-alpha'
-FABRIC_CACHE_GENERATION='20'
+FABRIC_VERSION_SUFFIX='-release'
+# [pzion 20120404]
+# IMPORTANT: Put a cache generation
+# with format 'number-description' here
+# so that we get merge conflicts if the
+# cache generation has been bumped to
+# the same number but with different
+# changes on different branches.  Such
+# conflicts should be resolved by
+# incrementing the number again and
+# forming a common description of the
+# changes.
+# WARNING: the cache generation must
+# be a valid filename on all of the
+# Fabric platforms (including Windows)
+# Choosing from the set 0-9, a-z,
+# A-Z, _, -  and . is safe and
+# recommended.
+FABRIC_CACHE_GENERATION='22-report-function'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import os, platform, posixpath, glob, sys

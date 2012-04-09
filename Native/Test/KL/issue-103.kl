@@ -5,5 +5,5 @@
 operator entry() {
   var Size index = 2;
   var Integer bob = ( index > 0 ? ( index > 4 ? 7 : 4 ) : 5);
-  report bob;
+  report(bob);
 }

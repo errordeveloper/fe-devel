@@ -1,0 +1,5 @@
+function noreturnval() {}
+operator entry()
+{
+  noreturnval().nomethod();
+}

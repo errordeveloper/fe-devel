@@ -240,7 +240,7 @@
         :cdata
           operator entry() {
             ValueProducer<Scalar> vp = createConstValue(1.4142);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -259,7 +259,7 @@
             String a[];
             a.push('zero'); a.push('one'); a.push('two');
             ArrayProducer<String> ap = createConstArray(a);
-            report ap.produce();
+            report(ap.produce());
           }
 
       %para
@@ -283,7 +283,7 @@
 
           operator entry() {
             ValueProducer<String[]>vp = createValueGenerator(gen);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -327,7 +327,7 @@
 
           operator entry() {
             ArrayProducer<Scalar> ap = createArrayGenerator(createConstValue(Size(10)), gen);
-            report ap.produce();
+            report(ap.produce());
           }
 
       %para
@@ -373,7 +373,7 @@
 
           operator entry() {
             ValueProducer<Size> vp = createValueMap(createConstValue("Hello, world!"), map);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -412,9 +412,9 @@
           operator entry() {
             String a[]; a.push("one"); a.push("two"); a.push("three");
             ArrayProducer<String> iap = createConstArray(a);
-            report iap.produce();
+            report(iap.produce());
             ArrayProducer<Size> oap = createArrayMap(iap, map);
-            report oap.produce();
+            report(oap.produce());
           }
 
       %para
@@ -460,7 +460,7 @@
 
           operator entry() {
             ValueProducer<Scalar> vp = createValueTransform(createConstValue(Scalar(3.14)), transform);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -499,9 +499,9 @@
           operator entry() {
             Scalar ia[]; ia.push(3.14); ia.push(2.71); ia.push(10.0); ia.push(87.32);
             ArrayProducer<Scalar> iap = createConstArray(ia);
-            report iap.produce();
+            report(iap.produce());
             ArrayProducer<Scalar> oap = createArrayTransform(iap, transform);
-            report oap.produce();
+            report(oap.produce());
           }
 
       %para
@@ -572,7 +572,7 @@
               ),
               reduce
             );
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -603,24 +603,24 @@
       %programlisting(language="kl")<
         :cdata
           operator gen(io String output) {
-            report "  Running generator!";
+            report("  Running generator!");
             output = "Hello";
           }
 
           operator entry() {
             // test caching ValueGenerator
             ValueProducer<String> vp1 = createValueCache(createValueGenerator(gen));
-            report "vp1 = " + vp1;
+            report("vp1 = " + vp1);
                     
-            report "Should run generator";
-            report "vp1.produce() = " + vp1.produce();
+            report("Should run generator");
+            report("vp1.produce() = " + vp1.produce());
                         
-            report "Should not run generator (use cache)";
-            report "vp1.produce() = " + vp1.produce();
+            report("Should not run generator (use cache)");
+            report("vp1.produce() = " + vp1.produce());
                             
             vp1.flush();
-            report "Should run generator";
-            report "vp1.produce() = " + vp1.produce();
+            report("Should run generator");
+            report("vp1.produce() = " + vp1.produce());
           }
       
       %para
@@ -647,7 +647,7 @@
             io Integer value
             )
           {
-            report "  Running generator";
+            report("  Running generator");
             value = 42;
           }
           
@@ -658,21 +658,21 @@
               createArrayGenerator(cvg, generator)
               );
           
-            report gen;
-            report " gen.getCount() = " + gen.getCount();
+            report(gen);
+            report(" gen.getCount() = " + gen.getCount());
           
-            report "Should run generator 10x";
+            report("Should run generator 10x");
             for (Index i=0; i<10; ++i)
-              report " gen.produce() = " + gen.produce(i);
+              report(" gen.produce() = " + gen.produce(i));
           
-            report "Should not run generator (cached)";
+            report("Should not run generator (cached)");
             for (Index i=0; i<10; ++i)
-              report " gen.produce() = " + gen.produce(i);
+              report(" gen.produce() = " + gen.produce(i));
           
             gen.flush();
-            report "Should run generator 10x";
+            report("Should run generator 10x");
             for (Index i=0; i<10; ++i)
-              report " gen.produce() = " + gen.produce(i);
+              report(" gen.produce() = " + gen.produce(i));
           }
 
       %para
@@ -1250,7 +1250,7 @@
             client.MR.createValueCache(
               client.MR.createValueGenerator(
                 client.KLC.createValueGeneratorOperator(
-                  "xfo.kl", "operator xfo(io Integer value) { report 'Running generator'; value = 121; }", "xfo"
+                  "xfo.kl", "operator xfo(io Integer value) { report('Running generator'); value = 121; }", "xfo"
                   )
                 )
               );
@@ -1288,7 +1288,7 @@
         :cdata
           cv = client.MR.createConstValue("Size", 10);
           
-          ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Index index) { report 'Running generator'; output = sqrt(Scalar(index)); }", "foo");
+          ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Index index) { report('Running generator'); output = sqrt(Scalar(index)); }", "foo");
           ag = client.MR.createArrayGenerator(cv, ago);
           
           var cache = client.MR.createArrayCache(ag);

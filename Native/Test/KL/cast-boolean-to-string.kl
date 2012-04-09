@@ -5,7 +5,7 @@
 operator entry()
 {
   var Boolean boolean = true;
-  report boolean;
+  report(boolean);
   boolean = false;
-  report boolean;
+  report(boolean);
 }

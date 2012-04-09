@@ -4,5 +4,5 @@
 
 operator entry() {
   Float64 pi = 3.14159265358979;
-  report pi;
+  report(pi);
 }

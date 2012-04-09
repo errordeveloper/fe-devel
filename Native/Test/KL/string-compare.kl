@@ -17,13 +17,13 @@ operator entry()
   {
     for ( Size j=0; j<strings.size; ++j )
     {
-      report "'"+strings[i]+"'.compare('"+strings[j]+"') = "+strings[i].compare(strings[j]);
-      report "'"+strings[i]+"' == '"+strings[j]+"') = "+(strings[i]==strings[j]);
-      report "'"+strings[i]+"' != '"+strings[j]+"') = "+(strings[i]!=strings[j]);
-      report "'"+strings[i]+"' < '"+strings[j]+"') = "+(strings[i]<strings[j]);
-      report "'"+strings[i]+"' <= '"+strings[j]+"') = "+(strings[i]<=strings[j]);
-      report "'"+strings[i]+"' > '"+strings[j]+"') = "+(strings[i]>strings[j]);
-      report "'"+strings[i]+"' >= '"+strings[j]+"') = "+(strings[i]>=strings[j]);
+      report("'"+strings[i]+"'.compare('"+strings[j]+"') = "+strings[i].compare(strings[j]));
+      report("'"+strings[i]+"' == '"+strings[j]+"') = "+(strings[i]==strings[j]));
+      report("'"+strings[i]+"' != '"+strings[j]+"') = "+(strings[i]!=strings[j]));
+      report("'"+strings[i]+"' < '"+strings[j]+"') = "+(strings[i]<strings[j]));
+      report("'"+strings[i]+"' <= '"+strings[j]+"') = "+(strings[i]<=strings[j]));
+      report("'"+strings[i]+"' > '"+strings[j]+"') = "+(strings[i]>strings[j]));
+      report("'"+strings[i]+"' >= '"+strings[j]+"') = "+(strings[i]>=strings[j]));
     }
   }
 }

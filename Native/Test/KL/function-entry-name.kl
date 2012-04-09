@@ -7,5 +7,5 @@ function Scalar foo( Scalar x ) = "bar" {
 }
 
 operator entry() {
-  report foo(2);
+  report(foo(2));
 }

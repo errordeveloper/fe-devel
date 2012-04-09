@@ -446,6 +446,8 @@ namespace Fabric
             return createToken( TOKEN_CONST, sourceRange );
           if ( string == "false" )
             return createToken( TOKEN_FALSE, sourceRange );
+          if ( string == "throw" )
+            return createToken( TOKEN_THROW, sourceRange );
           if ( string == "while" )
             return createToken( TOKEN_WHILE, sourceRange );
           break;
@@ -455,8 +457,6 @@ namespace Fabric
             return createToken( TOKEN_STRUCT, sourceRange );
           if ( string == "switch" )
             return createToken( TOKEN_SWITCH, sourceRange );
-          if ( string == "report" )
-            return createToken( TOKEN_REPORT, sourceRange );
           if ( string == "return" )
             return createToken( TOKEN_RETURN, sourceRange );
           break;

@@ -6,8 +6,8 @@ operator entry()
 {
   var Integer a=7, b, c, d;
   d = c = b = a;
-  report a;
-  report b;
-  report c;
-  report d;
+  report(a);
+  report(b);
+  report(c);
+  report(d);
 }

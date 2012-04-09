@@ -7,7 +7,7 @@ operator map(
   io Scalar output
   )
 {
-  report "map: input=" + input;
+  report("map: input=" + input);
   output = 1.0 / (Scalar(input + 1) * Scalar(input + 1));
 }
 
@@ -17,10 +17,10 @@ operator entry() {
     va.push(i);
 
   ArrayProducer<Integer> cap = createConstArray(va);
-  report "cap.getCount() = " + cap.getCount();
+  report("cap.getCount() = " + cap.getCount());
 
   ArrayProducer<Scalar> am = createArrayMap(cap, map);
-  report am;
-  report am.getCount();
-  report am.produce(10);
+  report(am);
+  report(am.getCount());
+  report(am.produce(10));
 }

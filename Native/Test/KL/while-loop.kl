@@ -6,5 +6,5 @@ operator entry()
 {
   Size i=0;
   while ( i < 10 )
-    report ++i;
+    report(++i);
 }

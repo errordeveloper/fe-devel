@@ -13,7 +13,7 @@ operator entry()
   a[0] = 17;
   a[1] = 42;
 
-  report doIndex( a, 0 );
-  report doIndex( a, 1 );
-  report doIndex( a, 2 );
+  report(doIndex( a, 0 ));
+  report(doIndex( a, 1 ));
+  report(doIndex( a, 2 ));
 }

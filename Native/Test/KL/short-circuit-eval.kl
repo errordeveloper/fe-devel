@@ -4,24 +4,24 @@
 
 function Boolean returnTrue()
 {
-  report "returnTrue called";
+  report("returnTrue called");
   return true;
 }
 
 function Boolean returnFalse()
 {
-  report "returnFalse called";
+  report("returnFalse called");
   return false;
 }
 
 operator entry()
 {
-  report returnFalse() || returnFalse();
-  report returnFalse() && returnFalse();
-  report returnFalse() || returnTrue();
-  report returnFalse() && returnTrue();
-  report returnTrue() || returnFalse();
-  report returnTrue() && returnFalse();
-  report returnTrue() || returnTrue();
-  report returnTrue() && returnTrue();
+  report(returnFalse() || returnFalse());
+  report(returnFalse() && returnFalse());
+  report(returnFalse() || returnTrue());
+  report(returnFalse() && returnTrue());
+  report(returnTrue() || returnFalse());
+  report(returnTrue() && returnFalse());
+  report(returnTrue() || returnTrue());
+  report(returnTrue() && returnTrue());
 }
