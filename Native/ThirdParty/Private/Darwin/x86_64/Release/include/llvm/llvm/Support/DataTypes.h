@@ -1,3 +1,4 @@
+/* include/llvm/Support/DataTypes.h.  Generated from DataTypes.h.in by configure.  */
 /*===-- include/Support/DataTypes.h - Define fixed size types -----*- C -*-===*\
 |*                                                                            *|
 |*                     The LLVM Compiler Infrastructure                       *|
@@ -21,16 +22,16 @@
 
 /* Please leave this file C-compatible. */
 
-/* Please keep this file in sync with DataTypes.h.in */
+/* Please keep this file in sync with DataTypes.h.cmake */
 
 #ifndef SUPPORT_DATATYPES_H
 #define SUPPORT_DATATYPES_H
 
-#cmakedefine HAVE_SYS_TYPES_H ${HAVE_SYS_TYPES_H}
-#cmakedefine HAVE_INTTYPES_H ${HAVE_INTTYPES_H}
-#cmakedefine HAVE_STDINT_H ${HAVE_STDINT_H}
-#cmakedefine HAVE_UINT64_T ${HAVE_UINT64_T}
-#cmakedefine HAVE_U_INT64_T ${HAVE_U_INT64_T}
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_INTTYPES_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_UINT64_T 1
+/* #undef HAVE_U_INT64_T */
 
 #ifdef __cplusplus
 #include <cmath>

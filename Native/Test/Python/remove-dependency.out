@@ -1,3 +1,3 @@
-['parent']
+[u'parent']
 childNode.removeDependency('notAParent'): Fabric core exception: DG.childNode.removeDependency('"notAParent"'): no dependency named 'notAParent'
 {}

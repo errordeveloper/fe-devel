@@ -1,5 +1,5 @@
 NODE_VERSION := 0.6.14
-LLVM_VERSION := 2.9
+LLVM_VERSION := 3.0
 PNG_VERSION := 1.4.4
 ZLIB_VERSION := 1.2.5
 LIBEDIT_VERSION := 3.0
@@ -868,14 +868,14 @@ install_llvm_headers:
 	mkdir -p $(TARGET_BASE)/include/llvm/llvm; \
         $(RSYNC) --progress --recursive --delete --prune-empty-dirs --exclude='llvm/Config/' --exclude='llvm/Support/DataTypes.h' --include='*/' --include='*.h' --include='*.def' --include='*.inc' --exclude='*' Build/llvm-$(LLVM_VERSION)-$(FIRST_ARCH)/include/llvm $(TARGET_BASE)/include/llvm/; \
 	for ARCH in $(ARCHS); do \
-          mkdir -p $(TARGET_BASE)/include/$(BUILD_PLATFORM)/$$ARCH/llvm/llvm; \
-          $(RSYNC) --progress --recursive --delete --prune-empty-dirs --include='llvm/Config/*.h' --include='llvm/Config/*.def' --include='llvm/Support/DataTypes.h' --include='*/' --include='*.gen' --exclude='*' Build/llvm-$(LLVM_VERSION)-$$ARCH/include/llvm $(TARGET_BASE)/include/$(BUILD_PLATFORM)/$$ARCH/llvm; \
+          mkdir -p $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/llvm/llvm; \
+          $(RSYNC) --progress --recursive --delete --prune-empty-dirs --include='llvm/Config/*.h' --include='llvm/Config/*.def' --include='llvm/Support/DataTypes.h' --include='*/' --include='*.gen' --exclude='*' Build/llvm-$(LLVM_VERSION)-$$ARCH/include/llvm $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/include/llvm; \
 	done
 
 install_llvm_libraries:
 	for ARCH in $(ARCHS); do \
-          mkdir -p $(TARGET_BASE)/lib/$(BUILD_PLATFORM)/$$ARCH/Release/llvm; \
-          $(RSYNC) --progress --recursive --delete --include='*/' --include='libLLVM*.a' --exclude='*' Build/llvm-$(LLVM_VERSION)-$$ARCH/Release/lib/ $(TARGET_BASE)/lib/$(BUILD_PLATFORM)/$$ARCH/Release/llvm/; \
+          mkdir -p $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/lib/Release/llvm; \
+          $(RSYNC) --progress --recursive --delete --include='*/' --include='libLLVM*.a' --exclude='*' Build/llvm-$(LLVM_VERSION)-$$ARCH/Release/lib/ $(TARGET_BASE)/$(BUILD_PLATFORM)/$$ARCH/Release/lib/llvm/; \
         done
 
 # [pzion 20111007] Note that the "install_node_lib" target is intentionally left
