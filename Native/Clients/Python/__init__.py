@@ -284,6 +284,9 @@ class _CLIENT( object ):
     self.__queuedUnwinds.append( unwind )
     self.__queuedCallbacks.append( callback )
 
+    # FIXME TBD figure out if we can do this every time, makes debugging easier
+    self.executeQueuedCommands()
+
   def executeQueuedCommands( self ):
     commands = self.__queuedCommands
     self.__queuedCommands = []
