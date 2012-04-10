@@ -28,6 +28,7 @@ def archLibs( libSubDirName, libNames ):
 # [pzion 20110128] These *must* be in topo order since the Linux linker is stupid
 
 llvmLibNames = [
+  "LLVMX86Desc",
   "LLVMBitWriter",
   "LLVMBitReader",
   "LLVMipo",
@@ -52,8 +53,7 @@ llvmLibNames = [
   "LLVMTarget",
   "LLVMMC",
   "LLVMCore",
-  "LLVMSupport",
-  "LLVMX86Desc"
+  "LLVMSupport"
 ]
 
 llvmStaticLibs = map( staticLibFromLibName, llvmLibNames )
