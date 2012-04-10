@@ -31,7 +31,7 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *BooleanAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *BooleanAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       return llvm::Type::getInt1Ty( context->getLLVMContext() );
     }

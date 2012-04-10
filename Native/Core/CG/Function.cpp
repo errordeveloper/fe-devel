@@ -159,8 +159,23 @@ namespace Fabric
       std::vector<llvm::Value *> argValues;
       for ( size_t i=0; i<args.size(); ++i )
         argValues.push_back( args[i].getValue() );
-      
-      llvm::Value *resultValue = basicBlockBuilder->CreateCall( m_llvmFunction, argValues.begin(), argValues.end() );
+      /*
+      llvm::BasicBlock *lpbb = basicBlockBuilder.getFunctionBuilder()->createBasicBlock( "lpbb" );
+      llvm::BasicBlock *normalbb = basicBlockBuilder.getFunctionBuilder()->createBasicBlock( "normalbb" );
+
+      llvm::Value *resultValue = basicBlockBuilder->CreateInvoke( m_llvmFunction, normalbb, lpbb, argValues );
+
+      if( !m_returnInfo.usesReturnLValue() )
+        returnValue = resultValue;
+
+      basicBlockBuilder->SetInsertPoint( lpbb );
+      basicBlockBuilder->CreateLandingPad();
+      basicBlockBuilder->CreateBr( normalbb );
+
+      basicBlockBuilder->SetInsertPoint( normalbb );
+      */
+
+      llvm::Value *resultValue = basicBlockBuilder->CreateCall( m_llvmFunction, argValues );
       if( !m_returnInfo.usesReturnLValue() )
         returnValue = resultValue;
 

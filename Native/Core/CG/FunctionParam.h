@@ -81,7 +81,7 @@ namespace Fabric
         return getExprType().getUsage();
       }
       
-      llvm::Type const *getLLVMType( RC::Handle<Context> const &context ) const
+      llvm::Type *getLLVMType( RC::Handle<Context> const &context ) const
       {
         switch ( getUsage() )
         {

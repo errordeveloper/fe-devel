@@ -18,7 +18,7 @@
 #include <vector>
 #include <stdint.h>
 
-#if defined( FABRIC_WIN32 )
+#if defined( FABRIC_OS_WINDOWS )
 #include <malloc.h>
 #else
 #include <alloca.h>

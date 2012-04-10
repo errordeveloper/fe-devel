@@ -11,7 +11,7 @@
 # include <sys/time.h>
 #endif
 
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
 # include <windows.h>
 #endif
 

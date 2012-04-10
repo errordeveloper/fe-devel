@@ -11,7 +11,7 @@
 
 #if defined(FABRIC_POSIX)
 # include <pthread.h>
-#elif defined(FABRIC_WIN32) 
+#elif defined(FABRIC_OS_WINDOWS) 
 # include <windows.h>
 #else
 # error "missing FABRIC_OS_... definition"

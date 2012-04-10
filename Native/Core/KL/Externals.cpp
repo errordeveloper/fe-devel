@@ -37,7 +37,12 @@
 #include <stdlib.h>
 
 #if defined(FABRIC_OS_WINDOWS)
+extern "C" long _ftol2( double dblSource );
+# if defined( WIN64 )
+extern "C" void __chkstk( );
+# else
 extern "C" void _chkstk();
+# endif
     
 static float imp_roundf( float x )
 {
@@ -499,7 +504,12 @@ namespace Fabric
 
         // Weird Windows stuff
 #if defined(FABRIC_OS_WINDOWS)
+        symbolNameToAddressMap["_ftol2"] = (void *)&_ftol2;
+# if defined( WIN64 )
+        symbolNameToAddressMap["__chkstk"] = (void *)&__chkstk;
+# else
         symbolNameToAddressMap["_chkstk"] = (void *)&_chkstk;
+# endif
 #endif
 
         // Map-reduce

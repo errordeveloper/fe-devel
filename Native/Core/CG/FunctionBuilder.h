@@ -57,7 +57,7 @@ namespace Fabric
         
       FunctionBuilder(
         ModuleBuilder &moduleBuilder,
-        llvm::FunctionType const *llvmFunctionType,
+        llvm::FunctionType *llvmFunctionType,
         llvm::Function *llvmFunction
         );
       
@@ -143,7 +143,7 @@ namespace Fabric
         );
                 
       ModuleBuilder &m_moduleBuilder;
-      llvm::FunctionType const *m_llvmFunctionType;
+      llvm::FunctionType *m_llvmFunctionType;
       llvm::Function *m_llvmFunction;
       FunctionScope *m_functionScope;
       RC::ConstHandle<CG::PencilSymbol> m_pencil;

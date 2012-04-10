@@ -109,12 +109,12 @@ namespace Fabric
 
       if ( !m_shared )
       {
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( sizeAdapter->llvmRType( context ) );
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( outputValueProducerAdapter->llvmLType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateValueGenerator_1", funcType );
         
         basicBlockBuilder->CreateCall4(
@@ -143,13 +143,13 @@ namespace Fabric
           )
           throw MR::ValueGeneratorOperator::GetPrototypeException();
       
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( sizeAdapter->llvmRType( context ) );
         argTypes.push_back( sharedValueProducerAdapter->llvmLType( context ) );
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( outputValueProducerAdapter->llvmLType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateValueGenerator_2", funcType );
         
         basicBlockBuilder->CreateCall5(

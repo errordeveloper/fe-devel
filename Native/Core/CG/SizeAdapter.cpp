@@ -34,7 +34,7 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *SizeAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *SizeAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       return llvmSizeType( context );
     }

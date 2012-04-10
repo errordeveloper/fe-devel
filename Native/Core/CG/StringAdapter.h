@@ -59,9 +59,9 @@ namespace Fabric
       
       StringAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::StringDesc> const &stringDesc );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
 
-      llvm::Type const *getLLVMImplType( RC::Handle<Context> const &context ) const;
+      llvm::Type *getLLVMImplType( RC::Handle<Context> const &context ) const;
 
       void llvmRetain( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;
       void llvmRelease( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;

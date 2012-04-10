@@ -75,10 +75,10 @@ namespace Fabric
       llvm::Value *llvmCallMax( BasicBlockBuilder &basicBlockBuilder, llvm::Value *lhsRValue, llvm::Value *rhsRValue ) const;
       llvm::Value *llvmCallNextPowTwoMinusOne( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;
   
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const = 0;
-      llvm::Type const *llvmRawType( RC::Handle<Context> const &context ) const;
-      llvm::Type const *llvmLType( RC::Handle<Context> const &context ) const;
-      llvm::Type const *llvmRType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const = 0;
+      llvm::Type *llvmRawType( RC::Handle<Context> const &context ) const;
+      llvm::Type *llvmLType( RC::Handle<Context> const &context ) const;
+      llvm::Type *llvmRType( RC::Handle<Context> const &context ) const;
       bool usesReturnLValue() const { return m_flags & FL_PASS_BY_REFERENCE; }
       bool isPassByReference() const { return m_flags & FL_PASS_BY_REFERENCE; }
       
@@ -109,7 +109,7 @@ namespace Fabric
       
       RC::ConstHandle<Adapter> getAdapter( RC::ConstHandle<RT::Desc> const &desc ) const;
       
-      llvm::Type const *llvmSizeType( RC::Handle<Context> const &context ) const;
+      llvm::Type *llvmSizeType( RC::Handle<Context> const &context ) const;
 
       void llvmThrowException(
         BasicBlockBuilder &basicBlockBuilder,

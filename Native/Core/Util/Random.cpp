@@ -10,7 +10,7 @@
 #if defined(FABRIC_POSIX)
 # include <sys/stat.h>
 # include <fcntl.h>
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
 # include <Wincrypt.h>
 #endif
 
@@ -25,7 +25,7 @@ namespace Fabric
       FABRIC_ASSERT( fd != -1 );
       FABRIC_VERIFY( read( fd, bytes, count ) == int(count) );
       close( fd );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       HCRYPTPROV  hCryptProvider = NULL;
 
       BOOL    success;

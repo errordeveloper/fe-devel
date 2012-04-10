@@ -37,44 +37,44 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *StringAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *StringAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
-      llvm::Type const *llvmSizeTy = llvmSizeType( context );
+      llvm::Type *llvmSizeTy = llvmSizeType( context );
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
       
-      std::vector<llvm::Type const *> memberLLVMTypes;
+      std::vector<llvm::Type *> memberLLVMTypes;
       memberLLVMTypes.push_back( llvmSizeTy ); // refCount
       memberLLVMTypes.push_back( llvmSizeTy ); // allocSize
       memberLLVMTypes.push_back( llvmSizeTy ); // length
       memberLLVMTypes.push_back( llvm::ArrayType::get( llvm::Type::getInt8Ty( llvmContext ), 0 ) );
-      llvm::Type const *implType = llvm::StructType::get( llvmContext, memberLLVMTypes, true );
-      
+      llvm::Type *implType = llvm::StructType::create( llvmContext, memberLLVMTypes, getCodeName() + ".Bits", true );
+
       return implType->getPointerTo();
     }
     
-    llvm::Type const *StringAdapter::getLLVMImplType( RC::Handle<Context> const &context ) const
+    llvm::Type *StringAdapter::getLLVMImplType( RC::Handle<Context> const &context ) const
     {
-      return static_cast<llvm::PointerType const *>( llvmRawType( context ) )->getElementType();
+      return static_cast<llvm::PointerType *>( llvmRawType( context ) )->getElementType();
     }
     
     void StringAdapter::llvmCallCast( BasicBlockBuilder &basicBlockBuilder, RC::ConstHandle<Adapter> const &adapter, llvm::Value *srcLValue, llvm::Value *dstLValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       
-      llvm::Type const *int8PtrTy = basicBlockBuilder->getInt8PtrTy();
+      llvm::Type *int8PtrTy = basicBlockBuilder->getInt8PtrTy();
       
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( int8PtrTy );
       argTypes.push_back( adapter->llvmLType( context ) );
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__String__Cast", funcType );
 
       std::vector< llvm::Value * > args;
       args.push_back( adapter->llvmAdapterPtr( basicBlockBuilder ) );
       args.push_back( srcLValue );
       args.push_back( dstLValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
     
     void StringAdapter::llvmCompileToModule( ModuleBuilder &moduleBuilder ) const
@@ -84,7 +84,7 @@ namespace Fabric
         
       RC::Handle<Context> context = moduleBuilder.getContext();
       
-      llvm::Type const *implType = getLLVMImplType( context );
+      llvm::Type *implType = getLLVMImplType( context );
   
       RC::ConstHandle<BooleanAdapter> booleanAdapter = getManager()->getBooleanAdapter();
       booleanAdapter->llvmCompileToModule( moduleBuilder );
@@ -94,13 +94,11 @@ namespace Fabric
       sizeAdapter->llvmCompileToModule( moduleBuilder );
       RC::ConstHandle<OpaqueAdapter> dataAdapter = getManager()->getDataAdapter();
       dataAdapter->llvmCompileToModule( moduleBuilder );
-      
-      moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
-      moduleBuilder->addTypeName( getCodeName() + ".Bits", implType );
-      
+            
       static const bool buildFunctions = true;
      
       {
+        std::vector< llvm::Type * > argTypes;
         std::string name = "report";
         ParamVector params(
           FunctionParam(
@@ -167,10 +165,10 @@ namespace Fabric
       
       llvm::Function *assignAddFunction = 0;
       {
-        std::vector< llvm::Type const * > argTypes;
+        std::vector< llvm::Type * > argTypes;
         argTypes.push_back( llvmLType( context ) );
         argTypes.push_back( llvmRType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
         llvm::Constant *func = moduleBuilder->getOrInsertFunction( "__String__Append", funcType ); 
 
         AssOpBuilder functionBuilder( moduleBuilder, this, ASSIGN_OP_ADD, this );
@@ -183,7 +181,7 @@ namespace Fabric
           std::vector< llvm::Value * > args;
           args.push_back( lhsLValue );
           args.push_back( rhsRValue );
-          basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+          basicBlockBuilder->CreateCall( func, args );
           basicBlockBuilder->CreateRetVoid();
           assignAddFunction = functionBuilder.getLLVMFunction();
         }
@@ -608,10 +606,10 @@ namespace Fabric
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
 
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( llvm::Type::getInt8PtrTy( context->getLLVMContext() ) );
       argTypes.push_back( sizeAdapter->llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::NoUnwind );
@@ -632,9 +630,9 @@ namespace Fabric
     void StringAdapter::llvmThrow( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector< llvm::Type const * > argTypes;
+      std::vector< llvm::Type * > argTypes;
       argTypes.push_back( llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__String__Throw", funcType ); 
       basicBlockBuilder->CreateCall( func, rValue );
     }
@@ -652,7 +650,7 @@ namespace Fabric
 
     void StringAdapter::llvmInit( BasicBlockBuilder &basicBlockBuilder, llvm::Value *lValue ) const
     {
-      llvm::PointerType const *rawType = static_cast<llvm::PointerType const *>( llvmRawType( basicBlockBuilder.getContext() ) );
+      llvm::PointerType *rawType = static_cast<llvm::PointerType *>( llvmRawType( basicBlockBuilder.getContext() ) );
       basicBlockBuilder->CreateStore(
         llvm::ConstantPointerNull::get( rawType ),
         lValue
@@ -664,9 +662,9 @@ namespace Fabric
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( bitsLValue->getType() );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -700,26 +698,11 @@ namespace Fabric
           );
         
         bbb->SetInsertPoint( nonNullBB );
+
         llvm::Value *oneRValue = sizeAdapter->llvmConst( context, 1 );
         llvm::Value *refCountLValue = bbb->CreateStructGEP( bitsLValue, 0 );
-        static const size_t numIntrinsicTypes = 2;
-        llvm::Type const *intrinsicTypes[numIntrinsicTypes] =
-        {
-          oneRValue->getType(),
-          refCountLValue->getType()
-        };
-        llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration(
-          mb,
-          llvm::Intrinsic::atomic_load_add,
-          intrinsicTypes,
-          numIntrinsicTypes
-          );
-        FABRIC_ASSERT( intrinsic );
-        bbb->CreateCall2(
-          intrinsic,
-          refCountLValue,
-          oneRValue
-          );
+        bbb->CreateAtomicRMW(llvm::AtomicRMWInst::Add, refCountLValue, oneRValue, llvm::Monotonic );
+
         bbb->CreateBr( doneBB );
 
         bbb->SetInsertPoint( doneBB );
@@ -728,7 +711,7 @@ namespace Fabric
 
       std::vector<llvm::Value *> args;
       args.push_back( bitsLValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
     
     void StringAdapter::llvmRelease( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *bitsLValue ) const
@@ -736,9 +719,9 @@ namespace Fabric
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       RC::ConstHandle<SizeAdapter> sizeAdapter = basicBlockBuilder.getManager()->getSizeAdapter();
 
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( bitsLValue->getType() );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       
       llvm::AttributeWithIndex AWI[1];
       AWI[0] = llvm::AttributeWithIndex::get( ~0u, llvm::Attribute::InlineHint | llvm::Attribute::NoUnwind );
@@ -775,20 +758,8 @@ namespace Fabric
         bbb->SetInsertPoint( nonNullBB );
         llvm::Value *refCountLValue = bbb->CreateStructGEP( bitsLValue, 0 );
         llvm::Value *oneRValue = sizeAdapter->llvmConst( bbb.getContext(), 1 );
-        static const size_t numIntrinsicTypes = 2;
-        llvm::Type const *intrinsicTypes[numIntrinsicTypes] =
-        {
-          oneRValue->getType(),
-          refCountLValue->getType()
-        };
-        llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration(
-          bbb.getModuleBuilder(),
-          llvm::Intrinsic::atomic_load_sub,
-          intrinsicTypes,
-          numIntrinsicTypes
-          );
-        FABRIC_ASSERT( intrinsic );
-        llvm::Value *oldRefCountRValue = bbb->CreateCall2( intrinsic, refCountLValue, oneRValue );
+        llvm::Value *oldRefCountRValue = bbb->CreateAtomicRMW(llvm::AtomicRMWInst::Sub, refCountLValue, oneRValue, llvm::Monotonic );
+
         llvm::Value *shouldFreeRValue = bbb->CreateICmpEQ( oldRefCountRValue, oneRValue );
         bbb->CreateCondBr( shouldFreeRValue, freeBB, doneBB );
 
@@ -802,7 +773,7 @@ namespace Fabric
 
       std::vector<llvm::Value *> args;
       args.push_back( bitsLValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
 
     void StringAdapter::llvmDefaultAssign( BasicBlockBuilder &basicBlockBuilder, llvm::Value *dstLValue, llvm::Value *srcRValue ) const
@@ -847,7 +818,7 @@ namespace Fabric
     
     llvm::Constant *StringAdapter::llvmDefaultValue( BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
+      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
     }
       
     llvm::Constant *StringAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const

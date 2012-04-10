@@ -73,10 +73,29 @@ else
   shift $(($OPTIND-1))
   FABRIC_BUILD_TYPE=$1
 
+  if [ "$FABRIC_BUILD_OS" == "Windows" ]; then
+		if [ "$FABRIC_BUILD_TYPE" == "Debug64" ]; then
+			FABRIC_BUILD_TYPE="Debug"
+			FABRIC_BUILD_ARCH="x86_64"
+			echo "Build architecture set to 64 bits"
+		fi
+		if [ "$FABRIC_BUILD_TYPE" == "Release64" ]; then
+			FABRIC_BUILD_TYPE="Release"
+			FABRIC_BUILD_ARCH="x86_64"
+			echo "Build architecture set to 64 bits"
+		fi
+	fi
+
   if [ "$FABRIC_BUILD_TYPE" != "Debug" -a "$FABRIC_BUILD_TYPE" != "Release" ]; then
-    cat >&2 <<EOF
+    if [ "$FABRIC_BUILD_OS" == "Windows" ]; then
+	    cat >&2 <<EOF
+Usage: souce fabric-build-env.sh [-n] (Debug|Debug64|Release|Release64)
+EOF
+		else
+	    cat >&2 <<EOF
 Usage: souce fabric-build-env.sh [-n] (Debug|Release)
 EOF
+		fi
   else
     FABRIC_BUILD_PATH="$FABRIC_CORE_PATH/build/Native/$FABRIC_BUILD_OS/$FABRIC_BUILD_ARCH/$FABRIC_BUILD_TYPE"
     FABRIC_DIST_PATH="$FABRIC_CORE_PATH/dist/Native/$FABRIC_BUILD_OS/$FABRIC_BUILD_ARCH/$FABRIC_BUILD_TYPE"

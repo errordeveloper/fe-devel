@@ -120,12 +120,12 @@ namespace Fabric
           )
           throw CG::Error( getLocation(), "operator must take parameters: in " + inputAdapter->getUserName() + " input, io OutputType output" );
         
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( inputValueProducerAdapter->llvmLType( context ) );
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( outputValueProducerAdapter->llvmLType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateValueMap_2", funcType );
         
         basicBlockBuilder->CreateCall4(
@@ -157,13 +157,13 @@ namespace Fabric
           )
           throw CG::Error( getLocation(), "operator must take parameters: in " + inputAdapter->getUserName() + " input, io OutputType output, in " + sharedAdapter->getUserName() + " shared" );
       
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( inputValueProducerAdapter->llvmLType( context ) );
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
         argTypes.push_back( sharedValueProducerAdapter->llvmLType( context ) );
         argTypes.push_back( outputValueProducerAdapter->llvmLType( context ) );
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateValueMap_3", funcType );
         
         basicBlockBuilder->CreateCall5(

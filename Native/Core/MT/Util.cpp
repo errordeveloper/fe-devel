@@ -8,7 +8,7 @@
 # include <stdlib.h>
 # include <sys/types.h>
 # include <sys/sysctl.h>
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
 # include <windows.h>
 # include <process.h>
 #endif

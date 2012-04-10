@@ -7,7 +7,7 @@
 
 #include <Fabric/Base/Config.h>
 
-#if defined (FABRIC_WIN32)
+#if defined (FABRIC_OS_WINDOWS)
 # include <math.h>
 #else
 # include <cmath>
@@ -45,7 +45,7 @@ namespace Fabric
 
     inline bool isnan( float value )
     {
-#if defined (FABRIC_WIN32)
+#if defined (FABRIC_OS_WINDOWS)
       return value != value;
 #else
       return std::isnan( value );
@@ -54,7 +54,7 @@ namespace Fabric
 
     inline bool isnan( double value )
     {
-#if defined (FABRIC_WIN32)
+#if defined (FABRIC_OS_WINDOWS)
       return value != value;
 #else
       return std::isnan( value );

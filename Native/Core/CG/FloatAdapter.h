@@ -39,7 +39,7 @@ namespace Fabric
       
       FloatAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::FloatDesc> const &floatDesc );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
       
       std::string internalFunctionNameForType( std::string const &externalFunctionName ) const;
       std::string externalFunctionNameForType( std::string const &externalFunctionName ) const;

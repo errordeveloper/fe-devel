@@ -14,7 +14,7 @@
 # include <fcntl.h>
 # include <sys/stat.h>
 # include <sys/types.h>
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
 # include <windows.h>
 #endif 
 
@@ -90,7 +90,7 @@ namespace Fabric
         result.push_back( std::string( de->d_name ) );
       }
       closedir( dir );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       WIN32_FIND_DATAA    fd;
       ::ZeroMemory( &fd, sizeof( fd ) );
       std::string   searchGlob = JoinPath( getFullPath(), "*" );
@@ -159,7 +159,7 @@ namespace Fabric
         result.append( buf, count );
       }
       close( fd );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       HANDLE    hFile = ::CreateFileA( filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL );
       if( hFile == INVALID_HANDLE_VALUE )
         throw Exception( "Can't open file" );
@@ -202,7 +202,7 @@ namespace Fabric
       close( fd );
       if ( size_t( result ) < contents.length() )
         throw Exception("short write");
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       HANDLE    hFile = ::CreateFileA( filePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
       if( hFile == INVALID_HANDLE_VALUE )
         throw Exception( "Can't create file" );
@@ -218,7 +218,7 @@ namespace Fabric
 #endif 
     }
 
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
     //[jcg 20110819] http://msdn.microsoft.com/en-us/library/ms724228(v=vs.85).aspx
     void TimetToWindowsFileTime( time_t t, LPFILETIME pft )
     {
@@ -253,7 +253,7 @@ namespace Fabric
           if ( unlink( fileFullPath.c_str() ) != 0 )
             FABRIC_LOG( "Warning: unable to delete " + _(fileFullPath) );
         }
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         WIN32_FILE_ATTRIBUTE_DATA attrData;
         if( GetFileAttributesExA( fileFullPath.c_str(), GetFileExInfoStandard, &attrData) == 0 )
         {

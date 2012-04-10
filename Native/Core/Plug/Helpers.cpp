@@ -42,7 +42,7 @@ namespace Fabric
       {
 #if defined(FABRIC_POSIX)
         result = dlopen( IO::JoinPath( pluginDirs[i], resolvedName ).c_str(), RTLD_LAZY | (global?RTLD_GLOBAL:RTLD_LOCAL) );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         result = ::LoadLibraryExA( IO::JoinPath( pluginDirs[i], resolvedName ).c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
 #else
 # error "Unsupported platform"
@@ -56,7 +56,7 @@ namespace Fabric
       {
 #if defined(FABRIC_POSIX)
         result = dlopen( resolvedName.c_str(), RTLD_LAZY | (global?RTLD_GLOBAL:RTLD_LOCAL) );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         result = ::LoadLibraryExA( resolvedName.c_str(), NULL, 0 );
 #else
 # error "Unsupported platform"
@@ -67,7 +67,7 @@ namespace Fabric
           
 #if defined(FABRIC_POSIX)
           msg = dlerror();
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
           char *szMessage = 0;
           ::FormatMessageA( 
             FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
@@ -119,7 +119,7 @@ namespace Fabric
         size_t findPos = 0;
         while ( findPos < fabricExtPathString.size() )
         {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
           static const char sep = ';';
 #elif defined(FABRIC_POSIX)
           static const char sep = ':';

@@ -12,7 +12,7 @@
 
 #if defined(FABRIC_POSIX)
 # include <pthread.h>
-#elif defined(FABRIC_WIN32) 
+#elif defined(FABRIC_OS_WINDOWS) 
 # include <windows.h>
 #else
 # error "missing FABRIC_PLATFORM_... definition"
@@ -31,7 +31,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
         if ( pthread_cond_init( &m_posixCond, 0 ) != 0 )
           throw Exception( "pthread_cond_init(): unknown failure" );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         ::InitializeCriticalSection( &m_windowsCS );
         m_windowsGeneration = 0;
         m_windowsWaitCount = 0;
@@ -49,7 +49,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
         if ( pthread_cond_destroy( &m_posixCond ) != 0 )
           throw Exception( "pthread_cond_destroy(): unknown failure" );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         if ( !::CloseHandle( m_windowsEvent ) )
           throw Exception( "CloseHandle(): unknown failure" );
         ::DeleteCriticalSection( &m_windowsCS );
@@ -63,7 +63,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
         if ( pthread_cond_wait( &m_posixCond, &mutex.m_mutex ) != 0 )
           throw Exception( "pthread_cond_wait(): unknown failure" );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         ::EnterCriticalSection( &m_windowsCS);
         size_t myGeneration = m_windowsGeneration;
         ++m_windowsWaitCount;
@@ -98,7 +98,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
         if ( pthread_cond_signal( &m_posixCond ) != 0 )
           throw Exception( "pthread_cond_signal(): unknown failure" );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         ::EnterCriticalSection( &m_windowsCS );
         if ( m_windowsWaitCount > m_windowsSignalCount )
         {
@@ -117,7 +117,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
         if ( pthread_cond_broadcast( &m_posixCond ) != 0 )
           throw Exception( "pthread_cond_broadcast(): unknown failure" );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         ::EnterCriticalSection( &m_windowsCS );
         if ( m_windowsWaitCount > 0 )
         {  
@@ -135,7 +135,7 @@ namespace Fabric
     
 #if defined(FABRIC_POSIX)
       pthread_cond_t m_posixCond;
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       CRITICAL_SECTION m_windowsCS;
       size_t m_windowsGeneration;
       size_t m_windowsWaitCount;

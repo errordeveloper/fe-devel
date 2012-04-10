@@ -9,7 +9,7 @@ set PNG_NAME=libpng-1.4.4
 set ILMBASE_NAME=ilmbase-1.0.2
 set OPENEXR_NAME=openexr-1.7.0
 set V8_NAME=v8-1.3.18.22
-set LLVM_NAME=llvm-2.9
+set LLVM_NAME=llvm-3.0
 set FFMPEG_NAME=ffmpeg-0.6.3
 set BOOST_NAME=boost_1_47_0
 set HDF5_NAME=hdf5-1.8.7
@@ -27,23 +27,37 @@ if "%1" NEQ "" goto %1
 
 set PATH=%PATH%;%TOP%\bin\Windows
 
-cmd /C build.bat x86
-rem cmd /C build.bat x64
+rem cmd /C build.bat x86
+cmd /C build.bat x64
 
 goto :eof
 
 
 :x86
 set ARCH=x86
+set ARCHTARGETDIR=x86
 set VSARCH=Win32
+set CMAKEGENERATOR="Visual Studio 10"
+set BOOSTARCH=
+set BOOSTJAMDIR=bin.ntx86
+set BOOSTADDRMODELSUBDIR=
 set PROCESSOR_ARCHITECTURE=x86
+set ALEMBICOUT=x86
+set LLVMTARGETOPTION=
 @call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
 goto start_build
 
 :x64
 set ARCH=x64
+set ARCHTARGETDIR=x86_64
 set VSARCH=x64
+set CMAKEGENERATOR="Visual Studio 10 Win64"
+set BOOSTARCH=address-model=64
+set BOOSTJAMDIR=bin.ntx86_64
+set BOOSTADDRMODELSUBDIR=address-model-64\
 echo %PROCESSOR_ARCHITECTURE%
+set ALEMBICOUT=i64
+set LLVMTARGETOPTION=-DLLVM_TARGET_ARCH=amd64
 @call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" amd64
 goto start_build
 
@@ -51,10 +65,10 @@ goto start_build
 
 set BUILD_DIR=%TOP%\Build\%ARCH%
 set CHECKPOINT_DIR=%BUILD_DIR%\cp
-set LIB_ARCH_DEBUG_DIR=%TOP%\Windows\%ARCH%\Debug\lib
-set LIB_ARCH_RELEASE_DIR=%TOP%\Windows\%ARCH%\Release\lib
-set INCLUDE_ARCH_DEBUG_DIR=%TOP%\Windows\%ARCH%\Debug\include
-set INCLUDE_ARCH_RELEASE_DIR=%TOP%\Windows\%ARCH%\Release\include
+set LIB_ARCH_DEBUG_DIR=%TOP%\Windows\%ARCHTARGETDIR%\Debug\lib
+set LIB_ARCH_RELEASE_DIR=%TOP%\Windows\%ARCHTARGETDIR%\Release\lib
+set INCLUDE_ARCH_DEBUG_DIR=%TOP%\Windows\%ARCHTARGETDIR%\Debug\include
+set INCLUDE_ARCH_RELEASE_DIR=%TOP%\Windows\%ARCHTARGETDIR%\Release\include
 
 if NOT EXIST %BUILD_DIR% mkdir %BUILD_DIR%
 if NOT EXIST %CHECKPOINT_DIR% mkdir %CHECKPOINT_DIR%
@@ -228,7 +242,8 @@ robocopy %VSARCH%\Debug %LIB_ARCH_DEBUG_DIR%\ilmbase *.lib /S /MIR > NUL:
 robocopy %VSARCH%\Release %LIB_ARCH_RELEASE_DIR%\ilmbase *.lib /S /MIR > NUL:
 
 cd %BUILD_DIR%\%ILMBASE_NAME%
-robocopy config.windows %TOP%\include\Windows\%ARCH%\ilmbase *.h /s > NUL:
+robocopy config.windows %INCLUDE_ARCH_DEBUG_DIR%\ilmbase *.h /s > NUL:
+robocopy config.windows %INCLUDE_ARCH_RELEASE_DIR%\ilmbase *.h /s > NUL:
 
 robocopy Half %TOP%\include\ilmbase *.h /S > NUL:
 robocopy Iex %TOP%\include\ilmbase *.h /S > NUL:
@@ -236,7 +251,6 @@ robocopy IlmThread %TOP%\include\ilmbase *.h /S > NUL:
 robocopy Imath %TOP%\include\ilmbase *.h /S > NUL:
 touch %CHECKPOINT_DIR%\ilmbase_install
 :ilmbase_install_done
-
 
 rem =========== OPENEXR =============
 if EXIST %CHECKPOINT_DIR%\openexr_unpack goto openexr_unpack_done
@@ -268,7 +282,8 @@ robocopy %VSARCH%\Debug %LIB_ARCH_DEBUG_DIR%\openexr *.lib /S /MIR > NUL:
 robocopy %VSARCH%\Release %LIB_ARCH_RELEASE_DIR%\openexr *.lib /S /MIR > NUL:
 
 cd %BUILD_DIR%\%OPENEXR_NAME%
-robocopy config.windows %TOP%\include\Windows\%ARCH%\openexr *.h /s > NUL:
+robocopy config.windows %INCLUDE_ARCH_DEBUG_DIR%\openexr *.h /s > NUL:
+robocopy config.windows %INCLUDE_ARCH_RELEASE_DIR%\openexr *.h /s > NUL:
 
 robocopy IlmImf %TOP%\include\openexr *.h /S > NUL:
 touch %CHECKPOINT_DIR%\openexr_install
@@ -317,7 +332,6 @@ robocopy include %TOP%\include\v8\v8 *.h /S /MIR > NUL:
 touch %CHECKPOINT_DIR%\v8_install
 :v8_install_done
 
-
 rem ============= LLVM ==============
 
 if EXIST %CHECKPOINT_DIR%\llvm_unpack goto llvm_unpack_done
@@ -332,7 +346,7 @@ if EXIST %CHECKPOINT_DIR%\llvm_cmake goto llvm_cmake_done
 echo LLVM - Creating build files
 if NOT EXIST %BUILD_DIR%\llvm-build mkdir %BUILD_DIR%\llvm-build
 cd %BUILD_DIR%\llvm-build
-cmake -G "Visual Studio 10" ..\%LLVM_NAME%
+cmake -G %CMAKEGENERATOR% ..\%LLVM_NAME% %LLVMTARGETOPTION%
 touch %CHECKPOINT_DIR%\llvm_cmake
 :llvm_cmake_done
 
@@ -359,7 +373,8 @@ robocopy include\llvm %TOP%\include\llvm\llvm *.h /S > NUL:
 
 cd %BUILD_DIR%\llvm-build
 rem Arch-specific headers
-robocopy include\llvm %TOP%\include\Windows\%ARCH%\llvm\llvm *.gen *.def *.h /S > NUL:
+robocopy include\llvm %INCLUDE_ARCH_DEBUG_DIR%\llvm\llvm *.gen *.def *.h /S > NUL:
+robocopy include\llvm %INCLUDE_ARCH_RELEASE_DIR%\llvm\llvm *.gen *.def *.h /S > NUL:
 
 rem Arch-specific libraries
 robocopy lib\Debug %LIB_ARCH_DEBUG_DIR%\llvm llvm*.lib llvm*.pdb /S /MIR /XF llvm_headers_do_not_build.* llvm-*.lib > NUL:
@@ -386,7 +401,7 @@ touch %CHECKPOINT_DIR%\boost_buildjam
 if EXIST %CHECKPOINT_DIR%\boost_compile goto boost_compile_done
 echo boost - Compile debug + release
 cd %BUILD_DIR%\%BOOST_NAME%
-.\tools\build\v2\engine\bin.ntx86\bjam program_options serialization date_time iostreams system filesystem thread variant=debug,release toolset=msvc link=static runtime-link=static threading=multi define=_SCL_SECURE_NO_WARNINGS=1 define=_ITERATOR_DEBUG_LEVEL=0 define=_SECURE_SCL=0
+.\tools\build\v2\engine\%BOOSTJAMDIR%\bjam program_options serialization date_time iostreams system filesystem thread variant=debug,release toolset=msvc link=static runtime-link=static threading=multi define=_SCL_SECURE_NO_WARNINGS=1 define=_ITERATOR_DEBUG_LEVEL=0 define=_SECURE_SCL=0 %BOOSTARCH%
 
 touch %CHECKPOINT_DIR%\boost_compile
 :boost_compile_done
@@ -396,22 +411,22 @@ echo boost - Installing
 cd %BUILD_DIR%\%BOOST_NAME%
 
 if NOT EXIST %LIB_ARCH_DEBUG_DIR%\boost mkdir %LIB_ARCH_DEBUG_DIR%\boost
-copy bin.v2\libs\program_options\build\msvc-10.0\debug\link-static\runtime-link-static\threading-multi\libboost_program_options-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
-copy bin.v2\libs\date_time\build\msvc-10.0\debug\link-static\runtime-link-static\threading-multi\libboost_date_time-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
-copy bin.v2\libs\iostreams\build\msvc-10.0\debug\link-static\runtime-link-static\threading-multi\libboost_iostreams-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
-copy bin.v2\libs\thread\build\msvc-10.0\debug\link-static\runtime-link-static\threading-multi\libboost_thread-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
-copy bin.v2\libs\serialization\build\msvc-10.0\debug\link-static\runtime-link-static\threading-multi\libboost_serialization-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
-copy bin.v2\libs\system\build\msvc-10.0\debug\link-static\runtime-link-static\threading-multi\libboost_system-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
-copy bin.v2\libs\filesystem\build\msvc-10.0\debug\link-static\runtime-link-static\threading-multi\libboost_filesystem-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
+copy bin.v2\libs\program_options\build\msvc-10.0\debug\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_program_options-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
+copy bin.v2\libs\date_time\build\msvc-10.0\debug\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_date_time-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
+copy bin.v2\libs\iostreams\build\msvc-10.0\debug\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_iostreams-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
+copy bin.v2\libs\thread\build\msvc-10.0\debug\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_thread-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
+copy bin.v2\libs\serialization\build\msvc-10.0\debug\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_serialization-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
+copy bin.v2\libs\system\build\msvc-10.0\debug\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_system-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
+copy bin.v2\libs\filesystem\build\msvc-10.0\debug\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_filesystem-vc100-mt-sgd-1_47.lib %LIB_ARCH_DEBUG_DIR%\boost
 
 if NOT EXIST %LIB_ARCH_RELEASE_DIR%\boost mkdir %LIB_ARCH_RELEASE_DIR%\boost
-copy bin.v2\libs\program_options\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_program_options-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
-copy bin.v2\libs\date_time\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_date_time-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
-copy bin.v2\libs\iostreams\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_iostreams-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
-copy bin.v2\libs\thread\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_thread-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
-copy bin.v2\libs\serialization\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_serialization-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
-copy bin.v2\libs\system\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_system-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
-copy bin.v2\libs\filesystem\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_filesystem-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
+copy bin.v2\libs\program_options\build\msvc-10.0\release\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_program_options-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
+copy bin.v2\libs\date_time\build\msvc-10.0\release\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_date_time-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
+copy bin.v2\libs\iostreams\build\msvc-10.0\release\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_iostreams-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
+copy bin.v2\libs\thread\build\msvc-10.0\release\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_thread-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
+copy bin.v2\libs\serialization\build\msvc-10.0\release\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_serialization-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
+copy bin.v2\libs\system\build\msvc-10.0\release\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_system-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
+copy bin.v2\libs\filesystem\build\msvc-10.0\release\%BOOSTADDRMODELSUBDIR%link-static\runtime-link-static\threading-multi\libboost_filesystem-vc100-mt-s-1_47.lib %LIB_ARCH_RELEASE_DIR%\boost
 
 robocopy boost %TOP%\include\boost\boost *.* /S > NUL:
 
@@ -473,7 +488,7 @@ type %TOP%\Patches\Windows\%ALEMBIC_NAME%-patch.tar.bz2 | bzip2 -d -c | tar -x -
 if NOT EXIST %BUILD_DIR%\%ALEMBIC_NAME%\Output mkdir %BUILD_DIR%\%ALEMBIC_NAME%\Output
 if NOT EXIST %BUILD_DIR%\%ALEMBIC_NAME%\thirdparty mklink /J %BUILD_DIR%\%ALEMBIC_NAME%\thirdparty %BUILD_DIR%
 if NOT EXIST %BUILD_DIR%\%ALEMBIC_NAME%\thirdpartyinc mklink /J %BUILD_DIR%\%ALEMBIC_NAME%\thirdpartyinc %TOP%\include
-if NOT EXIST %BUILD_DIR%\%ALEMBIC_NAME%\thirdpartylib mklink /J %BUILD_DIR%\%ALEMBIC_NAME%\thirdpartylib %TOP%\lib\Windows
+if NOT EXIST %BUILD_DIR%\%ALEMBIC_NAME%\thirdpartylib mklink /J %BUILD_DIR%\%ALEMBIC_NAME%\thirdpartylib %TOP%\Windows
 touch %CHECKPOINT_DIR%\alembic_unpack
 :alembic_unpack_done
 
@@ -488,8 +503,15 @@ call %BUILD_DIR%\%ALEMBIC_NAME%\init_Alembic.cmd
 touch %CHECKPOINT_DIR%\alembic_createproj
 :alembic_createproj_done
 
+if EXIST %CHECKPOINT_DIR%\alembic_build_debug goto alembic_build_debug_done
+echo ALEMBIC - Buiding Debug
+cd %BUILD_DIR%
+call %BUILD_DIR%\%ALEMBIC_NAME%\build_Alembic.cmd db:
+touch %CHECKPOINT_DIR%\alembic_build_debug
+:alembic_build_debug_done
+
 if EXIST %CHECKPOINT_DIR%\alembic_build goto alembic_build_done
-echo ALEMBIC - Buiding
+echo ALEMBIC - Buiding Release
 cd %BUILD_DIR%
 call %BUILD_DIR%\%ALEMBIC_NAME%\build_Alembic.cmd
 touch %CHECKPOINT_DIR%\alembic_build
@@ -498,8 +520,8 @@ touch %CHECKPOINT_DIR%\alembic_build
 if EXIST %CHECKPOINT_DIR%\alembic_install goto alembic_install_done
 echo alembic - Installing
 cd %BUILD_DIR%\%ALEMBIC_NAME%
-robocopy Output\x86\alembic\RelWithDebInfo %LIB_ARCH_DEBUG_DIR%\alembic *.lib > NUL:
-robocopy Output\x86\alembic\RelWithDebInfo %LIB_ARCH_RELEASE_DIR%\alembic *.lib > NUL:
+robocopy Output\%ALEMBICOUT%\alembic\Debug %LIB_ARCH_DEBUG_DIR%\alembic *.* > NUL:
+robocopy Output\%ALEMBICOUT%\alembic\Release %LIB_ARCH_RELEASE_DIR%\alembic *.lib > NUL:
 robocopy lib %TOP%\include\alembic *.h /S > NUL:
 touch %CHECKPOINT_DIR%\alembic_install
 :alembic_install_done
@@ -516,9 +538,9 @@ touch %CHECKPOINT_DIR%\teem_unpack
 if EXIST %CHECKPOINT_DIR%\teem_cmake goto teem_cmake_done
 echo teem - CMake - generating projects
 cd %BUILD_DIR%\%TEEM_NAME%
-cmake -G "Visual Studio 10" -DTeem_BZIP2=OFF -DTeem_PTHREAD=OFF -DTeem_PNG=OFF -DZLIB_LIBRARY=%LIB_ARCH_RELEASE_DIR%\zlib\zlib.lib -DZLIB_INCLUDE_DIR=%TOP%\include\zlib .
+cmake -G %CMAKEGENERATOR% -DTeem_BZIP2=OFF -DTeem_PTHREAD=OFF -DTeem_PNG=OFF -DZLIB_LIBRARY=%LIB_ARCH_RELEASE_DIR%\zlib\zlib.lib -DZLIB_INCLUDE_DIR=%TOP%\include\zlib .
 rem Do it twice; first time it gives errors about no bz or png but we don't care
-rem cmake -G "Visual Studio 10" -DZLIB_LIBRARY=%LIB_ARCH_RELEASE_DIR%\zlib\zlib.lib -DZLIB_INCLUDE_DIR=%TOP%\include\zlib .
+rem cmake -G %CMAKEGENERATOR% -DZLIB_LIBRARY=%LIB_ARCH_RELEASE_DIR%\zlib\zlib.lib -DZLIB_INCLUDE_DIR=%TOP%\include\zlib .
 touch %CHECKPOINT_DIR%\teem_cmake
 :teem_cmake_done
 
@@ -562,7 +584,6 @@ cd %BUILD_DIR%\%TIFF_NAME%\libtiff
 nmake /f makefile.vc
 cd %BUILD_DIR%\%TIFF_NAME%\port
 nmake /f makefile.vc
-devenv vstudio.sln /build "Debug|%VSARCH%"
 touch %CHECKPOINT_DIR%\tiff_config
 :tiff_config_debug_done
 
@@ -601,22 +622,34 @@ touch %CHECKPOINT_DIR%\jpeg_unpack
 :jpeg_unpack_done
 
 if EXIST %CHECKPOINT_DIR%\jpeg_build goto jpeg_build_done
-echo JPEG - Building (only Release). Note: this builds too but we just want to generate config files.
 cd %BUILD_DIR%\%JPEG_NAME%\
 copy /Y jconfig.vc jconfig.h
-nmake /f makefile.vc nodebug=1
-touch %CHECKPOINT_DIR%\jpeg_build_done
+if "%ARCH%" == "x86" (
+	nmake /f makefile.vc nodebug=1
+)
+if "%ARCH%" == "x64" (
+  devenv vs10_64\vs10_64.sln /build "Release|%VSARCH%"
+  devenv vs10_64\vs10_64.sln /build "Release|%VSARCH%"
+)
+touch %CHECKPOINT_DIR%\jpeg_build
 :jpeg_build_done
 
 if EXIST %CHECKPOINT_DIR%\jpeg_install goto jpeg_install_done
 echo JPEG - Installing
 cd %BUILD_DIR%\%JPEG_NAME%
-echo D | xcopy "libjpeg.lib" %LIB_ARCH_DEBUG_DIR%\jpeg\ /Y > NUL:
-echo D | xcopy "libjpeg.lib" %LIB_ARCH_RELEASE_DIR%\jpeg\ /Y > NUL:
+if "%ARCH%" == "x86" (
+  echo D | xcopy "libjpeg.lib" %LIB_ARCH_DEBUG_DIR%\jpeg\ /Y > NUL:
+  echo D | xcopy "libjpeg.lib" %LIB_ARCH_RELEASE_DIR%\jpeg\ /Y > NUL:
+)
+if "%ARCH%" == "x64" (
+  echo D | xcopy "vs10_64\Release\libjpeg.lib" %LIB_ARCH_DEBUG_DIR%\jpeg\ /Y > NUL:
+  echo D | xcopy "vs10_64\Release\libjpeg.lib" %LIB_ARCH_RELEASE_DIR%\jpeg\ /Y > NUL:
+)
 robocopy . %INCLUDE_ARCH_DEBUG_DIR%\jpeg\jpeg *.h /s > NUL:
 robocopy . %INCLUDE_ARCH_RELEASE_DIR%\jpeg\jpeg *.h /s > NUL:
 touch %CHECKPOINT_DIR%\jpeg_install
 :jpeg_install_done
+
 
 rem ============= OPENCV ===============
 if EXIST %CHECKPOINT_DIR%\opencv_unpack goto opencv_unpack_done
@@ -631,7 +664,7 @@ if EXIST %CHECKPOINT_DIR%\opencv_cmake goto opencv_cmake_done
 echo OPENCV - CMake - generating projects
 cd %BUILD_DIR%\%OPENCV_NAME%
 echo %BUILD_DIR%\%OPENCV_NAME%
-cmake -G "Visual Studio 10" -DWITH_CUDA=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_WITH_STATIC_CRT=ON -DCMAKE_CXX_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0" -DCMAKE_C_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0"
+cmake -G %CMAKEGENERATOR% -DWITH_CUDA=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_WITH_STATIC_CRT=ON -DCMAKE_CXX_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0" -DCMAKE_C_FLAGS="/D_SCL_SECURE_NO_WARNINGS=1 /D_ITERATOR_DEBUG_LEVEL=0 /D_SECURE_SCL=0"
 touch %CHECKPOINT_DIR%\opencv_cmake
 :opencv_cmake_done
 

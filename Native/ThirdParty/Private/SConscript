@@ -26,7 +26,9 @@ def archLibs( libSubDirName, libNames ):
 
 # LLVM
 # [pzion 20110128] These *must* be in topo order since the Linux linker is stupid
+
 llvmLibNames = [
+  "LLVMX86Desc",
   "LLVMBitWriter",
   "LLVMBitReader",
   "LLVMipo",
@@ -51,8 +53,9 @@ llvmLibNames = [
   "LLVMTarget",
   "LLVMMC",
   "LLVMCore",
-  "LLVMSupport",
+  "LLVMSupport"
 ]
+
 llvmStaticLibs = map( staticLibFromLibName, llvmLibNames )
 llvmFlags = {
 	'CPPDEFINES': [ '__STDC_LIMIT_MACROS', '__STDC_CONSTANT_MACROS' ],
@@ -64,6 +67,7 @@ llvmFlags = {
 }
 if buildOS == 'Windows':
   llvmFlags['LIBS'] += ['Shell32']
+
 Export( 'llvmFlags' )
 
 # Node.js

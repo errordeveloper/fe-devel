@@ -75,7 +75,7 @@ namespace Fabric
         RC::ConstHandle<RT::DictDesc> const &dictDesc
         );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
 
       llvm::Value *llvmCallSize( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;
       
@@ -87,11 +87,11 @@ namespace Fabric
       static void Dispose( void *_dictAdapter, void *dictLValue );
       static void DefaultAssign( void *_dictAdapter, void const *srcLValue, void *dstLValue );
 
-      llvm::StructType const *getLLVMBitsType( RC::Handle<Context> const &context ) const;
-      llvm::PointerType const *getLLVMBucketPtrType( RC::Handle<Context> const &context ) const;
-      llvm::StructType const *getLLVMBucketType( RC::Handle<Context> const &context ) const;
-      llvm::PointerType const *getLLVMNodePtrType( RC::Handle<Context> const &context ) const;
-      llvm::StructType const *getLLVMNodeType( RC::Handle<Context> const &context ) const;
+      llvm::StructType *getLLVMBitsType( RC::Handle<Context> const &context ) const;
+      llvm::PointerType *getLLVMBucketPtrType( RC::Handle<Context> const &context ) const;
+      llvm::StructType *getLLVMBucketType( RC::Handle<Context> const &context ) const;
+      llvm::PointerType *getLLVMNodePtrType( RC::Handle<Context> const &context ) const;
+      llvm::StructType *getLLVMNodeType( RC::Handle<Context> const &context ) const;
 
     private:
     
