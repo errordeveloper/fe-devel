@@ -119,7 +119,7 @@ namespace Fabric
         size_t findPos = 0;
         while ( findPos < fabricExtPathString.size() )
         {
-#if defined(FABRIC_WIN32)
+#if defined(FABRIC_OS_WINDOWS)
           static const char sep = ';';
 #elif defined(FABRIC_POSIX)
           static const char sep = ':';
