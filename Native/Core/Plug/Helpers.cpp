@@ -109,5 +109,65 @@ namespace Fabric
 # error "Unsupported platform"
 #endif
     }
-  };
-};
+
+    void AppendUserPaths( std::vector<std::string> &paths )
+    {
+      char const *fabricExtPath = getenv("FABRIC_EXT_PATH");
+      if ( fabricExtPath && *fabricExtPath )
+      {
+        std::string fabricExtPathString( fabricExtPath );
+        size_t findPos = 0;
+        while ( findPos < fabricExtPathString.size() )
+        {
+#if defined(FABRIC_WIN32)
+          static const char sep = ';';
+#elif defined(FABRIC_POSIX)
+          static const char sep = ':';
+#else
+ #error "Unsupported platform"
+#endif
+          size_t pos = fabricExtPathString.find( sep, findPos );
+          if ( pos == std::string::npos )
+            pos = fabricExtPathString.size();
+          if ( pos - findPos > 0 )
+            paths.push_back( fabricExtPathString.substr( findPos, pos - findPos ) );
+          findPos = pos + 1;
+        }
+      }
+
+#if defined(FABRIC_OS_MACOSX)
+      char const *home = getenv("HOME");
+      if ( home && *home )
+      {
+        std::string homePath( home );
+        paths.push_back( IO::JoinPath( homePath, "Library", "Fabric", "Exts" ) );
+      }
+#elif defined(FABRIC_OS_LINUX)
+      char const *home = getenv("HOME");
+      if ( home && *home )
+      {
+        std::string homePath( home );
+        paths.push_back( IO::JoinPath( homePath, ".fabric", "Exts" ) );
+      }
+#elif defined(FABRIC_OS_WINDOWS)
+      // [pzion 20120409] No user path defined for Windows??
+#endif
+    }
+
+    void AppendGlobalPaths( std::vector<std::string> &paths )
+    {
+#if defined(FABRIC_OS_MACOSX)
+      paths.push_back( "/Library/Fabric/Exts" );
+#elif defined(FABRIC_OS_LINUX)
+      paths.push_back( "/usr/lib/fabric/Exts" );
+#elif defined(FABRIC_OS_WINDOWS)
+      char const *appData = getenv("APPDATA");
+      if ( appData && *appData )
+      {
+        std::string appDataDir(appData);
+        paths.push_back( IO::JoinPath( appDataDir, "Fabric" , "Exts" ) );
+      }
+#endif
+    }
+  }
+}

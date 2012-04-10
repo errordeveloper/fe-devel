@@ -6,6 +6,7 @@
 #include <Fabric/Clients/Python/Client.h>
 #include <Fabric/Clients/Python/ClientWrap.h>
 #include <Fabric/Clients/Python/IOManager.h>
+#include <Fabric/Core/Plug/Helpers.h>
 #include <Fabric/Core/DG/Context.h>
 #include <Fabric/Base/JSON/Encoder.h>
 #include <Fabric/Base/JSON/Decoder.h>
@@ -30,30 +31,8 @@ namespace Fabric
       : m_mutex( "Python ClientWrap" )
     {
       std::vector<std::string> pluginPaths;
-#if defined(FABRIC_OS_MACOSX)
-      char const *home = getenv("HOME");
-      if ( home && *home )
-      {
-        std::string homePath( home );
-        pluginPaths.push_back( IO::JoinPath( homePath, "Library", "Fabric", "Exts" ) );
-      }
-      pluginPaths.push_back( "/Library/Fabric/Exts" );
-#elif defined(FABRIC_OS_LINUX)
-      char const *home = getenv("HOME");
-      if ( home && *home )
-      {
-        std::string homePath( home );
-        pluginPaths.push_back( IO::JoinPath( homePath, ".fabric", "Exts" ) );
-      }
-      pluginPaths.push_back( "/usr/lib/fabric/Exts" );
-#elif defined(FABRIC_OS_WINDOWS)
-      char const *appData = getenv("APPDATA");
-      if ( appData && *appData )
-      {
-        std::string appDataDir(appData);
-        pluginPaths.push_back( IO::JoinPath( appDataDir, "Fabric" , "Exts" ) );
-      }
-#endif
+      Plug::AppendUserPaths( pluginPaths );
+      Plug::AppendGlobalPaths( pluginPaths );
 
       CG::CompileOptions compileOptions;
       compileOptions.setGuarded( false );

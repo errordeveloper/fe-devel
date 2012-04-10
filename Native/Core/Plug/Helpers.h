@@ -16,7 +16,6 @@
 # include <windows.h>
 #endif
 
-
 namespace Fabric
 {
   namespace Plug
@@ -33,7 +32,10 @@ namespace Fabric
     SOLibHandle SOLibOpen( std::string const &name, std::string &resolvedName, bool global, std::vector<std::string> const &pluginDirs );
     void *SOLibResolve( SOLibHandle soLibHandle, std::string const &functionName );
     void SOLibClose( SOLibHandle soLibHandle, std::string const &resolvedName );
-  };
-};
+
+    void AppendUserPaths( std::vector<std::string> &paths );
+    void AppendGlobalPaths( std::vector<std::string> &paths );
+  }
+}
 
 #endif //_FABRIC_PLUG_HELPERS_H
