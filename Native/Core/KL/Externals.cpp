@@ -37,11 +37,12 @@
 #include <stdlib.h>
 
 #if defined(FABRIC_OS_WINDOWS)
-extern "C" long _ftol2( double dblSource );
 # if defined( WIN64 )
 extern "C" void __chkstk( );
+extern "C" long _ftol2( double dblSource ){ return long(dblSource); }
 # else
 extern "C" void _chkstk();
+extern "C" long _ftol2( double dblSource );
 # endif
     
 static float imp_roundf( float x )
