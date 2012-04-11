@@ -2,9 +2,13 @@
  *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
  */
 
+function String disp(Float64 n) {
+  return round(n*1000)/1000;
+}
+
 function reportStats( Size n, Size count )
 {
-  report(n + ": count=" + count + " n/log(n)=" + n/log(n));
+  report(n + ": count=" + count + " n/log(n)=" + disp(n/log(n)));
 }
 
 operator entry()
