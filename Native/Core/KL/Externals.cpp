@@ -39,7 +39,6 @@
 #if defined(FABRIC_OS_WINDOWS)
 # if defined( WIN64 )
 extern "C" void __chkstk( );
-extern "C" long _ftol2( double dblSource ){ return long(dblSource); }
 # else
 extern "C" void _chkstk();
 extern "C" long _ftol2( double dblSource );
@@ -505,11 +504,11 @@ namespace Fabric
 
         // Weird Windows stuff
 #if defined(FABRIC_OS_WINDOWS)
-        symbolNameToAddressMap["_ftol2"] = (void *)&_ftol2;
 # if defined( WIN64 )
         symbolNameToAddressMap["__chkstk"] = (void *)&__chkstk;
 # else
         symbolNameToAddressMap["_chkstk"] = (void *)&_chkstk;
+        symbolNameToAddressMap["_ftol2"] = (void *)&_ftol2;
 # endif
 #endif
 
