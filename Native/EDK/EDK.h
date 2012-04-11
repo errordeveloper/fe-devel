@@ -482,7 +482,7 @@ namespace Fabric
                   for ( size_t i=0; i<copyFromOldCount; ++i )
                     newBits->members[i] = m_bits->members[i];
                   size_t initialzeCount = newSize - copyFromOldCount;
-                  // Should really be disposing here
+                  // Should really be disposing members here
                   memset( &newBits->members[copyFromOldCount], 0, initialzeCount * sizeof(Member) );
                 }
               }
@@ -512,13 +512,14 @@ namespace Fabric
                 {
                   m_bits = static_cast<bits_t *>( ( *s_callbacks.m_malloc )( sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
                   m_bits->refCount.setValue( 1 );
-                  m_bits->allocSize = newAllocSize;
                 }
                 else if ( m_bits )
                 {
                   m_bits = static_cast<bits_t *>( ( *s_callbacks.m_realloc )( m_bits, sizeof(bits_t) + newAllocSize * sizeof(Member) ) );
-                  m_bits->allocSize = newAllocSize;
                 }
+
+                if ( m_bits )
+                  m_bits->allocSize = newAllocSize;
               }
 
               if ( newSize > oldSize )
@@ -567,15 +568,14 @@ namespace Fabric
 
         void makeUnique()
         {
-          bits_t *newBits = new bits_t;
+          bits_t *newBits = static_cast<bits_t *>( malloc( sizeof(bits_t) + m_bits->allocSize * sizeof(Member) ) );
           newBits->refCount.setValue( 1 );
           newBits->allocSize = m_bits->allocSize;
           newBits->size = m_bits->size;
           memset( &newBits->members[0], 0, newBits->size * sizeof(Member) );
           for ( size_t i=0; i<newBits->size; ++i )
             newBits->members[i] = m_bits->members[i];
-          if ( m_bits && m_bits->refCount.decrementAndGetValue() == 0 )
-            (*s_callbacks.m_free)( m_bits );
+          dispose();
           m_bits = newBits;
         }
       

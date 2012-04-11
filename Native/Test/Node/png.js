@@ -23,6 +23,8 @@ operator load( io String url, io FabricResource resource )\n\
   report("PNG data size is " + resource.data.dataSize());\n\
   Size imageWidth, imageHeight;\n\
   RGBA imagePixels[];\n\
+  imagePixels.resize(614400);\n\
+  RGBA imagePixelsCopy[] = imagePixels;\n\
   FabricPNGDecode( resource.data.data(), resource.data.dataSize(), imageWidth, imageHeight, imagePixels );\n\
   report("Image dimentions are "+imageWidth+" by "+imageHeight);\n\
   report("Image pixels size is "+imagePixels.size);\n\
