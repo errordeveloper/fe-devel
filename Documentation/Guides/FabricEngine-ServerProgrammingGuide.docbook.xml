@@ -1084,23 +1084,21 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
     sumNode.setDependency(termsNode, "terms")
     sumNode.bindings.append(sumTermsBinding)
 
-    def callback():
-      # Return the result as the HTTP content
+    # Evaluate the sumNode
 
-      self.send_response( 200 )
-      self.send_header( 'Content-type', 'text/plain' )
-      self.end_headers()
-      self.wfile.write( str(sumNode.getData('result', 0)) + '\n' )
+    sumNode.evaluate()
 
-      # Close the Fabric Engine client.  If the client isn't closed
-      # then Fabric Python client will keep this script alive!
+    # Return the result as the HTTP content
 
-      fabricClient.close()
+    self.send_response( 200 )
+    self.send_header( 'Content-type', 'text/plain' )
+    self.end_headers()
+    self.wfile.write( str(sumNode.getData('result', 0)) + '\n' )
 
-    # Evaluate the sumNode asynchronously.  The given
-    # callback is issue when the computation is done.
+    # Close the Fabric Engine client.  If the client isn't closed
+    # then Fabric Python client will keep this script alive!
 
-    sumNode.evaluateAsync( callback )
+    fabricClient.close()
 
 # Create the HTTP server
 port = 1337
