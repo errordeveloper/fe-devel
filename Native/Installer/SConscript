@@ -4,7 +4,7 @@
 
 import itertools, os
 
-Import( 'baseEnv', 'buildOS' )
+Import( 'baseEnv', 'buildOS', 'buildArch' )
 
 if 'dist' in COMMAND_LINE_TARGETS:
   Import( 'klToolInstaller', 'fileSystemInstaller' )
@@ -14,7 +14,8 @@ if 'dist' in COMMAND_LINE_TARGETS:
     if kinectBuilt:
       Import( 'kinectInstaller' )
       installers.append( kinectInstaller[0] )
-  installers += SConscript( 'Chrome/SConscript' )
+  if buildOS != 'Windows' or buildArch != 'x86_64':
+    installers += SConscript( 'Chrome/SConscript' )
   installers += SConscript( 'Firefox/SConscript' )
   installers += SConscript( 'Python/SConscript' )
   installers += SConscript( 'Node/SConscript' )
