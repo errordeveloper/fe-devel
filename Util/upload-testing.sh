@@ -37,8 +37,8 @@ DIST_DIR="/fabric-distribution/$VERSION"
 PUB_DIR="$DIST_DIR/pub"
 SG_DIR="$DIST_DIR/sg"
 if [ "$FORCE" = "1" ]; then
-  #GIT_OPTS="--git-dir=$PUB_DIR/.git --work-tree=$PUB_DIR"
-  GIT_OPTS="--git-dir=$PUB_DIR/.git"
+  GIT_OPTS="--git-dir=$PUB_DIR/.git --work-tree=$PUB_DIR"
+  #GIT_OPTS="--git-dir=$PUB_DIR/.git"
   rexec git $GIT_OPTS fetch || error
   rexec git $GIT_OPTS merge origin/ver-$VERSION || error
   rexec svn up "$PUB_DIR/Web" || error
