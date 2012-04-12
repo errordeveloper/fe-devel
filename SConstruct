@@ -33,7 +33,7 @@ FABRIC_VERSION_SUFFIX='-alpha'
 # Choosing from the set 0-9, a-z,
 # A-Z, _, -  and . is safe and
 # recommended.
-FABRIC_CACHE_GENERATION='23-llvm-3.0'
+FABRIC_CACHE_GENERATION='24-fix-sa-data-crash'
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import os, platform, posixpath, glob, sys
