@@ -57,9 +57,11 @@ for PLATFORM in Windows-x86 Darwin-universal Linux-i686 Linux-x86_64; do
   else
     ARCH_EXT=tar.bz2
   fi
-  BINS="$BINS $BIN_SRC_DIR/FabricEngine-ChromeExtension-$PLATFORM-$VERSION.crx"
+  if [ "$PLATFORM" != "Windows-x86_64" ]; then
+    BINS="$BINS $BIN_SRC_DIR/FabricEngine-ChromeExtension-$PLATFORM-$VERSION.crx"
+    BINS="$BINS $BIN_SRC_DIR/FabricEngine-NodeModule-$PLATFORM-$VERSION.$ARCH_EXT"
+  fi
   BINS="$BINS $BIN_SRC_DIR/FabricEngine-FirefoxExtension-$PLATFORM-$VERSION.xpi"
-  BINS="$BINS $BIN_SRC_DIR/FabricEngine-NodeModule-$PLATFORM-$VERSION.$ARCH_EXT"
   if [ "$PLATFORM" = "Windows-x86" ]; then
     BINS="$BINS $BIN_SRC_DIR/FabricEngine-KinectExt-$PLATFORM-$VERSION.$ARCH_EXT"
   fi
