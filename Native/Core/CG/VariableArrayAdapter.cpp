@@ -560,10 +560,11 @@ namespace Fabric
             );
           if ( buildFunctions )
           {
-            llvm::Value *selfRValue = functionBuilder[0];
+            llvm::Value *selfLValue = functionBuilder[0];
             BasicBlockBuilder basicBlockBuilder( functionBuilder );
             basicBlockBuilder->SetInsertPoint( functionBuilder.createBasicBlock( "entry" ) );
-            llvm::Value *bits = basicBlockBuilder->CreateLoad( selfRValue );
+            llvmPrepareForModify( basicBlockBuilder, selfLValue );
+            llvm::Value *bits = basicBlockBuilder->CreateLoad( selfLValue );
             llvm::Value *memberDatasLValue = basicBlockBuilder->CreateStructGEP( basicBlockBuilder->CreateStructGEP( bits, MemberDatasIndex ), 0 );
             basicBlockBuilder->CreateRet(
               basicBlockBuilder->CreatePointerCast( memberDatasLValue, dataAdapter->llvmRType( context ) )
@@ -894,11 +895,19 @@ namespace Fabric
         
         BasicBlockBuilder bbb( fb );
         llvm::BasicBlock *entryBB = fb.createBasicBlock( "entry" );
+        llvm::BasicBlock *notNullBB = fb.createBasicBlock( "notNull" );
         llvm::BasicBlock *isSharedBB = fb.createBasicBlock( "isShared" );
         llvm::BasicBlock *doneBB = fb.createBasicBlock( "done" );
 
         bbb->SetInsertPoint( entryBB );
         llvm::Value *bitsLValue = bbb->CreateLoad( selfLValue );
+        bbb->CreateCondBr(
+          bbb->CreateIsNotNull( bitsLValue ),
+          notNullBB,
+          doneBB
+          );
+
+        bbb->SetInsertPoint( notNullBB );
         llvm::Value *refCountLValue = bbb->CreateStructGEP( bitsLValue, RefCountIndex );
         llvm::Value *refCountRValue = sizeAdapter->llvmLValueToRValue( bbb, refCountLValue );
         bbb->CreateCondBr(
