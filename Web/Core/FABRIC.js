@@ -4,8 +4,8 @@
 
 var FABRIC = (function() {
 
-  var requiredVersion = [1,0,22];
-  var requiredVersionSuffix = "-release";
+  var requiredVersion = [1,2,0];
+  var requiredVersionSuffix = "-alpha";
   var fullRequiredVersionString = requiredVersion.join('.') + requiredVersionSuffix;
 
   // we keep an array of context ids,
