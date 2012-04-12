@@ -22,6 +22,26 @@ HANDLE	nextDepthFrameEvent;
 // ====================================================================
 // KL structs
 
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
+FABRIC_EXT_KL_STRUCT( RGBA, {
+  KL::Byte r;
+  KL::Byte g;
+  KL::Byte b;
+  KL::Byte a;
+} );
+
+FABRIC_EXT_KL_STRUCT( Color, {
+  KL::Float32 r;
+  KL::Float32 g;
+  KL::Float32 b;
+  KL::Float32 a;
+} );
+
 FABRIC_EXT_KL_STRUCT( KinectSkeletonData, {
   KL::Integer trackingState;
   KL::Integer trackingID;
