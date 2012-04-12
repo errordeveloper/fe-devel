@@ -252,7 +252,8 @@ $(document).ready(function() {
         return false;
     }
     var baseURL;
-    if(document.location.hostname === "demos.testing.fabric-engine.com"){
+    if(document.location.hostname === "demos.testing.fabricengine.com" ||
+        document.location.hostname === "demos.testing.fabric-engine.com"){
       // During testing, plugin installers are pulled from the 'dist.testing' path.
       baseURL = "http://dist.testing.fabric-engine.com";
     }
