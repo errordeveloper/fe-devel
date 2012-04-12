@@ -34,16 +34,19 @@ VERSION="$1"
 DIST_DIR="/fabric-distribution/$VERSION"
 
 
+PUB_DIR="$DIST_DIR/pub"
 SG_DIR="$DIST_DIR/sg"
 if [ "$FORCE" = "1" ]; then
-  rexec git --git-dir="$SG_DIR"/.git pull || error
-  rexec git --git-dir="$SG_DIR"/.git reset --hard || error
-  rexec git --git-dir="$SG_DIR"/.git clean --force || error
-  rexec svn up "$SG_DIR" || error
+  #GIT_OPTS="--git-dir=$PUB_DIR/.git --work-tree=$PUB_DIR"
+  GIT_OPTS="--git-dir=$PUB_DIR/.git"
+  rexec git $GIT_OPTS fetch || error
+  rexec git $GIT_OPTS merge origin/ver-$VERSION || error
+  rexec svn up "$PUB_DIR/Web" || error
 else
   rexec mkdir $DIST_DIR || error "$DIST_DIR already exists -- use -f parameter to force update"
-  rexec git clone -b ver-$VERSION git://github.com/fabric-engine/JSSceneGraph.git "$SG_DIR" || error
-  rexec svn co --force http://svn.fabric-engine.com/JSSceneGraphResources/tags/$VERSION "$SG_DIR" || error
+  rexec git clone -b ver-$VERSION git://github.com/fabric-engine/PublicDev.git "$PUB_DIR" || error
+  rexec ln -s "$PUB_DIR/Web" "$SG_DIR"
+  rexec svn co --force http://svn.fabric-engine.com/JSSceneGraphResources/tags/$VERSION "$PUB_DIR/Web" || error
 fi
 
 BIN_SRC_DIR="/home/build"
