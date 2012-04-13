@@ -54,8 +54,8 @@ BIN_DIR="$DIST_DIR/bin"
 rexec mkdir -p "$BIN_DIR" || error
 LOCAL_DIST_DIR="$FABRIC_CORE_PATH/Native/dist"
 BINS=
-for PLATFORM in Windows-x86 Darwin-universal Linux-i686 Linux-x86_64; do
-  if [ "$PLATFORM" = "Windows-x86" ]; then
+for PLATFORM in Windows-x86_64 Windows-x86 Darwin-universal Linux-i686 Linux-x86_64; do
+  if [ "$PLATFORM" = "Windows-x86" -o "$PLATFORM" = "Windows-x86_64" ]; then
     ARCH_EXT=zip
   else
     ARCH_EXT=tar.bz2
@@ -63,6 +63,7 @@ for PLATFORM in Windows-x86 Darwin-universal Linux-i686 Linux-x86_64; do
   if [ "$PLATFORM" != "Windows-x86_64" ]; then
     BINS="$BINS $BIN_SRC_DIR/FabricEngine-ChromeExtension-$PLATFORM-$VERSION.crx"
     BINS="$BINS $BIN_SRC_DIR/FabricEngine-NodeModule-$PLATFORM-$VERSION.$ARCH_EXT"
+    BINS="$BINS $BIN_SRC_DIR/crx-update-$PLATFORM.xml"
   fi
   BINS="$BINS $BIN_SRC_DIR/FabricEngine-FirefoxExtension-$PLATFORM-$VERSION.xpi"
   if [ "$PLATFORM" = "Windows-x86" ]; then
@@ -71,7 +72,6 @@ for PLATFORM in Windows-x86 Darwin-universal Linux-i686 Linux-x86_64; do
   BINS="$BINS $BIN_SRC_DIR/FabricEngine-PythonModule-$PLATFORM-$VERSION.$ARCH_EXT"
   BINS="$BINS $BIN_SRC_DIR/FabricEngine-FileSystemExt-$PLATFORM-$VERSION.$ARCH_EXT"
   BINS="$BINS $BIN_SRC_DIR/FabricEngine-KLTool-$PLATFORM-$VERSION.$ARCH_EXT"
-  BINS="$BINS $BIN_SRC_DIR/crx-update-$PLATFORM.xml"
   BINS="$BINS $BIN_SRC_DIR/xpi-update-$PLATFORM.rdf"
 done
 rexec cp $BINS "$BIN_DIR"/
