@@ -71,8 +71,8 @@ namespace Fabric
     
       size_t m_paramCount;
       std::map< std::string, std::multimap< std::string, Param * > > m_params;
-      
-      RC::Handle<Context> m_context;
+     
+      Context *m_context;
       RC::ConstHandle<RT::Desc> m_rtSizeDesc;
       RC::ConstHandle<RT::Impl> m_rtSizeImpl;
       RC::ConstHandle<RT::Desc> m_rtIndexDesc;

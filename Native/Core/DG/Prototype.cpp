@@ -150,7 +150,7 @@ namespace Fabric
     };
     
     Prototype::Prototype( RC::Handle<Context> const &context )
-      : m_context( context )
+      : m_context( context.ptr() )
       , m_rtSizeDesc( context->getCGManager()->getRTManager()->getSizeDesc() )
       , m_rtSizeImpl( m_rtSizeDesc->getImpl() )
       , m_rtIndexDesc( context->getCGManager()->getRTManager()->getIndexDesc() )
