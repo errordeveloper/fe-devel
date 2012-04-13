@@ -53,7 +53,7 @@ if buildType == 'Release':
   nativeEnv.Append( CPPDEFINES = ['NDEBUG'] )
 
 # Uncomment the following to have RC leaks logged
-# env.Append( CPPDEFINES = ['FABRIC_RC_LEAK_REPORT'] )
+# nativeEnv.Append( CPPDEFINES = ['FABRIC_RC_LEAK_REPORT'] )
 
 if buildOS == 'Windows' and buildType == 'Debug':
   nativeEnv.Append( PDB='${TARGET.base}.pdb' )
