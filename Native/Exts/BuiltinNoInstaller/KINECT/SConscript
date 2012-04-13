@@ -7,16 +7,17 @@ Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName', 'buildOS', 'buildArch', 'FA
 import os
 import os.path
 
-# only do this for windows
-if buildOS != 'Windows':
+kinectBuilt = False
+
+# only do this for windows x86
+if buildOS != 'Windows' or buildArch != 'x86':
+    Export( 'kinectBuilt' )
     Return()
 
 kinectPackageName = "FabricEngine-KinectExt-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
 kinectPackageDir = archDistDir.Dir(kinectPackageName)
     
 kinectPluginEnv = extsEnv.Clone()
-
-kinectBuilt = False
 
 # find the kinect sdk
 kinectInclude = 'C:\\Program Files\\Microsoft SDKs\Kinect\\v1.0 Beta2\\inc'
@@ -69,7 +70,7 @@ kinectInstaller = installerEnv.DistZip(
 Alias( 'kinectInstaller', kinectInstaller )
 Export( 'kinectInstaller' )
 
-Return( 'kinectExtFiles' )
-
 kinectBuilt = True
 Export( 'kinectBuilt' )
+
+Return( 'kinectExtFiles' )

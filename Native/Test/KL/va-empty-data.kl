@@ -1,0 +1,4 @@
+operator entry() {
+  Byte a[];
+  report(a.data);
+}
