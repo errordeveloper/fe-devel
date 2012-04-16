@@ -14,9 +14,8 @@ remove_link()
 {
   echo "Removing link $1"
   if [ "$FABRIC_BUILD_OS" = "Windows" ]; then
-    if [ -d $1 ]; then
-      rmdir "$1"
-    fi
+    # Note: can't test a Windows junction with -e, -L, -d, -f; they all report false
+    rmdir $1
   else
     rm -f "$1"
   fi

@@ -19,12 +19,8 @@ create_link()
 {
   echo "Linking $2 -> $1"
   if [ "$FABRIC_BUILD_OS" = "Windows" ]; then
-    if [ -d $2 ]; then
-      rmdir "$2"
-    fi
-    if [ -f $2 ]; then
-      rm "$2"
-    fi
+    # Note: can't test a Windows junction with -e, -L, -d, -f; they all report false
+    rmdir $2
     unix_to_windows_path $2
     ARG1=$WINDOWS_PATH_RESULT
     unix_to_windows_path $1
