@@ -17,7 +17,11 @@ namespace Fabric
   char const *buildOS = "{{FABRIC_OS}}";
   char const *buildArch = "{{FABRIC_ARCH}}";
 #if defined(FABRIC_OS_WINDOWS)
+# if defined(WIN64)
+  char const *runningArch = "x86_64";
+# else
   char const *runningArch = "x86";
+# endif
 #elif defined(FABRIC_OS_MACOSX)
 # if defined(__x86_64)
   char const *runningArch = "x86_64";
