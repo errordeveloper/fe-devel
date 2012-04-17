@@ -29,7 +29,7 @@ operator generateSpline(
   
   var Mat44 C = Mat44(p1.x, p1.y, p1.z, 0,
                       p2.x, p2.y, p2.z, 0,
-                      t1.x, t1.y, t1.x, 0,
+                      t1.x, t1.y, t1.z, 0,
                       t2.x, t2.y, t2.z, 0);
   
   //product of above matrices
