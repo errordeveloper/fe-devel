@@ -15,7 +15,7 @@ FABRIC_URL="http://fabricengine.com"
 FABRIC_VERSION_MAJ='1'
 FABRIC_VERSION_MIN='2'
 FABRIC_VERSION_REV='0'
-FABRIC_VERSION_SUFFIX='-alpha'
+FABRIC_VERSION_SUFFIX='-beta'
 # [pzion 20120404]
 # IMPORTANT: Put a cache generation
 # with format 'number-description' here
