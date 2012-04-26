@@ -354,7 +354,7 @@
               .
             </para></listitem>
             <listitem><para>
-              Using the browsers debugging features. Browsers such as Chrome and Firefox come with powerful debugging tools that enable developers to inspect running applications and understand the code execution. See <link xlink:href='http://code.google.com/chrome/devtools/docs/overview.html'><citetitle>Google Chrome Developer Tools</citetitle></link>.
+              Use the browser's debugging features. Browsers such as Chrome and Firefox come with powerful debugging tools that enable developers to inspect running applications and understand the code execution. See <link xlink:href='http://code.google.com/chrome/devtools/docs/overview.html'><citetitle>Google Chrome Developer Tools</citetitle></link> and <link xlink:href='http://getfirebug.com/'><citetitle>Firebug</citetitle></link> (for Firefox).
             </para></listitem>
             <listitem><para>
               Fork the Fabric repository and build applications in your own repository. You can then propagate bug fixes and updates from the Fabric Engine repository into your own. Follow the instructions on GitHub to fork your own repo: <link xlink:href='http://help.github.com/fork-a-repo/'><uri>http://help.github.com/fork-a-repo/</uri></link>

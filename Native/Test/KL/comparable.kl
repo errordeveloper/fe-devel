@@ -3,80 +3,80 @@
  */
 
 function testBoolean() {
-  report "Boolean:";
+  report("Boolean:");
   Boolean gr = true, sm = false;
-  report "gr.hash = " + gr.hash;
-  report "sm.hash = " + sm.hash;
-  report "gr.compare(gr) = " + gr.compare(gr);
-  report "gr.compare(sm) = " + gr.compare(sm);
-  report "sm.compare(gr) = " + sm.compare(gr);
-  report "sm.compare(sm) = " + sm.compare(sm);
+  report("gr.hash = " + gr.hash);
+  report("sm.hash = " + sm.hash);
+  report("gr.compare(gr) = " + gr.compare(gr));
+  report("gr.compare(sm) = " + gr.compare(sm));
+  report("sm.compare(gr) = " + sm.compare(gr));
+  report("sm.compare(sm) = " + sm.compare(sm));
 }
 
 function testByte() {
-  report "Byte:";
+  report("Byte:");
   Byte gr = 255, sm = 0;
-  report "gr.hash = " + gr.hash;
-  report "sm.hash = " + sm.hash;
-  report "gr.compare(gr) = " + gr.compare(gr);
-  report "gr.compare(sm) = " + gr.compare(sm);
-  report "sm.compare(gr) = " + sm.compare(gr);
-  report "sm.compare(sm) = " + sm.compare(sm);
+  report("gr.hash = " + gr.hash);
+  report("sm.hash = " + sm.hash);
+  report("gr.compare(gr) = " + gr.compare(gr));
+  report("gr.compare(sm) = " + gr.compare(sm));
+  report("sm.compare(gr) = " + sm.compare(gr));
+  report("sm.compare(sm) = " + sm.compare(sm));
 }
 
 function testInteger() {
-  report "Integer:";
+  report("Integer:");
   Integer gr = 200000000, sm = -Integer(20000000);
-  report "gr.hash = " + gr.hash;
-  report "sm.hash = " + sm.hash;
-  report "gr.compare(gr) = " + gr.compare(gr);
-  report "gr.compare(sm) = " + gr.compare(sm);
-  report "sm.compare(gr) = " + sm.compare(gr);
-  report "sm.compare(sm) = " + sm.compare(sm);
+  report("gr.hash = " + gr.hash);
+  report("sm.hash = " + sm.hash);
+  report("gr.compare(gr) = " + gr.compare(gr));
+  report("gr.compare(sm) = " + gr.compare(sm));
+  report("sm.compare(gr) = " + sm.compare(gr));
+  report("sm.compare(sm) = " + sm.compare(sm));
 }
 
 function testSize() {
-  report "Size:";
+  report("Size:");
   Size gr = 200000000, sm = 2000000;
-  report "gr.hash = " + gr.hash;
-  report "sm.hash = " + sm.hash;
-  report "gr.compare(gr) = " + gr.compare(gr);
-  report "gr.compare(sm) = " + gr.compare(sm);
-  report "sm.compare(gr) = " + sm.compare(gr);
-  report "sm.compare(sm) = " + sm.compare(sm);
+  report("gr.hash = " + gr.hash);
+  report("sm.hash = " + sm.hash);
+  report("gr.compare(gr) = " + gr.compare(gr));
+  report("gr.compare(sm) = " + gr.compare(sm));
+  report("sm.compare(gr) = " + sm.compare(gr));
+  report("sm.compare(sm) = " + sm.compare(sm));
 }
 
 function testScalar() {
-  report "Scalar:";
+  report("Scalar:");
   Scalar gr = 3.14, sm = -2.71;
-  report "gr.hash = " + gr.hash;
-  report "sm.hash = " + sm.hash;
-  report "gr.compare(gr) = " + gr.compare(gr);
-  report "gr.compare(sm) = " + gr.compare(sm);
-  report "sm.compare(gr) = " + sm.compare(gr);
-  report "sm.compare(sm) = " + sm.compare(sm);
+  report("gr.hash = " + gr.hash);
+  report("sm.hash = " + sm.hash);
+  report("gr.compare(gr) = " + gr.compare(gr));
+  report("gr.compare(sm) = " + gr.compare(sm));
+  report("sm.compare(gr) = " + sm.compare(gr));
+  report("sm.compare(sm) = " + sm.compare(sm));
 }
 
 function testFloat64() {
-  report "Float64:";
+  report("Float64:");
   Float64 gr = 3.14, sm = -2.71;
-  report "gr.hash = " + gr.hash;
-  report "sm.hash = " + sm.hash;
-  report "gr.compare(gr) = " + gr.compare(gr);
-  report "gr.compare(sm) = " + gr.compare(sm);
-  report "sm.compare(gr) = " + sm.compare(gr);
-  report "sm.compare(sm) = " + sm.compare(sm);
+  report("gr.hash = " + gr.hash);
+  report("sm.hash = " + sm.hash);
+  report("gr.compare(gr) = " + gr.compare(gr));
+  report("gr.compare(sm) = " + gr.compare(sm));
+  report("sm.compare(gr) = " + sm.compare(gr));
+  report("sm.compare(sm) = " + sm.compare(sm));
 }
 
 function testString() {
-  report "String:";
+  report("String:");
   String gr = "beta", sm = "";
-  report "gr.hash = " + gr.hash;
-  report "sm.hash = " + sm.hash;
-  report "gr.compare(gr) = " + gr.compare(gr);
-  report "gr.compare(sm) = " + gr.compare(sm);
-  report "sm.compare(gr) = " + sm.compare(gr);
-  report "sm.compare(sm) = " + sm.compare(sm);
+  report("gr.hash = " + gr.hash);
+  report("sm.hash = " + sm.hash);
+  report("gr.compare(gr) = " + gr.compare(gr));
+  report("gr.compare(sm) = " + gr.compare(sm));
+  report("sm.compare(gr) = " + sm.compare(gr));
+  report("sm.compare(sm) = " + sm.compare(sm));
 }
 
 operator entry() {

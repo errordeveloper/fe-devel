@@ -4,19 +4,21 @@
 
 import itertools, os
 
-Import( 'baseEnv', 'buildOS' )
+Import( 'baseEnv', 'buildOS', 'buildArch' )
 
 if 'dist' in COMMAND_LINE_TARGETS:
   Import( 'klToolInstaller', 'fileSystemInstaller' )
   installers = [klToolInstaller[0], fileSystemInstaller[0]]
   if buildOS == 'Windows':
-    Import( 'kinectInstaller' )
-    installers.append( kinectInstaller[0] )
-  installers += SConscript( 'Chrome/SConscript' )
+    Import( 'kinectBuilt' )
+    if kinectBuilt:
+      Import( 'kinectInstaller' )
+      installers.append( kinectInstaller[0] )
+  if buildOS != 'Windows' or buildArch != 'x86_64':
+    installers += SConscript( 'Chrome/SConscript' )
   installers += SConscript( 'Firefox/SConscript' )
   installers += SConscript( 'Python/SConscript' )
-  if buildOS != 'Windows':
-    installers += SConscript( 'Node/SConscript' )
+  installers += SConscript( 'Node/SConscript' )
   Alias( 'dist', installers )
   if 'upload' in COMMAND_LINE_TARGETS:
     if buildOS == 'Windows':

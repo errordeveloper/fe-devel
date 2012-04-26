@@ -5,5 +5,5 @@
 operator entry() {
   Integer x = 4;
   for (Index i=0; i<x; ++i)
-    report i;
+    report(i);
 }

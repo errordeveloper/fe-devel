@@ -8,7 +8,7 @@
 #include <Fabric/Core/Build.h>
 #include <Fabric/Core/MT/Impl.h>
 #include <Fabric/Core/Plug/Manager.h>
-#include <Fabric/Core/DG/IRCache.h>
+#include <Fabric/Core/DG/BCCache.h>
 
 #include <npapi/npapi.h>
 #include <npapi/npfunctions.h>
@@ -90,7 +90,7 @@ FABRIC_NPAPI_EXPORT NPError OSCALL NP_Shutdown()
   llvm::llvm_stop_multithreaded();
 
   Fabric::Plug::Manager::Terminate();
-  Fabric::DG::IRCache::Terminate();
+  Fabric::DG::BCCache::Terminate();
 
 #if defined( FABRIC_RC_LEAK_REPORT )
   Fabric::RC::_ReportLeaks();

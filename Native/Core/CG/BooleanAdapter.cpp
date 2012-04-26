@@ -31,7 +31,7 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *BooleanAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *BooleanAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       return llvm::Type::getInt1Ty( context->getLLVMContext() );
     }
@@ -55,7 +55,7 @@ namespace Fabric
       static const bool buildFunctions = true;
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];

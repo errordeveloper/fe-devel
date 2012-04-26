@@ -47,6 +47,7 @@ namespace Fabric
       bool exists() const;
       
       std::string getFullPath() const;
+      std::string getFullFilePath( std::string const &entry ) const;
       
       std::vector< std::string > getFiles() const;
       std::vector< RC::ConstHandle<Dir> > getSubDirs( bool followLinks = true ) const;

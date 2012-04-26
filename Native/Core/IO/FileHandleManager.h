@@ -51,9 +51,6 @@ namespace Fabric
         bool m_readOnly;
       };
 
-      typedef std::map< std::string, Data > HandleToDataMap;
-      typedef std::multimap< std::string, HandleToDataMap::iterator > PathToHandleMap;
-
       Data const &validateHandleAndGetData( std::string const &handle, std::string& relativePathPostfix ) const;
       std::string getPathInternal( Data const &data, std::string const &relativePathPostfix ) const;
       bool isReadOnlyInternal( Data const &data, std::string const &relativePathPostfix ) const;
@@ -62,8 +59,6 @@ namespace Fabric
       void ensureTargetExistsInternal( Data const &data, std::string const &relativePathPostfix ) const;
 
       size_t m_encodedHandleLength;
-      HandleToDataMap m_handleToData;
-      PathToHandleMap m_pathToHandle;
     };
   };
 };

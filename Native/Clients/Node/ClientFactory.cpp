@@ -61,11 +61,19 @@ namespace Fabric
     static v8::Handle<v8::Value> CreateClientV8FunctionCallback( v8::Arguments const &args )
     {
       v8::HandleScope handleScope;
-      
+
+      // andrew 2012-03-29
+      // we accept a map of options as our only parameter
+      v8::Handle<v8::Value> constructorArgs[1];
+      if ( args.Length() > 0 && args[0]->IsObject() )
+        constructorArgs[0] = args[0];
+      else
+        constructorArgs[0] = v8::Null();
+
       v8::Handle<v8::Object> clientWrapConstructorHolder = v8::Object::New();
-      ClientWrap::Initialize( clientWrapConstructorHolder );
-      
-      v8::Handle<v8::Object> clientWrap = v8::Handle<v8::Function>::Cast( clientWrapConstructorHolder->Get( v8::String::New( "Client" ) ) )->NewInstance();
+      ClientWrap::Init( clientWrapConstructorHolder );
+     
+      v8::Handle<v8::Object> clientWrap = v8::Handle<v8::Function>::Cast( clientWrapConstructorHolder->Get( v8::String::New( "Client" ) ) )->NewInstance( 1, constructorArgs );
       
       v8::TryCatch v8TryCatch;
       std::string const &wrapFabricClientJSSource = DG::Context::GetWrapFabricClientJSSource();

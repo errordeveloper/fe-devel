@@ -31,9 +31,9 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *OpaqueAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *OpaqueAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
-      llvm::Type const *result;
+      llvm::Type *result;
       size_t size = m_opaqueDesc->getAllocSize();
       if ( size == sizeof( void * ) )
         result = llvm::Type::getInt8PtrTy( context->getLLVMContext() );
@@ -66,7 +66,7 @@ namespace Fabric
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       if ( getDesc()->getAllocSize() == sizeof( void * ) )
-        return llvm::ConstantPointerNull::get( (llvm::PointerType const *)llvmRType( context ) );
+        return llvm::ConstantPointerNull::get( (llvm::PointerType *)llvmRType( context ) );
       else 
         return llvm::ConstantInt::get( llvmRType( context ), 0 );
     }
@@ -90,7 +90,7 @@ namespace Fabric
       static const bool buildFunctions = true;
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -104,7 +104,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];

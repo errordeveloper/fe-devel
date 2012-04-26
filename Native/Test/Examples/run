@@ -1,0 +1,9 @@
+#!/bin/sh
+
+TEST_SUFFIX="sh"
+TEST_CMD="sh"
+
+. ../runtests.sh
+
+exit $ERROR
+

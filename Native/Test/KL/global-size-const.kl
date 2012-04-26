@@ -6,5 +6,5 @@ const Size oneTwoThree = 123;
 
 operator entry()
 {
-  report oneTwoThree;
+  report(oneTwoThree);
 }

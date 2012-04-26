@@ -29,12 +29,12 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *ConstStringAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *ConstStringAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
-      std::vector<llvm::Type const *> memberLLVMTypes;
+      std::vector<llvm::Type *> memberLLVMTypes;
       memberLLVMTypes.push_back( llvm::Type::getInt8PtrTy( context->getLLVMContext() ) );
       memberLLVMTypes.push_back( llvmSizeType( context ) );
-      return llvm::StructType::get( context->getLLVMContext(), memberLLVMTypes, true );
+      return llvm::StructType::create( context->getLLVMContext(), memberLLVMTypes, getCodeName(), true );
     }
     
     void ConstStringAdapter::llvmCompileToModule( ModuleBuilder &moduleBuilder ) const
@@ -49,12 +49,10 @@ namespace Fabric
       RC::ConstHandle<StringAdapter> stringAdapter = getManager()->getStringAdapter();
       stringAdapter->llvmCompileToModule( moduleBuilder );
       
-      moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
-      
       static const bool buildFunctions = true;
 
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -70,7 +68,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
@@ -93,7 +91,7 @@ namespace Fabric
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
       
-      llvm::Type const *charType = llvm::Type::getInt8Ty( context->getLLVMContext() );
+      llvm::Type *charType = llvm::Type::getInt8Ty( context->getLLVMContext() );
       std::vector<llvm::Constant *> chars;
       for ( size_t i=0; i<length; ++i )
         chars.push_back( llvm::ConstantInt::get( charType, data[i] ) );
@@ -114,7 +112,7 @@ namespace Fabric
       std::vector<llvm::Constant *> elementDefaultRValues;
       elementDefaultRValues.push_back( llvmData );
       elementDefaultRValues.push_back( llvmLength );
-      llvm::Constant *llvmStruct = llvm::ConstantStruct::get( (llvm::StructType const *)llvmRawType( context ), elementDefaultRValues );
+      llvm::Constant *llvmStruct = llvm::ConstantStruct::get( (llvm::StructType *)llvmRawType( context ), elementDefaultRValues );
 
       return new llvm::GlobalVariable(
         *basicBlockBuilder.getModuleBuilder(),

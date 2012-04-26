@@ -1,0 +1,51 @@
+//
+// Copyright 2010-2011 Fabric Technologies Inc. All rights reserved.
+//
+
+use Vec3, Vec4, Mat44;
+use Math;
+
+operator generateSpline(
+  io Container container,
+  io Vec3 positions<>,
+  io Integer indices[],
+  io Vec3 p1,
+  io Vec3 t1,
+  io Vec3 p2,
+  io Vec3 t2,
+  io Integer numSegments
+) {
+  
+  container.resize(Size(numSegments+1));
+  indices.resize(numSegments*2);
+  
+  //implementation : http://www.cubic.org/docs/hermite.htm
+  //construct the matrix (4x4) that defines the hermite polynomial
+  var Mat44 h;
+  h =  Mat44( 2, -2,  1,  1,
+             -3,  3, -2, -1,
+              0,  0,  1,  0,
+              1,  0,  0,  0);
+  
+  var Mat44 C = Mat44(p1.x, p1.y, p1.z, 0,
+                      p2.x, p2.y, p2.z, 0,
+                      t1.x, t1.y, t1.z, 0,
+                      t2.x, t2.y, t2.z, 0);
+  
+  //product of above matrices
+  var Mat44 hC = h*C;
+  var Integer indexid = 0;
+  for (var Integer i = 0; i < numSegments; i++) {
+    //calculate the interpolant between 0,1
+    var Scalar s = (Scalar(i) / Scalar(numSegments)) ;
+    var Vec4 S = Vec4(s*s*s, s*s, s, 1);
+    //Post-multiplying vector S with Matrix hC
+    var Vec4 p = S * hC;
+    positions[i] = Vec3(p.x, p.y, p.z);
+    indices[indexid++] = i;
+    indices[indexid++] = (i + 1);
+  }
+  //the very last point
+  positions[numSegments] = Vec3(p2);
+}
+

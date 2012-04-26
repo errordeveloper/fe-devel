@@ -27,7 +27,7 @@ function decode3DImageUShortData(
         FabricTeemNRRDLoadUShortFromFileHandle(resource.dataExternalLocation, imageWidth, imageHeight, imageDepth, imageUShortVoxels, xfoMat);
       break;
     default:
-      report "Unsupported 3D image format: " + ext;
+      report("Unsupported 3D image format: " + ext);
   }
 }
 

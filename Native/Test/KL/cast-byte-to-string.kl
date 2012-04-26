@@ -5,11 +5,11 @@
 operator entry()
 {
   var Byte byte = 17;
-  report byte;
+  report(byte);
   byte = 0;
-  report byte;
+  report(byte);
   byte = 255;
-  report byte;
+  report(byte);
   byte = 4;
-  report byte;
+  report(byte);
 }

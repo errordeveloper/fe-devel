@@ -98,6 +98,6 @@ __kernel void square(\n\
       else
         rowString += " ";
     }
-    report rowString;
+    report(rowString);
   }
 }

@@ -52,7 +52,7 @@ namespace Fabric
   inline std::string _( uint32_t uint32 )
   {
     char buffer[32];
-    snprintf( buffer, 32, "%d", (unsigned int)uint32 );
+    snprintf( buffer, 32, "%u", (unsigned int)uint32 );
     return std::string( buffer );
   }
 
@@ -64,7 +64,11 @@ namespace Fabric
   inline std::string _( size_t size )
   {
     char buffer[32];
+#if defined(FABRIC_OS_WINDOWS)
+    snprintf( buffer, 32, "%Iu", size );
+#else
     snprintf( buffer, 32, "%lu", (unsigned long)size );
+#endif
     return std::string( buffer );
   }
 #endif
@@ -73,7 +77,11 @@ namespace Fabric
   inline std::string _( uint64_t uint64 )
   {
     char buffer[32];
+#if defined(FABRIC_OS_WINDOWS)
+    snprintf( buffer, 32, "%I64u", uint64 );
+#else
     snprintf( buffer, 32, "%lu", (unsigned long)uint64 );
+#endif
     return std::string( buffer );
   }
   

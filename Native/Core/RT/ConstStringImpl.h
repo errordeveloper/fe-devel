@@ -27,8 +27,6 @@ namespace Fabric
           
       // Impl
     
-      virtual void setData( void const *src, void *dst ) const;
-      virtual void disposeDatasImpl( void *data, size_t count, size_t stride ) const;
       virtual std::string descData( void const *data ) const;
       virtual void const *getDefaultData() const;
       virtual bool equalsData( void const *lhs, void const *rhs ) const;
@@ -37,9 +35,6 @@ namespace Fabric
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
 
       virtual bool isEquivalentTo( RC::ConstHandle<RT::Impl> const &impl ) const;
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
-      virtual bool isExportable() const;
       
       // ConstStringImpl
 
@@ -60,9 +55,12 @@ namespace Fabric
     protected:
     
       ConstStringImpl( std::string const &codeName );
-      ~ConstStringImpl();
-   };
-  };
-};
+
+      virtual void initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
+    };
+  }
+}
 
 #endif //_FABRIC_RT_CONST_STRING_IMPL_H

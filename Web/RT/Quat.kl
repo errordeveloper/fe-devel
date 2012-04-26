@@ -108,7 +108,7 @@ function Quat.setFromMat33(in Mat33 mat) {
   if (trace > 0) {
     Scalar s = 2.0 * sqrt(trace + 1.0);
     this.w = 0.25 * s;
-    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report string
+    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report(string
       Math_reportBadDivisor( s, "Quat.setFromMat33" );
     Scalar invS = 1.0 / s;
     this.v.x = (mat.row2.y - mat.row1.z) * invS;
@@ -116,7 +116,7 @@ function Quat.setFromMat33(in Mat33 mat) {
     this.v.z = (mat.row1.x - mat.row0.y) * invS;
   }else if (mat.row0.x > mat.row1.y && mat.row0.x > mat.row2.z) {
     Scalar s = 2.0 * sqrt(1.0 + mat.row0.x - mat.row1.y - mat.row2.z);
-    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report string
+    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report(string
       Math_reportBadDivisor( s, "Quat.setFromMat33" );
     Scalar invS = 1.0 / s;
     this.w = (mat.row2.y - mat.row1.z) * invS;
@@ -126,7 +126,7 @@ function Quat.setFromMat33(in Mat33 mat) {
   }else if (mat.row1.y > mat.row2.z) {
     Scalar s = 2.0 * sqrt(1.0 + mat.row1.y - mat.row0.x - mat.row2.z);
     Scalar invS = 1.0 / s;
-    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report string
+    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report(string
       Math_reportBadDivisor( s, "Quat.setFromMat33" );
     this.w = (mat.row0.z - mat.row2.x) * invS;
     this.v.x = (mat.row0.y + mat.row1.x) * invS;
@@ -135,7 +135,7 @@ function Quat.setFromMat33(in Mat33 mat) {
   }else {
     Scalar s = 2.0 * sqrt(1.0 + mat.row2.z - mat.row0.x - mat.row1.y);
     Scalar invS = 1.0 / s;
-    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report string
+    if( Math_badDivisor( s ) )//Perf: check first to avoid building the report(string
       Math_reportBadDivisor( s, "Quat.setFromMat33" );
     this.w = (mat.row1.x - mat.row0.y) * invS;
     this.v.x = (mat.row0.z + mat.row2.x) * invS;
@@ -241,7 +241,7 @@ function Quat. /= (in Quat b) {
 }
 
 function Quat / (Quat a, Scalar b) {
-  if( Math_badDivisor( b ) )//Perf: check first to avoid building the report string
+  if( Math_badDivisor( b ) )//Perf: check first to avoid building the report(string
     Math_reportBadDivisor( b, "Quat.divide" );
   return a * (1.0 / b);
 }
@@ -275,7 +275,7 @@ function Scalar Quat.length() {
 
 function Quat Quat.unit() {
   Scalar n = this.length();
-  if( Math_badDivisor( n ) )//Perf: check first to avoid building the report string
+  if( Math_badDivisor( n ) )//Perf: check first to avoid building the report(string
     Math_reportBadDivisor( n, "Quat.unit" );
   return this / n;
 }
@@ -283,7 +283,7 @@ function Quat Quat.unit() {
 //TODO: uncomment when some 'mutable' keyword is implemented //Note: setUnit returns the previous length
 function /*Scalar*/ Quat.setUnit() {
   Scalar n = this.length();
-  if( Math_badDivisor( n ) )//Perf: check first to avoid building the report string
+  if( Math_badDivisor( n ) )//Perf: check first to avoid building the report(string
     Math_reportBadDivisor( n, "Quat.setUnit" );
   this /= n;
   //return n;

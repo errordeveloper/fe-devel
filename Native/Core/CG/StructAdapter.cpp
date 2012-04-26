@@ -38,13 +38,13 @@ namespace Fabric
       }
     }
     
-    llvm::Type const *StructAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *StructAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
-      std::vector<llvm::Type const *> memberLLVMTypes;
+      std::vector<llvm::Type *> memberLLVMTypes;
       memberLLVMTypes.reserve( m_memberAdapters.size() );
       for ( size_t i=0; i<m_memberAdapters.size(); ++i )
         memberLLVMTypes.push_back( m_memberAdapters[i]->llvmRawType( context ) );
-      return llvm::StructType::get( context->getLLVMContext(), memberLLVMTypes, true );
+      return llvm::StructType::create( context->getLLVMContext(), memberLLVMTypes, getCodeName(), true );
     }
 
     bool StructAdapter::hasMember( std::string const &memberName ) const
@@ -109,8 +109,6 @@ namespace Fabric
       for ( MemberAdaptorVector::const_iterator it=m_memberAdapters.begin(); it!=m_memberAdapters.end(); ++it )
         (*it)->llvmCompileToModule( moduleBuilder );
       
-      moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
-      
       static const bool buildFunctions = true;
       
       if ( !m_isShallow )
@@ -143,7 +141,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
@@ -213,7 +211,8 @@ namespace Fabric
         RC::ConstHandle<Adapter> const &memberAdapter = m_memberAdapters[i];
         memberDefaultRValues.push_back( memberAdapter->llvmDefaultValue( basicBlockBuilder ) );
       }
-      return llvm::ConstantStruct::get( basicBlockBuilder.getContext()->getLLVMContext(), memberDefaultRValues, true );
+      llvm::StructType *rawType = static_cast<llvm::StructType *>( llvmRawType( basicBlockBuilder.getContext() ) );
+      return llvm::ConstantStruct::get( rawType, memberDefaultRValues );
     }
       
     llvm::Constant *StructAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const

@@ -530,7 +530,7 @@ ln -s ~/Fabric/Web ~/public_html/Fabric
   <chapter xml:id="optexts">
     <title>Installing optional extensions</title>
     <section xml:id="optexts.kinect">
-      <title>Installing the Kinect Extension</title>
+      <title>Installing the Kinect Extension (Windows only)</title>
       <para>
         To install the Fabric Engine extension for supporting the Microsoft Kinect hardware, you first need to install the Kinect SDK. You can download the SDK on the official site: <link xlink:href="http://kinectforwindows.org/">Kinect for Windows</link>.
       </para>
@@ -548,7 +548,7 @@ ln -s ~/Fabric/Web ~/public_html/Fabric
       </para>
 
       <para>
-        Once the four extension files are put in the right place, along with the other Fabric Engine extensions, you should restart your browser, and try one of the Fabric Engine based applications utilizing the kinect, for example this one: <link xlink:href="http://demos.fabric-engine.com/Apps/Sample/Kinect/DepthPoints.html">Kinect Depth Points</link>
+        Once the extension files are put in the right place, along with the other Fabric Engine extensions, you should restart your browser, and try one of the Fabric Engine based applications utilizing the kinect, for example this one: <link xlink:href="http://demos.fabric-engine.com/Apps/Sample/Kinect/DepthPoints.html">Kinect Depth Points</link>
       </para>
 
       <para>

@@ -37,9 +37,9 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *FloatAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *FloatAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
-      llvm::Type const *result = 0;
+      llvm::Type *result = 0;
       switch ( m_floatDesc->getAllocSize() )
       {
         case 4:
@@ -79,7 +79,7 @@ namespace Fabric
       static const bool buildFunctions = true;
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -93,7 +93,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, byteAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, byteAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *byteLValue = functionBuilder[0];
@@ -107,7 +107,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, integerAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, integerAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *integerLValue = functionBuilder[0];
@@ -121,7 +121,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, sizeAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, sizeAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *sizeLValue = functionBuilder[0];
@@ -167,7 +167,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
@@ -211,11 +211,11 @@ namespace Fabric
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
           basicBlockBuilder->SetInsertPoint( functionBuilder.createBasicBlock( "entry" ) );
           static const size_t numIntrinsicTypes = 1;
-          llvm::Type const *intrinsicTypes[numIntrinsicTypes] =
+          llvm::Type *intrinsicTypes[numIntrinsicTypes] =
           {
             llvmRType( context )
           };
-          llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration( moduleBuilder, llvm::Intrinsic::sin, intrinsicTypes, numIntrinsicTypes );
+          llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration( moduleBuilder, llvm::Intrinsic::sin, llvm::ArrayRef<llvm::Type *>(intrinsicTypes, numIntrinsicTypes) );
           FABRIC_ASSERT( intrinsic );
           basicBlockBuilder->CreateRet( basicBlockBuilder->CreateCall( intrinsic, x ) );
         }
@@ -229,11 +229,11 @@ namespace Fabric
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
           basicBlockBuilder->SetInsertPoint( functionBuilder.createBasicBlock( "entry" ) );
           static const size_t numIntrinsicTypes = 1;
-          llvm::Type const *intrinsicTypes[numIntrinsicTypes] =
+          llvm::Type *intrinsicTypes[numIntrinsicTypes] =
           {
             llvmRType( context )
           };
-          llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration( moduleBuilder, llvm::Intrinsic::cos, intrinsicTypes, numIntrinsicTypes );
+          llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration( moduleBuilder, llvm::Intrinsic::cos, llvm::ArrayRef<llvm::Type *>(intrinsicTypes, numIntrinsicTypes) );
           FABRIC_ASSERT( intrinsic );
           basicBlockBuilder->CreateRet( basicBlockBuilder->CreateCall( intrinsic, x ) );
         }
@@ -256,11 +256,11 @@ namespace Fabric
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
           basicBlockBuilder->SetInsertPoint( functionBuilder.createBasicBlock( "entry" ) );
           static const size_t numIntrinsicTypes = 1;
-          llvm::Type const *intrinsicTypes[numIntrinsicTypes] =
+          llvm::Type *intrinsicTypes[numIntrinsicTypes] =
           {
             llvmRType( context )
           };
-          llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration( moduleBuilder, llvm::Intrinsic::sqrt, intrinsicTypes, numIntrinsicTypes );
+          llvm::Function *intrinsic = llvm::Intrinsic::getDeclaration( moduleBuilder, llvm::Intrinsic::sqrt, llvm::ArrayRef<llvm::Type *>(intrinsicTypes, numIntrinsicTypes) );
           FABRIC_ASSERT( intrinsic );
           basicBlockBuilder->CreateRet( basicBlockBuilder->CreateCall( intrinsic, x ) );
         }
@@ -270,7 +270,7 @@ namespace Fabric
         FunctionBuilder functionBuilder( moduleBuilder, this, "abs", "x", this, USAGE_RVALUE );
         if ( buildFunctions )
         {
-          llvm::Type const *integerTypeOfSameWidth = 0;
+          llvm::Type *integerTypeOfSameWidth = 0;
           switch ( m_floatDesc->getAllocSize() )
           {
             case 4:

@@ -100,7 +100,7 @@ namespace Fabric
       basicBlockBuilder->SetInsertPoint( mergeBB );
       if ( castExprType )
       {
-        llvm::PHINode *phi = basicBlockBuilder->CreatePHI( castExprType.getAdapter()->llvmRType( basicBlockBuilder.getContext() ) );
+        llvm::PHINode *phi = basicBlockBuilder->CreatePHI( castExprType.getAdapter()->llvmRType( basicBlockBuilder.getContext() ), 2 );
         phi->addIncoming( rhsCastedRValue, lhsTruePredBB );
         phi->addIncoming( lhsCastedRValue, lhsFalsePredBB );
         return CG::ExprValue( castExprType.getAdapter(), usage, basicBlockBuilder.getContext(), phi );

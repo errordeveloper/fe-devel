@@ -24,7 +24,7 @@ operator generateVolumeSlices(
   indices.resize(0);
 
   if(projection.row3.z == 0.0) {
-    report "Todo: support orthogaphic projections";
+    report("Todo: support orthogaphic projections");
     return;
   }
 

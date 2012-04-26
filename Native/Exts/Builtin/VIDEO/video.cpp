@@ -7,6 +7,12 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
+FABRIC_EXT_KL_STRUCT( RGB, {
+  KL::Byte r;
+  KL::Byte g;
+  KL::Byte b;
+} );
+
 #include <stdint.h>
 
 #ifdef _WIN32
@@ -89,16 +95,16 @@ public:
       sRegistered = true;
 
 #ifndef _WIN32
-      printf("\n-----------------------------\n");
-      printf("FabricVIDEO supported input formats: ");
+      Fabric::EDK::log("\n-----------------------------\n");
+      Fabric::EDK::log("FabricVIDEO supported input formats: ");
       for(AVInputFormat * fmt = first_iformat; fmt != NULL; fmt = fmt->next)
-        printf("%s, ",fmt->name);
-      printf("\n-----------------------------\n");
+        Fabric::EDK::log("%s, ",fmt->name);
+      Fabric::EDK::log("\n-----------------------------\n");
       
-      printf("FabricVIDEO supported output formats: ");
+      Fabric::EDK::log("FabricVIDEO supported output formats: ");
       for(AVOutputFormat * fmt = first_oformat; fmt != NULL; fmt = fmt->next)
-        printf("%s, ",fmt->name);
-      printf("\n-----------------------------\n\n");
+        Fabric::EDK::log("%s, ",fmt->name);
+      Fabric::EDK::log("\n-----------------------------\n\n");
 #endif
     }
     
@@ -438,18 +444,18 @@ public:
     return readNextFrame(loop);
   }
   
-  bool getAllPixels(KL::VariableArray<KL::RGB> &pixels)
+  bool getAllPixels(KL::VariableArray<RGB> &pixels)
   {
     if(!mReadOnly)
       return false;
     mHandle->width = getWidth();
     mHandle->height = getHeight();
     pixels.resize(getHeight() * getWidth());
-    memcpy(&pixels[0],mFrameRGB->data[0],sizeof(KL::RGB) * getHeight() * getWidth());
+    memcpy(&pixels[0],mFrameRGB->data[0],sizeof(RGB) * getHeight() * getWidth());
     return true;
   }
 
-  bool writeFrame(KL::VariableArray<KL::RGB> &pixels)
+  bool writeFrame(KL::VariableArray<RGB> &pixels)
   {
     if(mReadOnly)
       return false;
@@ -457,7 +463,7 @@ public:
     if(pixels.size() != getWidth() * getHeight())
       return false;
     
-    memcpy(mFrameRGB->data[0],&pixels[0],sizeof(KL::RGB) * getHeight() * getWidth());
+    memcpy(mFrameRGB->data[0],&pixels[0],sizeof(RGB) * getHeight() * getWidth());
 
     sws_scale(mConvertCtx, mFrameRGB->data, mFrameRGB->linesize, 0, getHeight(), mFrameYUV->data, mFrameYUV->linesize);
 
@@ -604,7 +610,7 @@ FABRIC_EXT_EXPORT void FabricVIDEOCreateFromFileHandle(
 
 FABRIC_EXT_EXPORT void FabricVIDEOGetAllPixels(
   videoHandle & handle,
-  KL::VariableArray<KL::RGB> &pixels
+  KL::VariableArray<RGB> &pixels
 )
 {
   if(handle.pointer == NULL)
@@ -614,7 +620,7 @@ FABRIC_EXT_EXPORT void FabricVIDEOGetAllPixels(
 
 FABRIC_EXT_EXPORT void FabricVIDEOWriteAllPixels(
   videoHandle & handle,
-  KL::VariableArray<KL::RGB> &pixels
+  KL::VariableArray<RGB> &pixels
 )
 {
   if(handle.pointer == NULL)

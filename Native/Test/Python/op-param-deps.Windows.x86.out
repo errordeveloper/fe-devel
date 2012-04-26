@@ -1,0 +1,8 @@
+parent input: input1
+child output: child: parent: input1
+[FABRIC] [MT] [WARNING] node 'parent': parameter 1: member 'output': dependency parameters should be 'in' type
+[FABRIC] [MT] [WARNING] node 'parent': parameter 1: dependency parameters should be 'in' type
+[FABRIC] [MT] [WARNING] node 'parent': parameter 1: member 'output': dependency parameters should be 'in' type
+[FABRIC] [MT] [WARNING] node 'parent': parameter 1: member 'output': dependency parameters should be 'in' type
+[FABRIC] [MT] [WARNING] node 'parent': parameter 1: dependency parameters should be 'in' type
+[FABRIC] [MT] [WARNING] node 'parent': parameter 1: member 'output': dependency parameters should be 'in' type

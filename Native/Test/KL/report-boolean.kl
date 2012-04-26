@@ -4,6 +4,6 @@
 
 operator entry()
 {
-  report true;
-  report false;
+  report(true);
+  report(false);
 }

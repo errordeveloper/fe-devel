@@ -19,7 +19,7 @@
 # if defined(FABRIC_OS_MACOSX)
 #  include <copyfile.h>
 # endif
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
 # include <windows.h>
 #endif 
 
@@ -29,7 +29,7 @@ namespace Fabric
   {
 #if defined(FABRIC_POSIX)
     static const char *s_pathSeparator = "/";
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
     static const char *s_pathSeparator = "\\";
 #else
 # error "Unsupported platform"
@@ -48,7 +48,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
         if ( ch == '/' )
           throw Exception("directory entries cannot contain '/'");
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         if ( strchr( "<>:\"/\\|?*", ch ) != 0 )
           throw Exception("directory entries cannot contain any of '<>:\"/\\|?*'");
 #else
@@ -95,7 +95,7 @@ namespace Fabric
         char const *homeDir = 0;
 #if defined(FABRIC_POSIX)
         homeDir = getenv( "HOME" );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         homeDir = getenv( "APPDATA" );
 #else
 # error "Unsupported platform"
@@ -106,7 +106,7 @@ namespace Fabric
         s_rootPath = JoinPath( homeDir, ".fabric" );
         if ( mkdir( s_rootPath.c_str(), 0777 ) && errno != EEXIST )
           throw Exception("unable to create directory " + _(s_rootPath));
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         s_rootPath = JoinPath( homeDir, "Fabric" );
         if ( !::CreateDirectoryA( s_rootPath.c_str(), NULL ) && ::GetLastError() != ERROR_ALREADY_EXISTS )
           throw Exception("unable to create directory " + _(s_rootPath));
@@ -219,7 +219,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
       if ( mkdir( fullPath.c_str(), 0777 ) && errno != EEXIST )
         throw Exception("unable to create directory");
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       if ( !::CreateDirectoryA( fullPath.c_str(), NULL ) && GetLastError() != ERROR_ALREADY_EXISTS )
         throw Exception("unable to create directory");
 #endif 
@@ -231,7 +231,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
       struct stat st;
       result = stat( fullPath.c_str(), &st ) == 0 && S_ISDIR(st.st_mode);
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       DWORD dwAttrib = ::GetFileAttributesA( fullPath.c_str() );
       result = (dwAttrib != INVALID_FILE_ATTRIBUTES)
       	&& (dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
@@ -245,7 +245,7 @@ namespace Fabric
 #if defined(FABRIC_POSIX)
       struct stat st;
       result = stat( fullPath.c_str(), &st ) == 0 && !S_ISDIR(st.st_mode);
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       DWORD dwAttrib = ::GetFileAttributesA( fullPath.c_str() );
       result = (dwAttrib != INVALID_FILE_ATTRIBUTES)
       	&& !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
@@ -261,7 +261,7 @@ namespace Fabric
       if( stat( fullPath.c_str(), &st ) != 0 || S_ISDIR(st.st_mode) )
         throw Exception("File doesn't exist");
       result = st.st_size;
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       WIN32_FILE_ATTRIBUTE_DATA fileInfo;
       if( !GetFileAttributesEx(fullPath.c_str(), GetFileExInfoStandard, (void*)&fileInfo)
             || fileInfo.dwFileAttributes == INVALID_FILE_ATTRIBUTES
@@ -322,7 +322,7 @@ namespace Fabric
         result.push_back( entry );
       }
       closedir( dir );
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       WIN32_FIND_DATAA fd;
       ::ZeroMemory( &fd, sizeof( fd ) );
       std::string searchGlob = JoinPath( dirPath.length() > 0? dirPath.c_str(): ".", "*" );
@@ -387,7 +387,7 @@ namespace Fabric
       
       close(file1);
       close(file2);
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       if( ::CopyFile( sourceFullPath.c_str(), targetFullPath.c_str(), FALSE ) == FALSE )
         throw Exception("file copy failed");
 #endif
@@ -397,7 +397,7 @@ namespace Fabric
     {
 #if defined(FABRIC_POSIX)
       return strcasecmp( lhs.c_str(), rhs.c_str() ) == 0;
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
       return stricmp( lhs.c_str(), rhs.c_str() ) == 0;
 #endif
     }
@@ -414,7 +414,7 @@ namespace Fabric
         
 #if defined(FABRIC_POSIX)
         char dirSep = '/';
-#elif defined(FABRIC_WIN32)
+#elif defined(FABRIC_OS_WINDOWS)
         char dirSep = '\\';
 #endif
         size_t dirSepPos = dirPathSpec.rfind( dirSep, asteriskPos );

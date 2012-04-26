@@ -91,7 +91,7 @@ namespace Fabric
         throw CG::Error( getLocation(), "input must be an array producer" );
       RC::ConstHandle<CG::ArrayProducerAdapter> ioArrayProducerAdapter = RC::ConstHandle<CG::ArrayProducerAdapter>::StaticCast( inputExprType.getAdapter() );
       RC::ConstHandle<CG::Adapter> inputAdapter = ioArrayProducerAdapter->getElementAdapter();
-      if ( operatorParams[0].getAdapter() != inputAdapter )
+      if ( !operatorParams[0].getAdapter()->isEquivalentTo( inputAdapter ) )
         throw CG::Error( getLocation(), "operator value parameter type (" + operatorParams[0].getAdapter()->getUserName() + ") does not match input array producer element type (" + inputAdapter->getUserName() + ")" );
       if ( operatorParams[0].getUsage() != CG::USAGE_LVALUE )
         throw CG::Error( getLocation(), "operator value parameter must be an 'io' parameter" );
@@ -113,17 +113,17 @@ namespace Fabric
       bool needCall = true;
       if ( operatorParams.size() >= 2 )
       {
-        if ( operatorParams[1].getAdapter() != sizeAdapter )
-          throw CG::Error( getLocation(), "operator index parameter type (" + operatorParams[1].getAdapter()->getUserName() + ") must be 'Size'" );
+        if ( !operatorParams[1].getAdapter()->isEquivalentTo( sizeAdapter ) )
+          throw CG::Error( getLocation(), "operator index parameter type (" + operatorParams[1].getAdapter()->getUserName() + ") must be 'Index'" );
         if ( operatorParams[1].getUsage() != CG::USAGE_RVALUE )
           throw CG::Error( getLocation(), "operator index parameter must be an 'in' parameter" );
           
         if ( operatorParams.size() >= 3 )
         {
-          if ( operatorParams[2].getAdapter() != sizeAdapter )
-            throw CG::Error( getLocation(), "operator index parameter type (" + operatorParams[2].getAdapter()->getUserName() + ") must be 'Size'" );
+          if ( !operatorParams[2].getAdapter()->isEquivalentTo( sizeAdapter ) )
+            throw CG::Error( getLocation(), "operator count parameter type (" + operatorParams[2].getAdapter()->getUserName() + ") must be 'Size'" );
           if ( operatorParams[2].getUsage() != CG::USAGE_RVALUE )
-            throw CG::Error( getLocation(), "operator index parameter must be an 'in' parameter" );
+            throw CG::Error( getLocation(), "operator count parameter must be an 'in' parameter" );
             
           if ( operatorParams.size() >= 4 )
           {
@@ -146,13 +146,13 @@ namespace Fabric
 
             CG::ExprValue sharedExprRValue = m_shared->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, lValueErrorDesc );
 
-            std::vector<llvm::Type const *> argTypes;
+            std::vector<llvm::Type *> argTypes;
             argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) ); // function
             argTypes.push_back( sizeAdapter->llvmRType( context ) ); // numParams
             argTypes.push_back( ioArrayProducerAdapter->llvmLType( context ) ); // input array producer
             argTypes.push_back( sharedValueProducerAdapter->llvmLType( context ) ); // shared array producer
             argTypes.push_back( ioArrayProducerAdapter->llvmLType( context ) ); // output array producer
-            llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+            llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
             llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateArrayTransform_4", funcType );
             
             std::vector<llvm::Value *> args;
@@ -164,7 +164,7 @@ namespace Fabric
             args.push_back( inputExprRValue.getValue() );
             args.push_back( sharedExprRValue.getValue() );
             args.push_back( resultLValue );
-            basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+            basicBlockBuilder->CreateCall( func, args );
             
             needCall = false;
           }
@@ -173,12 +173,12 @@ namespace Fabric
       
       if ( needCall )
       {
-        std::vector<llvm::Type const *> argTypes;
+        std::vector<llvm::Type *> argTypes;
         argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) ); // function
         argTypes.push_back( sizeAdapter->llvmRType( context ) ); // numParams
         argTypes.push_back( ioArrayProducerAdapter->llvmLType( context ) ); // input array producer
         argTypes.push_back( ioArrayProducerAdapter->llvmLType( context ) ); // output array producer
-        llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+        llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
         llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateArrayTransform_3", funcType );
         
         std::vector<llvm::Value *> args;
@@ -189,7 +189,7 @@ namespace Fabric
         args.push_back( sizeAdapter->llvmConst( context, operatorParams.size() ) );
         args.push_back( inputExprRValue.getValue() );
         args.push_back( resultLValue );
-        basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+        basicBlockBuilder->CreateCall( func, args );
       }
 
       return CG::ExprValue(

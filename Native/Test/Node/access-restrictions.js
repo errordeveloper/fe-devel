@@ -5,7 +5,7 @@
 FABRIC = require('Fabric').createClient();
 
 op = FABRIC.DependencyGraph.createOperator("foo");
-op.setEntryFunctionName("entry");
+op.setEntryPoint("entry");
 op.setSourceCode("\
 operator entry( io Integer element, io Integer slice[] )\n\
 {\n\

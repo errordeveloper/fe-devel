@@ -19,5 +19,5 @@ function Vec3 ( Scalar x, Scalar y, Scalar z )
 operator entry()
 {
   var Vec3 var3( 3.1, 6.7, 2.9 );
-  report var3;
+  report(var3);
 }

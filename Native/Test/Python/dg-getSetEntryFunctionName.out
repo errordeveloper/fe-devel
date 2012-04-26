@@ -1,0 +1,4 @@
+Warning: setEntryFunctionName() is deprecated and will be removed in a future version; use setEntryPoint() instead
+operator entry() { report('Hello'); }
+Warning: getEntryFunctionName() is deprecated and will be removed in a future version; use getEntryPoint() instead
+entry

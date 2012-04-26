@@ -64,9 +64,6 @@ namespace Fabric
       void removeDependency( std::string const &dependencyName );
       RC::Handle<Node> getDependency( std::string const &dependencyName ) const;
       Dependencies const &getDependencies() const;
-
-      void addDependent( RC::Handle<Node> const &childNode );
-      void removeDependent( RC::Handle<Node> const &childNode );
       Dependents const &getDependents() const;
       
       RC::Handle<BindingList> getBindingList() const;
@@ -98,6 +95,7 @@ namespace Fabric
     
       Node( std::string const &name, RC::Handle<Context> const &context );
       ~Node();
+      virtual void destroy();
       
       virtual void setOutOfDate();
 

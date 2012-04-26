@@ -25,7 +25,7 @@ op.setSourceCode(
 '  cache[frameIndex] = pixels;\n'+
 '}\n'
 );
-op.setEntryFunctionName("videoSeekTime");
+op.setEntryPoint("videoSeekTime");
 if (op.getErrors().length > 0) {
   console.log(op.getErrors());
   if (op.getDiagnostics().length > 0) {

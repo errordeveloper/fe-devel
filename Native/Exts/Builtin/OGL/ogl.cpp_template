@@ -16,6 +16,42 @@ IMPLEMENT_FABRIC_EDK_ENTRIES
 
 using namespace Fabric::EDK;
 
+FABRIC_EXT_KL_STRUCT( Vec2, {
+  KL::Float32 x;
+  KL::Float32 y;
+} );
+
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
+FABRIC_EXT_KL_STRUCT( Vec4, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+  KL::Float32 t;
+} );
+
+FABRIC_EXT_KL_STRUCT( Mat22, {
+  Vec2 row0;
+  Vec2 row1;
+} );
+
+FABRIC_EXT_KL_STRUCT( Mat33, {
+  Vec3 row0;
+  Vec3 row1;
+  Vec3 row2;
+} );
+
+FABRIC_EXT_KL_STRUCT( Mat44, {
+  Vec4 row0;
+  Vec4 row1;
+  Vec4 row2;
+  Vec4 row3;
+} );
+
 static bool fglDebuggingEnabled = false;
 
 static unsigned int gBracket = 0;
@@ -35,11 +71,10 @@ static void _clearError()
 {
   if(!gGlewInitialized){
     if (fglDebuggingEnabled)
-      printf("glewInit();\n");
+      log("glewInit();\n");
     GLenum error = glewInit();
     if(error != GLEW_OK)
     {
-      printf("[Fabric::OGL::glewInit] ERROR: %s\n",(const char*)glewGetErrorString(error));
       throwException("[Fabric::OGL::glewInit] ERROR: %s",(const char*)glewGetErrorString(error));
     }
     gGlewInitialized = true;
@@ -87,7 +122,6 @@ static void _checkError(const char * functionName)
 			}
       glError = glGetError();
     } while ( glError != GL_NO_ERROR );
-    printf( "%s\n", buf );
     throwException( "%s", buf );
   }
 }
@@ -110,7 +144,7 @@ FABRIC_EXT_EXPORT void glGetVersion_wrapper(KL::String & result)
 FABRIC_EXT_EXPORT void glewIsSupported_wrapper(KL::String & token, KL::Boolean & supported)
 {
   _clearError();
-  printf("querying glewSupported: %s\n",token.data());
+  log("querying glewSupported: %s\n",token.data());
   supported = glewIsSupported(token.data());
 }
 

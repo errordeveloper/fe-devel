@@ -39,7 +39,7 @@ node.addMember( 'shaderSources', 'ShaderSource[]' )
 node.setData( 'shaderSources', sources )
 
 op = fabricClient.DependencyGraph.createOperator("bar")
-op.setEntryFunctionName("bar")
+op.setEntryPoint("bar")
 op.setSourceCode(klCode)
 
 binding = fabricClient.DependencyGraph.createBinding()

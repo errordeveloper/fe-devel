@@ -76,7 +76,7 @@ namespace Fabric
       
     void Binding::setPrototype( std::vector<std::string> const &parameterDescs )
     {
-      Prototype *newPrototype = new Prototype( m_context->getCGManager() );
+      Prototype *newPrototype = new Prototype( m_context );
       newPrototype->setDescs( parameterDescs );
       delete m_prototype;
       m_prototype = newPrototype;

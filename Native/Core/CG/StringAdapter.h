@@ -49,6 +49,7 @@ namespace Fabric
       // StringAdapter
 
       void llvmReport( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *stringRValue ) const;
+      void llvmThrow( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *stringRValue ) const;
 
       llvm::Value *llvmCallLength( BasicBlockBuilder &basicBlockBuilder, llvm::Value *stringRValue ) const;
       void llvmCallCast( BasicBlockBuilder &basicBlockBuilder, RC::ConstHandle<Adapter> const &adapter, llvm::Value *srcLValue, llvm::Value *dstLValue ) const;
@@ -58,9 +59,9 @@ namespace Fabric
       
       StringAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::StringDesc> const &stringDesc );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
 
-      llvm::Type const *getLLVMImplType( RC::Handle<Context> const &context ) const;
+      llvm::Type *getLLVMImplType( RC::Handle<Context> const &context ) const;
 
       void llvmRetain( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;
       void llvmRelease( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;
@@ -69,6 +70,7 @@ namespace Fabric
       
       static void Append( void *dstLValue, void const *srcRValue );
       static void Cast( Adapter const *adapter, void const *srcLValue, void *dstLValue );
+      static void Throw( void const *lValue );
       
       RC::ConstHandle<RT::StringDesc> m_stringDesc;
     };

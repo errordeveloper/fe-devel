@@ -13,8 +13,8 @@ namespace Fabric
   namespace RT
   {
     BooleanImpl::BooleanImpl( std::string const &codeName )
-      : SimpleImpl( codeName, DT_BOOLEAN, sizeof(bool) )
     {
+      initialize( codeName, DT_BOOLEAN, sizeof(bool) );
     }
     
     void BooleanImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
@@ -22,9 +22,32 @@ namespace Fabric
       encoder.makeBoolean( getValue(data) );
     }
     
-    void BooleanImpl::setData( void const *src, void *dst ) const
+    void BooleanImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      setValue( getValue( src ), dst );
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        setValue( getValue( src ), dst );
+        src += srcStride;
+        dst += dstStride;
+      }
+    }
+    
+    void BooleanImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        setValue( getValue( src ), dst );
+        src += srcStride;
+        dst += dstStride;
+      }
     }
     
     void const *BooleanImpl::getDefaultData() const
@@ -53,5 +76,5 @@ namespace Fabric
     {
       return int( getValue( lhsData ) ) - int( getValue( rhsData ) );
     }
-  };
-};
+  }
+}

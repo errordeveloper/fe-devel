@@ -103,7 +103,7 @@ FABRIC_EXT_EXPORT void FabricFileStream_Open(
       stream.m_data->mSize = boost::filesystem::file_size(path);
       stream.m_data->mSeek = stream.m_data->mSize;
     }
-#ifdef FABRIC_WIN32
+#ifdef FABRIC_OS_WINDOWS
     // Make sure we write the file in binary mode on Windows platforms
     modeStr += 'b';
 #endif

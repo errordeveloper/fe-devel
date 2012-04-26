@@ -112,7 +112,7 @@ namespace Fabric
       
       size_t elementSize = inputElementDesc->getAllocSize();
       void *inputData = alloca( elementSize );
-      memset( inputData, 0, elementSize );
+      inputElementDesc->initializeData( 0, inputData );
       m_inputArrayProducerComputeState->produce( index, inputData );
       
       RC::ConstHandle<ArrayIOOperator> arrayIOOperator = m_arrayMap->m_arrayIOOperator;

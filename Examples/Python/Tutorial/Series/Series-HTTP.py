@@ -17,7 +17,7 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
 
     computeTermOp = fabricClient.DG.createOperator("computeTermOp")
     computeTermOp.setSourceCode('computeTerm.kl', open('computeTerm.kl').read())
-    computeTermOp.setEntryFunctionName('computeTerm')
+    computeTermOp.setEntryPoint('computeTerm')
 
     # Create the binding that binds the computeTermOp to the
     # terms node.  A binding binds the members of the node
@@ -44,7 +44,7 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
 
     sumTermsOp = fabricClient.DG.createOperator("sumTermsOp")
     sumTermsOp.setSourceCode('sumTerms.kl', open('sumTerms.kl').read())
-    sumTermsOp.setEntryFunctionName('sumTerms')
+    sumTermsOp.setEntryPoint('sumTerms')
 
     # Create the binding that binds sumTermsOp to the members of
     # sumNode
@@ -67,23 +67,21 @@ class FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
     sumNode.setDependency(termsNode, "terms")
     sumNode.bindings.append(sumTermsBinding)
 
-    def callback():
-      # Return the result as the HTTP content
+    # Evaluate the sumNode
 
-      self.send_response( 200 )
-      self.send_header( 'Content-type', 'text/plain' )
-      self.end_headers()
-      self.wfile.write( str(sumNode.getData('result', 0)) + '\n' )
+    sumNode.evaluate()
 
-      # Close the Fabric Engine client.  If the client isn't closed
-      # then Fabric Python client will keep this script alive!
+    # Return the result as the HTTP content
 
-      fabricClient.close()
+    self.send_response( 200 )
+    self.send_header( 'Content-type', 'text/plain' )
+    self.end_headers()
+    self.wfile.write( str(sumNode.getData('result', 0)) + '\n' )
 
-    # Evaluate the sumNode asynchronously.  The given
-    # callback is issue when the computation is done.
+    # Close the Fabric Engine client.  If the client isn't closed
+    # then Fabric Python client will keep this script alive!
 
-    sumNode.evaluateAsync( callback )
+    fabricClient.close()
 
 # Create the HTTP server
 port = 1337

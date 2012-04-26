@@ -6,7 +6,7 @@ import fabric
 fabricClient = fabric.createClient()
 
 loadOp = fabricClient.DependencyGraph.createOperator("load")
-loadOp.setEntryFunctionName("load")
+loadOp.setEntryPoint("load")
 loadOp.setSourceCode('\
 require FabricOBJ;\n\
 \n\
@@ -16,8 +16,8 @@ operator load(\n\
   io OBJDataHandle objParseHandle\n\
   )\n\
 {\n\
-  report "Loaded " + url + " (mime type " + resource.mimeType + ")";\n\
-  report "OBJ data size is " + resource.data.dataSize();\n\
+  report("Loaded " + url + " (mime type " + resource.mimeType + ")");\n\
+  report("OBJ data size is " + resource.data.dataSize());\n\
   FabricOBJDecode(resource.data.data(), resource.data.dataSize(), false, false, false, objParseHandle);\n\
 }\n\
 ')
@@ -39,7 +39,7 @@ rlnode.bindings.append(loadOpBinding)
 rlnode.setData("url", 0, "testfile://test.obj")
 
 resizeOp = fabricClient.DependencyGraph.createOperator("resize")
-resizeOp.setEntryFunctionName("resize")
+resizeOp.setEntryPoint("resize")
 resizeOp.setSourceCode('\
 require FabricOBJ;\n\
 operator resize(\n\
@@ -50,7 +50,7 @@ operator resize(\n\
   Size newSize;\n\
   FabricOBJGetNbEntityPoints(objParseHandle, -1, newSize);\n\
   container.resize(newSize);\n\
-  report "rlnode: resized to " + newSize + " points";\n\
+  report("rlnode: resized to " + newSize + " points");\n\
 }\n\
 ')
 
@@ -65,7 +65,7 @@ resizeBinding.setParameterLayout([
 ])
 
 setDataOp = fabricClient.DependencyGraph.createOperator("setData")
-setDataOp.setEntryFunctionName("setData")
+setDataOp.setEntryPoint("setData")
 setDataOp.setSourceCode('\
 require FabricOBJ;\n\
 operator setData(\n\
@@ -74,7 +74,7 @@ operator setData(\n\
   )\n\
 {\n\
   FabricOBJGetEntityPointsSliced(objParseHandle, -1, positions);\n\
-  report "rlnode: setData to " + positions.size + " points";\n\
+  report("rlnode: setData to " + positions.size + " points");\n\
   FabricOBJFreeParsedData(objParseHandle);\n\
 }\n\
 ')

@@ -35,7 +35,7 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *FixedArrayAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *FixedArrayAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       return llvm::ArrayType::get( m_memberAdapter->llvmRawType( context ), m_length );
     }
@@ -61,8 +61,6 @@ namespace Fabric
       RC::ConstHandle<ConstStringAdapter> constStringAdapter = getManager()->getConstStringAdapter();
       constStringAdapter->llvmCompileToModule( moduleBuilder );
 
-      moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
-      
       static const bool buildFunctions = true;
       bool const guarded = moduleBuilder.getCompileOptions()->getGuarded();
       
@@ -264,7 +262,7 @@ namespace Fabric
       }
 
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -278,7 +276,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
@@ -349,7 +347,7 @@ namespace Fabric
     {
       std::vector<llvm::Constant *> elementDefaultRValues;
       elementDefaultRValues.resize( m_length, m_memberAdapter->llvmDefaultValue( basicBlockBuilder ) );
-      return llvm::ConstantArray::get( (llvm::ArrayType const *)llvmRawType( basicBlockBuilder.getContext() ), elementDefaultRValues );
+      return llvm::ConstantArray::get( (llvm::ArrayType *)llvmRawType( basicBlockBuilder.getContext() ), elementDefaultRValues );
     }
     
     llvm::Constant *FixedArrayAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const
@@ -391,7 +389,7 @@ namespace Fabric
       args.push_back( indexRValue );
       if ( guarded )
         args.push_back( llvmLocationConstStringRValue( basicBlockBuilder, constStringAdapter, location ) );
-      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args.begin(), args.end() );
+      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args );
     }
 
 
@@ -416,7 +414,7 @@ namespace Fabric
       args.push_back( indexRValue );
       if ( guarded )
         args.push_back( llvmLocationConstStringRValue( basicBlockBuilder, constStringAdapter, location ) );
-      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args.begin(), args.end() );
+      return basicBlockBuilder->CreateCall( functionBuilder.getLLVMFunction(), args );
     }
     
     void FixedArrayAdapter::llvmDefaultAssign( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *dstLValue, llvm::Value *srcRValue ) const

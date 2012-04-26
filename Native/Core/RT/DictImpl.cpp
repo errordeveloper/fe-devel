@@ -24,54 +24,72 @@ namespace Fabric
       RC::ConstHandle<ComparableImpl> const &keyImpl,
       RC::ConstHandle<Impl> const &valueImpl
       )
-      : Impl( codeName, DT_DICT )
-      , m_keyImpl( keyImpl )
+      : m_keyImpl( keyImpl )
       , m_keySize( keyImpl->getAllocSize() )
-      , m_keyIsShallow( keyImpl->isShallow() )
-      , m_keyIsNoAliasSafe( keyImpl->isNoAliasSafe() )
       , m_valueImpl( valueImpl )
       , m_valueSize( valueImpl->getAllocSize() )
-      , m_valueIsShallow( valueImpl->isShallow() )
-      , m_valueIsNoAliasSafe( valueImpl->isNoAliasSafe() )
       , m_nodeSize( sizeof(node_t) + m_keySize + m_valueSize )
     {
-      setSize( sizeof(bits_t) );
+      size_t flags = 0;
+      if ( keyImpl->isNoAliasUnsafe() || valueImpl->isNoAliasUnsafe() )
+        flags |= FlagNoAliasUnsafe;
+      if ( m_keyImpl->isExportable() && m_valueImpl->isExportable() )
+        flags |= FlagExportable;
+      initialize( codeName, DT_DICT, sizeof(bits_t *), flags );
     }
     
     void const *DictImpl::getDefaultData() const
     {
-      static bits_t defaultData;
-      static bool defaultDataInitialized = false;
-      if ( !defaultDataInitialized )
-      {
-        memset( &defaultData, 0, sizeof(bits_t) );
-        defaultDataInitialized = true;
-      }
+      static bits_t *defaultData;
       return &defaultData;
     }
 
-    void DictImpl::setData( void const *srcData, void *dstData ) const
+    void DictImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      disposeData( dstData );
-      memset( dstData, 0, sizeof(bits_t) );
-      
-      bits_t const *srcBits = reinterpret_cast<bits_t const *>( srcData );
-      node_t const *node = srcBits->firstNode;
-      while ( node )
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+      while ( dst != dstEnd )
       {
-        void const *srcKeyData = immutableKeyData( node );
-        void const *srcValueData = immutableValueData( node );
-        m_valueImpl->setData( srcValueData, getMutable( dstData, srcKeyData ) );
-        node = node->bitsNextNode;
+        bits_t *srcBits;
+        if ( src )
+        {
+          srcBits = *reinterpret_cast<bits_t * const *>( src );
+          if ( srcBits )
+            srcBits->refCount.increment();
+          src += srcStride;
+        }
+        else srcBits = 0;
+        *reinterpret_cast<bits_t **>( dst ) = srcBits;
+        dst += dstStride;
+      }
+    }
+
+    void DictImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+      while ( dst != dstEnd )
+      {
+        bits_t *bits = *reinterpret_cast<bits_t **>( dst );
+        if ( bits && bits->refCount.decrementAndGetValue() == 0 )
+        {
+          disposeBits( bits );
+          free( bits );
+        }
+        bits = *reinterpret_cast<bits_t * const *>( src );
+        if ( bits )
+          bits->refCount.increment();
+        *reinterpret_cast<bits_t **>( dst ) = bits;
+        src += srcStride;
+        dst += dstStride;
       }
     }
     
     void DictImpl::disposeNode( node_t *node ) const
     {
-      if ( !m_keyIsShallow )
-        m_keyImpl->disposeData( mutableKeyData( node ) );
-      if ( !m_valueIsShallow )
-        m_valueImpl->disposeData( mutableValueData( node ) );
+      m_keyImpl->disposeData( mutableKeyData( node ) );
+      m_valueImpl->disposeData( mutableValueData( node ) );
       free( node );
     }
     
@@ -87,14 +105,17 @@ namespace Fabric
       free( bits->buckets );
     }
 
-    void DictImpl::disposeDatasImpl( void *_data, size_t count, size_t stride ) const
+    void DictImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *data = static_cast<uint8_t *>( _data );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
-        bits_t *bits = reinterpret_cast<bits_t *>(data);
-        disposeBits( bits );
+        bits_t *bits = *reinterpret_cast<bits_t **>(data);
+        if ( bits && bits->refCount.decrementAndGetValue() == 0 )
+        {
+          disposeBits( bits );
+          free( bits );
+        }
         data += stride;
       }
     }
@@ -113,8 +134,8 @@ namespace Fabric
     
     bool DictImpl::has( void const *data, void const *keyData ) const
     {
-      bits_t const *bits = reinterpret_cast<bits_t const *>( data );
-      if ( bits->bucketCount > 0 )
+      bits_t const *bits = *reinterpret_cast<bits_t const * const *>( data );
+      if ( bits && bits->bucketCount > 0 )
       {
         size_t keyHash = m_keyImpl->hash( keyData );
         size_t bucketIndex = keyHash & (bits->bucketCount - 1);
@@ -138,8 +159,8 @@ namespace Fabric
     
     void const *DictImpl::getImmutable( void const *data, void const *keyData ) const
     {
-      bits_t const *bits = reinterpret_cast<bits_t const *>( data );
-      if ( bits->bucketCount > 0 )
+      bits_t const *bits = *reinterpret_cast<bits_t const * const *>( data );
+      if ( bits && bits->bucketCount > 0 )
       {
         size_t keyHash = m_keyImpl->hash( keyData );
         size_t bucketIndex = keyHash & (bits->bucketCount - 1);
@@ -250,16 +271,32 @@ namespace Fabric
       
       // Set the key and default value, and return the value data
       
-      memset( &node->keyAndValue[0], 0, m_keySize + m_valueSize );
-      m_keyImpl->setData( keyData, mutableKeyData( node ) );
+      void *dstKeyData = mutableKeyData( node );
+      m_keyImpl->initializeData( keyData, dstKeyData );
       void *valueData = mutableValueData( node );
-      m_valueImpl->setData( m_valueImpl->getDefaultData(), valueData );
+      m_valueImpl->initializeData( m_valueImpl->getDefaultData(), valueData );
       return valueData;
     }
     
     void *DictImpl::getMutable( void *data, void const *keyData ) const
     {
-      bits_t *bits = reinterpret_cast<bits_t *>( data );
+      bits_t *bits = prepareForModify( data );
+      if ( !bits )
+      {
+        bits = static_cast<bits_t *>( malloc( sizeof(bits_t) ) );
+        bits->refCount.setValue( 1 );
+        bits->bucketCount = 0;
+        bits->nodeCount = 0;
+        bits->firstNode = 0;
+        bits->lastNode = 0;
+        bits->buckets = 0;
+        *reinterpret_cast<bits_t **>( data ) = bits;
+      }
+      return getMutable( bits, keyData );
+    }
+
+    void *DictImpl::getMutable( bits_t *bits, void const *keyData ) const
+    {
       // [pzion 20111017] Only maybe resize when our node count
       // is zero or a power of two minus one
       if ( (bits->nodeCount & (bits->nodeCount - 1)) == 0 )
@@ -278,7 +315,7 @@ namespace Fabric
         keyImplAsStringImpl = RC::ConstHandle<StringImpl>::StaticCast( m_keyImpl );
       
       JSON::ObjectEncoder objectEncoder = encoder.makeObject();
-      bits_t const *bits = reinterpret_cast<bits_t const *>( data );
+      bits_t const *bits = *reinterpret_cast<bits_t const * const *>( data );
       if ( bits )
       {
         node_t *node = bits->firstNode;
@@ -315,10 +352,10 @@ namespace Fabric
         keyImplAsStringImpl = RC::ConstHandle<StringImpl>::StaticCast( m_keyImpl );
       
       disposeData( data );
-      memset( data, 0, sizeof(bits_t) );
+      memset( data, 0, sizeof(bits_t *) );
         
       void *keyData = alloca( m_keySize );
-      memset( keyData, 0, m_keySize );
+      m_keyImpl->initializeData( m_keyImpl->getDefaultData(), keyData );
       JSON::ObjectDecoder jsonObjectDecoder( entity );
       JSON::Entity keyString, valueEntity;
       while ( jsonObjectDecoder.getNext( keyString, valueEntity ) )
@@ -421,8 +458,8 @@ namespace Fabric
     
     void DictImpl::delete_( void *data, void const *keyData ) const
     {
-      bits_t *bits = reinterpret_cast<bits_t *>( data );
-      if ( bits->bucketCount > 0 )
+      bits_t *bits = *reinterpret_cast<bits_t **>( data );
+      if ( bits && bits->bucketCount > 0 )
       {
         size_t keyHash = m_keyImpl->hash( keyData );
         size_t bucketIndex = keyHash & (bits->bucketCount - 1);
@@ -433,20 +470,23 @@ namespace Fabric
     
     void DictImpl::clear( void *data ) const
     {
-      bits_t *bits = reinterpret_cast<bits_t *>( data );
-      node_t *node = bits->firstNode;
-      while ( node )
+      bits_t *bits = *reinterpret_cast<bits_t **>( data );
+      if ( bits )
       {
-        node_t *nextNode = node->bitsNextNode;
-        disposeNode( node );
-        node = nextNode;
-      }
-      bits->nodeCount = 0;
-      bits->firstNode = bits->lastNode = 0;
-      for ( size_t i=0; i<bits->bucketCount; ++i )
-      {
-        bucket_t *bucket = &bits->buckets[i];
-        bucket->firstNode = bucket->lastNode = 0;
+        node_t *node = bits->firstNode;
+        while ( node )
+        {
+          node_t *nextNode = node->bitsNextNode;
+          disposeNode( node );
+          node = nextNode;
+        }
+        bits->nodeCount = 0;
+        bits->firstNode = bits->lastNode = 0;
+        for ( size_t i=0; i<bits->bucketCount; ++i )
+        {
+          bucket_t *bucket = &bits->buckets[i];
+          bucket->firstNode = bucket->lastNode = 0;
+        }
       }
     }
     
@@ -454,7 +494,7 @@ namespace Fabric
     {
       size_t numDisplayed = 0;
       std::string result = "{";
-      bits_t const *bits = reinterpret_cast<bits_t const *>( data );
+      bits_t const *bits = *reinterpret_cast<bits_t const * const *>( data );
       if ( bits )
       {
         node_t *node = bits->firstNode;
@@ -484,16 +524,6 @@ namespace Fabric
       return descData( data, 16 );
     }
     
-    bool DictImpl::isShallow() const
-    {
-      return false;
-    }
-    
-    bool DictImpl::isNoAliasSafe() const
-    {
-      return m_keyIsNoAliasSafe && m_valueIsNoAliasSafe;
-    }
-    
     bool DictImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const
     {
       if ( !isDict( that->getType() ) )
@@ -507,8 +537,8 @@ namespace Fabric
     size_t DictImpl::getSize( void const *data ) const
     {
       FABRIC_ASSERT( data );
-      bits_t const *bits = static_cast<bits_t const *>(data);
-      return bits->nodeCount;
+      bits_t const *bits = *static_cast<bits_t const * const *>(data);
+      return bits? bits->nodeCount: 0;
     }
     
     bool DictImpl::equalsData( void const *lhs, void const *rhs ) const
@@ -519,25 +549,55 @@ namespace Fabric
 
     size_t DictImpl::getIndirectMemoryUsage( void const *data ) const
     {
-      bits_t const *bits = reinterpret_cast<bits_t const *>( data );
-      size_t total = bits->bucketCount * sizeof( bucket_t );
-      for ( size_t i=0; i<bits->bucketCount; ++i )
+      size_t total = 0;
+      bits_t const *bits = *reinterpret_cast<bits_t const * const *>( data );
+      if ( bits )
       {
-        node_t const *node = bits->buckets[i].firstNode;
-        while ( node )
+        total += bits->bucketCount * sizeof( bucket_t );
+        for ( size_t i=0; i<bits->bucketCount; ++i )
         {
-          total += sizeof( node )
-            + m_keyImpl->getAllocSize() + m_keyImpl->getIndirectMemoryUsage( immutableKeyData( node ) )
-            + m_valueImpl->getAllocSize() + m_valueImpl->getIndirectMemoryUsage( immutableValueData( node ) );
-          node = node->bucketNextNode;
+          node_t const *node = bits->buckets[i].firstNode;
+          while ( node )
+          {
+            total += sizeof( node )
+              + m_keyImpl->getAllocSize() + m_keyImpl->getIndirectMemoryUsage( immutableKeyData( node ) )
+              + m_valueImpl->getAllocSize() + m_valueImpl->getIndirectMemoryUsage( immutableValueData( node ) );
+            node = node->bucketNextNode;
+          }
         }
       }
       return total;
     }
 
-    bool DictImpl::isExportable() const
+    DictImpl::bits_t *DictImpl::duplicate( void *data ) const
     {
-      return m_keyImpl->isExportable() && m_valueImpl->isExportable();
+      bits_t *bits = *reinterpret_cast<bits_t **>( data );
+      FABRIC_ASSERT( bits->refCount.getValue() > 1 );
+
+      bits_t *newBits = static_cast<bits_t *>( malloc( sizeof(bits_t) ) );
+      newBits->refCount.setValue( 1 );
+      newBits->nodeCount = 0;
+      newBits->bucketCount = 0;
+      newBits->firstNode = 0;
+      newBits->lastNode = 0;
+      newBits->buckets = 0;
+
+      node_t const *node = bits->firstNode;
+      while ( node )
+      {
+        void const *srcKeyData = immutableKeyData( node );
+        void const *srcValueData = immutableValueData( node );
+        m_valueImpl->setData( srcValueData, getMutable( newBits, srcKeyData ) );
+        node = node->bitsNextNode;
+      }
+
+      if ( bits && bits->refCount.decrementAndGetValue() == 0 )
+      {
+        disposeBits( bits );
+        free( bits );
+      }
+      *reinterpret_cast<bits_t **>( data ) = newBits;
+      return newBits;
     }
   }
 }

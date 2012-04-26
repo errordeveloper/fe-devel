@@ -43,9 +43,10 @@ def _waitForClose():
 atexit.register( _waitForClose )
 
 # declare explicit prototypes for all the external library calls
-_fabric.identify.argtypes = []
+_fabric.initialize.argtypes = []
 _fabric.createClient.argtypes = [
-  ctypes.c_void_p
+  ctypes.c_void_p,
+  ctypes.c_char_p
 ]
 _fabric.jsonExec.argtypes = [
   ctypes.c_void_p,
@@ -69,11 +70,10 @@ _fabric.setJSONNotifyCallback.argtypes = [
   _NOTIFYCALLBACK
 ]
 
-# print app and version information
-_fabric.identify()
+_fabric.initialize()
 
-def createClient():
-  return _INTERFACE( _fabric )
+def createClient( opts = None ):
+  return _INTERFACE( _fabric, opts )
 
 # used in unit tests
 def stringify( obj ):
@@ -135,8 +135,8 @@ def _typeToDict( obj ):
 
 # this is the interface object that gets returned to the user
 class _INTERFACE( object ):
-  def __init__( self, fabric ):
-    self.__client = _CLIENT( fabric )
+  def __init__( self, fabric, opts ):
+    self.__client = _CLIENT( fabric, opts )
     self.KLC = self.__client.klc
     self.MR = self.__client.mr
     self.RT = self.__client.rt
@@ -171,9 +171,9 @@ class _INTERFACE( object ):
     return memoryUsage[ '_' ]
 
 class _CLIENT( object ):
-  def __init__( self, fabric ):
+  def __init__( self, fabric, opts ):
     self.__fabric = fabric
-    self.__fabricClient = self.__createClient()
+    self.__fabricClient = self.__createClient( opts )
 
     self.__queuedCommands = []
     self.__queuedUnwinds = []
@@ -228,9 +228,13 @@ class _CLIENT( object ):
   def __runScheduledCallbacks( self ):
     self.__fabric.runScheduledCallbacks( self.__fabricClient )
 
-  def __createClient( self ):
+  def __createClient( self, opts ):
+    optstr = None
+    if type( opts ) is dict:
+      optstr = json.dumps( opts )
+
     result = ctypes.c_void_p()
-    self.__fabric.createClient( ctypes.pointer( result ) )
+    self.__fabric.createClient( ctypes.pointer( result ), optstr )
     return result
 
   def __jsonExec( self, data, length ):
@@ -279,6 +283,9 @@ class _CLIENT( object ):
     self.__queuedCommands.append( command )
     self.__queuedUnwinds.append( unwind )
     self.__queuedCallbacks.append( callback )
+
+    # FIXME TBD figure out if we can do this every time, makes debugging easier
+    self.executeQueuedCommands()
 
   def executeQueuedCommands( self ):
     commands = self.__queuedCommands
@@ -477,7 +484,7 @@ class _DG( _NAMESPACE ):
     self._namedObjects[ name ] = obj
     
     def __unwind():
-      obj._destroy()
+      obj._confirmDestroy()
 
     self._queueCommand( cmd, name, __unwind )
 
@@ -550,24 +557,34 @@ class _DG( _NAMESPACE ):
     def __init__( self, dg, name ):
       self.__name = name
       self.__errors = []
+      self.__destroyed = None
       self._dg = dg
   
     def _nObjQueueCommand( self, cmd, arg = None, unwind = None, callback = None ):
-      if self.__name is None:
-        raise Exception( 'NamedObject "' + name + '" has been deleted' )
+      if not self.isValid():
+        raise Exception( 'NamedObject "' + self.__name + '" has been destroyed' )
       self._dg._objQueueCommand( [ self.__name ], cmd, arg, unwind, callback )
   
     def _patch( self, diff ):
       if 'errors' in diff:
         self.__errors = diff[ 'errors' ]
   
-    def _destroy( self ):
+    def _confirmDestroy( self ):
       del self._dg._namedObjects[ self.__name ]
-      self.__name = None
-  
+      self.__destroyed = True
+
+    def _setAsDestroyed( self ):
+      self.__destroyed = True
+
+    def _unsetDestroyed( self ):
+      self._dg._namedObjects[ self.__name ] = self;
+      self.__destroyed = None
+
     def _handle( self, cmd, arg ):
       if cmd == 'delta':
         self._patch( arg )
+      elif cmd == 'destroy':
+        self._confirmDestroy()
       else:
         raise Exception( 'command "' + cmd + '" not recognized' )
   
@@ -576,13 +593,16 @@ class _DG( _NAMESPACE ):
         self._handle( cmd, arg )
       else:
         raise Exception( 'unroutable' )
-  
+
     def getName( self ):
       return self.__name
   
     def getErrors( self ):
       self._dg._executeQueuedCommands()
       return self.__errors
+
+    def isValid( self ):
+      return self.__destroyed is None
   
   class _BINDINGLIST( object ):
     def __init__( self, dg, dst ):
@@ -715,8 +735,8 @@ class _DG( _NAMESPACE ):
       if 'sourceCode' in diff:
         self.__sourceCode = diff[ 'sourceCode' ]
 
-      if 'entryFunctionName' in diff:
-        self.__entryFunctionName = diff[ 'entryFunctionName' ]
+      if 'entryPoint' in diff:
+        self.__entryFunctionName = diff[ 'entryPoint' ]
 
       if 'diagnostics' in diff:
         self.__diagnostics = diff[ 'diagnostics' ]
@@ -772,20 +792,28 @@ class _DG( _NAMESPACE ):
       }
       self._nObjQueueCommand( 'setSourceCode', args, __unwind )
 
-    def getEntryFunctionName( self ):
+    def getEntryPoint( self ):
       if self.__entryFunctionName is None:
         self._dg._executeQueuedCommands()
       return self.__entryFunctionName
 
-    def setEntryFunctionName( self, entryFunctionName ):
+    def getEntryFunctionName( self ):
+      print "Warning: getEntryFunctionName() is deprecated and will be removed in a future version; use getEntryPoint() instead"
+      return self.getEntryPoint()
+
+    def setEntryPoint( self, entryPoint ):
       oldEntryFunctionName = self.__entryFunctionName
-      self.__entryFunctionName = entryFunctionName
+      self.__entryFunctionName = entryPoint
 
       def __unwind():
         self.__entryFunctionName = oldEntryFunctionName
 
-      self._nObjQueueCommand( 'setEntryFunctionName', entryFunctionName, __unwind )
+      self._nObjQueueCommand( 'setEntryPoint', entryPoint, __unwind )
       self.__diagnostics = []
+
+    def setEntryFunctionName( self, entryPoint ):
+      print "Warning: setEntryFunctionName() is deprecated and will be removed in a future version; use setEntryPoint() instead"
+      self.setEntryPoint( entryPoint )
 
     def getDiagnostics( self ):
       if len( self.__diagnostics ) == 0:
@@ -816,6 +844,13 @@ class _DG( _NAMESPACE ):
         # FIXME invalidate cache here, see pzion comment in node.js
       else:
         super( _DG._CONTAINER, self )._handle( cmd, arg )
+
+    def destroy( self ):
+      self._setAsDestroyed()
+      def __unwind():
+        self._unsetDestroyed()
+      # Don't call self._nObjQueueCommand as it checks isValid()
+      self._dg._objQueueCommand( [ self.getName() ], 'destroy', None, __unwind )
 
     def getCount( self ):
       if self.__sizeNeedRefresh:
@@ -1099,7 +1134,6 @@ class _DG( _NAMESPACE ):
           self.__dependencies[ dependencyName ] = oldDependency
         else:
           del self.__dependencies[ dependencyName ]
-          
       self._nObjQueueCommand( 'setDependency', args, __unwind )
 
     def getDependencies( self ):

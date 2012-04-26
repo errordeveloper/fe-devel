@@ -39,9 +39,39 @@ using namespace AbcA;
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
-struct AlembicHandle{
+FABRIC_EXT_KL_STRUCT( Vec2, {
+  KL::Scalar x;
+  KL::Scalar y;
+} );
+
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Scalar x;
+  KL::Scalar y;
+  KL::Scalar z;
+} );
+
+FABRIC_EXT_KL_STRUCT( Quat, {
+  Vec3 v;
+  KL::Scalar w;
+} );
+
+FABRIC_EXT_KL_STRUCT( Xfo, {
+  Quat ori;
+  Vec3 tr;
+  Vec3 sc;
+} );
+
+FABRIC_EXT_KL_STRUCT( Color, {
+  KL::Scalar r;
+  KL::Scalar g;
+  KL::Scalar b;
+  KL::Scalar a;
+} );
+
+struct AlembicHandle
+{
   KL::Data pointer;
-  KL::Vec2 timeRange;
+  Vec2 timeRange;
 };
 
 struct SampleInfo
@@ -249,7 +279,7 @@ FABRIC_EXT_EXPORT void FabricALEMBICParseXform(
   AlembicHandle &handle,
   KL::String & identifier,
   KL::Scalar & time,
-  KL::Xfo & transform
+  Xfo & transform
   )
 {
   Alembic::Abc::IArchive * archive = (Alembic::Abc::IArchive *)handle.pointer;
@@ -430,10 +460,10 @@ FABRIC_EXT_EXPORT void FabricALEMBICParsePolyMeshAttributes(
   AlembicHandle &handle,
   KL::String & identifier,
   KL::Scalar & time,
-  KL::SlicedArray<KL::Vec3>& vertices,
-  KL::SlicedArray<KL::Vec3>& normals,
+  KL::SlicedArray<Vec3>& vertices,
+  KL::SlicedArray<Vec3>& normals,
   KL::Boolean & uvsLoaded,
-  KL::SlicedArray<KL::Vec2>& uvs
+  KL::SlicedArray<Vec2>& uvs
   )
 {
   Alembic::Abc::IArchive * archive = (Alembic::Abc::IArchive *)handle.pointer;
@@ -702,11 +732,11 @@ FABRIC_EXT_EXPORT void FabricALEMBICParsePointsAttributes(
   AlembicHandle &handle,
   KL::String & identifier,
   KL::Scalar & time,
-  KL::SlicedArray<KL::Vec3>& positions,
-  KL::SlicedArray<KL::Quat>& orientations,
+  KL::SlicedArray<Vec3>& positions,
+  KL::SlicedArray<Quat>& orientations,
   KL::SlicedArray<KL::Scalar>& sizes,
-  KL::SlicedArray<KL::Vec3>& scales,
-  KL::SlicedArray<KL::Color>& colors
+  KL::SlicedArray<Vec3>& scales,
+  KL::SlicedArray<Color>& colors
   )
 {
   Alembic::Abc::IArchive * archive = (Alembic::Abc::IArchive *)handle.pointer;
@@ -926,11 +956,11 @@ FABRIC_EXT_EXPORT void FabricALEMBICParseCurvesAttributes(
   AlembicHandle &handle,
   KL::String & identifier,
   KL::Scalar & time,
-  KL::SlicedArray<KL::Vec3>& vertices,
+  KL::SlicedArray<Vec3>& vertices,
   KL::SlicedArray<KL::Scalar>& sizes,
   KL::Boolean & uvsLoaded,
-  KL::SlicedArray<KL::Vec2>& uvs,
-  KL::SlicedArray<KL::Color>& colors
+  KL::SlicedArray<Vec2>& uvs,
+  KL::SlicedArray<Color>& colors
   )
 {
   Alembic::Abc::IArchive * archive = (Alembic::Abc::IArchive *)handle.pointer;

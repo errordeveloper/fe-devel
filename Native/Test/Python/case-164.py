@@ -6,10 +6,10 @@ import fabric
 F = fabric.createClient()
 
 operator = F.DG.createOperator("op")
-operator.setEntryFunctionName("entry")
+operator.setEntryPoint("entry")
 operator.setSourceCode("\
 operator entry( io Size foo ) {\n\
-  report 'foo = ' + foo;\n\
+  report('foo = ' + foo);\n\
 }\n\
 ")
 

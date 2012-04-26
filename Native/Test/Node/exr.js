@@ -5,7 +5,7 @@
 FABRIC = require('Fabric').createClient();
 
 op = FABRIC.DependencyGraph.createOperator("op");
-op.setEntryFunctionName("load");
+op.setEntryPoint("load");
 op.setSourceCode('\
 use FabricEXR;\n\
 \n\
@@ -19,13 +19,13 @@ struct Color\n\
 \n\
 operator load( io String url, io FabricResource resource )\n\
 {\n\
-  report "Loaded " + url + " (mime type " + resource.mimeType + ")";\n\
-  report "EXR data size is " + resource.data.dataSize();\n\
+  report("Loaded " + url + " (mime type " + resource.mimeType + ")");\n\
+  report("EXR data size is " + resource.data.dataSize());\n\
   Size imageWidth, imageHeight;\n\
   Color imagePixels[];\n\
   FabricEXRDecode( resource.data.data(), resource.data.dataSize(), imageWidth, imageHeight, imagePixels );\n\
-  report "Image dimensions are "+imageWidth+" by "+imageHeight;\n\
-  report "Image pixels size is "+imagePixels.size;\n\
+  report("Image dimensions are "+imageWidth+" by "+imageHeight);\n\
+  report("Image pixels size is "+imagePixels.size);\n\
 }\n\
 ');
 if (op.getDiagnostics().length > 0)

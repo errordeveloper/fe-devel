@@ -23,7 +23,7 @@ namespace Fabric
   {
     class Context : public RC::Object
     {
-      typedef std::map< std::string, llvm::Type const * > LLVMTypeMap;
+      typedef std::map< std::string, llvm::Type * > LLVMTypeMap;
     
     public:
       REPORT_RC_LEAKS
@@ -35,7 +35,7 @@ namespace Fabric
         return m_llvmContext;
       }
       
-      llvm::Type const *getLLVMRawType( std::string const &codeName ) const
+      llvm::Type *getLLVMRawType( std::string const &codeName ) const
       {
         LLVMTypeMap::const_iterator it = m_llvmRawTypes.find( codeName );
         if ( it != m_llvmRawTypes.end() )
@@ -43,7 +43,7 @@ namespace Fabric
         else return 0;
       }
       
-      void setLLVMRawType( std::string const &codeName, llvm::Type const *llvmType )
+      void setLLVMRawType( std::string const &codeName, llvm::Type *llvmType )
       {
         m_llvmRawTypes[codeName] = llvmType;
       }

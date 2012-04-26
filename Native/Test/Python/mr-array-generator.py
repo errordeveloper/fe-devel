@@ -8,7 +8,7 @@ client = fabric.createClient()
 
 cv = client.MR.createConstValue("Size", 10)
 
-ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Size index) { output = sqrt(Scalar(index)); }", "foo")
+ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Index index) { output = sqrt(Scalar(index)); }", "foo")
 ag = client.MR.createArrayGenerator(cv, ago)
 
 count = ag.getCount()

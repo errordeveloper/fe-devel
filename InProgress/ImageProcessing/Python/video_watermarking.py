@@ -31,7 +31,7 @@ def createOperator( node, options ):
   # create the operator
   operator = F.DG.createOperator( options[ 'name' ] )
   operator.setSourceCode( options[ 'srcCode' ] )
-  operator.setEntryFunctionName( options[ 'name' ] )
+  operator.setEntryPoint( options[ 'name' ] )
   operator.setMainThreadOnly( True )
   diags = operator.getDiagnostics()
   if len(diags) > 0:

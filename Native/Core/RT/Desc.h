@@ -54,10 +54,14 @@ namespace Fabric
       ImplType getType() const;
       virtual bool isArrayDesc() const { return false; }
       
-      void const *getDefaultData() const;
+      void initializeData( void const *initialData, void *data ) const;
+      void initializeDatas( size_t count, void const *initialData, size_t initialStride, void *data, size_t stride ) const;
       void setData( void const *value, void *data ) const;
+      void setDatas( size_t count, void const *srcData, size_t srcStride, void *dstData, size_t dstStride ) const;
       void disposeData( void *data ) const;
-      void disposeDatas( void *data, size_t count, size_t stride ) const;
+      void disposeDatas( size_t count, void *data, size_t stride ) const;
+
+      void const *getDefaultData() const;
       std::string descData( void const *data ) const;
       std::string toString( void const *data ) const;
       bool equalsData( void const *lhs, void const *rhs ) const;
@@ -72,6 +76,7 @@ namespace Fabric
       bool isEquivalentTo( RC::ConstHandle< RT::Desc > const &desc ) const;
       bool isShallow() const;
       bool isNoAliasSafe() const;
+      bool isNoAliasUnsafe() const;
       bool isExportable() const;
       
       void jsonDesc( JSON::Encoder &resultEncoder ) const;

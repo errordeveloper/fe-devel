@@ -15,37 +15,78 @@ namespace Fabric
   namespace RT
   {
     SlicedArrayImpl::SlicedArrayImpl( std::string const &codeName, RC::ConstHandle<Impl> const &memberImpl )
-      : ArrayImpl( codeName, DT_SLICED_ARRAY, memberImpl )
+      : ArrayImpl( memberImpl )
       , m_memberImpl( memberImpl )
       , m_memberSize( memberImpl->getAllocSize() )
       , m_variableArrayImpl( memberImpl->getVariableArrayImpl() )
     {
-      setSize( sizeof(bits_t) );
+      size_t allocSize = sizeof(bits_t) + m_variableArrayImpl->getAllocSize();
+      size_t flags = 0;
+      if ( m_memberImpl->isNoAliasUnsafe() )  
+        flags |= FlagNoAliasUnsafe;
+      if ( m_memberImpl->isExportable() )  
+        flags |= FlagExportable;
+      initialize( codeName, DT_SLICED_ARRAY, allocSize, flags );
+
+      m_defaultData = malloc( allocSize );
+      initializeData( 0, m_defaultData );
+    }
+
+    SlicedArrayImpl::~SlicedArrayImpl()
+    {
+      free( m_defaultData );
     }
     
     void const *SlicedArrayImpl::getDefaultData() const
     {
-      static bits_t defaultData = { 0, 0, 0 };
-      return &defaultData;
+      return m_defaultData;
     }
 
-    void SlicedArrayImpl::setData( void const *src, void *dst ) const
+    void SlicedArrayImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      bits_t const *srcBits = reinterpret_cast<bits_t const *>(src);
-      bits_t *dstBits = reinterpret_cast<bits_t *>(dst);
-      dstBits->offset = srcBits->offset;
-      dstBits->size = srcBits->size;
-      if ( dstBits->rcva )
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+
+      m_variableArrayImpl->setDatas( count, &reinterpret_cast<bits_t const *>(src)->va, srcStride, &reinterpret_cast<bits_t *>(dst)->va, dstStride );
+
+      uint8_t * const dstEnd = dst + count * dstStride;
+      while ( dst != dstEnd )
       {
-        if ( --dstBits->rcva->refCount == 0 )
-        {
-          m_variableArrayImpl->disposeData( &dstBits->rcva->varArray );
-          free( dstBits->rcva );
-        }
+        bits_t const *srcBits = reinterpret_cast<bits_t const *>(src);
+        bits_t *dstBits = reinterpret_cast<bits_t *>(dst);
+        dstBits->offset = srcBits->offset;
+        dstBits->size = srcBits->size;
+        src += srcStride;
+        dst += dstStride;
       }
-      dstBits->rcva = srcBits->rcva;
-      if ( dstBits->rcva )
-        ++dstBits->rcva->refCount;
+    }
+
+    void SlicedArrayImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+
+      m_variableArrayImpl->initializeDatas(
+        count,
+        src? &reinterpret_cast<bits_t const *>(src)->va: 0,
+        srcStride,
+        &reinterpret_cast<bits_t *>(dst)->va,
+        dstStride
+        );
+
+      uint8_t * const dstEnd = dst + count * dstStride;
+      while ( dst != dstEnd )
+      {
+        bits_t *dstBits = reinterpret_cast<bits_t *>(dst);
+        if ( src )
+        {
+          bits_t const *srcBits = reinterpret_cast<bits_t const *>(src);
+          dstBits->offset = srcBits->offset;
+          dstBits->size = srcBits->size;
+          src += srcStride;
+        }
+        else dstBits->offset = dstBits->size = 0;
+        dst += dstStride;
+      }
     }
 
     void SlicedArrayImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
@@ -55,7 +96,7 @@ namespace Fabric
       for ( size_t i=0; i<bits->size; ++i )
       {
         JSON::Encoder encoder = jsonArrayEncoder.makeElement();
-        m_memberImpl->encodeJSON( m_variableArrayImpl->getImmutableMemberData_NoCheck( &bits->rcva->varArray, bits->offset + i ), encoder );
+        m_memberImpl->encodeJSON( m_variableArrayImpl->getImmutableMemberData_NoCheck( &bits->va, bits->offset + i ), encoder );
       }
     }
     
@@ -75,7 +116,7 @@ namespace Fabric
         FABRIC_ASSERT( membersFound < entity.value.array.size );
         try
         {
-          void *memberData = (void*)m_variableArrayImpl->getImmutableMemberData_NoCheck( &dstBits->rcva->varArray, dstBits->offset + membersFound );
+          void *memberData = (void*)m_variableArrayImpl->getImmutableMemberData_NoCheck( &dstBits->va, dstBits->offset + membersFound );
           m_memberImpl->decodeJSON( elementEntity, memberData );
         }
         catch ( Exception e )
@@ -88,17 +129,9 @@ namespace Fabric
       FABRIC_ASSERT( membersFound == entity.value.array.size );
     }
 
-    void SlicedArrayImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void SlicedArrayImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      bits_t *bits = reinterpret_cast<bits_t *>(data);
-      if ( bits->rcva )
-      {
-        if ( --bits->rcva->refCount == 0 )
-        {
-          m_variableArrayImpl->disposeData( &bits->rcva->varArray );
-          free( bits->rcva );
-        }
-      }
+      m_variableArrayImpl->disposeDatas( count, &reinterpret_cast<bits_t *>(data)->va, stride );
     }
     
     std::string SlicedArrayImpl::descData( void const *data ) const
@@ -115,22 +148,12 @@ namespace Fabric
       {
         if ( result.length() > 1 )
           result += ",";
-        result += getMemberImpl()->descData( m_variableArrayImpl->getImmutableMemberData_NoCheck( &srcBits->rcva->varArray, srcBits->offset + i ) );
+        result += getMemberImpl()->descData( m_variableArrayImpl->getImmutableMemberData_NoCheck( &srcBits->va, srcBits->offset + i ) );
       }
       if ( numMembers > numMembersToDisplay )
         result += "...";
       result += "]";
       return result;
-    }
-    
-    bool SlicedArrayImpl::isShallow() const
-    {
-      return false;
-    }
-
-    bool SlicedArrayImpl::isNoAliasSafe() const
-    {
-      return isMemberNoAliasSafe();
     }
 
     bool SlicedArrayImpl::isEquivalentTo( RC::ConstHandle<Impl> const &that ) const
@@ -145,64 +168,51 @@ namespace Fabric
     size_t SlicedArrayImpl::getNumMembers( void const *data ) const
     {
       FABRIC_ASSERT( data );
-      bits_t const *srcBits = reinterpret_cast<bits_t const *>(data);
+      bits_t const *srcBits = static_cast<bits_t const *>(data);
       return srcBits->size;
     }
     
     void const *SlicedArrayImpl::getImmutableMemberData( void const *data, size_t index ) const
     { 
-      bits_t const *srcBits = reinterpret_cast<bits_t const *>(data);
+      bits_t const *srcBits = static_cast<bits_t const *>(data);
       if ( index >= srcBits->size )
         throw Exception( "index ("+_(index)+") out of range ("+_(srcBits->size)+")" );
-      return m_variableArrayImpl->getImmutableMemberData_NoCheck( &srcBits->rcva->varArray, srcBits->offset + index );
+      return m_variableArrayImpl->getImmutableMemberData_NoCheck( &srcBits->va, srcBits->offset + index );
     }
     
     void *SlicedArrayImpl::getMutableMemberData( void *data, size_t index ) const
     { 
-      bits_t *srcBits = reinterpret_cast<bits_t *>(data);
+      bits_t *srcBits = static_cast<bits_t *>(data);
       if ( index >= srcBits->size )
         throw Exception( "index ("+_(index)+") out of range ("+_(srcBits->size)+")" );
-      return m_variableArrayImpl->getMutableMemberData_NoCheck( &srcBits->rcva->varArray, srcBits->offset + index );
+      return m_variableArrayImpl->getMutableMemberData_NoCheck( &srcBits->va, srcBits->offset + index );
     }
 
     size_t SlicedArrayImpl::getOffset( void const *data ) const
     {
-      bits_t const *bits = reinterpret_cast<bits_t const *>(data);
+      bits_t const *bits = static_cast<bits_t const *>(data);
       return bits->offset;
     }
     
     size_t SlicedArrayImpl::getSize( void const *data ) const
     {
-      bits_t const *bits = reinterpret_cast<bits_t const *>(data);
+      bits_t const *bits = static_cast<bits_t const *>(data);
       return bits->size;
     }
     
     void SlicedArrayImpl::setNumMembers( void *data, size_t numMembers, void const *defaultMemberData ) const
     {
-      bits_t *bits = reinterpret_cast<bits_t *>(data);
+      bits_t *bits = static_cast<bits_t *>(data);
       FABRIC_ASSERT( bits->offset == 0 );
-      FABRIC_ASSERT( bits->rcva == 0 || bits->size == m_variableArrayImpl->getNumMembers( &bits->rcva->varArray ) );
-      if ( !bits->rcva )
-      {
-        bits->rcva = static_cast<ref_counted_va_t *>( malloc( sizeof( ref_counted_va_t ) ) );
-        bits->rcva->refCount = 1;
-        memset( &bits->rcva->varArray, 0, sizeof( bits->rcva->varArray ) );
-      }
-      m_variableArrayImpl->setNumMembers( &bits->rcva->varArray, numMembers, defaultMemberData );
+      FABRIC_ASSERT( bits->size == m_variableArrayImpl->getNumMembers( &bits->va ) );
+      m_variableArrayImpl->setNumMembers( &bits->va, numMembers, defaultMemberData );
       bits->size = numMembers;
     }
 
     size_t SlicedArrayImpl::getIndirectMemoryUsage( void const *data ) const
     {
-      bits_t const *bits = reinterpret_cast<bits_t const *>(data);
-      if ( bits->rcva )
-        return sizeof( *bits->rcva ) + m_variableArrayImpl->getIndirectMemoryUsage( &bits->rcva->varArray );
-      else return 0;
-    }
-    
-    bool SlicedArrayImpl::isExportable() const
-    {
-      return m_variableArrayImpl->isExportable();
+      bits_t const *bits = static_cast<bits_t const *>(data);
+      return m_variableArrayImpl->getIndirectMemoryUsage( &bits->va );
     }
   }
 }

@@ -7,8 +7,11 @@ Import( 'extsEnv', 'fabricExtsDistDir', 'ExtSLName', 'buildOS', 'buildArch', 'FA
 import os
 import os.path
 
-# only do this for windows
-if buildOS != 'Windows':
+kinectBuilt = False
+
+# only do this for windows x86
+if buildOS != 'Windows' or buildArch != 'x86':
+    Export( 'kinectBuilt' )
     Return()
 
 kinectPackageName = "FabricEngine-KinectExt-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
@@ -20,16 +23,19 @@ kinectPluginEnv = extsEnv.Clone()
 kinectInclude = 'C:\\Program Files\\Microsoft SDKs\Kinect\\v1.0 Beta2\\inc'
 if not os.path.exists(kinectInclude):
     print('WARNING: Skipping build of KINECT extension, no KINECT Include Folder found!')
+    Export( 'kinectBuilt' )
     Return()
 
 kinectLib = 'C:\\Program Files\\Microsoft SDKs\\Kinect\\v1.0 Beta2\\lib\\x86\\MSRKinectNUI.lib'
 if not os.path.exists(kinectLib):
     print('WARNING: Skipping build of KINECT extension, no KINECT Object Library found!')
+    Export( 'kinectBuilt' )
     Return()
 
 kinectDllPath = 'C:\\Windows\\system32\\MSRKINECTNUI.DLL'
 if not os.path.exists(kinectDllPath):
     print('WARNING: Skipping build of KINECT extension, no KINECT DLL found!')
+    Export( 'kinectBuilt' )
     Return()
     
 kinectPluginEnv.Append(CPPPATH = [kinectInclude])
@@ -63,5 +69,8 @@ kinectInstaller = installerEnv.DistZip(
 )
 Alias( 'kinectInstaller', kinectInstaller )
 Export( 'kinectInstaller' )
+
+kinectBuilt = True
+Export( 'kinectBuilt' )
 
 Return( 'kinectExtFiles' )

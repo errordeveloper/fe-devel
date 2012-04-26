@@ -1,0 +1,21 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
+operator entry()
+{
+  Scalar scalars[];
+  scalars.push( 0.0 );
+  scalars.push( -0.0 );
+  scalars.push( 1.0 );
+  scalars.push( -1.0 );
+
+  for ( Size i=0; i<scalars.size; ++i )
+  {
+    for ( Size j=0; j<scalars.size; ++j )
+    {
+      report(scalars[i]+" * "+scalars[j]+" = "+(scalars[i]*scalars[j]));
+      report(scalars[i]+" / "+scalars[j]+" = "+(scalars[i]/scalars[j]));
+    }
+  }
+}

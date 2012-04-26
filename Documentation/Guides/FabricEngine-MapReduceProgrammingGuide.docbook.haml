@@ -240,7 +240,7 @@
         :cdata
           operator entry() {
             ValueProducer<Scalar> vp = createConstValue(1.4142);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -259,7 +259,7 @@
             String a[];
             a.push('zero'); a.push('one'); a.push('two');
             ArrayProducer<String> ap = createConstArray(a);
-            report ap.produce();
+            report(ap.produce());
           }
 
       %para
@@ -283,7 +283,7 @@
 
           operator entry() {
             ValueProducer<String[]>vp = createValueGenerator(gen);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -302,10 +302,10 @@
             %code operator functionName(io ElementType element)
         %listitem
           %para
-            %code operator functionName(io ElementType element, Size index)
+            %code operator functionName(io ElementType element, Index index)
         %listitem
           %para
-            %code operator functionName(io ElementType element, Size index, Size count)
+            %code operator functionName(io ElementType element, Index index, Size count)
 
       %para
         In cases where the index parameter is present, the index of the element within the array is passed to the generator function; similarly, when the count parameter is present the total number of elements in the array is passed. This can be useful for figuring out what value to generate.
@@ -317,7 +317,7 @@
         :cdata
           operator gen(
             io Scalar v,
-            Size i,
+            Index i,
             Size n
             )
           {
@@ -327,7 +327,7 @@
 
           operator entry() {
             ArrayProducer<Scalar> ap = createArrayGenerator(createConstValue(Size(10)), gen);
-            report ap.produce();
+            report(ap.produce());
           }
 
       %para
@@ -351,7 +351,7 @@
 
       %programlisting(language="kl")<
         :cdata
-          operator gen(io ElementType element, Size index, Size count, SharedType sharedValue) {
+          operator gen(io ElementType element, Index index, Size count, SharedType sharedValue) {
 
             ...
           }
@@ -373,7 +373,7 @@
 
           operator entry() {
             ValueProducer<Size> vp = createValueMap(createConstValue("Hello, world!"), map);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -392,10 +392,10 @@
             %code operator functionName(InputType input, io OutputType output)
         %listitem
           %para
-            %code operator functionName(InputType input, io OutputType output, Size index)
+            %code operator functionName(InputType input, io OutputType output, Index index)
         %listitem
           %para
-            %code operator functionName(InputType input, io OutputType output, Size index, Size count)
+            %code operator functionName(InputType input, io OutputType output, Index index, Size count)
 
       %para
         In cases where the <code>index</code> parameter is present, the index of the element within the array is passed to the generator function; similarly, when the count parameter is present the total number of elements in the array is passed. The result of the <code>createArrayMap</code> call is a value of type <code>ArrayProducer&lt;OutputType&gt;</code>.
@@ -412,9 +412,9 @@
           operator entry() {
             String a[]; a.push("one"); a.push("two"); a.push("three");
             ArrayProducer<String> iap = createConstArray(a);
-            report iap.produce();
+            report(iap.produce());
             ArrayProducer<Size> oap = createArrayMap(iap, map);
-            report oap.produce();
+            report(oap.produce());
           }
 
       %para
@@ -439,7 +439,7 @@
 
       %programlisting(language="kl")<
         :cdata
-          operator gen(InputType input, io OutputType output, Size index, Size count, SharedType sharedValue) {
+          operator gen(InputType input, io OutputType output, Index index, Size count, SharedType sharedValue) {
             ...
           }
 
@@ -460,7 +460,7 @@
 
           operator entry() {
             ValueProducer<Scalar> vp = createValueTransform(createConstValue(Scalar(3.14)), transform);
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -479,10 +479,10 @@
             %code operator functionName(io ElementType element)
         %listitem
           %para
-            %code operator functionName(io ElementType element, Size index)
+            %code operator functionName(io ElementType element, Index index)
         %listitem
           %para
-            %code operator functionName(io ElementType element, Size index, Size count)
+            %code operator functionName(io ElementType element, Index index, Size count)
 
       %para
         In cases where the <code>index</code> parameter is present, the index of the element within the array is passed to the generator function; similarly, when the <code>count</code> parameter is present the total number of elements in the array is passed. The result of the <code>createArrayTransform</code> call is a value of type <code>ArrayProducer&lt;ElementType&gt;</code>.
@@ -499,9 +499,9 @@
           operator entry() {
             Scalar ia[]; ia.push(3.14); ia.push(2.71); ia.push(10.0); ia.push(87.32);
             ArrayProducer<Scalar> iap = createConstArray(ia);
-            report iap.produce();
+            report(iap.produce());
             ArrayProducer<Scalar> oap = createArrayTransform(iap, transform);
-            report oap.produce();
+            report(oap.produce());
           }
 
       %para
@@ -526,7 +526,7 @@
 
       %programlisting(language="kl")<
         :cdata
-          operator gen(io ElementType element, Size index, Size count, SharedType sharedValue) {
+          operator gen(io ElementType element, Index index, Size count, SharedType sharedValue) {
             ...
           }
 
@@ -545,17 +545,17 @@
             %code operator functionName(InputType input, io OutputType output)
         %listitem
           %para
-            %code operator functionName(InputType input, io OutputType output, Size index)
+            %code operator functionName(InputType input, io OutputType output, Index index)
         %listitem
           %para
-            %code operator functionName(InputType input, io OutputType output, Size index, Size count)
+            %code operator functionName(InputType input, io OutputType output, Index index, Size count)
 
       %para
         The result of the <code>createReduce</code> call is a value producer with value type <code>OutputType</code>, ie. a result of type <code>ValueProducer&lt;OutputType&gt;</code>. An example of using a reduce operation in KL:
 
       %programlisting(language="kl")<
         :cdata
-          operator generate(io Size value, Size index) {
+          operator generate(io Size value, Index index) {
             value = index + 1;
           }
 
@@ -572,7 +572,7 @@
               ),
               reduce
             );
-            report vp.produce();
+            report(vp.produce());
           }
 
       %para
@@ -587,7 +587,7 @@
 
       %programlisting(language="kl")<
         :cdata
-          operator reduce(InputType input, io OutputType output, Size index, Size count, SharedType sharedValue) {
+          operator reduce(InputType input, io OutputType output, Index index, Size count, SharedType sharedValue) {
             ...
           }
 
@@ -603,24 +603,24 @@
       %programlisting(language="kl")<
         :cdata
           operator gen(io String output) {
-            report "  Running generator!";
+            report("  Running generator!");
             output = "Hello";
           }
 
           operator entry() {
             // test caching ValueGenerator
             ValueProducer<String> vp1 = createValueCache(createValueGenerator(gen));
-            report "vp1 = " + vp1;
+            report("vp1 = " + vp1);
                     
-            report "Should run generator";
-            report "vp1.produce() = " + vp1.produce();
+            report("Should run generator");
+            report("vp1.produce() = " + vp1.produce());
                         
-            report "Should not run generator (use cache)";
-            report "vp1.produce() = " + vp1.produce();
+            report("Should not run generator (use cache)");
+            report("vp1.produce() = " + vp1.produce());
                             
             vp1.flush();
-            report "Should run generator";
-            report "vp1.produce() = " + vp1.produce();
+            report("Should run generator");
+            report("vp1.produce() = " + vp1.produce());
           }
       
       %para
@@ -647,7 +647,7 @@
             io Integer value
             )
           {
-            report "  Running generator";
+            report("  Running generator");
             value = 42;
           }
           
@@ -658,21 +658,21 @@
               createArrayGenerator(cvg, generator)
               );
           
-            report gen;
-            report " gen.getCount() = " + gen.getCount();
+            report(gen);
+            report(" gen.getCount() = " + gen.getCount());
           
-            report "Should run generator 10x";
-            for (Size i=0; i<10; ++i)
-              report " gen.produce() = " + gen.produce(i);
+            report("Should run generator 10x");
+            for (Index i=0; i<10; ++i)
+              report(" gen.produce() = " + gen.produce(i));
           
-            report "Should not run generator (cached)";
-            for (Size i=0; i<10; ++i)
-              report " gen.produce() = " + gen.produce(i);
+            report("Should not run generator (cached)");
+            for (Index i=0; i<10; ++i)
+              report(" gen.produce() = " + gen.produce(i));
           
             gen.flush();
-            report "Should run generator 10x";
-            for (Size i=0; i<10; ++i)
-              report " gen.produce() = " + gen.produce(i);
+            report("Should run generator 10x");
+            for (Index i=0; i<10; ++i)
+              report(" gen.produce() = " + gen.produce(i));
           }
 
       %para
@@ -831,7 +831,7 @@
       %programlisting(language="javascript")<
         :cdata
           > var compilation = fabricClient.KLC.createCompilation();
-          > compilation.addSource('generate.kl', 'operator generate(io Size value, Size index) { value = index + 1; }');
+          > compilation.addSource('generate.kl', 'operator generate(io Size value, Index index) { value = index + 1; }');
           > compilation.addSource('reduce.kl', 'operator reduce(Size input, io Size output) { output += input; }');
           > var executable = compilation.run();
           > var reduce = executable.resolveReduceOperator('reduce');
@@ -1044,7 +1044,7 @@
             client.MR.createConstValue('Size', 1000000),
             client.KLC.createArrayGeneratorOperator(
               "generate.kl",
-              "operator generate(io Scalar x, Size index) { x = 3.141 * index; }",
+              "operator generate(io Scalar x, Index index) { x = 3.141 * index; }",
               "generate"
             )
           ).produce(9876, 16);
@@ -1196,10 +1196,10 @@
             %code operator operatorName(InputType input, io OutputType output)
         %listitem
           %para
-            %code operator operatorName(InputType input, io OutputType output, Size index)
+            %code operator operatorName(InputType input, io OutputType output, Index index)
         %listitem
           %para
-            %code operator operatorName(InputType input, io OutputType output, Size index, Size count)
+            %code operator operatorName(InputType input, io OutputType output, Index index, Size count)
 
       %para
         The result of the <code>client.MR.createReduce(...)</code> call is a value producer with value type <code>OutputType</code>. For example:
@@ -1231,7 +1231,7 @@
 
       %programlisting(language="kl")<
         :cdata
-          operator reduce(InputType input, io OutputType output, Size index, Size count, SharedType sharedValue) {
+          operator reduce(InputType input, io OutputType output, Index index, Size count, SharedType sharedValue) {
             ...
           }
 
@@ -1250,7 +1250,7 @@
             client.MR.createValueCache(
               client.MR.createValueGenerator(
                 client.KLC.createValueGeneratorOperator(
-                  "xfo.kl", "operator xfo(io Integer value) { report 'Running generator'; value = 121; }", "xfo"
+                  "xfo.kl", "operator xfo(io Integer value) { report('Running generator'); value = 121; }", "xfo"
                   )
                 )
               );
@@ -1288,7 +1288,7 @@
         :cdata
           cv = client.MR.createConstValue("Size", 10);
           
-          ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Size index) { report 'Running generator'; output = sqrt(Scalar(index)); }", "foo");
+          ago = client.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Index index) { report('Running generator'); output = sqrt(Scalar(index)); }", "foo");
           ag = client.MR.createArrayGenerator(cv, ago);
           
           var cache = client.MR.createArrayCache(ag);

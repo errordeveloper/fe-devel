@@ -9,6 +9,13 @@
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
 
+FABRIC_EXT_KL_STRUCT( RGBA, {
+  KL::Byte r;
+  KL::Byte g;
+  KL::Byte b;
+  KL::Byte a;
+} );
+
 class ReadDataBuffer
 {
 public:
@@ -72,7 +79,7 @@ FABRIC_EXT_EXPORT void FabricPNGDecode(
   KL::Size pngDataSize,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
   ReadDataBuffer dataBuffer( pngDataSize, pngData );
@@ -121,7 +128,7 @@ FABRIC_EXT_EXPORT void FabricPNGDecode(
     png_uint_32 byteIndex = 0;
     for ( png_uint_32 colIdx = 0; colIdx < width; ++colIdx )
     {
-      KL::RGBA klRGBA;
+      RGBA klRGBA;
       klRGBA.r = klRGBA.g = klRGBA.b = klRGBA.a = 255;
       if ( colorType == PNG_COLOR_TYPE_RGB || colorType == PNG_COLOR_TYPE_RGB_ALPHA )
       {
@@ -178,7 +185,7 @@ FABRIC_EXT_EXPORT void FabricPNGEncode(
 
   KL::Size readImageWidth;
   KL::Size readImageHeight;
-  KL::VariableArray<KL::RGBA> readImagePixels;
+  KL::VariableArray<RGBA> readImagePixels;
 
   FabricPNGDecode(
     &pngData[0],
@@ -192,7 +199,7 @@ FABRIC_EXT_EXPORT void FabricPNGOpenFileHandle(
   const KL::String & handle,
   KL::Size &imageWidth,
   KL::Size &imageHeight,
-  KL::VariableArray<KL::RGBA> &imagePixels
+  KL::VariableArray<RGBA> &imagePixels
   )
 {
   KL::FileHandleWrapper wrapper(handle);

@@ -14,9 +14,9 @@ namespace Fabric
   namespace RT
   {
     OpaqueImpl::OpaqueImpl( std::string const &codeName, size_t size )
-      : Impl( codeName, DT_OPAQUE )
     {
-      setSize( size );
+      initialize( codeName, DT_OPAQUE, size, FlagShallow | FlagExportable );
+
       m_defaultData = malloc( size );
       memset( m_defaultData, 0, size );
     }
@@ -31,39 +31,58 @@ namespace Fabric
       return m_defaultData;
     }
     
-    void OpaqueImpl::setData( void const *src, void *dst ) const
+    void OpaqueImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      memcpy( dst, src, getAllocSize() );
+      size_t allocSize = getAllocSize();
+      
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        if ( src )
+        {
+          memcpy( dst, src, allocSize );
+          src += srcStride;
+        }
+        else memset( dst, 0, allocSize );
+        dst += dstStride;
+      }
+    }
+    
+    void OpaqueImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      size_t allocSize = getAllocSize();
+      
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
+      {
+        memcpy( dst, src, allocSize );
+        src += srcStride;
+        dst += dstStride;
+      }
     }
    
-    void OpaqueImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void OpaqueImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
     }
     
     void OpaqueImpl::encodeJSON( void const *data, JSON::Encoder &encoder ) const
     {
-      encoder.makeNull();
+      encoder.makeBoolean( memcmp( data, m_defaultData, getAllocSize() ) != 0 );
     }
     
     void OpaqueImpl::decodeJSON( JSON::Entity const &entity, void *dst ) const
     {
-      entity.requireNull();
-      memset( dst, 0, getAllocSize() );
+      entity.requireNullOrBoolean();
     }
     
     std::string OpaqueImpl::descData( void const *src ) const
     {
       return "Opaque<" + Util::hexBuf( getAllocSize(), src ) + ">";
-    }
-
-    bool OpaqueImpl::isShallow() const
-    {
-      return true;
-    }
-
-    bool OpaqueImpl::isNoAliasSafe() const
-    {
-      return true;
     }
 
     bool OpaqueImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
@@ -76,11 +95,6 @@ namespace Fabric
     bool OpaqueImpl::equalsData( void const *lhs, void const *rhs ) const
     {
       return memcmp( lhs, rhs, getAllocSize() ) == 0;
-    }
-    
-    bool OpaqueImpl::isExportable() const
-    {
-      return false;
     }
   }
 }

@@ -75,12 +75,12 @@ namespace Fabric
       RC::Handle<CG::Context> context = basicBlockBuilder.getContext();
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
       
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
       argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
       argTypes.push_back( llvm::Type::getInt8PtrTy( llvmContext ) );
       argTypes.push_back( arrayProducerAdapter->llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( llvmContext ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__MR_CreateConstArray", funcType );
       
       CG::ExprValue childExprRValue = m_child->buildExprValue( basicBlockBuilder, CG::USAGE_RVALUE, lValueErrorDesc );

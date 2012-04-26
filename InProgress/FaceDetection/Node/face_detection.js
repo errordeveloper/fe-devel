@@ -15,7 +15,7 @@ var createOperator = function(node,options) {
   // create the operator
   var operator = F.DG.createOperator(options.name);
   operator.setSourceCode(options.srcCode.join('\n'));
-  operator.setEntryFunctionName(options.name);
+  operator.setEntryPoint(options.name);
   operator.setMainThreadOnly(true);
   
   // create a binding between the node and the operator

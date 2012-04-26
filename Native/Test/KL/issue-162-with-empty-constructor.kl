@@ -11,5 +11,5 @@ function MyType() {
 
 operator entry() {
   MyType myType; // invokes the empty constructor
-  report myType;
+  report(myType);
 }

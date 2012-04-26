@@ -211,19 +211,19 @@ node = FABRIC.DependencyGraph.createResourceLoadNode("node");
 
 //Add an operator to the ResourceLoadNode so we can trace its runtime behavior
 op = FABRIC.DependencyGraph.createOperator("loadop");
-op.setEntryFunctionName("onLoad");
+op.setEntryPoint("onLoad");
 op.setSourceCode('\
 operator onLoad( io FabricResource resource )\n\
 {\n\
   if( resource.dataExternalLocation != "" || resource.data.size() != 0 ) {\n\
-    report "Loaded " + resource.url;\n\
+    report("Loaded " + resource.url);\n\
     if( resource.dataExternalLocation )\n\
       report( "Data loaded into file handle " + resource.dataExternalLocation );\n\
     else\n\
       report( "Data loaded in data buffer of size " + resource.data.size() );\n\
   }\n\
   else\n\
-    report "Data not loaded yet";\n\
+    report("Data not loaded yet");\n\
 }\n\
 ');
 binding = FABRIC.DG.createBinding();

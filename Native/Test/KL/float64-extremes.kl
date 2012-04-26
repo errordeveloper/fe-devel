@@ -14,8 +14,8 @@ operator entry()
   {
     for ( Size j=0; j<float64s.size; ++j )
     {
-      report float64s[i]+" * "+float64s[j]+" = "+(float64s[i]*float64s[j]);
-      report float64s[i]+" / "+float64s[j]+" = "+(float64s[i]/float64s[j]);
+      report(float64s[i]+" * "+float64s[j]+" = "+(float64s[i]*float64s[j]));
+      report(float64s[i]+" / "+float64s[j]+" = "+(float64s[i]/float64s[j]));
     }
   }
 }

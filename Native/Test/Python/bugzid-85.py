@@ -12,10 +12,10 @@ dgnode1.resize(32)
 operatorInit = F.DG.createOperator("initiate")
 operatorInit.setSourceCode(
   'operator initiate(in Size index, io Size a[]) {\n'+
-  '  report "Setting index " + index;\n'+
+  '  report("Setting index " + index);\n'+
   '  a.push(index);\n'+
   '}\n')
-operatorInit.setEntryFunctionName('initiate')
+operatorInit.setEntryPoint('initiate')
 operatorInit.setMainThreadOnly(True)
 
 if len( operatorInit.getErrors() ) > 0:
@@ -35,7 +35,7 @@ operatorInit2.setSourceCode(
   '  for (Size i=0; i<container.size; ++i)\n'+
   '    a[i].push(Size(2*i));\n'+
   '}\n')
-operatorInit2.setEntryFunctionName('initiate2')
+operatorInit2.setEntryPoint('initiate2')
 operatorInit2.setMainThreadOnly(True)
 
 if len( operatorInit2.getErrors() ) > 0:
@@ -55,10 +55,10 @@ dgnode1.bindings.append(bindingInit2)
 reportOp = F.DG.createOperator('reportOp')
 reportOp.setSourceCode("\
 operator reportValues(io Size a<>[]) {\n\
-report a;\n\
+report(a);\n\
 }\n\
 ")
-reportOp.setEntryFunctionName('reportValues')
+reportOp.setEntryPoint('reportValues')
 
 reportBindings = F.DG.createBinding()
 reportBindings.setOperator(reportOp)

@@ -46,7 +46,7 @@ print( data.sum() )
 
 op = fabricClient.DG.createOperator("op")
 op.setSourceCode("(inline)", "use Vec2; operator entry( io Vec2 vec2 ) { vec2 = Vec2(8.9, 2.3); }")
-op.setEntryFunctionName("entry")
+op.setEntryPoint("entry")
 if len( op.getErrors() ) > 0:
   print( "ERRORS: " + str( op.getErrors() ) )
   if len( op.getDiagnostics() ) > 0:

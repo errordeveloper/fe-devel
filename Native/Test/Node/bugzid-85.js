@@ -11,10 +11,10 @@ F = require('Fabric').createClient();
   var operatorInit = F.DG.createOperator("initiate");
   operatorInit.setSourceCode(
     'operator initiate(in Size index, io Size a[]) {\n'+
-    '  report "Setting index " + index;\n'+
+    '  report("Setting index " + index);\n'+
     '  a.push(index);\n'+
     '}\n');
-  operatorInit.setEntryFunctionName('initiate');
+  operatorInit.setEntryPoint('initiate');
   operatorInit.setMainThreadOnly(true);
   if (operatorInit.getErrors().length > 0) {
     if (operatorInit.getDiagnostics().length > 0)
@@ -34,7 +34,7 @@ F = require('Fabric').createClient();
     '  for (Size i=0; i<container.size; ++i)\n'+
     '    a[i].push(Size(2*i));\n'+
     '}\n');
-  operatorInit2.setEntryFunctionName('initiate2');
+  operatorInit2.setEntryPoint('initiate2');
   operatorInit2.setMainThreadOnly(true);
   if (operatorInit2.getErrors().length > 0) {
     if (operatorInit2.getDiagnostics().length > 0)
@@ -54,10 +54,10 @@ F = require('Fabric').createClient();
   var reportOp = F.DG.createOperator('reportOp');
   reportOp.setSourceCode("\
 operator reportValues(io Size a<>[]) {\n\
-  report a;\n\
+  report(a);\n\
 }\n\
 ");
-  reportOp.setEntryFunctionName('reportValues');
+  reportOp.setEntryPoint('reportValues');
 
   var reportBindings = F.DG.createBinding();
   reportBindings.setOperator(reportOp);

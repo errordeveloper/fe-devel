@@ -6,5 +6,5 @@ const Scalar PI = 3.141;
 
 operator entry()
 {
-  report PI;
+  report(PI);
 }

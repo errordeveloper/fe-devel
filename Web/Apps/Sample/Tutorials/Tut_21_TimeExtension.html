@@ -19,7 +19,7 @@ $(document).ready(function() {
   
   // create an operator to retrieve the current time
   var op = FABRIC.DG.createOperator( "getCurrentTimeString" );
-  op.setEntryFunctionName( "entry" );
+  op.setEntryPoint( "entry" );
   op.setSourceCode( "use TimeSample; operator entry( io String result ) { currentTimeString( result ); }" );
   
   // create a binding for the operator

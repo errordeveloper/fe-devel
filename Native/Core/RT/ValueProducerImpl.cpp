@@ -13,10 +13,9 @@ namespace Fabric
   namespace RT
   {
     ValueProducerImpl::ValueProducerImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &valueImpl )
-      : ProducerImpl( codeName, DT_VALUE_PRODUCER )
-      , m_valueImpl( valueImpl )
+      : m_valueImpl( valueImpl )
     {
-      setSize( sizeof(MR::ValueProducer const *) );
+      initialize( codeName, DT_VALUE_PRODUCER, sizeof(MR::ValueProducer const *) );
     }
     
     void const *ValueProducerImpl::getDefaultData() const
@@ -25,22 +24,49 @@ namespace Fabric
       return &defaultData;
     }
     
-    void ValueProducerImpl::setData( void const *src, void *dst ) const
+    void ValueProducerImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t * const dstEnd = dst + count * dstStride;
+      while ( dst != dstEnd )
+      {
+        MR::ValueProducer const *&dstBits = *reinterpret_cast<MR::ValueProducer const **>( dst );
+        if ( src )
+        {
+          MR::ValueProducer const *srcBits = *reinterpret_cast<MR::ValueProducer const * const *>( src );
+          dstBits = srcBits;
+          if ( dstBits )
+            dstBits->retain();
+          src += srcStride;
+        }
+        else dstBits = 0;
+        dst += dstStride;
+      }
+    }
+    
+    void ValueProducerImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );
       FABRIC_ASSERT( dst );
-      
-      MR::ValueProducer const *srcBits = *static_cast<MR::ValueProducer const * const *>( src );
-      MR::ValueProducer const *&dstBits = *static_cast<MR::ValueProducer const **>( dst );
-      if ( dstBits != srcBits )
+      uint8_t * const dstEnd = dst + count * dstStride;
+
+      while ( dst != dstEnd )
       {
-        if ( dstBits )
-          dstBits->release();
-        
-        dstBits = srcBits;
-        
-        if ( dstBits )
-          dstBits->retain();
+        MR::ValueProducer const *srcBits = *reinterpret_cast<MR::ValueProducer const * const *>( src );
+        MR::ValueProducer const *&dstBits = *reinterpret_cast<MR::ValueProducer const **>( dst );
+        if ( dstBits != srcBits )
+        {
+          if ( dstBits )
+            dstBits->release();
+          
+          dstBits = srcBits;
+          
+          if ( dstBits )
+            dstBits->retain();
+        }
+
+        src += srcStride;
+        dst += dstStride;
       }
     }
      
@@ -61,9 +87,8 @@ namespace Fabric
       throw Exception( "unable to convert ValueProducer from JSON" );
     }
 
-    void ValueProducerImpl::disposeDatasImpl( void *dst, size_t count, size_t stride ) const
+    void ValueProducerImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *data = static_cast<uint8_t *>( dst );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
@@ -82,16 +107,6 @@ namespace Fabric
     bool ValueProducerImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
     {
       return isValueProducer( impl->getType() );
-    }
-    
-    bool ValueProducerImpl::isShallow() const
-    {
-      return false;
-    }
-
-    bool ValueProducerImpl::isNoAliasSafe() const
-    {
-      return true;
     }
 
     size_t ValueProducerImpl::getIndirectMemoryUsage( void const *data ) const

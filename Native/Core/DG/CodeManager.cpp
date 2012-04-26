@@ -4,7 +4,6 @@
 
 #include <Fabric/Core/DG/CodeManager.h>
 #include <Fabric/Base/Util/Assert.h>
-#include <Fabric/Core/DG/IRCache.h>
 
 namespace Fabric
 {

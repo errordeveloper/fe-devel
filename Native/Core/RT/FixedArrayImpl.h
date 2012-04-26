@@ -21,8 +21,6 @@ namespace Fabric
           
       // Impl
     
-      virtual void setData( void const *src, void *dst ) const;
-      virtual void disposeDatasImpl( void *data, size_t count, size_t stride ) const;
       virtual void const *getDefaultData() const;
       virtual size_t getIndirectMemoryUsage( void const *data ) const;
       
@@ -30,9 +28,6 @@ namespace Fabric
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
 
       virtual bool isEquivalentTo( RC::ConstHandle< RT::Impl > const &desc ) const;
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
-      virtual bool isExportable() const;
 
       // ArrayImpl
       
@@ -51,6 +46,10 @@ namespace Fabric
       FixedArrayImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &memberImpl, size_t length );
       ~FixedArrayImpl();
             
+      virtual void initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
+
       void const *getImmutableMemberData_NoCheck( void const *data, size_t index ) const
       { 
         uint8_t const *members = static_cast<uint8_t const *>( data );
@@ -69,8 +68,8 @@ namespace Fabric
       size_t m_memberSize;
       size_t m_length;
       void *m_defaultData;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_RT_FIXED_ARRAY_IMPL_H

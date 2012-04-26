@@ -1,0 +1,5 @@
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Fabric core exception: DG.foo.setData('{"memberName":"bar","sliceIndex"...'): missing member 'y'

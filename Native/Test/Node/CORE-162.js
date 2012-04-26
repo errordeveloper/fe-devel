@@ -38,7 +38,7 @@ node.addMember( 'shaderSources', 'ShaderSource[]' );
 node.setData( 'shaderSources', sources );
 
 var op = FABRIC.DependencyGraph.createOperator("bar");
-op.setEntryFunctionName("bar");
+op.setEntryPoint("bar");
 op.setSourceCode(klCode);
 
 var binding = FABRIC.DependencyGraph.createBinding();

@@ -60,7 +60,7 @@ FABRIC.SceneGraph.registerNodeType('Light', {
           LIGHTCOSCUTOFF_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightCosCutoff'),
           LIGHTVIEWMATRIX_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightShadowMapMatrix')
         },
-        entryFunctionName: 'loadLight',
+        entryPoint: 'loadLight',
         parameterLayout: [
         'shader.shaderProgram',
         'light.type',
@@ -87,7 +87,7 @@ FABRIC.SceneGraph.registerNodeType('Light', {
                 LIGHTCOSCUTOFF_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightCosCutoff'),
                 LIGHTVIEWMATRIX_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightShadowMapMatrix')
               },
-              entryFunctionName: 'loadLightMatrixUniform',
+              entryPoint: 'loadLightMatrixUniform',
               parameterLayout: [
                 'shader.shaderProgram',
                 'light.shadowMat44',
@@ -99,7 +99,7 @@ FABRIC.SceneGraph.registerNodeType('Light', {
           scene.constructOperator({
               operatorName: 'bindShadowMapBufferOp',
               srcFile: 'FABRIC_ROOT/SG/KL/shadowMaps.kl',
-              entryFunctionName: 'bindShadowMapBuffer',
+              entryPoint: 'bindShadowMapBuffer',
               parameterLayout: [
                 'self.shadowMap',
                 'light.depthRenderTarget'
@@ -128,7 +128,7 @@ FABRIC.SceneGraph.registerNodeType('Light', {
       shadowRenderEventHandler.preDescendBindings.append(scene.constructOperator({
           operatorName: 'bindDepthRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'bindRenderTarget',
+          entryPoint: 'bindRenderTarget',
           parameterLayout: [
             'light.depthRenderTarget'
           ]
@@ -136,7 +136,7 @@ FABRIC.SceneGraph.registerNodeType('Light', {
       shadowRenderEventHandler.postDescendBindings.append(scene.constructOperator({
           operatorName: 'unbindDepthRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'unbindRenderTarget',
+          entryPoint: 'unbindRenderTarget',
           parameterLayout: [
             'light.depthRenderTarget'
           ]
@@ -152,7 +152,7 @@ FABRIC.SceneGraph.registerNodeType('Light', {
           scene.constructOperator({
               operatorName:"debugShadowMapBuffer",
               srcFile:"FABRIC_ROOT/SG/KL/shadowMaps.kl",
-              entryFunctionName:"debugShadowMapBuffer",
+              entryPoint:"debugShadowMapBuffer",
               parameterLayout:[
                 'light.depthRenderTarget',
                 'self.program'
@@ -166,7 +166,7 @@ FABRIC.SceneGraph.registerNodeType('Light', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'loadLightXfo',
       srcCode: 'use Xfo; use Mat44; operator loadLightXfo(io Xfo xfo, io Mat44 lightMat44, io Mat44 cameraMat44){ lightMat44 = xfo.toMat44(); cameraMat44 = lightMat44.inverse(); }',
-      entryFunctionName: 'loadLightXfo',
+      entryPoint: 'loadLightXfo',
       parameterLayout: [
         'transform.globalXfo',
         'self.lightMat44',
@@ -318,7 +318,7 @@ FABRIC.SceneGraph.registerNodeType('DirectionalLight', {
           LIGHTCOSCUTOFF_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightCosCutoff'),
           LIGHTVIEWMATRIX_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightShadowMapMatrix')
         },
-        entryFunctionName: 'loadDirectionalLight',
+        entryPoint: 'loadDirectionalLight',
         parameterLayout: [
           'shader.shaderProgram',
           'camera.cameraMat44',
@@ -334,7 +334,7 @@ FABRIC.SceneGraph.registerNodeType('DirectionalLight', {
       dgnode.bindings.append(scene.constructOperator({
           operatorName: 'calcDirectionalLightProjectionMatrices',
           srcFile: 'FABRIC_ROOT/SG/KL/shadowMaps.kl',
-          entryFunctionName: 'calcDirectionalLightProjectionMatrices',
+          entryPoint: 'calcDirectionalLightProjectionMatrices',
           parameterLayout: [
             'self.nearDistance',
             'self.farDistance',
@@ -447,7 +447,7 @@ FABRIC.SceneGraph.registerNodeType('SpotLight', {
             LIGHTCOSCUTOFF_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightCosCutoff'),
             LIGHTVIEWMATRIX_ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('lightShadowMapMatrix')
           },
-          entryFunctionName: 'loadSpotLight',
+          entryPoint: 'loadSpotLight',
           parameterLayout: [
             'shader.shaderProgram',
             'light.coneAngle',
@@ -462,7 +462,7 @@ FABRIC.SceneGraph.registerNodeType('SpotLight', {
       dgnode.bindings.append(scene.constructOperator({
           operatorName: 'calcSpotLightProjectionMatrices',
           srcFile: 'FABRIC_ROOT/SG/KL/shadowMaps.kl',
-          entryFunctionName: 'calcSpotLightProjectionMatrices',
+          entryPoint: 'calcSpotLightProjectionMatrices',
           parameterLayout: [
             'self.nearDistance',
             'self.farDistance',

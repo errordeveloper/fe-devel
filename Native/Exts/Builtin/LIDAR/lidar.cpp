@@ -7,6 +7,20 @@
 
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
+//#define LIDAR_TRACE
+
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
+FABRIC_EXT_KL_STRUCT( Color, {
+  KL::Float32 r;
+  KL::Float32 g;
+  KL::Float32 b;
+  KL::Float32 a;
+} );
 
 #include <string>
 #include <iostream>
@@ -37,8 +51,8 @@ FABRIC_EXT_KL_STRUCT( LidarReader, {
 } );
 
 LidarReader::LocalData::LocalData(KL::String & fileName, KL::Boolean & compressed) {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : Opening file %s\n",fileName.data());
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : Opening file %s",fileName.data());
 #endif
   mStream.open(fileName.data(), std::ifstream::in | std::ifstream::binary);
   liblas::ReaderFactory f;
@@ -47,8 +61,8 @@ LidarReader::LocalData::LocalData(KL::String & fileName, KL::Boolean & compresse
 }
 
 LidarReader::LocalData::~LocalData() {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : Calling LidarReader::LocalData::~LocalData()\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : Calling LidarReader::LocalData::~LocalData()");
 #endif
   if(mReader != NULL)
     delete(mReader);
@@ -61,8 +75,8 @@ void FabricLIDAR_Reader_Open(
 )
 {
   if(lidar.localData == NULL && fileName.data() != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR} : FabricLIDAR_Reader_Open called.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR} : FabricLIDAR_Reader_Open called.");
 #endif
 
     lidar.compressed = lidar.url.data()[lidar.url.length()-1] == 'z' || lidar.url.data()[lidar.url.length()-1] == 'Z';
@@ -83,8 +97,8 @@ void FabricLIDAR_Reader_Open(
       lidar.localData = NULL;
     }
 
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : FabricLIDAR_Reader_Open completed.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : FabricLIDAR_Reader_Open completed.");
 #endif
   }
 }
@@ -96,8 +110,8 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_Decode(
 )
 {
   if(lidar.localData == NULL && resourceData != NULL && resourceDataSize > 0) {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR} : FabricLIDAR_Reader_Decode called.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR} : FabricLIDAR_Reader_Decode called.");
 #endif
 
 #if defined(FABRIC_OS_WINDOWS)
@@ -123,8 +137,8 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_Decode(
     
     FabricLIDAR_Reader_Open(fileName,lidar);
 
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : FabricLIDAR_Reader_Decode completed.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : FabricLIDAR_Reader_Decode completed.");
 #endif
   }
 }
@@ -135,8 +149,8 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_OpenFileHandle(
 )
 {
   if(lidar.localData == NULL) {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR} : FabricLIDAR_Reader_OpenFileHandle called.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR} : FabricLIDAR_Reader_OpenFileHandle called.");
 #endif
 
     KL::FileHandleWrapper wrapper(handle);
@@ -144,8 +158,8 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_OpenFileHandle(
     KL::String fileName = wrapper.getPath();
     FabricLIDAR_Reader_Open(fileName,lidar);
 
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : FabricLIDAR_Reader_OpenFileHandle completed.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : FabricLIDAR_Reader_OpenFileHandle completed.");
 #endif
   }
 }
@@ -155,15 +169,15 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_Free(
 )
 {
   if(lidar.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR} : FabricLIDAR_Reader_Free called.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR} : FabricLIDAR_Reader_Free called.");
 #endif
 
     lidar.localData->release();
     lidar.localData = NULL;
 
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : FabricLIDAR_Reader_Free completed.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : FabricLIDAR_Reader_Free completed.");
 #endif
   }
 }
@@ -174,8 +188,8 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_GetCount(
 )
 {
   if(lidar.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR} : FabricLIDAR_Reader_Count called.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR} : FabricLIDAR_Reader_Count called.");
 #endif
 
     try
@@ -193,21 +207,21 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_GetCount(
       Fabric::EDK::throwException("  { FabricLIDAR } : Exception caught: '%s'",e.what());
     }
 
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : FabricLIDAR_Reader_Count completed.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : FabricLIDAR_Reader_Count completed.");
 #endif
   }
 }
 
 FABRIC_EXT_EXPORT void FabricLIDAR_Reader_GetPoints(
   LidarReader & lidar,
-  KL::SlicedArray<KL::Vec3>& positions,
-  KL::SlicedArray<KL::Color>& colors
+  KL::SlicedArray<Vec3>& positions,
+  KL::SlicedArray<Color>& colors
 )
 {
   if(lidar.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricLIDAR} : FabricLIDAR_Reader_GetPoints called.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR} : FabricLIDAR_Reader_GetPoints called.");
 #endif
 
     // only do this if the counts match
@@ -256,8 +270,8 @@ FABRIC_EXT_EXPORT void FabricLIDAR_Reader_GetPoints(
       }
     }
 
-#ifndef NDEBUG
-    printf("  { FabricLIDAR } : FabricLIDAR_Reader_GetPoints completed.\n");
+#ifdef LIDAR_TRACE
+    log("  { FabricLIDAR } : FabricLIDAR_Reader_GetPoints completed.");
 #endif
   }
 }

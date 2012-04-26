@@ -3,50 +3,65 @@
 #
 
 import os
-Import( 'baseEnv', 'buildOS', 'buildArch', 'archDistDir', 'FABRIC_VERSION', 'fabricNodePackage', 'fabricNodeAddOn', 'nodeModuleReadMe', 'nodeModuleLicense', 'browserExtFiles', 'fileSystemExtFiles' )
+Import('buildOS', 'buildArch')
 
-nodePackageName = "FabricEngine-NodeModule-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
+if buildOS != 'Windows' or buildArch != 'x86_64':
+  Import( 'baseEnv', 'archDistDir', 'FABRIC_VERSION', 'fabricNodePackage', 'fabricNodeAddOn', 'nodeModuleReadMe', 'nodeModuleLicense', 'browserExtFiles', 'fileSystemExtFiles', 'generateDistZip' )
 
-nodePackageDir = archDistDir.Dir(nodePackageName)
-nodeModuleDir = nodePackageDir.Dir('node_modules').Dir('Fabric')
+  nodePackageName = "FabricEngine-NodeModule-"+buildOS+"-"+buildArch+"-"+FABRIC_VERSION
 
-installerFiles = []
+  nodePackageDir = archDistDir.Dir(nodePackageName)
+  nodeModuleDir = nodePackageDir.Dir('node_modules').Dir('Fabric')
 
-installerFiles.append( baseEnv.Command(
-  nodeModuleDir.File('package.json'),
-  fabricNodePackage,
-  [ Copy( '$TARGET', '$SOURCE' ) ]
-) )
+  installerFiles = []
 
-installerFiles.append( baseEnv.Command(
-  nodeModuleDir.File('Fabric.node'),
-  fabricNodeAddOn,
-  [ Copy( '$TARGET', '$SOURCE' ) ]
-) )
+  installerFiles.append( baseEnv.Command(
+    nodeModuleDir.File('package.json'),
+    fabricNodePackage,
+    [ Copy( '$TARGET', '$SOURCE' ) ]
+  ) )
 
-installerFiles.append( baseEnv.Command(
-  nodePackageDir.File('README.txt'),
-  nodeModuleReadMe,
-  [ Copy( '$TARGET', '$SOURCE' ) ]
-) )
+  installerFiles.append( baseEnv.Command(
+    nodeModuleDir.File('Fabric.node'),
+    fabricNodeAddOn,
+    [ Copy( '$TARGET', '$SOURCE' ) ]
+  ) )
 
-installerFiles.append( baseEnv.Command(
-  nodePackageDir.File('LICENSE.txt'),
-  nodeModuleLicense,
-  [ Copy( '$TARGET', '$SOURCE' ) ]
-) )
+  installerFiles.append( baseEnv.Command(
+    nodePackageDir.File('README.txt'),
+    nodeModuleReadMe,
+    [ Copy( '$TARGET', '$SOURCE' ) ]
+  ) )
 
-installerFiles.append( Install(
-  nodePackageDir.Dir('Exts'),
-  [browserExtFiles, fileSystemExtFiles]
-) )
+  installerFiles.append( baseEnv.Command(
+    nodePackageDir.File('LICENSE.txt'),
+    nodeModuleLicense,
+    [ Copy( '$TARGET', '$SOURCE' ) ]
+  ) )
 
-nodeInstaller = baseEnv.Command(
-  archDistDir.File(nodePackageName+".tar.bz2"),
-  installerFiles,
-  [
-    [ "tar", "-C", archDistDir, "-jcf", "$TARGET", nodePackageName ]
-  ]
-)
+  installerFiles.append( Install(
+    nodePackageDir.Dir('Exts'),
+    [browserExtFiles, fileSystemExtFiles]
+  ) )
+
+  if buildOS == 'Windows':
+    installerEnv = baseEnv.Clone()
+    generateDistZip( installerEnv )
+    installerEnv.Append( DISTZIP_ROOTDIR = nodePackageDir )
+    nodeInstaller = installerEnv.DistZip(
+      archDistDir.File( nodePackageName+".zip" ),
+      installerFiles
+    )
+  else:
+    nodeInstaller = baseEnv.Command(
+      archDistDir.File(nodePackageName+".tar.bz2"),
+      installerFiles,
+      [
+        [ "tar", "-C", archDistDir, "-jcf", "$TARGET", nodePackageName ]
+      ]
+    )
+else:
+  nodeInstaller = []
+
 Alias( 'nodeInstaller', nodeInstaller )
 Return( 'nodeInstaller' )

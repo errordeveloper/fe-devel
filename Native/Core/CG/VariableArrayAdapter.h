@@ -62,26 +62,34 @@ namespace Fabric
     
       VariableArrayAdapter( RC::ConstHandle<Manager> const &manager, RC::ConstHandle<RT::VariableArrayDesc> const &variableArrayDesc );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      llvm::Type *getLLVMImplType( RC::Handle<Context> const &context ) const;
       
     private:
     
       static void Append( VariableArrayAdapter const *inst, void *dstLValue, void const *srcRValue );
       static void Pop( VariableArrayAdapter const *inst, void *dst, void *result );
+      static void Resize( VariableArrayAdapter const *inst, void *data, size_t newSize );
  
+      void llvmPrepareForModify( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayLValue ) const;
+      void llvmDuplicate( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayLValue ) const;
       void llvmCallPop( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayLValue, llvm::Value *memberLValue ) const;
       llvm::Value *llvmCallSize( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayRValue ) const;
       void llvmCallResize( BasicBlockBuilder &basicBlockBuilder, llvm::Value *arrayLValue, llvm::Value *newSize ) const;
+
+      void llvmRetain( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;
+      void llvmRelease( BasicBlockBuilder &basicBlockBuilder, llvm::Value *rValue ) const;
       
-      static const uint8_t AllocSizeIndex = 0;
-      static const uint8_t SizeIndex = 1;
-      static const uint8_t MemberDatasIndex = 2;
+      static const uint8_t RefCountIndex = 0;
+      static const uint8_t AllocSizeIndex = 1;
+      static const uint8_t SizeIndex = 2;
+      static const uint8_t MemberDatasIndex = 3;
  
       RC::ConstHandle<RT::VariableArrayDesc> m_variableArrayDesc;
       RC::ConstHandle<RT::VariableArrayImpl> m_variableArrayImpl;
       RC::ConstHandle<Adapter> m_memberAdapter;
-   };
-  };
-};
+    };
+  }
+}
 
 #endif //_FABRIC_CG_VARIABLE_ARRAY_ADAPTER_H

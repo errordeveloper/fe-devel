@@ -6,8 +6,8 @@ import fabric
 F = fabric.createClient()
 
 o = F.DG.createOperator("op")
-o.setSourceCode("operator entry( io Integer foo ) { report 'Hello'; }")
-o.setEntryFunctionName("entry")
+o.setSourceCode("operator entry( io Integer foo ) { report('Hello'); }")
+o.setEntryPoint("entry")
 print(o.getMainThreadOnly())
 o.setMainThreadOnly(True)
 print(o.getMainThreadOnly())

@@ -42,7 +42,7 @@ namespace Fabric
       
       size_t allocSize = elementDesc->getAllocSize();
       void *valueData = alloca( allocSize );
-      memset( valueData, 0, allocSize );
+      elementDesc->initializeData( 0, valueData );
       produce( index, valueData );
       elementDesc->encodeJSON( valueData, jg );
       elementDesc->disposeData( valueData );
@@ -133,7 +133,7 @@ namespace Fabric
       size_t allocSize = elementDesc->getAllocSize();
       size_t totalAllocSize = allocSize * count;
       void *datas = alloca( totalAllocSize );
-      memset( datas, 0, totalAllocSize );
+      elementDesc->initializeDatas( count, 0, allocSize, datas, allocSize );
       produce( index, count, datas );
       {
         JSON::ArrayEncoder jag = jg.makeArray();
@@ -145,7 +145,7 @@ namespace Fabric
           data += allocSize;
         }
       }
-      elementDesc->disposeDatas( datas, count, allocSize );
+      elementDesc->disposeDatas( count, datas, allocSize );
     }
     
     struct ProduceJSONAsyncCallbackData_0

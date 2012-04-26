@@ -163,7 +163,7 @@ namespace Fabric
 
     Exception ArrayIOOperator::GetPrototypeException()
     {
-      static const Exception exception("operator must have prototype: in InputType inputData, io OutputType outputData[, in Size index[,in Size count[, in SharedType sharedData]]]]");
+      static const Exception exception("operator must have prototype: in InputType inputData, io OutputType outputData[, in Index index[,in Size count[, in SharedType sharedData]]]]");
       return exception;
     }
         

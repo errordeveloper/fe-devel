@@ -13,7 +13,7 @@ except Exception as e:
 
 try:
   desc = {
-    'members': { 'x' },
+    'members': { 'x':'x' },
     'constructor': object
   }
   fabricClient.RT.registerType( 'Foobar2', desc )

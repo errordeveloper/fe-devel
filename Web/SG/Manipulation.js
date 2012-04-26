@@ -395,7 +395,7 @@ FABRIC.SceneGraph.registerNodeType('PaintManipulator', {
           paintingOpDef = {
             operatorName: 'collectPointsInsideBrush',
             srcFile: 'FABRIC_ROOT/SG/KL/collectPointsInsideVolume.kl',
-            entryFunctionName: 'collectPointsInsideBrush',
+            entryPoint: 'collectPointsInsideBrush',
             parameterLayout: [
               'paintData.cameraMatrix',
               'paintData.projectionMatrix',

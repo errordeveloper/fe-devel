@@ -99,7 +99,7 @@ FABRIC.SceneGraph.registerNodeType('Hair', {
         SEGMENT_COUNT: options.segments + 1,
         HAIR_COUNT: options.count
       },
-      entryFunctionName: 'initHair'
+      entryPoint: 'initHair'
     }));
 
     // create the node to perform the simulation
@@ -139,7 +139,7 @@ FABRIC.SceneGraph.registerNodeType('Hair', {
     hairUniformsDGNode.bindings.append(scene.constructOperator({
         operatorName: 'calcSkinningXfos',
         srcFile: 'FABRIC_ROOT/SG/KL/calcSkinningXfos.kl',
-        entryFunctionName: 'calcSkinningXfos',
+        entryPoint: 'calcSkinningXfos',
         parameterLayout: ['rig.pose', 'skeleton.bones', 'self.skinningXfos']
       }));
     
@@ -167,7 +167,7 @@ FABRIC.SceneGraph.registerNodeType('Hair', {
       preProcessorDefinitions: {
         SEGMENT_COUNT: options.segments + 1
       },
-      entryFunctionName: 'simulateHair'
+      entryPoint: 'simulateHair'
     }));
 
     hairDGNode.bindings.append(scene.constructOperator({
@@ -182,7 +182,7 @@ FABRIC.SceneGraph.registerNodeType('Hair', {
       preProcessorDefinitions: {
         SEGMENT_COUNT: options.segments + 1
       },
-      entryFunctionName: 'shiftPositions'
+      entryPoint: 'shiftPositions'
     }));
     
     return hairNode;

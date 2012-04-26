@@ -4,5 +4,5 @@
 
 operator entry()
 {
-  report String(7) + String(5);
+  report(String(7) + String(5));
 }

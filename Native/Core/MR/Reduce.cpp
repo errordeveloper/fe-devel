@@ -162,7 +162,7 @@ namespace Fabric
         size_t endIndex = std::min( index + m_indicesPerJob, m_count );
         while ( index < endIndex )
         {
-          memset( inputDatas, 0, allInputElementsSize );
+          m_inputDesc->initializeDatas( maxGroupSize, 0, inputElementSize, inputDatas, inputElementSize );
           
           size_t groupSize = 0;
           while ( groupSize < maxGroupSize && index + groupSize < endIndex )
@@ -188,7 +188,7 @@ namespace Fabric
             }
           }
         
-          m_inputDesc->disposeDatas( inputDatas, groupSize, inputElementSize );
+          m_inputDesc->disposeDatas( maxGroupSize, inputDatas, inputElementSize );
           
           index += groupSize;
         }

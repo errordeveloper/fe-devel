@@ -34,8 +34,6 @@ namespace Fabric
     
       // Impl
       
-      virtual void setData( void const *value, void *data ) const;
-      virtual void disposeDatasImpl( void *data, size_t count, size_t stride ) const;
       virtual std::string descData( void const *data ) const;
       virtual void const *getDefaultData() const;
       virtual size_t getIndirectMemoryUsage( void const *data ) const;
@@ -44,9 +42,6 @@ namespace Fabric
       virtual void decodeJSON( JSON::Entity const &entity, void *data ) const;
 
       virtual bool isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const;
-      virtual bool isShallow() const;
-      virtual bool isNoAliasSafe() const;
-      virtual bool isExportable() const;
     
       // ComparableImpl
     
@@ -55,7 +50,7 @@ namespace Fabric
       
       // StringImpl
       
-      char const *getValueData( void const *src ) const
+      static char const *GetValueData( void const *src )
       {
         FABRIC_ASSERT( src );
         bits_t const * const *bitsPtr = static_cast<bits_t const * const *>( src );
@@ -67,7 +62,12 @@ namespace Fabric
         return result;
       }
       
-      size_t getValueLength( void const *src ) const
+      char const *getValueData( void const *src ) const
+      {
+        return GetValueData( src );
+      }
+      
+      static size_t GetValueLength( void const *src )
       {
         FABRIC_ASSERT( src );
         bits_t const *bits = *static_cast<bits_t const * const *>( src );
@@ -76,6 +76,11 @@ namespace Fabric
           result = bits->length;
         else result = 0;
         return result;
+      }
+      
+      size_t getValueLength( void const *src ) const
+      {
+        return GetValueLength( src );
       }
 
       static void SetValue( char const *data, size_t length, void *dst )
@@ -113,6 +118,10 @@ namespace Fabric
     protected:
       
       StringImpl( std::string const &codeName );
+
+      virtual void initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const;
+      virtual void disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const;
       
       static size_t AllocSizeForLength( size_t length )
       {
@@ -213,7 +222,7 @@ namespace Fabric
         return result;
       }
     };
-  };
-};
+  }
+}
 
 #endif //_FABRIC_RT_STRING_IMPL_H

@@ -14,7 +14,7 @@ function MyType(Scalar scalar) {
 
 operator entry() {
   MyType myTypeFromString = "foo";
-  report myTypeFromString;
+  report(myTypeFromString);
   MyType myTypeFromScalar = 2.718;
-  report myTypeFromScalar;
+  report(myTypeFromScalar);
 }

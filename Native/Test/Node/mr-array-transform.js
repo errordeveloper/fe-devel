@@ -6,7 +6,7 @@ FC = require("Fabric").createClient();
 
 cv = FC.MR.createConstValue("Size", 10);
 
-ago = FC.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Size index) { output = Scalar(index); }", "foo");
+ago = FC.KLC.createArrayGeneratorOperator("foo.kl", "operator foo(io Scalar output, Index index) { output = Scalar(index); }", "foo");
 ag = FC.MR.createArrayGenerator(cv, ago);
 
 to = FC.KLC.createArrayTransformOperator("bar.kl", "operator bar(io Scalar value) { value *= 3.14; }", "bar");

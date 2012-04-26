@@ -1,0 +1,51 @@
+/*
+ *  Copyright 2010-2012 Fabric Engine Inc. All rights reserved.
+ */
+
+// verify that compilation doesn't fail on stubs for any types
+// of parameters
+operator lotsparams(
+  Boolean a,
+  Byte b,
+  Integer c,
+  Size d,
+  Index e,
+  Float32 f,
+  Scalar g,
+  Float64 h,
+  String i,
+  Container j,
+  io Boolean a1,
+  io Byte b1,
+  io Integer c1,
+  io Size d1,
+  io Index e1,
+  io Float32 f1,
+  io Scalar g1,
+  io Float64 h1,
+  io String i1,
+  io Container j1,
+  Boolean a2[],
+  Byte b2[],
+  Integer c2[],
+  Size d2[],
+  Index e2[],
+  Float32 f2[],
+  Scalar g2[],
+  Float64 h2[],
+  String i2[],
+  Container j2[],
+  io Boolean a3[],
+  io Byte b3[],
+  io Integer c3[],
+  io Size d3[],
+  io Index e3[],
+  io Float32 f2[],
+  io Scalar g3[],
+  io Float64 h3[],
+  io String i3[],
+  io Container j3[]
+  )
+{}
+
+operator entry() {}

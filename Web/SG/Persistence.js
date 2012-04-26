@@ -504,7 +504,7 @@ FABRIC.SceneGraph.registerNodeType('LoadBinaryDataNode', {
           "self.dataNames",
           "self.seekOffsets"
         ],
-        entryFunctionName: 'readTOCFromStream',
+        entryPoint: 'readTOCFromStream',
         srcFile: 'FABRIC_ROOT/SG/KL/fileStream.kl',
         async: false
       }));
@@ -519,7 +519,7 @@ FABRIC.SceneGraph.registerNodeType('LoadBinaryDataNode', {
           "self.dataNames",
           "self.seekOffsets"
         ],
-        entryFunctionName: 'readTOCFromStream',
+        entryPoint: 'readTOCFromStream',
         srcFile: 'FABRIC_ROOT/SG/KL/fileStream.kl',
         async: false
       }));
@@ -581,7 +581,7 @@ FABRIC.SceneGraph.registerNodeType('LoadBinaryDataNode', {
           preProcessorDefinitions: {
             DATA_TYPE: 'Vec3'
           },
-          entryFunctionName: 'readSliceCountFromStream',
+          entryPoint: 'readSliceCountFromStream',
           srcFile: 'FABRIC_ROOT/SG/KL/fileStreamIO.kl'
         }));
         
@@ -612,7 +612,7 @@ FABRIC.SceneGraph.registerNodeType('LoadBinaryDataNode', {
             preProcessorDefinitions: {
               DATA_TYPE: memberType
             },
-            entryFunctionName: operatorName,
+            entryPoint: operatorName,
             parameterLayout: [
               'resourceNode.resource',
               'resourceNode.dataNames',
@@ -688,7 +688,7 @@ FABRIC.SceneGraph.registerNodeType('WriteBinaryDataNode', {
         "self.seekOffsetsLocation",
         "self.seekOffsets"
       ],
-      entryFunctionName: 'openFileStreamForWriting',
+      entryPoint: 'openFileStreamForWriting',
       srcFile: 'FABRIC_ROOT/SG/KL/fileStream.kl',
       async: false
     }));
@@ -701,7 +701,7 @@ FABRIC.SceneGraph.registerNodeType('WriteBinaryDataNode', {
         "self.seekOffsetsLocation",
         "self.seekOffsets"
       ],
-      entryFunctionName: 'closeFileStream',
+      entryPoint: 'closeFileStream',
       srcFile: 'FABRIC_ROOT/SG/KL/fileStream.kl',
       async: false
     }));
@@ -740,7 +740,7 @@ FABRIC.SceneGraph.registerNodeType('WriteBinaryDataNode', {
           preProcessorDefinitions: {
             DATA_TYPE: 'Size'
           },
-          entryFunctionName: 'writeSliceCountToStream',
+          entryPoint: 'writeSliceCountToStream',
           parameterLayout: [
             'fileStream.stream',
             'fileStream.dataNames',
@@ -765,7 +765,7 @@ FABRIC.SceneGraph.registerNodeType('WriteBinaryDataNode', {
           var dataName = sgnodeName+'.'+dgnodeName+'.'+memberName;
           writeDGNodesEventHandler.addMember(memberName+'_name','String', dataName);
           var operatorName = 'write'+ memberType + (isArray ? 'Array' : 'Member') + 'ToStream';
-          var entryFunctionName = 'write' + (isArray ? 'Array' : 'Member') + 'ToStream';
+          var entryPoint = 'write' + (isArray ? 'Array' : 'Member') + 'ToStream';
           
           writeDGNodesEventHandler.preDescendBindings.append(scene.constructOperator({
             operatorName: operatorName,
@@ -773,7 +773,7 @@ FABRIC.SceneGraph.registerNodeType('WriteBinaryDataNode', {
             preProcessorDefinitions: {
               DATA_TYPE: memberType
             },
-            entryFunctionName: entryFunctionName,
+            entryPoint: entryPoint,
             parameterLayout: [
               'fileStream.stream',
               'fileStream.dataNames',

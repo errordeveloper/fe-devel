@@ -11,30 +11,30 @@ operator entry()
   report((-Size(42))&0xFFFFFFFF);
 
   // Binary ops
-  x = Size(1) + Size(2); report x;
-  x = Size(4) - Size(3); report x;
-  x = Size(3) * Size(4); report x;
-  x = Size(6) / Size(2); report x;
-  x = Size(11) % Size(5); report x;
-  x = Size(11) << Size(2); report x;
-  x = Size(11) >> Size(3); report x;
+  x = Size(1) + Size(2); report(x);
+  x = Size(4) - Size(3); report(x);
+  x = Size(3) * Size(4); report(x);
+  x = Size(6) / Size(2); report(x);
+  x = Size(11) % Size(5); report(x);
+  x = Size(11) << Size(2); report(x);
+  x = Size(11) >> Size(3); report(x);
   
   // Bit ops
-  x = Size(7) & Size(11); report x;
-  x = Size(7) | Size(11); report x;
-  x = Size(7) ^ Size(11); report x;
+  x = Size(7) & Size(11); report(x);
+  x = Size(7) | Size(11); report(x);
+  x = Size(7) ^ Size(11); report(x);
 
   // Assignment ops
-  x = Size(5); report x;
-  x += Size(2); report x;
-  x -= Size(3); report x;
-  x *= Size(12); report x;
-  x /= Size(2); report x;
-  x %= Size(5); report x;
-  x |= Size(11); report x;
-  x &= Size(11); report x;
-  x ^= Size(11); report x;
-  x = Size(5421); report x;
-  x <<= Size(1); report x;
-  x >>= Size(1); report x;
+  x = Size(5); report(x);
+  x += Size(2); report(x);
+  x -= Size(3); report(x);
+  x *= Size(12); report(x);
+  x /= Size(2); report(x);
+  x %= Size(5); report(x);
+  x |= Size(11); report(x);
+  x &= Size(11); report(x);
+  x ^= Size(11); report(x);
+  x = Size(5421); report(x);
+  x <<= Size(1); report(x);
+  x >>= Size(1); report(x);
 }

@@ -637,8 +637,8 @@ operator locomotionPreProcessing(
     }
   }
   if(comXfoBindings.xfoBindings.size == 0){
-    report bindings;
-    report com;
+    report(bindings);
+    report(com);
     report("COM Xfo variable not found");
     return;
   }

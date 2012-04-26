@@ -1,6 +1,6 @@
 Node
-{'foo': {'type': 'String', 'name': 'foo'}}
+{u'foo': {u'type': u'String'}}
 2
 fred
 joe
-{'parent': 'node2'}
+{u'parent': 'node2'}

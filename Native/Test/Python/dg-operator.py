@@ -6,9 +6,9 @@ import fabric
 F = fabric.createClient()
 
 o = F.DG.createOperator("op")
-o.setSourceCode("operator entry() { report 'Hello'; }")
-o.setEntryFunctionName("entry")
+o.setSourceCode("operator entry() { report('Hello'); }")
+o.setEntryPoint("entry")
 print(o.getSourceCode())
-print(o.getEntryFunctionName())
+print(o.getEntryPoint())
 
 F.close()

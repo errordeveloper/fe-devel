@@ -3,39 +3,45 @@
  */
 
 #include <Fabric/Core/RT/StructImpl.h>
-
+ 
 #include <Fabric/Core/RT/Desc.h>
 #include <Fabric/Base/Util/Format.h>
 #include <Fabric/Base/JSON/Encoder.h>
 #include <Fabric/Base/JSON/Decoder.h>
 #include <Fabric/Base/Util/SimpleString.h>
 
+#include <set>
+ 
 namespace Fabric
 {
   namespace RT
   {
-    StructImpl::StructImpl( std::string const &codeName, StructMemberInfoVector const &memberInfos )
-      : Impl( codeName, DT_STRUCT )
-      , m_memberInfos( memberInfos )
+    StructImpl::StructImpl(
+      std::string const &codeName,
+      StructMemberInfoVector const &memberInfos
+      )
+      : m_memberInfos( memberInfos )
       , m_numMembers( memberInfos.size() )
       , m_defaultData( 0 )
     {
-      m_isShallow = true;
-      m_isNoAliasSafe = true;
-      m_isExportable = true;
+      size_t flags = FlagShallow | FlagExportable;
       m_memberOffsets.push_back( 0 );
       for ( size_t i=0; i<m_numMembers; ++i )
       {
         StructMemberInfo const &memberInfo = getMemberInfo(i);
         m_memberOffsets.push_back( m_memberOffsets.back() + memberInfo.desc->getAllocSize() );
         m_nameToIndexMap.insert( NameToIndexMap::value_type( memberInfo.name, i ) );
-        m_isShallow = m_isShallow && memberInfo.desc->isShallow();
-        m_isNoAliasSafe = m_isNoAliasSafe && memberInfo.desc->isNoAliasSafe();
-        m_isExportable = m_isExportable && memberInfo.desc->isExportable();
+        if ( !memberInfo.desc->isShallow() )
+          flags &= ~FlagShallow;
+        if ( memberInfo.desc->isNoAliasUnsafe() )
+          flags |= FlagNoAliasUnsafe;
+        if ( !memberInfo.desc->isExportable() )
+          flags &= ~FlagExportable;
       }
-      
       size_t size = m_memberOffsets[m_numMembers];
-      setSize( size );
+
+      initialize( codeName, DT_STRUCT, size, flags );
+
       m_defaultData = malloc( size );
       memset( m_defaultData, 0, size );
       setDefaultValues( memberInfos );
@@ -66,20 +72,34 @@ namespace Fabric
       return m_defaultData;
     }
     
-    void StructImpl::setData( void const *srcData, void *dstData ) const
+    void StructImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
-      if ( m_isShallow )
-        memcpy( dstData, srcData, getAllocSize() );
-      else
+      FABRIC_ASSERT( dst );
+      for ( size_t i=0; i<m_numMembers; ++i )
       {
-        for ( size_t i=0; i<m_numMembers; ++i )
-        {
-          StructMemberInfo const &memberInfo = m_memberInfos[i];
-          size_t memberOffset = m_memberOffsets[i];
-          void const *srcMemberData = static_cast<uint8_t const *>(srcData) + memberOffset;
-          void *dstMemberData = static_cast<uint8_t *>(dstData) + memberOffset;
-          memberInfo.desc->setData( srcMemberData, dstMemberData );
-        }
+        StructMemberInfo const &memberInfo = m_memberInfos[i];
+        size_t memberOffset = m_memberOffsets[i];
+        void const *srcMemberData;
+        if ( src )
+          srcMemberData = src + memberOffset;
+        else
+          srcMemberData = 0;
+        void *dstMemberData = dst + memberOffset;
+        memberInfo.desc->initializeDatas( count, srcMemberData, srcStride, dstMemberData, dstStride );
+      }
+    }
+    
+    void StructImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( src );
+      FABRIC_ASSERT( dst );
+      for ( size_t i=0; i<m_numMembers; ++i )
+      {
+        StructMemberInfo const &memberInfo = m_memberInfos[i];
+        size_t memberOffset = m_memberOffsets[i];
+        void const *srcMemberData = static_cast<uint8_t const *>(src) + memberOffset;
+        void *dstMemberData = static_cast<uint8_t *>(dst) + memberOffset;
+        memberInfo.desc->setDatas( count, srcMemberData, srcStride, dstMemberData, dstStride );
       }
     }
     
@@ -99,7 +119,7 @@ namespace Fabric
     {
       entity.requireObject();
         
-      size_t membersFound = 0;
+      std::set<std::string> membersFound;
       JSON::ObjectDecoder objectDecoder( entity );
       JSON::Entity keyString, valueEntity;
       while ( objectDecoder.getNext( keyString, valueEntity ) )
@@ -120,26 +140,41 @@ namespace Fabric
           size_t memberIndex = it->second;
           void *memberData = static_cast<uint8_t *>(data) + m_memberOffsets[memberIndex];
           m_memberInfos[memberIndex].desc->decodeJSON( valueEntity, memberData );
+
+          membersFound.insert( name );
         }
         catch ( Exception e )
         {
           throw _(name) + ": " + e;
         }
-
-        ++membersFound;
       }
       
-      if ( membersFound != m_numMembers )
-        throw Exception( "missing members" );
+      if ( membersFound.size() != m_numMembers )
+      {
+        std::string missingMembers = "";
+        for ( NameToIndexMap::const_iterator it = m_nameToIndexMap.begin(); it != m_nameToIndexMap.end(); ++it )
+        {
+          if ( membersFound.find( it->first ) == membersFound.end() )
+          {
+            if ( !missingMembers.empty() )
+              missingMembers += ", ";
+            missingMembers += _(it->first);
+          }
+        }
+        if ( membersFound.size() > 1 )
+          throw Exception( "missing members " + missingMembers );
+        else
+          throw Exception( "missing member " + missingMembers );
+      }
     }
 
-    void StructImpl::disposeDatasImpl( void *data, size_t count, size_t stride ) const
+    void StructImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
       for ( size_t i=0; i<m_numMembers; ++i )
       {
         StructMemberInfo const &memberInfo = m_memberInfos[i];
-        void *memberData = static_cast<uint8_t *>(data) + m_memberOffsets[i];
-        memberInfo.desc->disposeDatas( memberData, count, stride );
+        void *memberData = data + m_memberOffsets[i];
+        memberInfo.desc->disposeDatas( count, memberData, stride );
       }
     }
     
@@ -158,16 +193,6 @@ namespace Fabric
       }
       result += "}";
       return result;
-    }
-    
-    bool StructImpl::isShallow() const
-    {
-      return m_isShallow;
-    }
-
-    bool StructImpl::isNoAliasSafe() const
-    {
-      return m_isNoAliasSafe;
     }
 
     bool StructImpl::isEquivalentTo( RC::ConstHandle<Impl> const &thatImpl ) const
@@ -197,7 +222,7 @@ namespace Fabric
     
     bool StructImpl::equalsData( void const *lhs, void const *rhs ) const
     {
-      if ( m_isShallow )
+      if ( isShallow() )
         return memcmp( lhs, rhs, getAllocSize() ) == 0;
       else
       {
@@ -217,11 +242,6 @@ namespace Fabric
       for ( size_t i=0; i<m_numMembers; ++i )
         total += m_memberInfos[i].desc->getIndirectMemoryUsage( getImmutableMemberData_NoCheck( data, i ) );
       return total;
-    }
-    
-    bool StructImpl::isExportable() const
-    {
-      return m_isExportable;
     }
   }
 }

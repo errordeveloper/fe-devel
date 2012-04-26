@@ -6,5 +6,5 @@ function Scalar externalSquare( Scalar value ) = "externalSquare";
 
 operator entry()
 {
-  report externalSquare( 7 );
+  report(externalSquare( 7 ));
 }

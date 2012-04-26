@@ -6,15 +6,15 @@ operator entry() {
   String a[];
   a.push("hello");
   a.push("world");
-  report a;
+  report(a);
 
   String b[];
   b = a;
-  report b;
+  report(b);
 
   String c[];
-  report c;
+  report(c);
 
   b = c;
-  report b;
+  report(b);
 }

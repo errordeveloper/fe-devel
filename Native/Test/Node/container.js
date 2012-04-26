@@ -19,7 +19,7 @@ catch(e)
 }
 
 op = FABRIC.DependencyGraph.createOperator("op");
-op.setEntryFunctionName("op");
+op.setEntryPoint("op");
 op.setSourceCode('\
 operator op(\n\
   io Container c,\n\
@@ -27,22 +27,22 @@ operator op(\n\
   io String s<>\n\
   )\n\
 {\n\
-  report "Container string: " + c + " Count: " + c.size() + " Is valid: " + Boolean(c);\n\
+  report("Container string: " + c + " Count: " + c.size() + " Is valid: " + Boolean(c));\n\
   Container otherC;\n\
-  report "Uninitialized Container string: " + otherC + " Is valid: " + Boolean(otherC);\n\
-  report "Before resize: Member sizes: " + i.size;\n\
-  report "Members: " + i + " " + s;\n\
+  report("Uninitialized Container string: " + otherC + " Is valid: " + Boolean(otherC));\n\
+  report("Before resize: Member sizes: " + i.size);\n\
+  report("Members: " + i + " " + s);\n\
   otherC = c;\n\
   otherC.resize(Size(3));\n\
-  report "Container string: " + otherC + " Count: " + otherC.size() + " Is valid: " + Boolean(otherC);\n\
-  report "After resize: Member sizes: " + i.size;\n\
+  report("Container string: " + otherC + " Count: " + otherC.size() + " Is valid: " + Boolean(otherC));\n\
+  report("After resize: Member sizes: " + i.size);\n\
   i[2] = 1;\n\
   s[2] = "test";\n\
-  report "Member sizes: " + s.size;\n\
-  report "Members: " + i + " " + s;\n\
+  report("Member sizes: " + s.size);\n\
+  report("Members: " + i + " " + s);\n\
   //No test accessing uninitialized Container\n\
   Container bad;\n\
-  report bad.size();\n\
+  report(bad.size());\n\
 }\n\
 ');
 if (op.getDiagnostics().length > 0 ) {
@@ -67,7 +67,7 @@ catch(e)
 
 //Error test: we are not allowed to have io Container along with members elements
 badOp = FABRIC.DependencyGraph.createOperator("badOp");
-badOp.setEntryFunctionName("badOp");
+badOp.setEntryPoint("badOp");
 badOp.setSourceCode('\
 operator badOp(\n\
   io Container c,\n\

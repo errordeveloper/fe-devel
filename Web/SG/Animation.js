@@ -198,7 +198,7 @@ FABRIC.SceneGraph.registerNodeType('TrackAnimationContainer', {
             KEYFRAMETYPE: trackAnimationContainerNode.pub.getKeyframeType(),
             KEYFRAME_EVALUATEDTYPE: trackAnimationContainerNode.pub.getValueType()
           },
-          entryFunctionName: 'evaluateTrackCurve',
+          entryPoint: 'evaluateTrackCurve',
           parameterLayout: [
             'characteranimationcontainer.track<>',
             'parameters.timeRange',
@@ -362,7 +362,7 @@ FABRIC.SceneGraph.registerNodeType('TrackAnimationContainer', {
         targetnode.getDGNode().bindings.insert(scene.constructOperator({
           operatorName: operatorName,
           srcCode: operatorHeaderSrc + operatorBodySrc,
-          entryFunctionName: operatorName,
+          entryPoint: operatorName,
           parameterLayout: parameterLayout
         }), 0);
       }
@@ -370,7 +370,7 @@ FABRIC.SceneGraph.registerNodeType('TrackAnimationContainer', {
         targetnode.getDGNode().bindings.append(scene.constructOperator({
           operatorName: operatorName,
           srcCode: operatorHeaderSrc + operatorBodySrc,
-          entryFunctionName: operatorName,
+          entryPoint: operatorName,
           parameterLayout: parameterLayout
         }));
       }
@@ -676,7 +676,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterAnimationContainer', {
           preProcessorDefinitions: {
             KEYFRAMETRACKSETTYPE: keyframeTrackSetType
           },
-          entryFunctionName: 'keyCurvesFromVariables',
+          entryPoint: 'keyCurvesFromVariables',
           parameterLayout: [
             characterAnimationContainerNode.getControllerBinding(),
             'variables.poseVariables',
@@ -710,7 +710,7 @@ FABRIC.SceneGraph.registerNodeType('CharacterAnimationContainer', {
             TRACKSETTYPE: characterAnimationContainerNode.getTrackSetType(),
             KEYFRAME_EVALUATEDTYPE: characterAnimationContainerNode.pub.getValueType()
           },
-          entryFunctionName: 'evaluateTrackSetCurve',
+          entryPoint: 'evaluateTrackSetCurve',
           parameterLayout: [
             'characteranimationcontainer.trackSet<>',
             'parameters.trackSetId',
@@ -864,7 +864,7 @@ FABRIC.SceneGraph.registerNodeType('AnimationController', {
       dgnode.bindings.append(scene.constructOperator( {
           operatorName:'incrementControllerLocalTime',
           srcFile:'FABRIC_ROOT/SG/KL/incrementControllerLocalTime.kl',
-          entryFunctionName:'incrementControllerLocalTime',
+          entryPoint:'incrementControllerLocalTime',
           parameterLayout: [
             'globals.time',
             'globals.timestep',

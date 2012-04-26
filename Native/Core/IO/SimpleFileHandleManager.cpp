@@ -19,7 +19,8 @@ namespace Fabric
       return new SimpleFileHandleManager();
     }
 
-    SimpleFileHandleManager::SimpleFileHandleManager()
+    SimpleFileHandleManager::SimpleFileHandleManager() :
+      m_mapMutex( "SimpleFileHandleManager Map Mutex" )
     {
     }
 
@@ -41,6 +42,8 @@ namespace Fabric
       data.m_isFolder = folder;
       data.m_readOnly = readOnly;
       std::string handle = makeHandle( path );
+
+      Util::Mutex::Lock lock( m_mapMutex );
 
       std::pair<HandleToDataMap::iterator, bool> result = m_handleToData.insert( std::make_pair( handle, data ) );
       if( result.first != m_handleToData.end() )
@@ -72,11 +75,13 @@ namespace Fabric
     bool SimpleFileHandleManager::hasRelativePath( std::string const &handle ) const
     {
       //[JeromeCG 20120227] For consistency, just check if we have data related to that handle (this function is more relevant for secure file handles).
+      Util::Mutex::Lock lock( m_mapMutex );
       return m_handleToData.find( makeHandle( handle ) ) == m_handleToData.end();
     }
 
     SimpleFileHandleManager::Data const *SimpleFileHandleManager::getHandleData( std::string const &handle ) const
     {
+      Util::Mutex::Lock lock( m_mapMutex );
       HandleToDataMap::const_iterator it = m_handleToData.find( makeHandle( handle ) );
       return it != m_handleToData.end() ? &(it->second) : NULL;
     }

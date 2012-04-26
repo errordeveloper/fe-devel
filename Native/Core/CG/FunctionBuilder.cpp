@@ -114,8 +114,8 @@ namespace Fabric
     {
       RC::Handle<Context> context = getContext();
       
-      llvm::Type const *llvmReturnType = 0;
-      std::vector<llvm::Type const *> llvmParamTypes;
+      llvm::Type *llvmReturnType = 0;
+      std::vector<llvm::Type *> llvmParamTypes;
 
       if ( flags & DirectlyReturnLValue )
       {
@@ -229,7 +229,7 @@ namespace Fabric
 
     FunctionBuilder::FunctionBuilder(
       ModuleBuilder &moduleBuilder,
-      llvm::FunctionType const *llvmFunctionType,
+      llvm::FunctionType *llvmFunctionType,
       llvm::Function *llvmFunction
       )
       : m_moduleBuilder( moduleBuilder )

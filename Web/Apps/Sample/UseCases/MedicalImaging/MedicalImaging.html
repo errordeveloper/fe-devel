@@ -145,7 +145,7 @@ FABRIC.SceneGraph.registerNodeType('Image3DWithHistogram', {
         'self.histogramResolution',
         'self.histogram'
       ],
-      entryFunctionName: 'generate3DImageHistogram',
+      entryPoint: 'generate3DImageHistogram',
       srcFile: 'KL/3DTextureUtils.kl'
     }));
     return histogramNode;
@@ -195,7 +195,7 @@ FABRIC.SceneGraph.registerNodeType('CropVolumeManipulator', {
           'volume_uniforms.cropMax',
           'self.positions<>'
         ],
-        entryFunctionName: 'setLineSegmentPositions',
+        entryPoint: 'setLineSegmentPositions',
         srcCode: srcCode
       }));
             

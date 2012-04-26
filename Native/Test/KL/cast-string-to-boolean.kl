@@ -4,6 +4,6 @@
 
 operator entry()
 {
-  report Boolean("");
-  report Boolean("foo");
+  report(Boolean(""));
+  report(Boolean("foo"));
 }

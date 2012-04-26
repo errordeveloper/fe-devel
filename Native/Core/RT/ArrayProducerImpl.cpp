@@ -13,10 +13,9 @@ namespace Fabric
   namespace RT
   {
     ArrayProducerImpl::ArrayProducerImpl( std::string const &codeName, RC::ConstHandle<RT::Impl> const &elementImpl )
-      : ProducerImpl( codeName, DT_ARRAY_PRODUCER )
-      , m_elementImpl( elementImpl )
+      : m_elementImpl( elementImpl )
     {
-      setSize( sizeof(MR::ArrayProducer const *) );
+      initialize( codeName, DT_ARRAY_PRODUCER, sizeof(MR::ArrayProducer const *) );
     }
     
     void const *ArrayProducerImpl::getDefaultData() const
@@ -25,22 +24,51 @@ namespace Fabric
       return &defaultData;
     }
     
-    void ArrayProducerImpl::setData( void const *src, void *dst ) const
+    void ArrayProducerImpl::initializeDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
+    {
+      FABRIC_ASSERT( dst );
+      uint8_t *dstEnd = dst + dstStride * count;
+
+      while ( dst != dstEnd )
+      {
+        MR::ArrayProducer const *srcBits;
+        if ( src )
+        {
+          srcBits = *reinterpret_cast<MR::ArrayProducer const * const *>( src );
+          src += srcStride;
+        }
+        else srcBits = 0;
+
+        MR::ArrayProducer const *&dstBits = *reinterpret_cast<MR::ArrayProducer const **>( dst );
+        dstBits = srcBits;
+        if ( dstBits )
+          dstBits->retain();
+        dst += dstStride;
+      }
+    }
+    
+    void ArrayProducerImpl::setDatasImpl( size_t count, uint8_t const *src, size_t srcStride, uint8_t *dst, size_t dstStride ) const
     {
       FABRIC_ASSERT( src );
       FABRIC_ASSERT( dst );
-      
-      MR::ArrayProducer const *srcBits = *static_cast<MR::ArrayProducer const * const *>( src );
-      MR::ArrayProducer const *&dstBits = *static_cast<MR::ArrayProducer const **>( dst );
-      if ( dstBits != srcBits )
+      uint8_t *dstEnd = dst + dstStride * count;
+
+      while ( dst != dstEnd )
       {
-        if ( dstBits )
-          dstBits->release();
-        
-        dstBits = srcBits;
-        
-        if ( dstBits )
-          dstBits->retain();
+        MR::ArrayProducer const *srcBits = *reinterpret_cast<MR::ArrayProducer const * const *>( src );
+        MR::ArrayProducer const *&dstBits = *reinterpret_cast<MR::ArrayProducer const **>( dst );
+        if ( dstBits != srcBits )
+        {
+          if ( dstBits )
+            dstBits->release();
+          
+          dstBits = srcBits;
+          
+          if ( dstBits )
+            dstBits->retain();
+        }
+        src += srcStride;
+        dst += dstStride;
       }
     }
      
@@ -61,9 +89,8 @@ namespace Fabric
       throw Exception( "unable to convert ArrayProducer from JSON" );
     }
 
-    void ArrayProducerImpl::disposeDatasImpl( void *dst, size_t count, size_t stride ) const
+    void ArrayProducerImpl::disposeDatasImpl( size_t count, uint8_t *data, size_t stride ) const
     {
-      uint8_t *data = static_cast<uint8_t *>( dst );
       uint8_t * const dataEnd = data + count * stride;
       while ( data != dataEnd )
       {
@@ -82,16 +109,6 @@ namespace Fabric
     bool ArrayProducerImpl::isEquivalentTo( RC::ConstHandle<Impl> const &impl ) const
     {
       return isArrayProducer( impl->getType() );
-    }
-    
-    bool ArrayProducerImpl::isShallow() const
-    {
-      return false;
-    }
-
-    bool ArrayProducerImpl::isNoAliasSafe() const
-    {
-      return true;
     }
 
     size_t ArrayProducerImpl::getIndirectMemoryUsage( void const *data ) const

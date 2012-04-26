@@ -4,47 +4,55 @@
 
 import os.path
 
-Import( 'coreEnv', 'buildOS', 'buildType', 'buildObject', 'archDistDir', 'nodeFlags' )
+Import( 'coreEnv', 'buildOS', 'buildArch', 'buildType', 'buildObject', 'archDistDir', 'nodeFlags' )
 
-nodeEnv = coreEnv.Clone()
-nodeEnv.MergeFlags( nodeFlags )
-if buildOS == 'Darwin':
-  nodeEnv.Append( LINKFLAGS = ["-undefined", "dynamic_lookup"] )
+if buildOS != 'Windows' or buildArch != 'x86_64':
+  nodeEnv = coreEnv.Clone()
+  nodeEnv.MergeFlags( nodeFlags )
+  if buildOS == 'Darwin':
+    nodeEnv.Append( LINKFLAGS = ["-undefined", "dynamic_lookup"] )
 
-extraObjects = []
+  extraObjects = []
 
-nodeLibraryName = 'Fabric.node'
-if buildOS == 'Windows':
-    Import( 'getoptFlags' )
-    nodeEnv.MergeFlags( getoptFlags )
-    nodeEnv.Append( LINKFLAGS = [
-        '/IMPLIB:${TARGET.dir}/fabric_cmd.lib',
-        '/STACK:4194304'
-    ] )
-    nodeEnv.Append( LIBS = [ 'User32', 'advapi32' ] )
-    nodeLibraryName = 'Fabric.dll'
+  nodeLibraryName = 'Fabric.node'
+  if buildOS == 'Windows':
+      Import( 'getoptFlags' )
+      nodeEnv.MergeFlags( getoptFlags )
+      nodeEnv.Append( LINKFLAGS = [
+          '/IMPLIB:${TARGET.dir}/fabric_cmd.lib',
+          '/STACK:4194304'
+      ] )
+      nodeEnv.Append( LIBS = [ 'User32', 'advapi32' ] )
+      nodeLibraryName = 'Fabric.dll'
 
-nodeLoadableModule = nodeEnv.LoadableModule( nodeLibraryName, [Glob('*.cpp'),buildObject,extraObjects] )
+  nodeLoadableModule = nodeEnv.LoadableModule( nodeLibraryName, [Glob('*.cpp'),buildObject,extraObjects] )
 
-fabricNodeModuleDistDir = archDistDir.Dir('NodeModule')
-fabricNodePackage = nodeEnv.Command(
-  fabricNodeModuleDistDir.File('package.json'),
-  'package.json',
-  [
-    Copy( "$TARGET", "$SOURCE" )
-  ])
-Export('fabricNodePackage')
-fabricNodeAddOn = nodeEnv.Command(
-  fabricNodeModuleDistDir.File( nodeLibraryName ),
-  nodeLoadableModule,
-  [
-    Copy( "$TARGET", "$SOURCE" )
-  ])
-Export('fabricNodeAddOn')
+  fabricNodeModuleDistDir = archDistDir.Dir('NodeModule')
+  fabricNodePackage = nodeEnv.Command(
+    fabricNodeModuleDistDir.File('package.json'),
+    'package.json',
+    [
+      Copy( "$TARGET", "$SOURCE" )
+    ])
+  Export('fabricNodePackage')
 
-Alias('node', [fabricNodePackage, fabricNodeAddOn, 'exts'])
+  nodeDestModuleName = nodeLibraryName
+  if buildOS == 'Windows':
+    nodeDestModuleName = 'Fabric.node'
 
-nodeModuleReadMe = nodeEnv.File('README.txt')
-Export('nodeModuleReadMe')
-nodeModuleLicense = nodeEnv.File('LICENSE.txt')
-Export('nodeModuleLicense')
+  fabricNodeAddOn = nodeEnv.Command(
+    fabricNodeModuleDistDir.File( nodeDestModuleName ),
+    nodeLoadableModule,
+    [
+      Copy( "$TARGET", "$SOURCE" )
+    ])
+  Export('fabricNodeAddOn')
+
+  nodeModuleReadMe = nodeEnv.File('README.txt')
+  Export('nodeModuleReadMe')
+  nodeModuleLicense = nodeEnv.File('LICENSE.txt')
+  Export('nodeModuleLicense')
+
+  Alias('node', [fabricNodePackage, fabricNodeAddOn, 'exts'])
+else:
+  Alias('node', [])

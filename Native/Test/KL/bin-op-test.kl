@@ -28,5 +28,5 @@ function Vec3 +( Vec3 lhs, Vec3 rhs )
 operator entry()
 {
   var Vec3 lhs(1.0,2.0,3.0), rhs(4.0,5.0,6.0);
-  report lhs + rhs;
+  report(lhs + rhs);
 }

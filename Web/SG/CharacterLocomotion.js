@@ -55,7 +55,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('COMSolver', {
       srcCode: 'operator solveCOM( io Xfo pose[], io Bone bones[], io COM com, Size index, io PoseVariables poseVariableSlices<> ) {\n\
   pose[com.boneId] = poseVariableSlices[index].xfoValues[com.xfoId];\n\
 }',
-      entryFunctionName: 'solveCOM',
+      entryPoint: 'solveCOM',
       parameterLayout: [
         'self.pose',
         'skeleton.bones',
@@ -81,7 +81,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('COMSolver', {
           srcCode: 'operator invertCOM( io Xfo pose[], io Bone bones[], io COM com, io PoseVariables poseVariables ) {\n\
   poseVariables.xfoValues[com.xfoId] = pose[com.boneId];\n\
 }',
-          entryFunctionName: 'invertCOM',
+          entryPoint: 'invertCOM',
           parameterLayout: [
             'sourcerig.pose',
             'skeleton.bones',
@@ -245,7 +245,7 @@ FABRIC.SceneGraph.registerNodeType('LocomotionCharacterAnimationContainer', {
       dgnode.bindings.append(scene.constructOperator({
         operatorName: 'matchCount',
         srcCode: 'operator matchCount(in Container parentContainer, io Container selfContainer) { selfContainer.resize( parentContainer.size() ); }',
-        entryFunctionName: 'matchCount',
+        entryPoint: 'matchCount',
         parameterLayout: [
           'sourceCharacterAnimationContainer',
           'self'
@@ -256,7 +256,7 @@ FABRIC.SceneGraph.registerNodeType('LocomotionCharacterAnimationContainer', {
       dgnode.bindings.append(scene.constructOperator({
         operatorName: 'locomotionPreProcessing',
         srcFile: 'FABRIC_ROOT/SG/KL/locomotionPreProcessing.kl',
-        entryFunctionName: 'locomotionPreProcessing',
+        entryPoint: 'locomotionPreProcessing',
         parameterLayout: [
           'sourceCharacterAnimationContainer.trackSet<>',
           'sourceCharacterAnimationContainer.bindings<>',
@@ -418,7 +418,7 @@ FABRIC.SceneGraph.registerNodeType('LocomotionCharacterController', {
       return scene.constructOperator({
         operatorName: 'evaluateCharacterController',
         srcFile: 'FABRIC_ROOT/SG/KL/characterController.kl',
-        entryFunctionName: 'evaluateCharacterController',
+        entryPoint: 'evaluateCharacterController',
         parameterLayout: [
           'self.xfo',
           'self.controllerparams',
@@ -474,7 +474,7 @@ FABRIC.SceneGraph.registerNodeType('WorldSpacePlayerCharacterController', {
     dgnode.bindings.insert(scene.constructOperator({
       operatorName: 'worldSpacePlayerControls',
       srcFile: 'FABRIC_ROOT/SG/KL/characterController.kl',
-      entryFunctionName: 'worldSpacePlayerControls',
+      entryPoint: 'worldSpacePlayerControls',
       parameterLayout: [
         'self.translationControls',
         'self.orientationControls',
@@ -520,7 +520,7 @@ FABRIC.SceneGraph.registerNodeType('ScreenSpacePlayerCharacterController', {
     dgnode.bindings.insert(scene.constructOperator({
       operatorName: 'screenSpacePlayerControls',
       srcFile: 'FABRIC_ROOT/SG/KL/characterController.kl',
-      entryFunctionName: 'screenSpacePlayerControls',
+      entryPoint: 'screenSpacePlayerControls',
       parameterLayout: [
         'self.translationControls',
         'self.orientationControls',
@@ -637,7 +637,7 @@ FABRIC.SceneGraph.registerNodeType('LocomotionPoseVariables', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'matchCount',
       srcCode: 'operator matchCount(in Container parentContainer, io Container selfContainer) { selfContainer.resize( parentContainer.size() ); }',
-      entryFunctionName: 'matchCount',
+      entryPoint: 'matchCount',
       parameterLayout: [
         'charactercontroller',
         'self'
@@ -685,7 +685,7 @@ FABRIC.SceneGraph.registerNodeType('LocomotionPoseVariables', {
     dgnode.bindings.append(scene.constructOperator({
       operatorName: 'evaluateLocomotionPoseVariables',
       srcFile: 'FABRIC_ROOT/SG/KL/locomotion.kl',
-      entryFunctionName: 'evaluateLocomotionPoseVariables',
+      entryPoint: 'evaluateLocomotionPoseVariables',
       parameterLayout: parameterLayout,
       preProcessorDefinitions: {
         BULLLETWORLD_OPENBLOCKCOMMENT: options.bulletWorldNode ? '' : '/*',
@@ -713,7 +713,7 @@ FABRIC.SceneGraph.registerNodeType('LocomotionPoseVariables', {
       dgnode.bindings.append(scene.constructOperator({
         operatorName: 'matchCount',
         srcCode: 'operator matchCount(in Container parentContainer, io Container selfContainer) { selfContainer.resize( parentContainer.size() ); }',
-        entryFunctionName: 'matchCount',
+        entryPoint: 'matchCount',
         parameterLayout: [
           'matchCountNode',
           'self'
@@ -762,7 +762,7 @@ FABRIC.SceneGraph.CharacterSolvers.registerSolver('HeadLookAtSolver', {
     rigNode.addSolverOperator({
       operatorName: 'solveHeadLookAt',
       srcFile: 'FABRIC_ROOT/SG/KL/solveHubRig.kl',
-      entryFunctionName: 'solveHeadLookAt',
+      entryPoint: 'solveHeadLookAt',
       parameterLayout: [
         'self.pose',
         'skeleton.headBoneId',

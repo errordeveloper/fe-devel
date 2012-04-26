@@ -8,8 +8,7 @@ namespace Fabric
 {
   namespace RT
   {
-    ComparableImpl::ComparableImpl( std::string const &codeName, ImplType type )
-      : Impl( codeName, type )
+    ComparableImpl::ComparableImpl()
     {
     }
     
@@ -17,5 +16,5 @@ namespace Fabric
     {
       return compare( lhs, rhs ) == 0;
     }
-  };
-};
+  }
+}

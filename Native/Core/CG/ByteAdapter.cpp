@@ -33,7 +33,7 @@ namespace Fabric
     {
     }
     
-    llvm::Type const *ByteAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *ByteAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       return llvm::Type::getInt8Ty( context->getLLVMContext() );
     }
@@ -68,7 +68,7 @@ namespace Fabric
       static const bool buildFunctions = true;
 
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *booleanLValue = functionBuilder[0];
@@ -124,7 +124,7 @@ namespace Fabric
       }
       
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];

@@ -42,7 +42,7 @@ FABRIC.SceneGraph.registerNodeType('LidarInstance', {
         ATTRIBUTE_ID: FABRIC.SceneGraph.getShaderParamID('color'),
         DATA_TYPE: 'Color'
       },
-      entryFunctionName: 'loadUniform',
+      entryPoint: 'loadUniform',
       parameterLayout: [
         'shader.shaderProgram',
         'self.color'

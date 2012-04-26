@@ -20,6 +20,24 @@
 
 using namespace Fabric::EDK;
 IMPLEMENT_FABRIC_EDK_ENTRIES
+//#define BULLET_TRACE
+    
+FABRIC_EXT_KL_STRUCT( Vec3, {
+  KL::Float32 x;
+  KL::Float32 y;
+  KL::Float32 z;
+} );
+
+FABRIC_EXT_KL_STRUCT( Quat, {
+  Vec3 v;
+  KL::Float32 w;
+} );
+
+FABRIC_EXT_KL_STRUCT( Xfo, {
+  Quat ori;
+  Vec3 tr;
+  Vec3 sc;
+} );
 
 const int maxProxies = 32766;
 const int maxOverlap = 65535;
@@ -47,18 +65,18 @@ FABRIC_EXT_KL_STRUCT( BulletWorld, {
   };
 
   LocalData * localData;
-  KL::Vec3 gravity;
+  Vec3 gravity;
   KL::Size step;
   KL::Size substeps;
 } );
 
 FABRIC_EXT_KL_STRUCT( BulletContact, {
   KL::Scalar fraction;
-  KL::Vec3 normal;
+  Vec3 normal;
   KL::Scalar mass;
-  KL::Xfo transform;
-  KL::Vec3 linearVelocity;
-  KL::Vec3 angularVelocity;
+  Xfo transform;
+  Vec3 linearVelocity;
+  Vec3 angularVelocity;
 } );
 
 FABRIC_EXT_KL_STRUCT( BulletShape, {
@@ -73,7 +91,7 @@ FABRIC_EXT_KL_STRUCT( BulletShape, {
   KL::Integer type;
   KL::String name;
   KL::VariableArray<KL::Scalar> parameters;
-  KL::VariableArray<KL::Vec3> vertices;
+  KL::VariableArray<Vec3> vertices;
   KL::VariableArray<KL::Integer> indices;
 } );
 
@@ -87,7 +105,7 @@ FABRIC_EXT_KL_STRUCT( BulletRigidBody, {
 
   LocalData * localData;
   KL::String name;
-  KL::Xfo transform;
+  Xfo transform;
   KL::Scalar mass;
   KL::Scalar friction;
   KL::Scalar restitution;
@@ -112,7 +130,7 @@ FABRIC_EXT_KL_STRUCT( BulletSoftBody, {
 
   LocalData * localData;
   KL::String name;
-  KL::Xfo transform;
+  Xfo transform;
   KL::Integer clusters;
   KL::Integer constraints;
   KL::Scalar mass;
@@ -134,8 +152,8 @@ FABRIC_EXT_KL_STRUCT( BulletConstraint, {
   BulletRigidBody::LocalData * bodyLocalDataB;
   KL::Integer type;
   KL::String name;
-  KL::Xfo pivotA;
-  KL::Xfo pivotB;
+  Xfo pivotA;
+  Xfo pivotB;
   KL::String nameA;
   KL::String nameB;
   KL::Integer indexA;
@@ -145,8 +163,8 @@ FABRIC_EXT_KL_STRUCT( BulletConstraint, {
 
 FABRIC_EXT_KL_STRUCT( BulletForce, {
   KL::String name;
-  KL::Vec3 origin;
-  KL::Vec3 direction;
+  Vec3 origin;
+  Vec3 direction;
   KL::Scalar radius;
   KL::Scalar factor;
   KL::Boolean useTorque;
@@ -278,8 +296,8 @@ void BulletWorld::LocalData::reset() {
 }
 
 BulletWorld::LocalData::~LocalData() {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } :   Calling BulletWorld::LocalData::~LocalData()\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } :   Calling BulletWorld::LocalData::~LocalData()");
 #endif
   delete mDynamicsWorld;
   delete mSolver;
@@ -295,13 +313,13 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_Create(
 )
 {
   if(world.localData == NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Create called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Create called.");
 #endif
     world.localData = new BulletWorld::LocalData();
     world.localData->retain();
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Create completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Create completed.");
 #endif
   }
 }
@@ -311,13 +329,13 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_Delete(
 )
 {
   if(world.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Delete called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Delete called.");
 #endif
     world.localData->release();
     world.localData = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Delete completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Delete completed.");
 #endif
   }
 }
@@ -327,13 +345,13 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_SetGravity(
 )
 {
   if(world.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_SetGravity called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_SetGravity called.");
 #endif
     world.localData->mDynamicsWorld->setGravity(btVector3(world.gravity.x,world.gravity.y,world.gravity.z));
     world.localData->mSoftBodyWorldInfo.m_gravity = world.localData->mDynamicsWorld->getGravity();
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_SetGravity completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_SetGravity completed.");
 #endif
   }
 }
@@ -344,8 +362,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_Step(
 )
 {
   if(world.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Step called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Step called.");
 #endif
     KL::Scalar frameStep = 1.0f / 30.0f;
     KL::Scalar dt = frameStep / KL::Scalar(world.substeps);
@@ -357,8 +375,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_Step(
       timeStep -= dt;
     }
     world.localData->mSoftBodyWorldInfo.m_sparsesdf.GarbageCollect();
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Step completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Step completed.");
 #endif
   }
 }
@@ -368,13 +386,13 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_Reset(
 )
 {
   if(world.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Reset called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Reset called.");
 #endif
     world.step = 0;
     world.localData->reset();
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Reset completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Reset completed.");
 #endif
   }
 }
@@ -442,15 +460,15 @@ struct fabricRayResultCallback : public btCollisionWorld::RayResultCallback
 
 FABRIC_EXT_EXPORT void FabricBULLET_World_Raycast(
   BulletWorld & world,
-  KL::Vec3 & from,
-  KL::Vec3 & to,
+  Vec3 & from,
+  Vec3 & to,
   KL::Boolean & filterPassiveObjects,
   KL::VariableArray<BulletContact> & contacts
 )
 {
   if(world.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Raycast called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Raycast called.");
 #endif
     btVector3 fromVec(from.x,from.y,from.z);
     btVector3 toVec(to.x,to.y,to.z);
@@ -465,8 +483,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_Raycast(
     for(size_t i=0;i<contacts.size();i++, it++)
       contacts[i] = it->second;
     
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_Raycast completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_Raycast completed.");
 #endif
   }
 }
@@ -477,8 +495,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_ApplyForce(
 )
 {
   if(world.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_ApplyForce called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_ApplyForce called.");
 #endif
     btVector3 origin(force.origin.x,force.origin.y,force.origin.z);
     btVector3 direction(force.direction.x,force.direction.y,force.direction.z);
@@ -503,8 +521,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_ApplyForce(
       } else
         body->applyCentralForce(direction * factor);
     }
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_ApplyForce completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_ApplyForce completed.");
 #endif
   }
 }
@@ -515,14 +533,14 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_AddRigidBody(
 )
 {
   if(world.localData != NULL && body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_AddRigidBody called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_AddRigidBody called.");
 #endif
     body.localData->mWorld = world.localData;
     body.localData->mWorld->retain();
     world.localData->mDynamicsWorld->addRigidBody(body.localData->mBody);
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_AddRigidBody completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_AddRigidBody completed.");
 #endif
   }
 }
@@ -533,14 +551,14 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_RemoveRigidBody(
 )
 {
   if(world.localData != NULL && body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_RemoveRigidBody called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_RemoveRigidBody called.");
 #endif
     world.localData->mDynamicsWorld->removeRigidBody(body.localData->mBody);
     body.localData->mWorld->release();
     body.localData->mWorld = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_RemoveRigidBody completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_RemoveRigidBody completed.");
 #endif
   }
 }
@@ -551,14 +569,14 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_AddSoftBody(
 )
 {
   if(world.localData != NULL && body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_AddSoftBody called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_AddSoftBody called.");
 #endif
     body.localData->mWorld = world.localData;
     body.localData->mWorld->retain();
     world.localData->mDynamicsWorld->addSoftBody(body.localData->mBody);
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_AddSoftBody completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_AddSoftBody completed.");
 #endif
   }
 }
@@ -569,14 +587,14 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_RemoveSoftBody(
 )
 {
   if(world.localData != NULL && body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_RemoveSoftBody called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_RemoveSoftBody called.");
 #endif
     world.localData->mDynamicsWorld->removeSoftBody(body.localData->mBody);
     body.localData->mWorld->release();
     body.localData->mWorld = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_RemoveSoftBody completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_RemoveSoftBody completed.");
 #endif
   }
 }
@@ -587,14 +605,14 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_AddConstraint(
 )
 {
   if(world.localData != NULL && constraint.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_AddConstraint called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_AddConstraint called.");
 #endif
     world.localData->mDynamicsWorld->addConstraint(constraint.localData->mConstraint);
     constraint.localData->mWorld = world.localData;
     constraint.localData->mWorld->retain();
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_AddConstraint completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_AddConstraint completed.");
 #endif
   }
 }
@@ -605,14 +623,14 @@ FABRIC_EXT_EXPORT void FabricBULLET_World_RemoveConstraint(
 )
 {
   if(world.localData != NULL && constraint.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_RemoveConstraint called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_RemoveConstraint called.");
 #endif
     world.localData->mDynamicsWorld->removeConstraint(constraint.localData->mConstraint);
     constraint.localData->mWorld->release();
     constraint.localData->mWorld = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_World_RemoveConstraint completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_World_RemoveConstraint completed.");
 #endif
   }
 }
@@ -624,8 +642,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Shape_Create(
 )
 {
   if(shape.localData == NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Shape_Create called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Shape_Create called.");
 #endif
     // validate the shape type first
     btCollisionShape * collisionShape = NULL;
@@ -760,8 +778,7 @@ FABRIC_EXT_EXPORT void FabricBULLET_Shape_Create(
     
     // if we don't have a shape, we can't do this
     if(collisionShape == NULL) {
-      printf("   { FabricBULLET } ERROR: Shape type %d is not supported.\n",int(shape.type ));
-      throwException( "{FabricBULLET} ERROR: Shape type is not supported." );
+      throwException( "{FabricBULLET} ERROR: Shape type %d is not supported.",int(shape.type ));
       return;
     }
     
@@ -776,8 +793,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Shape_Create(
     }
     shape.localData->mShape = collisionShape;
     shape.localData->mShape->setUserPointer(shape.localData);
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Shape_Create completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Shape_Create completed.");
 #endif
   }
 }
@@ -787,8 +804,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Shape_Delete(
 )
 {
   if(shape.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Shape_Delete called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Shape_Delete called.");
 #endif
     delete( shape.localData->mShape );
     if(shape.localData->mTriangles != NULL)
@@ -799,8 +816,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Shape_Delete(
       free(shape.localData->mTrianglePos);
     delete( shape.localData );
     shape.localData = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Shape_Delete completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Shape_Delete completed.");
 #endif
   }
 }
@@ -813,8 +830,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_Create(
 )
 {
   if(body.localData == NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_Create called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_Create called.");
 #endif
     if(shape.localData == NULL) {
       throwException( "{FabricBULLET} ERROR: Cannot create a RigidBody with an uninitialized shape." );
@@ -862,8 +879,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_Create(
     body.localData->mBody->setDamping(0.3f,0.3f);
 
     body.localData->mBody->setUserPointer(body.localData);
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_Create completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_Create completed.");
 #endif
   }
 }
@@ -873,8 +890,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_Delete(
 )
 {
   if(body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_Delete called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_Delete called.");
 #endif
     if(body.localData->mWorld != NULL) {
       body.localData->mWorld->mDynamicsWorld->removeRigidBody(body.localData->mBody);
@@ -883,8 +900,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_Delete(
     delete(body.localData->mBody);
     delete(body.localData);
     body.localData = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_Delete completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_Delete completed.");
 #endif
   }  
 }
@@ -894,8 +911,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetMass(
 )
 {
   if(body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetMass called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_SetMass called.");
 #endif
     btVector3 inertia(0,0,0);
     if(body.mass > 0.0f)
@@ -906,20 +923,20 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetMass(
       body.localData->mBody->setCollisionFlags( body.localData->mBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
     else
       body.localData->mBody->setCollisionFlags( body.localData->mBody->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetMass completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_SetMass completed.");
 #endif
   }  
 }
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_GetTransform(
   BulletRigidBody & body,
-  KL::Xfo &result
+  Xfo &result
 )
 {
   if(body.localData != NULL) {
     btTransform & bodyTransform = body.localData->mBody->getWorldTransform();
-    KL::Xfo transform;
+    Xfo transform;
     transform.tr.x = bodyTransform.getOrigin().getX();
     transform.tr.y = bodyTransform.getOrigin().getY();
     transform.tr.z = bodyTransform.getOrigin().getZ();
@@ -937,13 +954,13 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_GetTransform(
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetTransform(
   BulletRigidBody & body,
-  const KL::Xfo & transform
+  const Xfo & transform
 )
 {
   if(body.localData != NULL) {
     if(body.localData->mWorld != NULL) {
-#ifndef NDEBUG
-      printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetTransform called.\n");
+#ifdef BULLET_TRACE
+      log("  { FabricBULLET } : FabricBULLET_RigidBody_SetTransform called.");
 #endif
       btTransform bulletTransform;
       bulletTransform.setOrigin(btVector3(transform.tr.x,transform.tr.y,transform.tr.z));
@@ -954,29 +971,29 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetTransform(
         body.localData->mBody->proceedToTransform(bulletTransform);
       }      
       body.localData->mShape->mShape->setLocalScaling(btVector3(transform.sc.x,transform.sc.y,transform.sc.z));
-#ifndef NDEBUG
-      printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetTransform completed.\n");
+#ifdef BULLET_TRACE
+      log("  { FabricBULLET } : FabricBULLET_RigidBody_SetTransform completed.");
 #endif
     }
   }  
 }
 
-FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetLinearVelocity(
+FABRIC_EXT_EXPORT Vec3 FabricBULLET_RigidBody_GetLinearVelocity(
   BulletRigidBody & body
 )
 {
-  KL::Vec3 result;
+  Vec3 result;
   result.x = result.y = result.z = 0.0f;
   if(body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_GetLinearVelocity called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_GetLinearVelocity called.");
 #endif
     btVector3 velocity = body.localData->mBody->getLinearVelocity();
     result.x = velocity.getX();
     result.y = velocity.getY();
     result.z = velocity.getZ();
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_GetLinearVelocity completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_GetLinearVelocity completed.");
 #endif
   }
   return result;
@@ -984,36 +1001,36 @@ FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetLinearVelocity(
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetLinearVelocity(
   BulletRigidBody & body,
-  KL::Vec3 & bodyVelocity
+  Vec3 & bodyVelocity
 )
 {
   if(body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetLinearVelocity called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_SetLinearVelocity called.");
 #endif
     body.localData->mBody->setLinearVelocity(btVector3(bodyVelocity.x,bodyVelocity.y,bodyVelocity.z));
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetLinearVelocity completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_SetLinearVelocity completed.");
 #endif
   }  
 }
 
-FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetAngularVelocity(
+FABRIC_EXT_EXPORT Vec3 FabricBULLET_RigidBody_GetAngularVelocity(
   BulletRigidBody & body
 )
 {
-  KL::Vec3 result;
+  Vec3 result;
   result.x = result.y = result.z = 0.0f;
   if(body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_GetAngularVelocity called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_GetAngularVelocity called.");
 #endif
     btVector3 velocity = body.localData->mBody->getAngularVelocity();
     result.x = velocity.getX();
     result.y = velocity.getY();
     result.z = velocity.getZ();
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_GetAngularVelocity completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_GetAngularVelocity completed.");
 #endif
   }
   return result;
@@ -1021,16 +1038,16 @@ FABRIC_EXT_EXPORT KL::Vec3 FabricBULLET_RigidBody_GetAngularVelocity(
 
 FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetAngularVelocity(
   BulletRigidBody & body,
-  KL::Vec3 & bodyVelocity
+  Vec3 & bodyVelocity
 )
 {
   if(body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetAngularVelocity called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_SetAngularVelocity called.");
 #endif
     body.localData->mBody->setAngularVelocity(btVector3(bodyVelocity.x,bodyVelocity.y,bodyVelocity.z));
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_RigidBody_SetAngularVelocity completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_RigidBody_SetAngularVelocity completed.");
 #endif
   }  
 }
@@ -1040,14 +1057,14 @@ FABRIC_EXT_EXPORT void FabricBULLET_RigidBody_SetAngularVelocity(
 FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_Create(
   BulletSoftBody & body,
   BulletWorld & world,
-  KL::SlicedArray<KL::Vec3> & positions,
-  KL::SlicedArray<KL::Vec3> & normals,
+  KL::SlicedArray<Vec3> & positions,
+  KL::SlicedArray<Vec3> & normals,
   KL::VariableArray<KL::Integer> & indices
 )
 {
   if(body.localData == NULL && world.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_SoftBody_Create called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_SoftBody_Create called.");
 #endif
     // convert the transform.
     btTransform transform;
@@ -1138,8 +1155,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_Create(
     body.localData->piterations = body.localData->mBody->m_cfg.piterations;
     
     body.localData->mBody->setUserPointer(body.localData);
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_SoftBody_Create completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_SoftBody_Create completed.");
 #endif
   }
 }
@@ -1149,8 +1166,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_Delete(
 )
 {
   if(body.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_SoftBody_Delete called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_SoftBody_Delete called.");
 #endif
     if(body.localData->mWorld != NULL) {
       body.localData->mWorld->mDynamicsWorld->removeSoftBody(body.localData->mBody);
@@ -1160,8 +1177,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_Delete(
     delete(body.localData->mBody);
     delete(body.localData);
     body.localData = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_SoftBody_Delete completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_SoftBody_Delete completed.");
 #endif
   }  
 }
@@ -1169,8 +1186,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_Delete(
 FABRIC_EXT_EXPORT void FabricBULLET_SoftBody_GetPosition(
   KL::Size index,
   BulletSoftBody & body,
-  KL::Vec3 & position,
-  KL::Vec3 & normal
+  Vec3 & position,
+  Vec3 & normal
 )
 {
   if(body.localData != NULL) {
@@ -1190,8 +1207,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Constraint_Create(
 )
 {
   if(constraint.localData == NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Constraint_Create called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Constraint_Create called.");
 #endif
     // check the bodies
     if(!constraint.bodyLocalDataA)
@@ -1249,16 +1266,15 @@ FABRIC_EXT_EXPORT void FabricBULLET_Constraint_Create(
     
     // if we don't have a shape, we can't do this
     if(typedConstraint == NULL) {
-      printf("   { FabricBULLET } ERROR: Constraint type %d is not supported.\n",int(constraint.type));
-      throwException( "{FabricBULLET} ERROR: Constraint type is not supported." );
+      throwException( "{FabricBULLET} ERROR: Constraint type %d is not supported.",int(constraint.type));
       return;
     }
 
     constraint.localData = new BulletConstraint::LocalData();
     constraint.localData->mConstraint = typedConstraint;
     constraint.localData->mWorld = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Constraint_Create completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Constraint_Create completed.");
 #endif
   }
 }
@@ -1268,8 +1284,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Constraint_Delete(
 )
 {
   if(constraint.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Constraint_Delete called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Constraint_Delete called.");
 #endif
     if(constraint.localData->mWorld != NULL) {
       constraint.localData->mWorld->mDynamicsWorld->removeConstraint(constraint.localData->mConstraint);
@@ -1279,8 +1295,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Constraint_Delete(
     delete( constraint.localData->mConstraint );
     delete( constraint.localData );
     constraint.localData = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Constraint_Delete completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Constraint_Delete completed.");
 #endif
   }
 }
@@ -1292,8 +1308,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Anchor_Create(
 )
 {
   if(anchor.localData == NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Anchor_Create called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Anchor_Create called.");
 #endif
     // check the bodies
     if(!anchor.rigidBodyLocalData)
@@ -1318,8 +1334,8 @@ FABRIC_EXT_EXPORT void FabricBULLET_Anchor_Create(
 
     anchor.localData = new BulletAnchor::LocalData();
     anchor.localData->mCreated = true;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Anchor_Create completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Anchor_Create completed.");
 #endif
   }
 }
@@ -1329,13 +1345,13 @@ FABRIC_EXT_EXPORT void FabricBULLET_Anchor_Delete(
 )
 {
   if(anchor.localData != NULL) {
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Anchor_Delete called.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Anchor_Delete called.");
 #endif
     delete( anchor.localData );
     anchor.localData = NULL;
-#ifndef NDEBUG
-    printf("  { FabricBULLET } : FabricBULLET_Anchor_Delete completed.\n");
+#ifdef BULLET_TRACE
+    log("  { FabricBULLET } : FabricBULLET_Anchor_Delete completed.");
 #endif
   }
 }

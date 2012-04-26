@@ -48,9 +48,9 @@ namespace Fabric
         RC::ConstHandle<RT::ContainerDesc> const &containerDesc
         );
       
-      virtual llvm::Type const *buildLLVMRawType( RC::Handle<Context> const &context ) const;
+      virtual llvm::Type *buildLLVMRawType( RC::Handle<Context> const &context ) const;
 
-      llvm::Type const *getLLVMImplType( RC::Handle<Context> const &context ) const;
+      llvm::Type *getLLVMImplType( RC::Handle<Context> const &context ) const;
 
       void llvmSetCount( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *containerLValue, llvm::Value *newSizeRValue ) const;
       llvm::Value *llvmGetCount( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *containerRValue ) const;

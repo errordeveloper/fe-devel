@@ -35,7 +35,7 @@ namespace Fabric
     {
     }
 
-    llvm::Type const *ContainerAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
+    llvm::Type *ContainerAdapter::buildLLVMRawType( RC::Handle<Context> const &context ) const
     {
       llvm::LLVMContext &llvmContext = context->getLLVMContext();
       return llvm::Type::getInt8Ty( llvmContext )->getPointerTo()->getPointerTo();
@@ -55,13 +55,11 @@ namespace Fabric
       RC::ConstHandle<SizeAdapter> sizeAdapter = getManager()->getSizeAdapter();
       sizeAdapter->llvmCompileToModule( moduleBuilder );
       
-      moduleBuilder->addTypeName( getCodeName(), llvmRawType( context ) );
-      
       static const bool buildFunctions = true;
       
       llvm::Function *toStringFunction = 0;
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, stringAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           llvm::Value *stringLValue = functionBuilder[0];
@@ -76,7 +74,7 @@ namespace Fabric
       }
 
       {
-        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this );
+        ConstructorBuilder functionBuilder( moduleBuilder, booleanAdapter, this, ConstructorBuilder::HighCost );
         if ( buildFunctions )
         {
           BasicBlockBuilder basicBlockBuilder( functionBuilder );
@@ -84,9 +82,9 @@ namespace Fabric
           llvm::Value *containerRValue = functionBuilder[1];
           basicBlockBuilder->SetInsertPoint( basicBlockBuilder.getFunctionBuilder().createBasicBlock( "entry" ) );
           
-          std::vector<llvm::Type const *> argTypes;
+          std::vector<llvm::Type *> argTypes;
           argTypes.push_back( llvmRType( context ) );
-          llvm::FunctionType const *funcType = llvm::FunctionType::get( booleanAdapter->llvmRType( context ), argTypes, false );
+          llvm::FunctionType *funcType = llvm::FunctionType::get( booleanAdapter->llvmRType( context ), argTypes, false );
           llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__ToBoolean", funcType ); 
           llvm::Value *booleanRValue = basicBlockBuilder->CreateCall( func, containerRValue );
           booleanAdapter->llvmAssign( basicBlockBuilder, booleanLValue, booleanRValue );
@@ -147,7 +145,7 @@ namespace Fabric
 
     void ContainerAdapter::llvmInit( BasicBlockBuilder &basicBlockBuilder, llvm::Value *lValue ) const
     {
-      llvm::PointerType const *rawType = static_cast<llvm::PointerType const *>( llvmRawType( basicBlockBuilder.getContext() ) );
+      llvm::PointerType *rawType = static_cast<llvm::PointerType *>( llvmRawType( basicBlockBuilder.getContext() ) );
       basicBlockBuilder->CreateStore(
         llvm::ConstantPointerNull::get( rawType ),
         lValue
@@ -161,15 +159,15 @@ namespace Fabric
       ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmLType( context ) );
       argTypes.push_back( llvmSizeType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__SetCount", funcType ); 
       std::vector< llvm::Value * > args;
       args.push_back( containerLValue );
       args.push_back( newSizeRValue );
-      basicBlockBuilder->CreateCall( func, args.begin(), args.end() );
+      basicBlockBuilder->CreateCall( func, args );
     }
 
     llvm::Value *ContainerAdapter::llvmGetCount(
@@ -178,9 +176,9 @@ namespace Fabric
       ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvmSizeType( context ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvmSizeType( context ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__GetCount", funcType ); 
       return basicBlockBuilder->CreateCall( func, containerRValue );
     }
@@ -188,10 +186,10 @@ namespace Fabric
     void ContainerAdapter::llvmDefaultAssign( BasicBlockBuilder &basicBlockBuilder, llvm::Value *dstLValue, llvm::Value *srcRValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
       argTypes.push_back( llvmLType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__DefaultAssign", funcType ); 
       basicBlockBuilder->CreateCall2( func, srcRValue, dstLValue );
     }
@@ -199,9 +197,9 @@ namespace Fabric
     void ContainerAdapter::llvmDisposeImpl( CG::BasicBlockBuilder &basicBlockBuilder, llvm::Value *lValue ) const
     {
       RC::Handle<Context> context = basicBlockBuilder.getContext();
-      std::vector<llvm::Type const *> argTypes;
+      std::vector<llvm::Type *> argTypes;
       argTypes.push_back( llvmRType( context ) );
-      llvm::FunctionType const *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
+      llvm::FunctionType *funcType = llvm::FunctionType::get( llvm::Type::getVoidTy( context->getLLVMContext() ), argTypes, false );
       llvm::Constant *func = basicBlockBuilder.getModuleBuilder()->getOrInsertFunction( "__"+getCodeName()+"__Dispose", funcType ); 
       basicBlockBuilder->CreateCall( func, lValue );
     }
@@ -213,7 +211,7 @@ namespace Fabric
 
     llvm::Constant *ContainerAdapter::llvmDefaultValue( BasicBlockBuilder &basicBlockBuilder ) const
     {
-      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType const *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
+      return llvm::ConstantPointerNull::get( static_cast<llvm::PointerType *>( llvmRawType( basicBlockBuilder.getContext() ) ) );
     }
       
     llvm::Constant *ContainerAdapter::llvmDefaultRValue( BasicBlockBuilder &basicBlockBuilder ) const

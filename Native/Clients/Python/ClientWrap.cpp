@@ -6,8 +6,10 @@
 #include <Fabric/Clients/Python/Client.h>
 #include <Fabric/Clients/Python/ClientWrap.h>
 #include <Fabric/Clients/Python/IOManager.h>
+#include <Fabric/Core/Plug/Helpers.h>
 #include <Fabric/Core/DG/Context.h>
 #include <Fabric/Base/JSON/Encoder.h>
+#include <Fabric/Base/JSON/Decoder.h>
 #include <Fabric/Core/IO/Helpers.h>
 #include <Fabric/Core/IO/Manager.h>
 #include <Fabric/Core/IO/ResourceManager.h>
@@ -25,43 +27,53 @@ namespace Fabric
 {
   namespace Python
   {
-    ClientWrap::ClientWrap()
+    ClientWrap::ClientWrap( char const *opts )
       : m_mutex( "Python ClientWrap" )
     {
       std::vector<std::string> pluginPaths;
-#if defined(FABRIC_OS_MACOSX)
-      char const *home = getenv("HOME");
-      if ( home && *home )
-      {
-        std::string homePath( home );
-        pluginPaths.push_back( IO::JoinPath( homePath, "Library", "Fabric", "Exts" ) );
-      }
-      pluginPaths.push_back( "/Library/Fabric/Exts" );
-#elif defined(FABRIC_OS_LINUX)
-      char const *home = getenv("HOME");
-      if ( home && *home )
-      {
-        std::string homePath( home );
-        pluginPaths.push_back( IO::JoinPath( homePath, ".fabric", "Exts" ) );
-      }
-      pluginPaths.push_back( "/usr/lib/fabric/Exts" );
-#elif defined(FABRIC_OS_WINDOWS)
-      char const *appData = getenv("APPDATA");
-      if ( appData && *appData )
-      {
-        std::string appDataDir(appData);
-        pluginPaths.push_back( IO::JoinPath( appDataDir, "Fabric" , "Exts" ) );
-      }
-#endif
+      Plug::AppendUserPaths( pluginPaths );
+      Plug::AppendGlobalPaths( pluginPaths );
 
       CG::CompileOptions compileOptions;
       compileOptions.setGuarded( false );
+      int logWarnings = -1;
+
+      if ( opts )
+      {
+        JSON::Decoder decoder( opts, strlen( opts ) );
+        JSON::Entity entity;
+        if ( decoder.getNext( entity ) )
+        {
+          JSON::ObjectDecoder argObjectDecoder( entity );
+          JSON::Entity keyString, valueEntity;
+          while ( argObjectDecoder.getNext( keyString, valueEntity ) )
+          {
+            try
+            {
+              if ( keyString.stringIs( "logWarnings", 11 ) )
+              {
+                valueEntity.requireBoolean();
+                logWarnings = valueEntity.booleanValue();
+              }
+              else if ( keyString.stringIs( "guarded", 7 ) )
+              {
+                valueEntity.requireBoolean();
+                compileOptions.setGuarded( valueEntity.booleanValue() );
+              }
+            }
+            catch ( Exception e ) {}
+          }
+        }
+      }
 
       RC::Handle<IO::Manager> ioManager = IOManager::Create( &ClientWrap::ScheduleAsyncUserCallback, this );
       RC::Handle<DG::Context> dgContext = DG::Context::Create( ioManager, pluginPaths, compileOptions, true );
 #if defined(FABRIC_MODULE_OPENCL)
       OCL::registerTypes( dgContext->getRTManager() );
 #endif
+      
+      if ( logWarnings > -1 )
+        dgContext->setLogWarnings( logWarnings );
 
       Plug::Manager::Instance()->loadBuiltInPlugins( pluginPaths, dgContext->getCGManager(), DG::Context::GetCallbackStruct() );
 

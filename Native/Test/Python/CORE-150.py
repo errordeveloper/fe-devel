@@ -6,7 +6,7 @@ import fabric
 fabricClient = fabric.createClient()
 
 op = fabricClient.DependencyGraph.createOperator( "op" )
-op.setEntryFunctionName('entry')
+op.setEntryPoint('entry')
 op.setSourceCode("operator entry( io Scalar input[][] ) {}")
 
 binding = fabricClient.DependencyGraph.createBinding()

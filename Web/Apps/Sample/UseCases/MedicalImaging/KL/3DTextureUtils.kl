@@ -139,7 +139,7 @@ operator slice3DTexture(
 ){
   Size start, dim1Delta, dim2Delta, dim1, dim2;
   if(sliceAxis == 0) {
-    start = sliceRatio*sourceWidth;
+    start = Size(sliceRatio*Scalar(sourceWidth));
     if(start == sourceWidth)
       start = sourceWidth-1;
     dim1Delta = sourceWidth*sourceHeight;
@@ -148,7 +148,7 @@ operator slice3DTexture(
     dim2 = sourceHeight;
   }
   else if(sliceAxis == 1) {
-    start = sliceRatio*sourceHeight;
+    start = Size(sliceRatio*Scalar(sourceHeight));
     if(start == sourceHeight)
       start = sourceHeight-1;
     start *= sourceWidth;
@@ -158,7 +158,7 @@ operator slice3DTexture(
     dim2 = sourceDepth;
   }
   else {
-    start = sliceRatio*sourceDepth;
+    start = Size(sliceRatio*Scalar(sourceDepth));
     if(start == sourceDepth)
       start = sourceDepth-1;
     start *= sourceWidth*sourceHeight;

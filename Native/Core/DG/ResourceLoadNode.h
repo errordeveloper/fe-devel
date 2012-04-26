@@ -43,6 +43,7 @@ namespace Fabric
     
       ResourceLoadNode( std::string const &name, RC::Handle<Context> const &context );
       ~ResourceLoadNode();
+      virtual void destroy();
 
       virtual void evaluateLocal( void *userdata );
 

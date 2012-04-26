@@ -35,7 +35,7 @@ namespace Fabric
         return false;
       else if( lhsSize )
       {
-        if( m_memberIsShallow )
+        if ( m_memberImpl->isShallow() )
           return memcmp( getImmutableMemberData( lhs, 0 ), getImmutableMemberData( rhs, 0 ), lhsSize * m_memberImpl->getAllocSize() ) == 0;
         else
         {

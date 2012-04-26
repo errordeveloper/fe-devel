@@ -1,8 +1,8 @@
 var fc = require('Fabric').createClient();
 try {
   var op = fc.DG.createOperator('foo');
-  op.setSourceCode('foo.kl', 'operator foo(Integer bar<>[]) { report bar; }');
-  op.setEntryFunctionName('foo');
+  op.setSourceCode('foo.kl', 'operator foo(Integer bar<>[]) { report(bar); }');
+  op.setEntryPoint('foo');
   var binding = fc.DG.createBinding();
   binding.setOperator(op);
   binding.setParameterLayout([

@@ -60,7 +60,7 @@ FABRIC.SceneGraph.registerNodeType('DeferredPostPassMaterial', {
                 srcCode:'use OGLTexture2D, OGLShaderProgram;\n' +
                         'operator drawShaderQuad(io OGLShaderProgram program){ \n' +
                         '  drawScreenQuad(program.programId, Vec2(-1.0,1.0), Vec2(1.0,-1.0), false);}',
-                entryFunctionName: 'drawShaderQuad',
+                entryPoint: 'drawShaderQuad',
                 parameterLayout: [
                   'shader.shaderProgram'
                 ]
@@ -178,7 +178,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
         scene.constructOperator({
             operatorName: 'bindScreenRenderTarget',
             srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-            entryFunctionName: 'bindScreenRenderTarget',
+            entryPoint: 'bindScreenRenderTarget',
             parameterLayout: [
               'window.width',
               'window.height',
@@ -202,7 +202,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
                       '  }\n' +
                       '  renderTarget.bindColorBuffers(drawBufferIDs);\n' +
                       '}\n',
-            entryFunctionName: 'bindPrePassRenderTargets',
+            entryPoint: 'bindPrePassRenderTargets',
             parameterLayout: [
               'window.width',
               'window.height',
@@ -215,7 +215,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
       scene.constructOperator({
           operatorName: 'unbindRenderTarget',
           srcFile: 'FABRIC_ROOT/SG/KL/renderTarget.kl',
-          entryFunctionName: 'unbindRenderTarget',
+          entryPoint: 'unbindRenderTarget',
           parameterLayout: [
             'deferredDraw.renderTarget'
           ]
@@ -247,7 +247,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
                   '    drawTexture(0, progId, Vec2(x,y), Vec2(x+0.66666,y-0.66666), false);\n' +
                   '    if(curr == n)\n' +
                   '      return;}}}\n',
-          entryFunctionName: 'debugDrawRenderTargets',
+          entryPoint: 'debugDrawRenderTargets',
           parameterLayout: [
             'self.renderTarget',
             'self.debugShaderProgID',
@@ -269,7 +269,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
                       'glEnable(GL_BLEND);\n' +
                       'glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n' +
                       '}',
-          entryFunctionName: 'preDeferredRenderShading',
+          entryPoint: 'preDeferredRenderShading',
           parameterLayout: []
         }));
 
@@ -278,7 +278,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
           operatorName: 'postDeferredRenderShading',
           srcCode: 'use FabricOGL; operator postDeferredRenderShading(){\n'+
                       'glPopAttrib();}',
-          entryFunctionName: 'postDeferredRenderShading',
+          entryPoint: 'postDeferredRenderShading',
           parameterLayout: []
         }));
 
@@ -316,7 +316,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
                       '  glClearColor(0.0, 0.0, 0.0, 0.0);\n' +
                       '  renderTarget.bindColorBuffers(drawBufferIDs);\n' +
                       '}\n',
-            entryFunctionName: 'bindForwardRenderMixRenderTarget',
+            entryPoint: 'bindForwardRenderMixRenderTarget',
             parameterLayout: [
               'deferredDraw.renderTarget'
             ]
@@ -337,7 +337,7 @@ FABRIC.SceneGraph.registerNodeType('BaseDeferredRenderer', {
                       '  renderTarget.textures[FORWARD_RENDER_BUFFER_INDEX].texture.bind(0);\n' +
                       '  drawTexture(0, shaderProgramID, Vec2(-1.0,1.0), Vec2(1.0,-1.0), false);\n' +
                       '  glPopAttrib();}',
-            entryFunctionName: 'unbindAndDrawForwardRenderTarget',
+            entryPoint: 'unbindAndDrawForwardRenderTarget',
             parameterLayout: [
               'deferredDraw.renderTarget',
               'self.shaderProgID'
