@@ -1,0 +1,113 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Building Fabric Engine From Source</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Building Fabric Engine From Source"><div class="titlepage"><div><div><h1 class="title"><a name="d5e1"></a>Building Fabric Engine From Source</h1></div><div><p class="releaseinfo">Fabric Engine Version 1.2.0-beta</p></div><div><p class="copyright">Copyright © 2010-2012 Fabric Engine Inc.</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#introduction">1. Introduction</a></span></dt><dt><span class="chapter"><a href="#setup">2. Core Setup</a></span></dt><dd><dl><dt><span class="section"><a href="#setup.prereqs">Prerequisites</a></span></dt><dd><dl><dt><span class="section"><a href="#setup.prereqs.windows">Windows</a></span></dt><dt><span class="section"><a href="#setup.prereqs.mac">Mac OS X</a></span></dt><dt><span class="section"><a href="#setup.prereqs.linux">Linux</a></span></dt></dl></dd><dt><span class="section"><a href="#setup.build-folder">Build Folder</a></span></dt><dt><span class="section"><a href="#setup.clone-repo">Clone the PublicDev Repository</a></span></dt><dt><span class="section"><a href="#setup.thirdparty">Install Pre-built Third-Party Binaries</a></span></dt><dt><span class="section"><a href="#setup.build">Build</a></span></dt></dl></dd></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Introduction"><div class="titlepage"><div><div><h2 class="title"><a name="introduction"></a>Chapter&nbsp;1.&nbsp;Introduction</h2></div></div></div><p>
+      This document will outline how to set up your development environment in order to build Fabric Engine Core under Mac OS X, Linux, and Windows. The builds under all three systems are generally done from the command prompt, using Mingw32 under Windows for more UNIX-like functionality.
+      The Fabric Engine Core is used by all Fabric applications whether in the browser or in a language binding module.
+    </p><p>
+      Fabric supports the following platforms:
+
+      </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+          <span class="emphasis"><em>Windows</em></span>: Vista or Windows 7.
+        </p></li><li class="listitem"><p>
+          <span class="emphasis"><em>Mac OS X</em></span>: 10.6 (Snow Leopard) or above
+        </p></li><li class="listitem"><p>
+          <span class="emphasis"><em>Linux</em></span>: Tested on Ubuntu 10.04 and above (32-bit or 64-bit). Should work with any modern distro.
+        </p></li></ul></div><p>
+    </p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Core Setup"><div class="titlepage"><div><div><h2 class="title"><a name="setup"></a>Chapter&nbsp;2.&nbsp;Core Setup</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#setup.prereqs">Prerequisites</a></span></dt><dd><dl><dt><span class="section"><a href="#setup.prereqs.windows">Windows</a></span></dt><dt><span class="section"><a href="#setup.prereqs.mac">Mac OS X</a></span></dt><dt><span class="section"><a href="#setup.prereqs.linux">Linux</a></span></dt></dl></dd><dt><span class="section"><a href="#setup.build-folder">Build Folder</a></span></dt><dt><span class="section"><a href="#setup.clone-repo">Clone the PublicDev Repository</a></span></dt><dt><span class="section"><a href="#setup.thirdparty">Install Pre-built Third-Party Binaries</a></span></dt><dt><span class="section"><a href="#setup.build">Build</a></span></dt></dl></div><div class="section" title="Prerequisites"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setup.prereqs"></a>Prerequisites</h2></div></div></div><p>
+        Before getting started you will need several packages installed in order to be able to retrieve and compile the Fabric source code. Packages vary depending on build operating system.
+      </p><div class="section" title="Windows"><div class="titlepage"><div><div><h3 class="title"><a name="setup.prereqs.windows"></a>Windows</h3></div></div></div><div class="section" title="Install software"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.windows.install"></a>Install software</h4></div></div></div><p>
+            The following software is required to build Fabric on Windows:
+          </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <a class="link" href="http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-express" target="_top">Microsoft Visual C++ Express 2010</a> (or any superior Visual Studio version). Use standard settings.
+            </p></li><li class="listitem"><p>
+              <a class="link" href="http://www.python.org/download/" target="_top">Latest Python 2.x 32-bit</a>. Use standard settings.
+            </p></li><li class="listitem"><p>
+              <a class="link" href="http://sourceforge.net/projects/scons/files/scons/" target="_top">Latest Scons 2.x</a>. Use standard settings.
+            </p></li></ul></div><p>
+            You'll also need to add the python and python/scripts folders to your <code class="prompt">PATH</code> environment variable. To do so click on the Windows Menu, choose “Control Panel”. Now click on “System and Security”, followed by “System”. Finally, click on “Advanced System Settings”, followed by the “Environment Variables” button. If the variable “PATH” already exists, append “;c:\Python27;c:\Python27\Scripts” to its value, else create it and choose “c:\Python27;c:\Python27\Scripts” for its value.
+          </p></div><div class="section" title="Install Git and Configure SSH"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.windows.git"></a>Install Git and Configure SSH</h4></div></div></div><p>
+            The Fabric Engine source code is hosted in a GitHub repositroy, which uses SSH for security. You will need to set up Git and SSH on your windows machine to be able to clone the repository.
+          </p><p>
+            Install Git for Windows and (optionally) set up your github ssh key by following the instructions found here: <a class="link" href="http://help.github.com/win-set-up-git/" target="_top"><code class="uri">Set Up Git</code></a>
+          </p><p>
+            If you want the system to remember your git passphrase, you can follow the instructions found here: <a class="link" href="http://stackoverflow.com/questions/370030/why-git-cant-remember-my-passphrase-under-windows" target="_top"><code class="uri">Why git can't remember my passphrase under Windows</code></a>
+          </p></div></div><div class="section" title="Mac OS X"><div class="titlepage"><div><div><h3 class="title"><a name="setup.prereqs.mac"></a>Mac OS X</h3></div></div></div><div class="section" title="Install Xcode"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.mac.xcode"></a>Install Xcode</h4></div></div></div><p>
+            Install the latest version of Xcode (4.1 as of this writing). This should automatically get you the <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">git</code></span> binary so you can check out the source.
+          </p></div><div class="section" title="Install MacPorts"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.mac.macports"></a>Install MacPorts</h4></div></div></div><p>
+            Follow the instructions <a class="link" href="http://www.macports.org/install.php" target="_top">to install MacPorts on your system.</a> Use the OS X .pkg installer (the recommended choice). Once the installer has finished, bring MacPorts up-to-date by opening a Terminal and running:
+          </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">sudo port -v selfupdate</code></span></p><p>
+            You need to make sure that the directory <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">/opt/local/bin</code></span> is in your <code class="prompt">PATH</code> environment variable so you can run the MacPorts tools easily. To the end of the file <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/.profile</code></span>, add the line:
+          </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">export PATH="$PATH":/opt/local/bin</code></span></p><p>
+            Then restart the Terminal application.
+          </p></div><div class="section" title="Install required applications"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.mac.install"></a>Install required applications</h4></div></div></div><p>
+            There is a version of bison (the GNU yacc-compatible parser generator) that ships with Xcode but it is too old for us; you need to install the version of bison from MacPorts. To do so, run:
+          </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">sudo port install bison</code></span></p><p>
+            The build system we use is scons, and it too needs to be installed from MacPorts. To do so, run:
+          </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">sudo port install scons</code></span></p></div><div class="section" title="Install Git"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.mac.git"></a>Install Git</h4></div></div></div><p>
+            Follow the instructions on GitHub for setting up Git on OsX.
+            <a class="link" href="http://help.github.com/mac-set-up-git/" target="_top"><code class="uri">mac-set-up-git</code></a>
+          </p></div></div><div class="section" title="Linux"><div class="titlepage"><div><div><h3 class="title"><a name="setup.prereqs.linux"></a>Linux</h3></div></div></div><p>
+          A few packages are necessary to build under Linux, namely the compiler, bison, and scons. Assuming you are running Ubuntu, you may run:
+        </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">sudo apt-get install build-essential scons bison</code></span></p><p>
+          If you are running a different distribution use your appropriate package manager to install the required application.
+        </p><div class="section" title="Install Git"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.linux.git"></a>Install Git</h4></div></div></div><p>
+            Follow the instructions on GitHub for setting up Git on Linux.
+            <a class="link" href="http://help.github.com/linux-set-up-git/" target="_top"><code class="uri">linux-set-up-git</code></a>
+          </p></div></div></div><div class="section" title="Build Folder"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setup.build-folder"></a>Build Folder</h2></div></div></div><p>
+        You first need to choose a directory where the Fabric source code will live. Assuming that <code class="prompt">myuser</code> is your local username, the recommended paths are:
+
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Windows: <code class="prompt">c:\Users\myuser\Fabric</code>
+          </p></li><li class="listitem"><p>
+            Mac OS X: <code class="prompt">/Users/myuser/Fabric</code>
+          </p></li><li class="listitem"><p>
+            Linux: <code class="prompt">/home/myuser/Fabric</code>
+          </p></li></ul></div><p>
+      </p><p>
+        You will then need to set an environment variable called <code class="prompt">FABRIC_CORE_PATH</code> that points to this newly-created directory. Under Mac OS X and Linux, this can be done by running:
+      </p><p>
+        <code class="prompt">export FABRIC_CORE_PATH=~/Fabric</code>
+      </p><p>
+        You may also want to add this to your <code class="prompt">~/.bash_profile</code> or <code class="prompt">~/.profile</code> file.
+      </p><p>
+        Under Windows you'll want to set it as a permanent environment variable by going to Control Panel -&gt; System -&gt; Advanced System Settings -&gt; Advanced -&gt; Environment Variables. You can create a new variable named <code class="prompt">FABRIC_CORE_PATH</code> and set it to <code class="prompt">c:\Users\myuser\Fabric</code> (or whatever directory you chose).
+      </p></div><div class="section" title="Clone the PublicDev Repository"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setup.clone-repo"></a>Clone the PublicDev Repository</h2></div></div></div><p>
+        If read-only access is enough, you can clone the PublicDev repository from the command line without setting up an ssh key by doing:
+      </p><p>
+        <code class="prompt">git clone https://github.com/fabric-engine/PublicDev.git $FABRIC_CORE_PATH</code>
+      </p><p>
+        Where <code class="prompt">$FABRIC_CORE_PATH</code> is the folder set up above.
+      </p><p>
+        If you will require write access then you will need to:
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Ensure that you have uploaded your public SSH key to your github.com account.
+          </p></li><li class="listitem"><p>
+            Test that your SSH keys are properly set up for github.com by running:
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">ssh -T git@github.com</code></span>. You should see a message like the following:
+            <code class="prompt">Hi myuser! You've successfully authenticated, but GitHub does not provide shell access.</code>
+          </p></li><li class="listitem"><p>
+            If your keys have been set up and you have been granted write access, you can check out the repository by running:
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">git clone ssh://github.com/fabric-engine/PublicDev.git $FABRIC_CORE_PATH</code></span>
+          </p></li></ul></div><p>
+        
+      </p></div><div class="section" title="Install Pre-built Third-Party Binaries"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setup.thirdparty"></a>Install Pre-built Third-Party Binaries</h2></div></div></div><p>
+        Certain additional custom-compiled binaries are needed to compile Fabric. These are platform-specific and available from the PublicDev github page.
+      </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+          From the <a class="link" href="https://github.com/fabric-engine/PublicDev/downloads" target="_top">downloads page for the PublicDev repository</a>, download the latest set of pre-built third-party binaries for you platform.
+        </p></li><li class="listitem"><p>
+          Unpack the archive into <code class="prompt">$FABRIC_CORE_PATH</code>.
+        </p></li></ol></div></div><div class="section" title="Build"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setup.build"></a>Build</h2></div></div></div><p>
+        Before running the build, you'll need to set up some necessary environment variables that the build process will use. These are set by simply running a script found in the PublicDev repository.
+      </p><p>
+        Source the <code class="prompt">$FABRIC_CORE_PATH</code>/Util/fabric-build-env.sh script with the following args (Windows: use Git bash):
+      </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">source ~Fabric/Util/fabric-build-env.sh -n Release</code></span></p><p>
+        The <code class="prompt">-n</code> is optional and adds a symlink for the NPAPI plugin to be automatically loaded when your browser runs. You can pass either <code class="prompt">Debug</code> or <code class="prompt">Release</code> to specify either a Debug build or a Release build.
+      </p><p>
+        This can be added to your <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/.bash_profile</code></span> or <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/.profile</code></span> file so that it will always run on the command line if you want.
+      </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+        <span class="emphasis"><em>Important note:</em></span> If you are building on Windows, you will need to copy two resource headers from your Visual Studio Professional install into Fabric before compiling. In your VS install path, under <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">VC\atlmfc\include\</code></span> there should be files named <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">afxres.h</code></span> and <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">winres.h</code></span>, these will need to be copied to your <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">$FABRIC_CORE_PATH\Native\Clients\NPAPI\Windows\</code></span> folder.
+      </p></td></tr></table></div><p>
+        The build can now be run:
+      </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">cd $FABRIC_CORE_PATH</code></span></p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">scons all</code></span></p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+          <span class="emphasis"><em>Note:</em></span> Building the documentation guides (<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">scons guides</code></span>) require additional setup steps which have not been detailed yet. Required additional software include <a class="link" href="http://napcs.com/products/docbook/" target="_top"><code class="uri">Short-Attention-Span Docbook</code></a>, Java, Haml and Ruby.
+        </p></td></tr></table></div></div></div></div></body></html>

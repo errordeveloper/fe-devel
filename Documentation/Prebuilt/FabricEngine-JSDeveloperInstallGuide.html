@@ -1,0 +1,427 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Fabric Engine JavaScript Scene Graph Developer Install Guide</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Fabric Engine JavaScript Scene Graph Developer Install Guide"><div class="titlepage"><div><div><h1 class="title"><a name="d5e1"></a>Fabric Engine JavaScript Scene Graph Developer Install Guide</h1></div><div><p class="releaseinfo">Fabric Engine Version 1.2.0-beta</p></div><div><p class="copyright">Copyright © 2010-2012 Fabric Engine Inc.</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#introduction">1. Introduction</a></span></dt><dd><dl><dt><span class="section"><a href="#introduction.plugininstall">Installing the Plugin</a></span></dt></dl></dd><dt><span class="chapter"><a href="#setup">2. Core Setup</a></span></dt><dd><dl><dt><span class="section"><a href="#setup.prereqs">Prerequisites</a></span></dt><dd><dl><dt><span class="section"><a href="#setup.prereqs.windows">Windows</a></span></dt><dt><span class="section"><a href="#setup.prereqs.mac">Mac OS X</a></span></dt><dt><span class="section"><a href="#setup.prereqs.linux">Linux</a></span></dt></dl></dd><dt><span class="section"><a href="#setup.clone-repo">Clone the PublicDev Repository</a></span></dt></dl></dd><dt><span class="chapter"><a href="#scenegraph">3. SceneGraph Setup</a></span></dt><dd><dl><dt><span class="section"><a href="#scenegraph.prereqs">Prerequisites</a></span></dt><dt><span class="section"><a href="#scenegraph.resources">Install SceneGraph Resources</a></span></dt><dd><dl><dt><span class="section"><a href="#scenegraph.resources.maclinux">Mac OS X and Linux</a></span></dt><dt><span class="section"><a href="#scenegraph.resources.windows">Windows</a></span></dt></dl></dd><dt><span class="section"><a href="#scenegraph.webserver">Setting up a local Fabric web server</a></span></dt><dd><dl><dt><span class="section"><a href="#scenegraph.webserver.windows">Windows</a></span></dt><dt><span class="section"><a href="#scenegraph.webserver.mac">Mac OS X</a></span></dt><dt><span class="section"><a href="#scenegraph.webserver.linux">Linux</a></span></dt></dl></dd><dt><span class="section"><a href="#scenegraph.run">Run Sample Fabric Applications</a></span></dt></dl></dd><dt><span class="chapter"><a href="#optexts">4. Installing optional extensions</a></span></dt><dd><dl><dt><span class="section"><a href="#optexts.kinect">Installing the Kinect Extension (Windows only)</a></span></dt><dt><span class="section"><a href="#optexts.filesystem">Installing the filesystem extension</a></span></dt><dd><dl><dt><span class="section"><a href="#optexts.filesystem.install">Installation</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.demos">Demos</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.overview">General overview of File IO in Fabric Engine</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.kl">KL Usage</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.otherext">Creating a FabricFileHandle for use in other extensions</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.use">Use of the FabricFILESTREAM</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#debug">5. Debugging</a></span></dt><dd><dl><dt><span class="section"><a href="#debug.windows">Windows: Attaching the VisualStudio debugger</a></span></dt></dl></dd></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Introduction"><div class="titlepage"><div><div><h2 class="title"><a name="introduction"></a>Chapter&nbsp;1.&nbsp;Introduction</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#introduction.plugininstall">Installing the Plugin</a></span></dt></dl></div><p>
+      This document will outline how to set up your development environment in order work with the Fabric Engine JavaScript Scene Graph under Mac OS X, Linux, and Windows.
+    </p><p>
+      Fabric supports the following platforms:
+
+      </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+          <span class="emphasis"><em>Windows</em></span>: Vista or Windows 7.
+        </p></li><li class="listitem"><p>
+          <span class="emphasis"><em>Mac OS X</em></span>: 10.6 (Snow Leopard) or above
+        </p></li><li class="listitem"><p>
+          <span class="emphasis"><em>Linux</em></span>: Tested on Ubuntu 10.04 and above (32-bit or 64-bit). Should work with any modern distro.
+        </p></li></ul></div><p>
+    </p><div class="section" title="Installing the Plugin"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="introduction.plugininstall"></a>Installing the Plugin</h2></div></div></div><p>
+        Developers building client side web applications do not need to build Fabric Engine from souce and can use the plugin installed when visiting any of our online demos. Note that once the plugin is installed, developers can immedeiately start working with Fabric as the entire toolchain is distributed as part of the plugin. The remaining portion of the document covers retrieving the Fabric Engine Java Script Scene Graph source code and working with extensions.
+      </p><p>
+        <a class="link" href="http://demos.fabric-engine.com" target="_top">Fabric Engine Web Demos</a>
+      </p></div></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Core Setup"><div class="titlepage"><div><div><h2 class="title"><a name="setup"></a>Chapter&nbsp;2.&nbsp;Core Setup</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#setup.prereqs">Prerequisites</a></span></dt><dd><dl><dt><span class="section"><a href="#setup.prereqs.windows">Windows</a></span></dt><dt><span class="section"><a href="#setup.prereqs.mac">Mac OS X</a></span></dt><dt><span class="section"><a href="#setup.prereqs.linux">Linux</a></span></dt></dl></dd><dt><span class="section"><a href="#setup.clone-repo">Clone the PublicDev Repository</a></span></dt></dl></div><div class="section" title="Prerequisites"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setup.prereqs"></a>Prerequisites</h2></div></div></div><p>
+        Before getting started you will need several packages installed in order to be able to retrieve and compile the Fabric source code. Packages vary depending on build operating system.
+      </p><div class="section" title="Windows"><div class="titlepage"><div><div><h3 class="title"><a name="setup.prereqs.windows"></a>Windows</h3></div></div></div><p>
+          The Fabric Engine source code is hosted in a GitHub repositroy, which uses SSH for security. You will need to set up Git and SSH on your windows machine to be able to clone the repository.
+        </p><div class="section" title="Install Git and Configure SSH"><div class="titlepage"><div><div><h4 class="title"><a name="setup.prereqs.windows.git"></a>Install Git and Configure SSH</h4></div></div></div><p>
+            Install Git for Windows and (optionally) set up your github ssh key by following the instructions found here: <a class="link" href="http://help.github.com/win-set-up-git/" target="_top"><code class="uri">Set Up Git</code></a>
+          </p><p>
+            If you want the system to remember your git passphrase, you can follow the instructions found here: <a class="link" href="http://stackoverflow.com/questions/370030/why-git-cant-remember-my-passphrase-under-windows" target="_top"><code class="uri">Why git can't remember my passphrase under Windows</code></a>
+          </p></div></div><div class="section" title="Mac OS X"><div class="titlepage"><div><div><h3 class="title"><a name="setup.prereqs.mac"></a>Mac OS X</h3></div></div></div><p>
+          Follow the instructions on GitHub for setting up Git on OsX.
+          <a class="link" href="http://help.github.com/mac-set-up-git/" target="_top"><code class="uri">mac-set-up-git</code></a>
+        </p></div><div class="section" title="Linux"><div class="titlepage"><div><div><h3 class="title"><a name="setup.prereqs.linux"></a>Linux</h3></div></div></div><p>
+          Follow the instructions on GitHub for setting up Git on Linux.
+          <a class="link" href="http://help.github.com/linux-set-up-git/" target="_top"><code class="uri">linux-set-up-git</code></a>
+        </p></div></div><div class="section" title="Clone the PublicDev Repository"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setup.clone-repo"></a>Clone the PublicDev Repository</h2></div></div></div><p>
+        If read-only access is enough, you can clone the PublicDev repository from the command line without setting up an ssh key by doing:
+      </p><p>
+        <code class="prompt">git clone https://github.com/fabric-engine/PublicDev.git $FABRIC_CORE_PATH</code>
+      </p><p>
+        Where <code class="prompt">$FABRIC_CORE_PATH</code> is the folder set up above.
+      </p><p>
+        If you will require write access then you will need to:
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Ensure that you have uploaded your public SSH key to your github.com account.
+          </p></li><li class="listitem"><p>
+            Test that your SSH keys are properly set up for github.com by running:
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">ssh -T git@github.com</code></span>. You should see a message like the following:
+            <code class="prompt">Hi myuser! You've successfully authenticated, but GitHub does not provide shell access.</code>
+          </p></li><li class="listitem"><p>
+            If your keys have been set up and you have been granted write access, you can check out the repository by running:
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">git clone ssh://github.com/fabric-engine/PublicDev.git $FABRIC_CORE_PATH</code></span>
+          </p></li></ul></div><p>
+        
+      </p></div></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;SceneGraph Setup"><div class="titlepage"><div><div><h2 class="title"><a name="scenegraph"></a>Chapter&nbsp;3.&nbsp;SceneGraph Setup</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#scenegraph.prereqs">Prerequisites</a></span></dt><dt><span class="section"><a href="#scenegraph.resources">Install SceneGraph Resources</a></span></dt><dd><dl><dt><span class="section"><a href="#scenegraph.resources.maclinux">Mac OS X and Linux</a></span></dt><dt><span class="section"><a href="#scenegraph.resources.windows">Windows</a></span></dt></dl></dd><dt><span class="section"><a href="#scenegraph.webserver">Setting up a local Fabric web server</a></span></dt><dd><dl><dt><span class="section"><a href="#scenegraph.webserver.windows">Windows</a></span></dt><dt><span class="section"><a href="#scenegraph.webserver.mac">Mac OS X</a></span></dt><dt><span class="section"><a href="#scenegraph.webserver.linux">Linux</a></span></dt></dl></dd><dt><span class="section"><a href="#scenegraph.run">Run Sample Fabric Applications</a></span></dt></dl></div><p>
+      If you will be working with the Fabric Javascript SceneGraph you'll need to install some additional resources in addition to a web server for local testing.
+    </p><div class="section" title="Prerequisites"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scenegraph.prereqs"></a>Prerequisites</h2></div></div></div><p>
+        The following software is required to use the NPAPI plugin client:
+      </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+          <a class="link" href="http://www.google.com/chrome/" target="_top">Google Chrome</a>. You can also use Firefox, but Chrome is recommended for now. Use standard settings.
+        </p></li></ul></div></div><div class="section" title="Install SceneGraph Resources"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scenegraph.resources"></a>Install SceneGraph Resources</h2></div></div></div><div class="section" title="Mac OS X and Linux"><div class="titlepage"><div><div><h3 class="title"><a name="scenegraph.resources.maclinux"></a>Mac OS X and Linux</h3></div></div></div><p>
+          You'll need to install Subversion via MacPorts or your distributions package manager. Once installed, you will need to check them out into your <code class="prompt">$FABRIC_CORE_PATH/Web</code> folder by running:
+        </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">svn co --force http://svn.fabric-engine.com/JSSceneGraphResources/stable $FABRIC_CORE_PATH/Web</code></span></p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+            If you have been granted write access to the resources repository via ssh, you'll only need to change your checkout command to use ssh rather than http:
+          </p><p><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">svn co --force svn+ssh://svn.fabric-engine.com/JSSceneGraphResources/stable $FABRIC_CORE_PATH/Web</code></span></p></td></tr></table></div></div><div class="section" title="Windows"><div class="titlepage"><div><div><h3 class="title"><a name="scenegraph.resources.windows"></a>Windows</h3></div></div></div><p>
+          These instructions are specific to Tortoise SVN; other clients might be as good or better (since Tortoise SVN has command line issues). You may use any SVN client you prefer but these instructions will outline how to configure Tortoise.
+        </p><div class="section" title="Install Tortoise SVN"><div class="titlepage"><div><div><h4 class="title"><a name="scenegraph.resources.windows.tortoise"></a>Install Tortoise SVN</h4></div></div></div><p>
+            Tortoise SVN Windows installers are available from their <a class="link" href="http://sourceforge.net/projects/tortoisesvn/files" target="_top">Sourceforge files page</a>.
+          </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+            <span class="emphasis"><em>Note:</em></span> In TortoiseSVN's installation steps, enable the installation of the "Command Line Tools" component.
+          </p></td></tr></table></div></div><div class="section" title="(Optional) Setup SSH for write access"><div class="titlepage"><div><div><h4 class="title"><a name="scenegraph.resources.windows.ssh"></a>(Optional) Setup SSH for write access</h4></div></div></div><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+            <span class="emphasis"><em>Note:</em></span> This only applies if you have been granted write access to the resources repository by Fabric.
+          </p></td></tr></table></div><div class="section" title="Configure Tortoise SVN for OpenSSH (not required if you use PuTTY for SSH)"><div class="titlepage"><div><div><h5 class="title"><a name="scenegraph.resources.windows.openssh"></a>Configure Tortoise SVN for OpenSSH (not required if you use PuTTY for SSH)</h5></div></div></div><p>
+              If you are using OpenSSH for git SSH:
+
+              </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                  Install <a class="link" href="http://tartarus.org/~simon/putty-snapshots/x86/putty-installer.exe" target="_top">Putty</a>
+                </p></li><li class="listitem"><p>
+                  Convert your OpenSSH key to the PuTTy format:
+
+                  </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>
+                      Open puttygen.exe from the PuTTY install directory
+                    </p></li><li class="listitem"><p>
+                      Do Conversion-&gt;Import key, and select your .ssh private key (eg: C:\Users\myname.ssh\id_rsa)
+                    </p></li><li class="listitem"><p>
+                      Do File-&gt;Save private key, and save it as [keyname].ppk (eg: id_rsa.ppk)
+                    </p></li></ul></div><p>
+                </p></li></ul></div><p>
+            </p></div><div class="section" title="Setup a PuTTY session for svn+ssh"><div class="titlepage"><div><div><h5 class="title"><a name="scenegraph.resources.windows.ssh.putty"></a>Setup a PuTTY session for svn+ssh</h5></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                Open PuTTY.exe
+              </p></li><li class="listitem"><p>
+                In the Connection-&gt;SSH-&gt;Auto item, set Private key file for authentication to you .ppk private key path (eg: C:\Users\myname.ssh\id_rsa.ppk)
+              </p></li><li class="listitem"><p>
+                In the Session tab, set the Host Name to "[svnuser]@svn.fabric-engine.com" (eg: myname@svn.fabric-engine.com), set a session name (eg: SVNConnection), and press Save (should appear in the Saved Sessions list)
+              </p></li><li class="listitem"><p>
+                Start pageant.exe (agent from the PuTTY folder). On the Windows taskbar icons, find the PuTTY agent, right-click and choose "Add Key", and select your .ppk PuTTY private SSH key.
+                </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+                  <span class="emphasis"><em>Note:</em></span> This agent needs to be started before any SVN operation is done; you might set it as a startup program.
+                </p></td></tr></table></div><p>
+              </p></li></ul></div></div></div><div class="section" title="Checking out the JSSceneGraphResources repository"><div class="titlepage"><div><div><h4 class="title"><a name="scenegraph.resources.windows.checkout"></a>Checking out the JSSceneGraphResources repository</h4></div></div></div><p>
+            For some reason, operations over the SSH tunnel don't work from the command line. Until someone finds how to fix that, all SVN operations are done with Turtoise's customized Windows Explorer menu.
+          </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              Open the Fabric folder in an Explorer. Right-click on the Web folder, and select "SVN Checkout" in the contextual menu.
+            </p></li><li class="listitem"><p>
+              Set the URL of the repository to "svn+http://SVNConnection/JSSceneGraphResources/stable" (where "SVNConnection" is the name of your saved PuTTY session), and set the Checkout directory to "[FABRICPATH]\Web" (eg: C:\Users\myuser\Fabric\Web).
+            </p></li><li class="listitem"><p>
+              If you have been granted write access, instead set the URL of the repository ="svn+ssh://SVNConnection/JSSceneGraphResources/stable".
+            </p></li><li class="listitem"><p>
+              You should now be able to run SVN commands from the Windows Explorer on files or folders located in the Web sub-directories, using the contextual menu (right-click).
+            </p></li></ul></div></div><div class="section" title="References"><div class="titlepage"><div><div><h4 class="title"><a name="scenegraph.resources.windows.references"></a>References</h4></div></div></div><p>
+            If you are unfamiliar with SVN or run into trouble with the above, the following resources may be useful:
+
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                <a class="link" href="http://tortoisesvn.net/docs/nightly/TortoiseSVN_en/tsvn-ssh-howto.html" target="_top">Securing Svnserve using SSH</a>
+              </p></li><li class="listitem"><p>
+                <a class="link" href="http://vimeo.com/5378553" target="_top">Tortoise SVN + Putty SSH integration tutorial</a>
+              </p></li></ul></div><p>
+          </p></div></div></div><div class="section" title="Setting up a local Fabric web server"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scenegraph.webserver"></a>Setting up a local Fabric web server</h2></div></div></div><p>
+        In order to the SceneGraph locally you will need to install a local web server. The web server used will depend on your operating system.
+      </p><div class="section" title="Windows"><div class="titlepage"><div><div><h3 class="title"><a name="scenegraph.webserver.windows"></a>Windows</h3></div></div></div><p>
+          The following describes how to setup a local web server using Windows's Internet Information Services (IIS). Other web server services, such as Apache, work too however we don't have precise steps for these.
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Activating IIS:
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>
+                Click Start and then click Control Panel
+              </p></li><li class="listitem"><p>
+                In Control Panel, click Programs And Features and then click Turn Windows features on or off
+              </p></li><li class="listitem"><p>
+                In the Windows Features dialog box, click Internet Information Services and then click OK (you can use the default sub-feature selection)
+              </p></li></ul></div><p>
+          </p></li><li class="listitem"><p>
+            Configuring IIS:
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>
+                From the Windows Start Menu search field, type 'inetmgr' and run it, this will open the IIS configuration tool
+              </p></li><li class="listitem"><p>
+                On the left pane, expand to -+Sites-+Default Web Site
+                </p><div class="itemizedlist"><ul class="itemizedlist" type="square"><li class="listitem"><p>
+                    Right-click over the "Default Web Site" item, and select 'Add Virtual Directory...'
+                    </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                        Alias = Fabric
+                      </p></li><li class="listitem"><p>
+                        Physical path = FABRICDIR\Web (eg: C:\Fabric\Web)
+                      </p></li></ul></div><p>
+                  </p></li><li class="listitem"><p>
+                    Click Ok
+                  </p></li></ul></div><p>
+              </p></li><li class="listitem"><p>
+                On the left pane, select Fabric, under 'Default Web Site'
+              </p></li><li class="listitem"><p>
+                On the center pane, open the 'Directory Browsing' item
+                </p><div class="itemizedlist"><ul class="itemizedlist" type="square"><li class="listitem"><p>
+                    On the right pane, click 'Enable'
+                  </p></li></ul></div><p>
+              </p></li><li class="listitem"><p>
+                On the left pane, select Fabric, under 'Default Web Site'
+              </p></li><li class="listitem"><p>
+                On the center pane, open the 'MIME Types' item
+                </p><div class="itemizedlist"><ul class="itemizedlist" type="square"><li class="listitem"><p>
+                    On the right pane, click 'Add...' to add all of these
+                    </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                        File name extension: .kl MIME Type: text/plain
+                      </p></li><li class="listitem"><p>
+                        File name extension: .obj MIME Type: text/plain
+                      </p></li><li class="listitem"><p>
+                        File name extension: .dae MIME Type: text/plain
+                      </p></li><li class="listitem"><p>
+                        File name extension: .cl MIME Type: text/plain
+                      </p></li><li class="listitem"><p>
+                        File name extension: .glsl MIME Type: text/plain
+                      </p></li><li class="listitem"><p>
+                        File name extension: .ply MIME Type: text/plain
+                      </p></li><li class="listitem"><p>
+                        File name extension: .abc MIME Type: application/octet-stream
+                      </p></li><li class="listitem"><p>
+                        File name extension: .laz MIME Type: application/octet-stream
+                      </p></li><li class="listitem"><p>
+                        File name extension: .nrrd MIME Type: application/octet-stream
+                      </p></li></ul></div><p>
+                  </p></li><li class="listitem"><p>
+                    In order to avoid clearing browser cache when modifying files, caching should be disabled. On the left pane, select Fabric, under 'Default Web Site'
+                    </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                        On the center pane, open the 'Output Caching' item
+                      </p></li><li class="listitem"><p>
+                        On the right pane, click 'Edit Feature Settings...'
+                      </p></li><li class="listitem"><p>
+                        Uncheck 'Enable cache'
+                      </p></li></ul></div><p>
+                  </p></li></ul></div><p>
+              </p></li></ul></div><p>
+          </p></li></ul></div><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+            <span class="emphasis"><em>Note:</em></span> In some cases, Skype can conflict with localhost. Localhost will not be available and clicking 'Start' for localhost in the inetmgr.exe will give an error about a file being used by another process. To avoid the problem, turn off: Skype -&gt; Tools -&gt; Options -&gt; Advanced -&gt; Connection -&gt; Use port 80 and 443 as alternative for incoming connections.
+          </p></td></tr></table></div></div><div class="section" title="Mac OS X"><div class="titlepage"><div><div><h3 class="title"><a name="scenegraph.webserver.mac"></a>Mac OS X</h3></div></div></div><p>
+          Note that in the follow steps, <code class="prompt">$USER</code> should be replaced with your UNIX username on your Mac OS X system. If you're unsure what your UNIX username is, in Terminal run <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">echo $USER</code></span>.
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Ensure that "Web Sharing" is enabled in the System Settings
+          </p></li><li class="listitem"><p>
+            As root (ie. using sudo), edit the text file <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">/private/etc/apache2/users/$USER.conf</code></span>
+          </p></li><li class="listitem"><p>
+            Change the <code class="prompt">AllowOverride</code> directive to <code class="prompt">All</code> (it defaults to <code class="prompt">None</code>). The file will look something like this:
+            </p><div class="informalfigure"><pre class="programlisting">
+                
+&lt;Directory "/Users/$USER/Sites/"&gt;
+    Options Indexes MultiViews
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+&lt;/Directory&gt;
+                
+              </pre></div><p>
+          </p></li><li class="listitem"><p>
+            Create a new text file <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/Sites/.htaccess</code></span> with the following content:
+            </p><div class="informalfigure"><pre class="programlisting">
+                
+Options +FollowSymLinks
+Header add Cache-Control "no-cache, no-store, max-age=0, must-revalidate"
+Header add Pragma "no-cache"
+Header add Expires "Fri, 01 Jan 1990 00:00:00 GMT"
+                
+              </pre></div><p>
+          </p></li><li class="listitem"><p>
+            Restart the web server by running: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">sudo apachectl graceful</code></span>
+          </p></li><li class="listitem"><p>
+            the URL http://localhost/~$USER/Fabric direct to <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/Fabric/Web</code></span> by running <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">ln -s ~/Fabric/Web ~/Sites/Fabric</code></span>
+          </p></li></ul></div></div><div class="section" title="Linux"><div class="titlepage"><div><div><h3 class="title"><a name="scenegraph.webserver.linux"></a>Linux</h3></div></div></div><p>For the following instructions, replace <code class="prompt">$USER</code> with your username.</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Ensure that Apache is installed by running:
+            </p><div class="informalfigure"><pre class="programlisting">
+                
+sudo apt-get install apache2
+                
+              </pre></div><p>
+          </p></li><li class="listitem"><p>
+            Enable user directories and header control on Apache2 by running:
+            </p><div class="informalfigure"><pre class="programlisting">
+                
+sudo ln -s /etc/apache2/mods-available/userdir.load /etc/apache2/mods-enabled/
+sudo ln -s /etc/apache2/mods-available/userdir.conf /etc/apache2/mods-enabled/
+sudo ln -s /etc/apache2/mods-available/headers.load /etc/apache2/mods-enabled/
+sudo /etc/init.d/apache2 restart
+                
+              </pre></div><p>
+          </p></li><li class="listitem"><p>
+            Create a new text file <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/public_html/.htaccess</code></span> with the following content:
+            </p><div class="informalfigure"><pre class="programlisting">
+                
+Header add Cache-Control "no-cache, no-store, max-age=0, must-revalidate"
+Header add Pragma "no-cache"
+Header add Expires "Fri, 01 Jan 1990 00:00:00 GMT"
+                
+              </pre></div><p>
+          </p></li><li class="listitem"><p>
+            Make the URL http://localhost/~$USER/Fabric serve <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/Fabric/Web</code></span> by running:
+            </p><div class="informalfigure"><pre class="programlisting">
+                
+ln -s ~/Fabric/Web ~/public_html/Fabric
+                
+              </pre></div><p>
+          </p></li></ul></div></div></div><div class="section" title="Run Sample Fabric Applications"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scenegraph.run"></a>Run Sample Fabric Applications</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+          In Google Chrome, navigate to <a class="link" href="http://localhost/Fabric" target="_top">http://localhost/Fabric</a>.
+        </p></li><li class="listitem"><p>
+          Run any of the demos in your browser.
+        </p></li></ul></div></div></div><div class="chapter" title="Chapter&nbsp;4.&nbsp;Installing optional extensions"><div class="titlepage"><div><div><h2 class="title"><a name="optexts"></a>Chapter&nbsp;4.&nbsp;Installing optional extensions</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#optexts.kinect">Installing the Kinect Extension (Windows only)</a></span></dt><dt><span class="section"><a href="#optexts.filesystem">Installing the filesystem extension</a></span></dt><dd><dl><dt><span class="section"><a href="#optexts.filesystem.install">Installation</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.demos">Demos</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.overview">General overview of File IO in Fabric Engine</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.kl">KL Usage</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.otherext">Creating a FabricFileHandle for use in other extensions</a></span></dt><dt><span class="section"><a href="#optexts.filesystem.use">Use of the FabricFILESTREAM</a></span></dt></dl></dd></dl></div><div class="section" title="Installing the Kinect Extension (Windows only)"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="optexts.kinect"></a>Installing the Kinect Extension (Windows only)</h2></div></div></div><p>
+        To install the Fabric Engine extension for supporting the Microsoft Kinect hardware, you first need to install the Kinect SDK. You can download the SDK on the official site: <a class="link" href="http://kinectforwindows.org/" target="_top">Kinect for Windows</a>.
+      </p><p>
+        Once the SDK is installed, please connect up your Kinect and try it with one of the sample applications provided by the Kinect SDK, for example the Skeletal Viewer.
+      </p><p>
+        Once the camera has proven to work, you need to get the extension files from the <a class="link" href="http://dist.fabric-engine.com/latest/" target="_top">Fabric distributions page</a>. The file is named <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-KinectExt-Windows-x86-VERSION.zip</code></span>, where VERSION is the latest Fabric version.
+      </p><p>
+        Unzip the files into the Extensions folder, based in <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">%APPDATA%/Fabric/Exts</code></span>.
+      </p><p>
+        Once the extension files are put in the right place, along with the other Fabric Engine extensions, you should restart your browser, and try one of the Fabric Engine based applications utilizing the kinect, for example this one: <a class="link" href="http://demos.fabric-engine.com/Apps/Sample/Kinect/DepthPoints.html" target="_top">Kinect Depth Points</a>
+      </p><p>
+        Other applications available for reference are:
+
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            <a class="link" href="http://demos.fabric-engine.com/Apps/Sample/Kinect/Tilt.html" target="_top">Kinect Tilt</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="http://demos.fabric-engine.com/Apps/Sample/Kinect/Depth.html" target="_top">Kinect Depth</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="http://demos.fabric-engine.com/Apps/Sample/Kinect/Skeletons.html" target="_top">Kinect Skeletons</a>
+          </p></li></ul></div><p>
+      </p></div><div class="section" title="Installing the filesystem extension"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="optexts.filesystem"></a>Installing the filesystem extension</h2></div></div></div><p>
+        The Fabric Engine extension for accessing the local filesystem, called FabricFILESYSTEM, is a so called 'unsafe' extension. Since it allows Fabric to access your local drives, be sure to understand the risks of installing this extension. It provides high performance local file access, but introduces security risks for unknown or malicious Fabric applications. This extension works both for Fabric Engine client as well as the Fabric Engine Node.js module.
+      </p><p>
+        You can download the FabricFILESYSTEM extension for all supported platforms from the <a class="link" href="http://demos.fabric-engine.com/latest/" target="_top">Fabric distributions page</a>. The file is named <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-FileSystemExt-OS-VERSION.zip</code></span> or <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-FileSystemExt-OS-VERSION.tar.bz2</code></span> where OS is your operating system and VERSION is the latest Fabric version.
+      </p><div class="section" title="Installation"><div class="titlepage"><div><div><h3 class="title"><a name="optexts.filesystem.install"></a>Installation</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Windows: Unzip the archive into the Extensions folder, based in <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">%APPDATA%/Fabric/Exts</code></span>.
+          </p></li><li class="listitem"><p>
+            Mac/Linux: Untar the archive into the Extensions folder, based in <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/.fabric/Exts</code></span>. You might have to create the directory if it doesn't exist.
+          </p></li></ul></div></div><div class="section" title="Demos"><div class="titlepage"><div><div><h3 class="title"><a name="optexts.filesystem.demos"></a>Demos</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            Accessing the local filesystem and browsing folders: <a class="link" href="http://demos.fabric-engine.com/Apps/Sample/BasicDemos/FileSystem.html" target="_top">FileSystem</a>
+          </p></li><li class="listitem"><p>
+            Reading and writing local files using the FileSTREAM: <a class="link" href="http://demos.fabric-engine.com/Apps/Sample/BasicDemos/FileStream.html" target="_top">FileStream</a>
+          </p></li></ul></div></div><div class="section" title="General overview of File IO in Fabric Engine"><div class="titlepage"><div><div><h3 class="title"><a name="optexts.filesystem.overview"></a>General overview of File IO in Fabric Engine</h3></div></div></div><p>
+          Fabric Engine supports access to the local harddrive(s) through a special kind of string, which is called the FabricFileHandle. It is a secure unique key, which represents a path to folder or a file on disk, but it is encrypted. That way you can provide a FabricFileHandle to extensions for example, without knowing which file you are reading or writing. This provides a secure model for allowing the application binary access to local files while Fabric Engine cannot access files without the user's action. The process is as follows:
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            User can be asked to provide a FabricFileHandle (through an open or save dialog).
+          </p></li><li class="listitem"><p>
+            The chosen path will be encoded to a secret unique key by the Fabric Engine core.
+          </p></li><li class="listitem"><p>
+            The FabricFileHandle can be passed around and provided to extensions.
+          </p></li><li class="listitem"><p>
+            Extensions can create a FILE * in C++ for example out of the FabricFileHandle using the EDK.
+          </p></li></ul></div><p>
+          This means that every FabricFileHandle will have to be initiated by the user and makes Fabric Engine's IO secure.
+        </p><p>
+          The FabricFILESYSTEM extension adds the ability to create FabricFileHandles from fullpaths, providing full access to the harddrive without any limitations, therefore it is not secure. We don't distribute the extension together with Fabric Engine, but it is available as a separate download (on this page).
+        </p></div><div class="section" title="KL Usage"><div class="titlepage"><div><div><h3 class="title"><a name="optexts.filesystem.kl"></a>KL Usage</h3></div></div></div><p>
+          The extension provides two new KL types to Fabric Engine: The FabricFolderHandle and the FabricFileHandleWrapper. The FabricFolderHandle provides access to folders on the local disk, as well as the contained subfolders and files. Its API is as follows:
+        </p><div class="informalfigure"><pre class="programlisting">
+            
+FabricFolderHandle.setAbsolutePath(String path)  
+String FabricFolderHandle.getAbsolutePath()
+String FabricFolderHandle.getBaseName()
+Boolean FabricFolderHandle.isValid()
+Boolean FabricFolderHandle.exists()
+FabricFolderHandle FabricFolderHandle.getParentFolder()
+FabricFolderHandle.getSubFolders(io FabricFolderHandle subfolders[])
+FabricFolderHandle.getFiles(io FabricFileHandleWrapper files[])
+            
+          </pre></div><p>
+          The methods are self-explanatory and allow to walk the filesystem as well as access all FabricFileHandleWrappers of a given folder.
+        </p><p>
+          The FabricFileHandleWrapper provides functionality for using the FabricFileHandle, creating new handles based on file paths etc. The API looks as follows:
+        </p><div class="informalfigure"><pre class="programlisting">
+            
+FabricFileHandleWrapper.setHandle(io String handle)
+String FabricFileHandleWrapper.getHandle()
+FabricFileHandleWrapper.setAbsolutePath(io String path)
+String FabricFileHandleWrapper.getAbsolutePath()
+FabricFolderHandle FabricFileHandleWrapper.getParentFolder()
+String FabricFileHandleWrapper.getName()
+String FabricFileHandleWrapper.getBaseName()
+String FabricFileHandleWrapper.getExtension()
+String FabricFileHandleWrapper.getExtensionLower()
+Boolean FabricFileHandleWrapper.isValid()
+Boolean FabricFileHandleWrapper.exists()
+Boolean FabricFileHandleWrapper.isReadOnly()
+Size FabricFileHandleWrapper.getSize()
+            
+          </pre></div></div><div class="section" title="Creating a FabricFileHandle for use in other extensions"><div class="titlepage"><div><div><h3 class="title"><a name="optexts.filesystem.otherext"></a>Creating a FabricFileHandle for use in other extensions</h3></div></div></div><p>
+          You will need to convert an absolute path string to a FileHandle using the FabricFileHandleWrapper. Like so:
+        </p><div class="informalfigure"><pre class="programlisting">
+            
+use FabricFILESYSTEM;
+
+String path;
+FabricFileHandleWrapper wrapper;
+wrapper.setAbsolutePath(path);
+myExtensionFunction(wrapper.getHandle())
+            
+          </pre></div><p>
+          This will allow you to implement a safe extension, that can work securely on the internet, but also perform on the local drive, if the user installs the options FabricFILESYSTEM extension.
+        </p></div><div class="section" title="Use of the FabricFILESTREAM"><div class="titlepage"><div><div><h3 class="title"><a name="optexts.filesystem.use"></a>Use of the FabricFILESTREAM</h3></div></div></div><p>
+          Along with the client resp. the node.js module you will find another File IO related extension, called FabricFILESTREAM. It is a wrapper for a std::ifstream resp. std::ofstream in KL, and can be created using a FabricFileHandle string, to allow to provide secure IO with stream functionality. The extension provides another KL type, called FabricFileStream. Its API looks like this:
+        </p><div class="informalfigure"><pre class="programlisting">
+            
+FabricFileStream(String handle, String mode) // Mode can be 'r', 'w' or 'a' (append).
+FabricFileStream.close()
+FabricFileStream.closeOnFullyRead(Boolean close) // If set to true, the stream will close once all of its contents are read.
+Boolean FabricFileStream.isValid()
+Boolean FabricFileStream.isWritable()
+Size FabricFileStream.getSize()
+Size FabricFileStrean.getSizeRead()
+Size FabricFileStream.getSeek()
+FabricFileStream.setSeek(Size seek)
+FabricFileStream.setSeekStart()
+FabricFileStream.setSeekEnd()
+FabricFileStream.writeData(Data data, Size size)
+FabricFileStream.readData(io Data data, Size size)
+FabricFileStream.writeString(String string)
+FabricFileStream.readString(io String string)
+FabricFileStream.writeStringArray(String strings[])
+FabricFileStream.readStringArray(io String strings[])
+FabricFileStream.writeSize(Size size)
+FabricFileStream.readSize(io Size size)
+            
+          </pre></div><p>
+          As a sample, you could do something like this:
+        </p><div class="informalfigure"><pre class="programlisting">
+            
+use FabricFILESYSTEM;
+use FabricFILESTREAM;
+
+String path;
+FabricFileHandleWrapper wrapper;
+wrapper.setAbsolutePath(path);
+
+FabricFileStream outputStream;
+outputStream.open(wrapper.getHandle(),"w")
+Scalar scalars[];
+scalars.push(1.0);
+scalars.push(2.0);
+scalars.push(3.0);
+scalars.push(4.0);
+scalars.push(5.0);
+outputStream.writeSize(scalar.size())
+outputStream.writeData(scalars.data(),scalars.dataSize())
+outputStream.close();
+
+FabricFileStream inputStream;
+inputStream.open(wrapper.getHandle(),"r")
+Size nbOfScalars;
+inputStream.readSize(nbOfScalars);
+scalars.resize(nbOfScalars);
+inputStream.readData(scalars.data(),scalars.dataSize());
+inputStream.close();
+
+report(scalars);
+            
+          </pre></div></div></div></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;Debugging"><div class="titlepage"><div><div><h2 class="title"><a name="debug"></a>Chapter&nbsp;5.&nbsp;Debugging</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#debug.windows">Windows: Attaching the VisualStudio debugger</a></span></dt></dl></div><p>
+      If you have built the Fabric Engine plugin from source according to the Developer Install Guide, you can debug the build dlls that 
+    </p><div class="section" title="Windows: Attaching the VisualStudio debugger"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="debug.windows"></a>Windows: Attaching the VisualStudio debugger</h2></div></div></div><p>
+        With Chrome:
+        </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+            Start Fabric (eg: open any Sample in Chrome)
+          </p></li><li class="listitem"><p>
+            Open Visual Studio
+          </p></li><li class="listitem"><p>
+            Choose Debug -&gt; Attach To Process
+          </p></li><li class="listitem"><p>
+            Select the upper one which is Chrome, but which has no "[Low Rights]" in the user name column
+          </p></li></ol></div><p>
+      </p><p>
+        With Firefox:
+        </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+            Do the same as above, but select "PluginContainer"
+          </p></li><li class="listitem"><p>
+            You need to turn off some obscure preferrence which will automatically kill an unresponsive plugin after a few seconds. I don't remember what it is; please update this page if you find it.
+          </p></li></ol></div><p>
+      </p></div></div></div></body></html>

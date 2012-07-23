@@ -1,0 +1,818 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Server Programming Guide</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Server Programming Guide"><div class="titlepage"><div><div><h1 class="title"><a name="d5e1"></a>Server Programming Guide</h1></div><div><p class="releaseinfo">Fabric Engine Version 1.2.0-beta</p></div><div><p class="copyright">Copyright © 2010-2012 Fabric Engine Inc.</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#introduction">1. Introduction</a></span></dt><dt><span class="chapter"><a href="#nodejs">2. Node.js Module</a></span></dt><dd><dl><dt><span class="section"><a href="#nodejs.platforms">Supported Platforms</a></span></dt><dt><span class="section"><a href="#nodejs.installation">Installation</a></span></dt><dd><dl><dt><span class="section"><a href="#nodejs.installation.getnode">Step Zero: Get Node.js</a></span></dt><dt><span class="section"><a href="#nodejs.installation.download">Step One: Download</a></span></dt><dt><span class="section"><a href="#nodejs.installation.install">Step Two: Install</a></span></dt><dt><span class="section"><a href="#nodejs.installation.test">Step Three: Test</a></span></dt><dt><span class="section"><a href="#nodejs.installation.exts">(Optional) Step Four: Install Extensions</a></span></dt></dl></dd><dt><span class="section"><a href="#nodejs.tutorial">Getting Started with Fabric Engine on Node.js</a></span></dt><dd><dl><dt><span class="section"><a href="#nodejs.tutorial.conventions">Conventions</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.application">A Standalone Node.js Application</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.http">An HTTP Server Using Fabric Engine</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.features">Supported and Unsupported Features of Fabric Engine Node.js Module</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.wheretogo">Where to Go from Here</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#python">3. Python Module</a></span></dt><dd><dl><dt><span class="section"><a href="#python.platforms">Supported Platforms</a></span></dt><dt><span class="section"><a href="#python.installation">Installation</a></span></dt><dd><dl><dt><span class="section"><a href="#python.installation.download">Step One: Download</a></span></dt><dt><span class="section"><a href="#python.installation.install">Step Two: Install</a></span></dt><dt><span class="section"><a href="#python.installation.test">Step Three: Test</a></span></dt><dt><span class="section"><a href="#python.installation.exts">(Optional) Step Four: Install Extensions</a></span></dt></dl></dd><dt><span class="section"><a href="#python.tutorial">Getting Started with Fabric Engine on Python</a></span></dt><dd><dl><dt><span class="section"><a href="#python.tutorial.conventions">Conventions</a></span></dt><dt><span class="section"><a href="#python.tutorial.application">A Standalone Python Application</a></span></dt><dt><span class="section"><a href="#python.tutorial.http">An HTTP Server Using Fabric Engine</a></span></dt><dt><span class="section"><a href="#python.tutorial.features">Supported and Unsupported Features of Fabric Engine Python Module</a></span></dt><dt><span class="section"><a href="#python.tutorial.wheretogo">Where to Go from Here</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#extensions">4. Fabric Extensions</a></span></dt></dl></div><div class="list-of-examples"><p><b>List of Examples</b></p><dl><dt>2.1. <a href="#d5e92">
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/trivialHTTPServer.js</code></span>
+          </a></dt><dt>2.2. <a href="#d5e115">
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/Series-Display.js</code></span>
+          </a></dt><dt>2.3. <a href="#d5e130">
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/computeTerm.kl</code></span>
+          </a></dt><dt>2.4. <a href="#d5e134">
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/sumTerms.kl</code></span>
+          </a></dt><dt>2.5. <a href="#d5e155">
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/Series-HTTP.js</code></span>
+          </a></dt><dt>3.1. <a href="#d5e285"><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/trivialHTTPServer.py</code></span></a></dt><dt>3.2. <a href="#d5e309"><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/Series/Series-Display.py</code></span></a></dt><dt>3.3. <a href="#d5e324"><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/Series/computeTerm.kl</code></span></a></dt><dt>3.4. <a href="#d5e328"><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/Series/sumTerms.kl</code></span></a></dt><dt>3.5. <a href="#d5e349"><span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorials/Series/Series-HTTP.py</code></span></a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Introduction"><div class="titlepage"><div><div><h2 class="title"><a name="introduction"></a>Chapter&nbsp;1.&nbsp;Introduction</h2></div></div></div><p>
+      This document outlines the installation and use of Fabric from the command line, as is typically used in a server environment.  Currently, bindings exist for JavaScript using Node.js on Mac OS X and Linux, and for Python on Windows, Mac OS X, and Linux.  Both Node.js and Python bindings are implemented as modules.
+    </p><p>
+      The rest of this document outlines instructions on how to install each module, a tutorial for each language to get you up-and-running, and links to reference documentation. The last section also outlines how to install and use the Fabric Extensions with the bindings for your chosen language.
+    </p><p>
+      This document focuses only on installing and configuring the specific language bindings, for a detailed reference on Fabric itself and the KL language please see <a class="link" href="http://documentation.fabricengine.com/latest" target="_top"><code class="uri">the other relevant documentation</code></a>.
+    </p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Node.js Module"><div class="titlepage"><div><div><h2 class="title"><a name="nodejs"></a>Chapter&nbsp;2.&nbsp;Node.js Module</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#nodejs.platforms">Supported Platforms</a></span></dt><dt><span class="section"><a href="#nodejs.installation">Installation</a></span></dt><dd><dl><dt><span class="section"><a href="#nodejs.installation.getnode">Step Zero: Get Node.js</a></span></dt><dt><span class="section"><a href="#nodejs.installation.download">Step One: Download</a></span></dt><dt><span class="section"><a href="#nodejs.installation.install">Step Two: Install</a></span></dt><dt><span class="section"><a href="#nodejs.installation.test">Step Three: Test</a></span></dt><dt><span class="section"><a href="#nodejs.installation.exts">(Optional) Step Four: Install Extensions</a></span></dt></dl></dd><dt><span class="section"><a href="#nodejs.tutorial">Getting Started with Fabric Engine on Node.js</a></span></dt><dd><dl><dt><span class="section"><a href="#nodejs.tutorial.conventions">Conventions</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.application">A Standalone Node.js Application</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.http">An HTTP Server Using Fabric Engine</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.features">Supported and Unsupported Features of Fabric Engine Node.js Module</a></span></dt><dt><span class="section"><a href="#nodejs.tutorial.wheretogo">Where to Go from Here</a></span></dt></dl></dd></dl></div><div class="section" title="Supported Platforms"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="nodejs.platforms"></a>Supported Platforms</h2></div></div></div><p>
+        The Fabric Engine module for Node.js currently runs on:
+
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Mac OS X running on Intel processors, version 10.6 ("Snow Leopard") or later</p></li><li class="listitem"><p>32-bit and 64-bit Linux. We do our development on Ubuntu 10.04 and above but it should work with any modern distribution</p></li></ul></div><p>
+      </p></div><div class="section" title="Installation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="nodejs.installation"></a>Installation</h2></div></div></div><div class="section" title="Step Zero: Get Node.js"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.installation.getnode"></a>Step Zero: Get Node.js</h3></div></div></div><p>
+            The first thing you'll need to do is install Node.js if you haven't already. We currently support the 0.6.x series of Node, although the module may work with later versions as well. Node.js may be available through your package manager but you'll need to make sure that it's at least version 0.6.x. Otherwise it can be installed from here: <a class="link" href="http://nodejs.org/" target="_top"><code class="uri">Node.js</code></a>
+          </p></div><div class="section" title="Step One: Download"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.installation.download"></a>Step One: Download</h3></div></div></div><p>
+            From the <a class="link" href="http://dist.fabricengine.com/latest/" target="_top"><code class="uri">Fabric distributions page</code></a>, download the version of the Node.js module that applies for your operating system.
+          </p><p>
+            For Linux, choose the file based on whether you are running a 32-bit or 64-bit operating system. If you're not sure which version to download, run <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">uname -m</code></span> which will report either <code class="prompt">i686</code> or <code class="prompt">x86_64</code>.
+
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-NodeModule-Linux-i686-VERSION.tar.bz2</code></span>
+              </p></li><li class="listitem"><p>
+                <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-NodeModule-Linux-x86_64-VERSION.tar.bz2</code></span>
+              </p></li></ul></div><p>
+          </p><p>
+            For Mac OS X choose:
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-NodeModule-Darwin-universal-VERSION.tar.bz2</code></span>
+              </p></li></ul></div><p>
+          </p></div><div class="section" title="Step Two: Install"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.installation.install"></a>Step Two: Install</h3></div></div></div><p>
+          Unpack the module by running <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">tar jxf FabricEngine-NodeModule-XXX.tar.bz2</code></span> from a command line.
+        </p><p>
+          Create the directory <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/node_modules</code></span>. Next, inside the module that you just unpacked there should be a subfolder called <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">node_modules</code></span> with a subfolder of its own called <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Fabric</code></span>. Move this <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Fabric</code></span> folder to <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/node_modules</code></span>. You can also create a symlink if it makes more sense for your setup.
+        </p></div><div class="section" title="Step Three: Test"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.installation.test"></a>Step Three: Test</h3></div></div></div><p>
+          Now we will test that the installation works. Run <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">node</code></span> from a command line and execute the command <code class="code">require('Fabric').createClient().build.getName();</code>. You should see something like this:
+
+          </p><div class="informalfigure"><a name="nodejs.installation.test.output"></a><pre class="screen">
+user@host~$ node
+&gt; require('Fabric').createClient().build.getName();
+[FABRIC] Fabric Engine version 1.0.22-release
+'Fabric Engine'
+&gt; 
+            </pre></div><p>
+
+          This confirms that the Fabric Engine Node.js module is installed and working. You can press <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">Ctrl-C</code></span> or run <code class="code">process.exit();</code> to exit.
+        </p></div><div class="section" title="(Optional) Step Four: Install Extensions"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.installation.exts"></a>(Optional) Step Four: Install Extensions</h3></div></div></div><p>To install the optional Fabric extensions, see <a class="xref" href="#extensions" title="Chapter&nbsp;4.&nbsp;Fabric Extensions">Chapter&nbsp;4, <i>Fabric Extensions</i></a>.</p></div></div><div class="section" title="Getting Started with Fabric Engine on Node.js"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="nodejs.tutorial"></a>Getting Started with Fabric Engine on Node.js</h2></div></div></div><p>
+        This is a tutorial intended to help get you started with using the Fabric Engine Node.js module. It assumes that you've already installed the Fabric Engine Node.js module as specified above.
+      </p><p>
+        All of the examples in this tutorial are provided in the <a class="link" href="https://github.com/fabric-engine/PublicDev/" target="_top"><code class="uri">Fabric Engine PublicDev github repository</code></a> under <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node</code></span>. The filenames given in this tutorial refer to the filenames within a checkout of this repository.
+      </p><div class="section" title="Conventions"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.tutorial.conventions"></a>Conventions</h3></div></div></div><p>
+          We will be showing some examples of direct command-line usage, e.g.:
+            
+          </p><div class="informalfigure"><pre class="screen">
+host~ user$ node
+&gt; FC = require('Fabric').createClient();
+[FABRIC] Fabric Engine version 1.0.22-release
+{ build: 
+ { isExpired: [Function],
+...
+close: [Function],
+getMemoryUsage: [Function] }
+&gt; 
+            </pre></div><p>
+
+          In general, we may omit the Fabric Engine startup messages (prefixed by <code class="prompt">[FABRIC]</code>) from example output. In cases when it's obvious, we may also omit the startup of Node.js and the creation of the Fabric Engine client:
+          
+          </p><div class="informalfigure"><pre class="screen">
+&gt; FC.build.getFullVersion();
+'1.0.22-release'
+&gt; 
+            </pre></div><p>
+        </p><p>
+          In other examples, we will be working with JavaScript sources files that will be run directly:
+        </p><div class="example"><a name="d5e92"></a><p class="title"><b>Example&nbsp;2.1.&nbsp;
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/trivialHTTPServer.js</code></span>
+          </b></p><div class="example-contents"><pre class="programlisting">
+            
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> fabric = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Fabric'</span>);
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> http = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http'</span>);
+
+http.createServer(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span> (req, res) {
+(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span> (fabricClient) {
+  res.writeHead(<span class="hl-number">200</span>, {<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span>: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'text/plain'</span>});
+  res.end(fabricClient.build.getName() + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">" version "</span> + fabricClient.build.getFullVersion() + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\n"</span>);
+  fabricClient.close();
+})(fabric.createClient());
+}).listen(<span class="hl-number">1337</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"127.0.0.1"</span>);
+
+console.log(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Server running at http://127.0.0.1:1337/'</span>);
+            
+          </pre></div></div><br class="example-break"><p>
+          We will then generally show the output of running the command directly:
+
+          </p><div class="informalfigure"><pre class="screen">
+host:Tutorial user$ node trivialHTTPServer.js 
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            </pre></div><p>
+
+          In cases of using a server (as in the example above), we will also show examples of accessing the server, generally using <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">curl</code></span> or some other command line tool:
+
+          </p><div class="informalfigure"><pre class="screen">
+host~ user$ curl http://127.0.0.1:1337/
+Fabric Engine version 1.0.22-release
+host~ user$
+            </pre></div><p>
+        </p></div><div class="section" title="A Standalone Node.js Application"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.tutorial.application"></a>A Standalone Node.js Application</h3></div></div></div><p>
+          Generally, Node.js is used to create server-type applications that accept incoming requests and produce responses. Fabric integrates well with this type of application, but we will start by creating a standalone Node.js application that instead simply computes and prints a result; think of it as a kind of "Hello, world!" for using Fabric Engine with Node.js.
+        </p><p>
+          Since Fabric Engine augments an existing platform (in this case Node.js) to perform heavy-duty computation, the simplest meaningful Fabric Engine examples are still fairly complex. The examples here should be fairly obvious if you read through the code and the comments, be we encourage you to refer to the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-KLProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine KL Programming Guide</span>”</span></a>, the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-DependencyGraphProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Dependency Graph Programming Guide</span>”</span></a> and the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-MapReduceProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Map Reduce Programming Guide</span>”</span></a> for more detail as to what's possible with the Fabric Engine core and the KL programming language.
+        </p><p>
+          Our first example will compute the sum of the first N terms of the series <code class="prompt">1/1 + 1/4 + 1/9+....</code> by computing all of the terms in parallel and then summing the results. This provides a simple example of using Fabric Engine for a parallel computation.
+        </p><p>
+          First, the source code for the Node.js source file:
+        </p><div class="example"><a name="d5e115"></a><p class="title"><b>Example&nbsp;2.2.&nbsp;
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/Series-Display.js</code></span>
+          </b></p><div class="example-contents"><pre class="programlisting">
+            
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> fabricClient = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Fabric'</span>).createClient();
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> fs = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fs'</span>);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Take the number of terms to compute on the command</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// line; default to 10</span>
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> numTerms = <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">parseInt</span>(process.argv[<span class="hl-number">2</span>]) || <span class="hl-number">10</span>;
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the operator that computes the value for</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// each term of the series</span>
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> computeTermOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"computeTermOp"</span>);
+computeTermOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>, fs.readFileSync(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'utf8'</span>));
+computeTermOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm'</span>);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the binding that binds the computeTermOp to the</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// terms node.  A binding binds the members of the node</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// to the arguments to the operator</span>
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> computeTermBinding = fabricClient.DG.createBinding();
+computeTermBinding.setOperator(computeTermOp);
+computeTermBinding.setParameterLayout([
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.index"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// self.index is special: the index of the</span>
+                  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// slice being operated on</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span>
+]);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the node that holds the terms in the series.</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// The number of terms is the "count" of the node,</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// ie. the SIMD multiplicity</span>
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> termsNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"termsNode"</span>);
+termsNode.setCount(numTerms);
+termsNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>);
+termsNode.bindings.append(computeTermBinding);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the operator that sums the terms of the series</span>
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> sumTermsOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumTermsOp"</span>);
+sumTermsOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>, fs.readFileSync(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'utf8'</span>));
+sumTermsOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms'</span>);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the binding that binds sumTermsOp to the members of</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// sumNode</span>
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> sumTermsBinding = fabricClient.DG.createBinding();
+sumTermsBinding.setOperator(sumTermsOp);
+sumTermsBinding.setParameterLayout([
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>,            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// terms is special: it is a Container</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// object that allows you to get and set</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the slice count of the node</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms.result&lt;&gt;"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the &lt;&gt; syntax specifies that we want to bind</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// to all the slices at once</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span> 
+]);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the node to hold the result, add termsNode as a</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// dependency and append the binding for sumTermsOp</span>
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> sumNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumNode"</span>);
+sumNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>);
+sumNode.setDependency(termsNode, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>);
+sumNode.bindings.append(sumTermsBinding);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Evaluate the sumNode (which evalutes its dependecy, the</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// termsNode, first) and then print the result.</span>
+
+sumNode.evaluate();
+console.log(sumNode.getData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'result'</span>, <span class="hl-number">0</span>));
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Close the Fabric Engine client.  If the client isn't closed</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then Node.js will keep this script alive!</span>
+
+fabricClient.close();
+            
+          </pre></div></div><br class="example-break"><p>
+          Before we can do anything with the Fabric Core, we need to call <code class="code">require('Fabric')</code>. The result of the require statement is an object that allows you to create Fabric Core client connections by calling its <code class="code">createClient()</code> method.
+        </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+          <span class="emphasis"><em>Important note:</em></span> As of this writing, it is not safe to perform multiple computations on the same client connection at the same time. As such, it is highly recommended for request server architectures (which we will demonstrate below) that one client connection is created per server request!
+        </p></td></tr></table></div><p>
+          Once we've created the client connection, we use it to build a dependency graph. We load the operator source code from external files (whose contents are given below), create the operators and bindings, set the number of terms, perform the evaluation and print the result. Once we are done we close the client connection to tell the Fabric Engine core that we are done using it.
+        </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+          <span class="emphasis"><em>Important note:</em></span> If you do not close a client connection the Node.js script will never exit. This is the same as for other connections in Node.js such as request connections accepted by the HTTP server.
+        </p></td></tr></table></div><p>
+          The source code for the two operators follow:
+        </p><div class="example"><a name="d5e130"></a><p class="title"><b>Example&nbsp;2.3.&nbsp;
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/computeTerm.kl</code></span>
+          </b></p><div class="example-contents"><pre class="programlisting">
+            
+operator computeTerm(
+  Size index,
+  io Scalar result
+  )
+{
+  result = 1.0 / (Scalar(index+1) * Scalar(index+1));
+}
+            
+          </pre></div></div><br class="example-break"><div class="example"><a name="d5e134"></a><p class="title"><b>Example&nbsp;2.4.&nbsp;
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/sumTerms.kl</code></span>
+          </b></p><div class="example-contents"><pre class="programlisting">
+            
+operator sumTerms(
+  Container self,
+  io Scalar terms&lt;&gt;,
+  io Scalar result
+  )
+{
+  result = 0.0;
+  for (Size i=0; i&lt;self.size; ++i)
+    result += terms[i];
+}
+            
+          </pre></div></div><br class="example-break"><p>
+          And the output from running the program to request the first 1000 terms of the series:
+
+          </p><div class="informalfigure"><pre class="screen">
+host:Series user$ node Series-Display.js 1000
+[FABRIC] Fabric Engine version 1.0.22-release
+1.643934845924377
+host:Series user$ 
+            </pre></div><p>
+        </p></div><div class="section" title="An HTTP Server Using Fabric Engine"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.tutorial.http"></a>An HTTP Server Using Fabric Engine</h3></div></div></div><p>
+          We now modify our series computation example to show how it is easily transformed into an HTTP server for the same result.
+        </p><p>
+          The key modification that is made to the program is to perform the computation asynchronously. To do so, we replace the call to <code class="code">sumNode.evalute()</code> with a call to <code class="code">sumNode.evaluateAync(...)</code>, passing a callback function that gets executed when the computation is finished. While the computation is being performed by Fabric Engine, control returns to Node.js which will continue to service other incoming HTTP requests. Fabric Engine provides generic, high-performance, parallel computation as an asynchronous service to Node.js, similar to an asynchronous web service or database query.
+        </p><p>
+          The other modifications that are made are:
+
+          </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              We will use a standard HTTP server and pass the number of terms to compute as the GET variable <code class="code">n</code>
+            </p></li><li class="listitem"><p>
+              In order to server multiple requests at once, we will create one Fabric Engine client connection per incoming HTTP request
+            </p></li></ul></div><p>
+        </p><p>
+          The actual "meat" of the computation is exactly as before. The source code is:
+        </p><div class="example"><a name="d5e155"></a><p class="title"><b>Example&nbsp;2.5.&nbsp;
+            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Node/Tutorial/Series/Series-HTTP.js</code></span>
+          </b></p><div class="example-contents"><pre class="programlisting">
+            
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> fabric = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Fabric'</span>);
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> fs = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'fs'</span>);
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> http = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'http'</span>);
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> url = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'url'</span>);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the HTTP server</span>
+http.createServer(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span> (req, res) {
+
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Take the number of terms to compute from the 'n' GET</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// parameter; default to 10</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> numTerms = <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">parseInt</span>(url.parse(req.url, true).query[<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'n'</span>]) || <span class="hl-number">10</span>;
+
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Ensure that each request has its own client</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// connection and local scope using the usual JavaScript trick</span>
+  (<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span> (fabricClient) {
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the operator that computes the value for</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// each term of the series</span>
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> computeTermOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"computeTermOp"</span>);
+    computeTermOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>, fs.readFileSync(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'utf8'</span>));
+    computeTermOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm'</span>);
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the binding that binds the computeTermOp to the</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// terms node.  A binding binds the members of the node</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// to the arguments to the operator</span>
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> computeTermBinding = fabricClient.DG.createBinding();
+    computeTermBinding.setOperator(computeTermOp);
+    computeTermBinding.setParameterLayout([
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.index"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// self.index is special: the index of the</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// slice being operated on</span>
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span>
+    ]);
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the node that holds the terms in the series.</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// The number of terms is the "count" of the node,</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// ie. the SIMD multiplicity</span>
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> termsNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"termsNode"</span>);
+    termsNode.setCount(numTerms);
+    termsNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>);
+    termsNode.bindings.append(computeTermBinding);
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the operator that sums the terms of the series</span>
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> sumTermsOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumTermsOp"</span>);
+    sumTermsOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>, fs.readFileSync(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'utf8'</span>));
+    sumTermsOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms'</span>);
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the binding that binds sumTermsOp to the members of</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// sumNode</span>
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> sumTermsBinding = fabricClient.DG.createBinding();
+    sumTermsBinding.setOperator(sumTermsOp);
+    sumTermsBinding.setParameterLayout([
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>,            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// terms is special: it is a Container object</span>
+                          <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// that allows you to get and set the slice</span>
+                          <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// count of the node</span>
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms.result&lt;&gt;"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// the &lt;&gt; syntax specifies that we want to bind</span>
+                          <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// to all the slices at once</span>
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span> 
+    ]);
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Create the node to hold the result, add termsNode as a</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// dependency and append the binding for sumTermsOp</span>
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> sumNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumNode"</span>);
+    sumNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>);
+    sumNode.setDependency(termsNode, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>);
+    sumNode.bindings.append(sumTermsBinding);
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Evaluate the sumNode asynchronously.  The given</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// callback is issue when the computation is done.</span>
+
+    sumNode.evaluateAsync(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span> () {
+
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Return the result as the HTTP content</span>
+
+      res.writeHead(<span class="hl-number">200</span>, {<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-Type'</span>: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'text/plain'</span>});
+      res.end(sumNode.getData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'result'</span>, <span class="hl-number">0</span>) + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"\n"</span>);
+
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// Close the Fabric Engine client.  If the client isn't closed</span>
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">// then Node.js will keep this script alive!</span>
+
+      fabricClient.close();
+    });
+
+  })(fabric.createClient());
+
+}).listen(<span class="hl-number">1337</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"127.0.0.1"</span>);
+
+console.log(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Server running at http://127.0.0.1:1337/'</span>);
+            
+          </pre></div></div><br class="example-break"><p>
+          The code for the operators is exactly as before. When run, the HTTP server starts:
+
+          </p><div class="informalfigure"><pre class="screen">
+host:Series user$ node Series-HTTP.js 
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            </pre></div><p>
+        </p><p>
+          From another command line, we can request computation, passing the number of terms as the <code class="code">n</code> query parameter:
+
+          </p><div class="informalfigure"><pre class="screen">
+host:~ user$ curl http://127.0.0.1:1337/?n=1000
+1.643934845924377
+host:~ user$ 
+            </pre></div><p>
+        </p></div><div class="section" title="Supported and Unsupported Features of Fabric Engine Node.js Module"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.tutorial.features"></a>Supported and Unsupported Features of Fabric Engine Node.js Module</h3></div></div></div><p>
+          Fabric Engine was originally developed as a browser plug-in that could be used to render high-end 3D effects inside of normal web pages. Many of the features that are available in the context of high-end browser 3D are not available or available differently when Fabric Engine is being used as a Node.js module.
+        </p><p>
+          Features that are not supported or that are partially supported:
+
+          </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              OpenGL viewports are not supported. It is expected that some sort of off-line rendering support will be made available in a future version of the Node.js module.
+            </p></li><li class="listitem"><p>
+              ResourceLoadNodes are available but can only load URLs that use the <code class="code">file:</code> method for local file access. A future version of the Node.js module will add support for access to remote URLs using the <code class="code">http:</code> method.
+            </p></li></ul></div><p>
+        </p></div><div class="section" title="Where to Go from Here"><div class="titlepage"><div><div><h3 class="title"><a name="nodejs.tutorial.wheretogo"></a>Where to Go from Here</h3></div></div></div><p>
+          You have learned the basics of how to use Fabric Engine with Node.js and how to use it for asynchronous computation as a Node.js service. As mentioned above, much more information can be obtained by reading the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-KLProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine KL Programming Guide</span>”</span></a>, the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-DependencyGraphProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Dependency Graph Programming Guide</span>”</span></a> and the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-MapReduceProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Map Reduce Programming Guide</span>”</span></a> . You can find a few more examples of the use of Fabric Engine with Node.js in our <a class="link" href="https://github.com/fabric-engine/Benchmarks" target="_top"><code class="uri">benchmark repository</code></a>. And finally, you can learn about using Fabric Engine for in-browser high-end 3D effects by learning about the Fabric JavaScript scene graph.
+        </p></div></div></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;Python Module"><div class="titlepage"><div><div><h2 class="title"><a name="python"></a>Chapter&nbsp;3.&nbsp;Python Module</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#python.platforms">Supported Platforms</a></span></dt><dt><span class="section"><a href="#python.installation">Installation</a></span></dt><dd><dl><dt><span class="section"><a href="#python.installation.download">Step One: Download</a></span></dt><dt><span class="section"><a href="#python.installation.install">Step Two: Install</a></span></dt><dt><span class="section"><a href="#python.installation.test">Step Three: Test</a></span></dt><dt><span class="section"><a href="#python.installation.exts">(Optional) Step Four: Install Extensions</a></span></dt></dl></dd><dt><span class="section"><a href="#python.tutorial">Getting Started with Fabric Engine on Python</a></span></dt><dd><dl><dt><span class="section"><a href="#python.tutorial.conventions">Conventions</a></span></dt><dt><span class="section"><a href="#python.tutorial.application">A Standalone Python Application</a></span></dt><dt><span class="section"><a href="#python.tutorial.http">An HTTP Server Using Fabric Engine</a></span></dt><dt><span class="section"><a href="#python.tutorial.features">Supported and Unsupported Features of Fabric Engine Python Module</a></span></dt><dt><span class="section"><a href="#python.tutorial.wheretogo">Where to Go from Here</a></span></dt></dl></dd></dl></div><div class="section" title="Supported Platforms"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="python.platforms"></a>Supported Platforms</h2></div></div></div><p>
+        The Fabric Engine module for Python currently runs on:
+
+        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Windows Vista or Windows 7</p></li><li class="listitem"><p>Mac OS X running on Intel processors, version 10.6 ("Snow Leopard") or later</p></li><li class="listitem"><p>32-bit and 64-bit Linux. We do our development on Ubuntu 10.04 and above but it should work with any modern distribution</p></li></ul></div><p>
+
+        We target Python version 2.6.x or later, but may work with older versions of Python as well.
+      </p></div><div class="section" title="Installation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="python.installation"></a>Installation</h2></div></div></div><div class="section" title="Step One: Download"><div class="titlepage"><div><div><h3 class="title"><a name="python.installation.download"></a>Step One: Download</h3></div></div></div><p>
+            From the <a class="link" href="http://dist.fabricengine.com/latest/" target="_top"><code class="uri">Fabric distributions page</code></a>, download the version of the Node.js module that applies for your operating system.
+          </p><p>
+            For Linux, choose the file based on whether you are running a 32-bit or 64-bit operating system. If you're not sure which version to download, run <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">uname -m</code></span> which will report either <code class="prompt">i686</code> or <code class="prompt">x86_64</code>.
+
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-PythonModule-Linux-i686-VERSION.tar.bz2</code></span>
+              </p></li><li class="listitem"><p>
+                <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-PythonModule-Linux-x86_64-VERSION.tar.bz2</code></span>
+              </p></li></ul></div><p>
+          </p><p>
+            For Mac OS X choose:
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-PythonModule-Darwin-universal-VERSION.tar.bz2</code></span>
+              </p></li></ul></div><p>
+          </p><p>
+            For Windows choose:
+            </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+                <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">FabricEngine-PythonModule-Windows-x86-VERSION.zip</code></span>
+              </p></li></ul></div><p>
+          </p></div><div class="section" title="Step Two: Install"><div class="titlepage"><div><div><h3 class="title"><a name="python.installation.install"></a>Step Two: Install</h3></div></div></div><p>
+          On Mac OS X and Linux, unpack the module by running <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">tar jxf FabricEngine-PythonModule-XXX.tar.bz2</code></span> from a command line. On Windows, simply double-click the .zip file to unpack it.
+        </p><p>
+          The module can be installed anywhere you would normally install Python modules on your system. If you do not already have a location where you normally install Python modules you can create one. Assuming that your local user is called <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">myuser</code></span>, the recommended paths to create are as follows:
+        </p><p>
+          </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Windows: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">c:\Users\myuser\python_modules</code></span></p></li><li class="listitem"><p>Mac OS X: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">/Users/myuser/python_modules</code></span></p></li><li class="listitem"><p>Linux: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">/home/myuser/python_modules</code></span></p></li></ul></div><p>
+        </p><p>
+          Next, inside the module that you just unpacked there should be a subfolder called <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">python_modules</code></span> with a subfolder of its own called <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">fabric</code></span>. Move this <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">fabric</code></span> folder to the folder you created above. In Mac OS X or Linux you can also create a symlink if it makes more sense for your setup.
+        </p><p>
+          If you created a new folder above you will also need to set an environment variable to tell Python where to look. On Mac OS X or Linux this can be done by running <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">export PYTHONPATH=~/python_modules</code></span>. You may want to add this to your <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/.bashrc</code></span> or <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">~/.bash_profile</code></span> as well.
+        </p><p>
+          Under Windows you'll want to set it as a permanent environment variable by going to Control Panel -&gt; System -&gt; Advanced System Settings -&gt; Advanced -&gt; Environment Variables. Create a new variable called <code class="prompt">PYTHONPATH</code> and set it to <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">c:\Users\myuser\python_modules</code></span>.
+        </p></div><div class="section" title="Step Three: Test"><div class="titlepage"><div><div><h3 class="title"><a name="python.installation.test"></a>Step Three: Test</h3></div></div></div><p>
+          Now we will test that the installation works. Run <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">python</code></span> from a command line and try this:
+
+          </p><div class="informalfigure"><a name="python.installation.test.output"></a><pre class="screen">
+user@host~$ python
+Python 2.7.2+ (default, Jan 21 2012, 23:31:34) 
+[GCC 4.6.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import fabric
+[FABRIC] Fabric Engine version 1.0.22-release
+&gt;&gt;&gt; fabric.createClient().build.getName()
+[FABRIC] Searching extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Searching extension directory '/usr/lib/fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/usr/lib/fabric/Exts'
+u'Fabric Engine'
+&gt;&gt;&gt; 
+            </pre></div><p>
+
+          This confirms that the Fabric Engine Python module is installed and working. You can press <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">Ctrl-D</code></span> and then <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">Ctrl-C</code></span> to exit.
+        </p></div><div class="section" title="(Optional) Step Four: Install Extensions"><div class="titlepage"><div><div><h3 class="title"><a name="python.installation.exts"></a>(Optional) Step Four: Install Extensions</h3></div></div></div><p>To install the optional Fabric extensions, see <a class="xref" href="#extensions" title="Chapter&nbsp;4.&nbsp;Fabric Extensions">Chapter&nbsp;4, <i>Fabric Extensions</i></a>.</p></div></div><div class="section" title="Getting Started with Fabric Engine on Python"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="python.tutorial"></a>Getting Started with Fabric Engine on Python</h2></div></div></div><p>
+        This is a tutorial intended to help get you started with using the Fabric Engine Python module. It assumes that you've already installed the Fabric Engine Python module as described above.
+      </p><p>
+        All of the examples in this tutorial are provided in the <a class="link" href="https://github.com/fabric-engine/PublicDev/" target="_top"><code class="uri">Fabric Engine PublicDev github repository</code></a> under <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python</code></span>. The filenames given in this tutorial refer to the filenames within a checkout of this repository.
+      </p><div class="section" title="Conventions"><div class="titlepage"><div><div><h3 class="title"><a name="python.tutorial.conventions"></a>Conventions</h3></div></div></div><p>
+          We will be showing some examples of direct command-line usage, e.g.:
+          
+          </p><div class="informalfigure"><pre class="screen">
+user@host~$ python
+Python 2.7.2+ (default, Jan 21 2012, 23:31:34) 
+[GCC 4.6.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import fabric
+[FABRIC] Fabric Engine version 1.0.22-release
+&gt;&gt;&gt; client = fabric.createClient()
+[FABRIC] Searching extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/home/andrew/.fabric/Exts'
+[FABRIC] Searching extension directory '/usr/lib/fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/usr/lib/fabric/Exts'
+&gt;&gt;&gt;
+            </pre></div><p>
+        </p><p>
+          In general, we may omit the Fabric Engine startup messages (prefixed by <code class="prompt">[FABRIC]</code>) from example output. In cases when it's obvious, we may also omit the Python startup and the creation of the Fabric Engine client:
+
+          </p><div class="informalfigure"><pre class="screen">
+&gt;&gt;&gt; client.build.getFullVersion()
+u'1.0.22-release'
+&gt;&gt;&gt; 
+            </pre></div><p>
+        </p><p>
+          In other examples, we will be working with Python sources files that will be run directly:
+        </p><div class="example"><a name="d5e285"></a><p class="title"><b>Example&nbsp;3.1.&nbsp;<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/trivialHTTPServer.py</code></span></b></p><div class="example-contents"><pre class="programlisting">
+            
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> fabric
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> BaseHTTPServer
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">def</span> do_GET( self ):
+    client = fabric.createClient()
+    self.send_response( <span class="hl-number">200</span> )
+    self.send_header( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-type'</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'text/plain'</span> )
+    self.end_headers()
+    self.wfile.write( client.build.getName() + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">' version '</span> + client.build.getFullVersion() + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'\n'</span> )
+    client.close()
+
+port = <span class="hl-number">1337</span>
+httpd = BaseHTTPServer.HTTPServer( (<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>, port), FabricHandler )
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">print</span>(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Server running at http://127.0.0.1:'</span> + str(port) + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/'</span>)
+httpd.serve_forever()
+            
+          </pre></div></div><br class="example-break"><p>
+          We will then generally show the output of running the command directly:
+
+          </p><div class="informalfigure"><pre class="screen">
+user@host~$ python trivialHTTPServer.py 
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            </pre></div><p>
+        </p><p>
+          In cases of using a server (as in the example above), we will also show examples of accessing the server, generally using <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="command"><code class="command">curl</code></span> or some other command line tool:
+
+          </p><div class="informalfigure"><pre class="screen">
+andrew@variable:~$ curl http://127.0.0.1:1337/
+Fabric Engine version 1.0.22-release
+andrew@variable:~$ 
+            </pre></div><p>
+        </p></div><div class="section" title="A Standalone Python Application"><div class="titlepage"><div><div><h3 class="title"><a name="python.tutorial.application"></a>A Standalone Python Application</h3></div></div></div><p>
+          We will start by creating a standalone Python application that simply computes and prints a result; think of it as a kind of "Hello, world!" for using Fabric Engine with Python.
+        </p><p>
+          Since Fabric Engine augments an existing platform (in this case Python) to perform heavy-duty computation, the simplest meaningful Fabric Engine examples are still fairly complex. The examples here should be fairly obvious if you read through the code and the comments, and we encourage you to refer to the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-KLProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine KL Programming Guide</span>”</span></a>, the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-DependencyGraphProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Dependency Graph Programming Guide</span>”</span></a> and the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-MapReduceProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Map Reduce Programming Guide</span>”</span></a> for more detail as to what's possible with the Fabric Engine core and the KL programming language.
+        </p><p>
+          Our first example will compute the sum of the first N terms of the series <code class="code">1/1 + 1/4 + 1/9+....</code> by computing all of the terms in parallel and them summing the results. This provides a simple example of using Fabric Engine for a parallel computation.
+        </p><p>
+          First, the source code for the Python source file:
+        </p><div class="example"><a name="d5e309"></a><p class="title"><b>Example&nbsp;3.2.&nbsp;<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/Series/Series-Display.py</code></span></b></p><div class="example-contents"><pre class="programlisting">
+            
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> fabric
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> sys
+
+fabricClient = fabric.createClient()
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Take the number of terms to compute on the command</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># line default to 10</span>
+
+numTerms = <span class="hl-number">10</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> len( sys.argv ) &gt; <span class="hl-number">1</span>:
+  numTerms = int( sys.argv[<span class="hl-number">1</span>] )
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the operator that computes the value for</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># each term of the series</span>
+
+computeTermOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"computeTermOp"</span>)
+computeTermOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>, open(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>).read())
+computeTermOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm'</span>)
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the binding that binds the computeTermOp to the</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># terms node.  A binding binds the members of the node</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># to the arguments to the operator</span>
+
+computeTermBinding = fabricClient.DG.createBinding()
+computeTermBinding.setOperator(computeTermOp)
+computeTermBinding.setParameterLayout([
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.index"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># self.index is special: the index of the</span>
+                  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># slice being operated on</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span>
+])
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the node that holds the terms in the series.</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># The number of terms is the "count" of the node,</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># ie. the SIMD multiplicity</span>
+
+termsNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"termsNode"</span>)
+termsNode.setCount(numTerms)
+termsNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>)
+termsNode.bindings.append(computeTermBinding)
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the operator that sums the terms of the series</span>
+
+sumTermsOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumTermsOp"</span>)
+sumTermsOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>, open(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>).read())
+sumTermsOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms'</span>)
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the binding that binds sumTermsOp to the members of</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># sumNode</span>
+
+sumTermsBinding = fabricClient.DG.createBinding()
+sumTermsBinding.setOperator(sumTermsOp)
+sumTermsBinding.setParameterLayout([
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>,            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># terms is special: it is an object that</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># allows you to get and set the number of</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># slices of the node</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms.result&lt;&gt;"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># the &lt;&gt; syntax specifies that we want to bind</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># to all the slices at once</span>
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span> 
+])
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the node to hold the result, add termsNode as a</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># dependency and append the binding for sumTermsOp</span>
+
+sumNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumNode"</span>)
+sumNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>)
+sumNode.setDependency(termsNode, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>)
+sumNode.bindings.append(sumTermsBinding)
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Evaluate the sumNode (which evalutes its dependecy, the</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># termsNode, first) and then print the result.</span>
+
+errors = sumNode.getErrors()
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">for</span> error <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">in</span> errors:
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">print</span> error
+sumNode.evaluate()
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">print</span>(sumNode.getData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'result'</span>, <span class="hl-number">0</span>))
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Close the Fabric Engine client.  If the client isn't closed</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># then the Python module will keep this script alive!</span>
+
+fabricClient.close()
+            
+          </pre></div></div><br class="example-break"><p>
+          Before we can do anything with the Fabric Core, we need to call <code class="code">import fabric</code>. The result of the import statement is an object that allows you to create Fabric Core client connections by calling its <code class="code">createClient()</code> method.
+        </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+          <span class="emphasis"><em>Important Note:</em></span> As of this writing, it is not safe to perform multiple computations on the same client connection at the same time. As such, it is highly recommended for request server architectures (which we will demonstrate below) that one client connection is created per server request!
+        </p></td></tr></table></div><p>
+          Once we've created the client connection, we use it to build a dependency graph. We load the operator source code from external files (whose contents are given below), create the operators and bindings, set the number of terms, perform the evaluation and print the result. Once we are done we close the client connection to tell the Fabric Engine core that we are done using it.
+        </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+          <span class="emphasis"><em>Important Note:</em></span> If you do not close a client connection the Python script will never exit. For testing you can use Ctrl-C to close a Python script where you forgot to close the Fabric client but you should always make sure that the client is correctly closed in production scripts.
+        </p></td></tr></table></div><p>
+          The source code for the two operators follow:
+        </p><div class="example"><a name="d5e324"></a><p class="title"><b>Example&nbsp;3.3.&nbsp;<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/Series/computeTerm.kl</code></span></b></p><div class="example-contents"><pre class="programlisting">
+            
+operator computeTerm(
+  Size index,
+  io Scalar result
+  )
+{
+  result = 1.0 / (Scalar(index+1) * Scalar(index+1));
+}
+            
+          </pre></div></div><br class="example-break"><div class="example"><a name="d5e328"></a><p class="title"><b>Example&nbsp;3.4.&nbsp;<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorial/Series/sumTerms.kl</code></span></b></p><div class="example-contents"><pre class="programlisting">
+            
+operator sumTerms(
+  Size numTerms,
+  io Scalar terms&lt;&gt;,
+  io Scalar result
+  )
+{
+  result = 0.0;
+  for (Size i=0; i&lt;numTerms; ++i)
+    result += terms[i];
+}
+            
+          </pre></div></div><br class="example-break"><p>
+          And the output from running the program to request the first 1000 terms of the series:
+
+          </p><div class="informalfigure"><pre class="screen">
+user@host~$ python Series-Display.py 1000
+[FABRIC] Fabric Engine version 1.0.22-release
+1.64393484592
+user@host~$
+            </pre></div><p>
+        </p></div><div class="section" title="An HTTP Server Using Fabric Engine"><div class="titlepage"><div><div><h3 class="title"><a name="python.tutorial.http"></a>An HTTP Server Using Fabric Engine</h3></div></div></div><p>
+          We now modify our series computation example to show how it is easily transformed into an HTTP server for the same result.
+        </p><p>
+          The key modification that is made to the program is to perform the computation asynchronously. To do so, we replace the call to <code class="code">sumNode.evalute()</code> with a call to <code class="code">sumNode.evaluateAync(...)</code>, passing a callback function that gets executed when the computation is finished. While the computation is being performed by Fabric Engine, control returns to Python which will continue to service other incoming HTTP requests. Fabric Engine provides generic, high-performance, parallel computation as an asynchronous service, similar to an asynchronous web service or database query.
+        </p><p>
+          The other modifications that are made are:
+
+          </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              We will use the Python BaseHTTPServer and pass the number of terms to compute as the GET variable <code class="code">n</code>
+            </p></li><li class="listitem"><p>
+              In order to server multiple requests at once, we will create one Fabric Engine client connection per incoming HTTP request
+            </p></li></ul></div><p>
+        </p><p>
+          The actual "meat" of the computation is exactly as before. The source code is:
+        </p><div class="example"><a name="d5e349"></a><p class="title"><b>Example&nbsp;3.5.&nbsp;<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Examples/Python/Tutorials/Series/Series-HTTP.py</code></span></b></p><div class="example-contents"><pre class="programlisting">
+            
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> fabric
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> BaseHTTPServer
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">import</span> urlparse
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> FabricHandler( BaseHTTPServer.BaseHTTPRequestHandler ):
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">def</span> do_GET( self ):
+
+    query = urlparse.parse_qs(urlparse.urlparse(self.path).query)
+    numTerms = <span class="hl-number">10</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'n'</span> <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">in</span> query:
+      numTerms = int( query[ <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'n'</span> ][ <span class="hl-number">0</span> ] )
+
+    fabricClient = fabric.createClient()
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the operator that computes the value for</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># each term of the series</span>
+
+    computeTermOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"computeTermOp"</span>)
+    computeTermOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>, open(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm.kl'</span>).read())
+    computeTermOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'computeTerm'</span>)
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the binding that binds the computeTermOp to the</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># terms node.  A binding binds the members of the node</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># to the arguments to the operator</span>
+
+    computeTermBinding = fabricClient.DG.createBinding()
+    computeTermBinding.setOperator(computeTermOp)
+    computeTermBinding.setParameterLayout([
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.index"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># self.index is special: the index of the</span>
+                      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># slice being operated on</span>
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span>
+    ])
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the node that holds the terms in the series.</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># The number of terms is the "count" of the node,</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># ie. the SIMD multiplicity</span>
+
+    termsNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"termsNode"</span>)
+    termsNode.setCount(numTerms)
+    termsNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>)
+    termsNode.bindings.append(computeTermBinding)
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the operator that sums the terms of the series</span>
+
+    sumTermsOp = fabricClient.DG.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumTermsOp"</span>)
+    sumTermsOp.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>, open(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms.kl'</span>).read())
+    sumTermsOp.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'sumTerms'</span>)
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the binding that binds sumTermsOp to the members of</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># sumNode</span>
+
+    sumTermsBinding = fabricClient.DG.createBinding()
+    sumTermsBinding.setOperator(sumTermsOp)
+    sumTermsBinding.setParameterLayout([
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>,            <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># terms is special: it is an object that</span>
+                          <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># allows you to get and set the number of slices</span>
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms.result&lt;&gt;"</span>,   <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># the &lt;&gt; syntax specifies that we want to bind</span>
+                          <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># to all the slices at once</span>
+      <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.result"</span> 
+    ])
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the node to hold the result, add termsNode as a</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># dependency and append the binding for sumTermsOp</span>
+
+    sumNode = fabricClient.DG.createNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"sumNode"</span>)
+    sumNode.addMember(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"result"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Scalar"</span>)
+    sumNode.setDependency(termsNode, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"terms"</span>)
+    sumNode.bindings.append(sumTermsBinding)
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Evaluate the sumNode</span>
+
+    sumNode.evaluate()
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Return the result as the HTTP content</span>
+
+    self.send_response( <span class="hl-number">200</span> )
+    self.send_header( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Content-type'</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'text/plain'</span> )
+    self.end_headers()
+    self.wfile.write( str(sumNode.getData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'result'</span>, <span class="hl-number">0</span>)) + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'\n'</span> )
+
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Close the Fabric Engine client.  If the client isn't closed</span>
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># then Fabric Python client will keep this script alive!</span>
+
+    fabricClient.close()
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment"># Create the HTTP server</span>
+port = <span class="hl-number">1337</span>
+httpd = BaseHTTPServer.HTTPServer( (<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">''</span>, port), FabricHandler )
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">print</span>(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Server running at http://127.0.0.1:'</span> + str(port) + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/'</span>)
+httpd.serve_forever()
+            
+          </pre></div></div><br class="example-break"><p>
+          The code for the operators is exactly as before. When run, the HTTP server starts:
+
+          </p><div class="informalfigure"><pre class="screen">
+user@host~$ python Series-HTTP.py
+[FABRIC] Fabric Engine version 1.0.22-release
+Server running at http://127.0.0.1:1337/
+            </pre></div><p>
+        </p><p>
+          From another command line, we can request computation, passing the number of terms as the <code class="code">n</code> query parameter:
+
+          </p><div class="informalfigure"><pre class="screen">
+user@host~$ curl http://127.0.0.1:1337/?n=1000
+1.64393484592
+user@host~$
+            </pre></div><p>
+        </p></div><div class="section" title="Supported and Unsupported Features of Fabric Engine Python Module"><div class="titlepage"><div><div><h3 class="title"><a name="python.tutorial.features"></a>Supported and Unsupported Features of Fabric Engine Python Module</h3></div></div></div><p>
+          Fabric Engine was originally developed as a browser plug-in that could be used to render high-end 3D effects inside of normal web pages. Many of the features that are available in the context of high-end browser 3D are not yet available or available differently when Fabric Engine is being used as a Python module.
+        </p><p>
+          Features that are not supported or that are partially supported:
+
+          </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              OpenGL viewports are not yet supported, but as of this writing, a PyQT port is being developed. For up-to-date information please consult the <a class="link" href="http://www.fabricengine.com" target="_top"><code class="uri">Fabric Engine</code></a> website.
+            </p></li></ul></div><p>
+        </p></div><div class="section" title="Where to Go from Here"><div class="titlepage"><div><div><h3 class="title"><a name="python.tutorial.wheretogo"></a>Where to Go from Here</h3></div></div></div><p>
+          You have learned the basics of how to use Fabric Engine with Python and how to use it for asynchronous computation. As mentioned above, much more information can be obtained by reading the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-KLProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine KL Programming Guide</span>”</span></a>, the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-DependencyGraphProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Dependency Graph Programming Guide</span>”</span></a> and the <a class="link" href="http://documentation.fabricengine.com/latest/FabricEngine-MapReduceProgrammingGuide.html" target="_top"><span class="quote">“<span class="quote">Fabric Engine Map Reduce Programming Guide</span>”</span></a> . You can find a few more examples of the use of Fabric Engine with Node.js in our <a class="link" href="https://github.com/fabric-engine/Benchmarks" target="_top"><code class="uri">benchmark repository</code></a>. And finally, you can learn about using Fabric Engine for in-browser high-end 3D effects by learning about the Fabric JavaScript scene graph.
+        </p></div></div></div><div class="chapter" title="Chapter&nbsp;4.&nbsp;Fabric Extensions"><div class="titlepage"><div><div><h2 class="title"><a name="extensions"></a>Chapter&nbsp;4.&nbsp;Fabric Extensions</h2></div></div></div><p>
+      Each module should also contain the Fabric Extensions. These are optional but expose additional functionality within Fabric and KL. To install the Extensions, look for a subfolder called <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">Exts</code></span> under the archive for your module that you downloaded and unpacked. The contents of this folder should be copied to a specific location depending on your operating system:
+
+      </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Windows: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">c:\Users\myuser\AppData\Roaming\Fabric\Exts</code></span></p></li><li class="listitem"><p>Mac OS X: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">/Users/myuser/Library/Fabric/Exts</code></span></p></li><li class="listitem"><p>Linux: <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="filename"><code class="filename">/home/myuser/.fabric/Exts</code></span></p></li></ul></div><p>
+
+      This folder may not exist and will need to be created (including any missing parent folders) if not.
+    </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+        If you are upgrading the extensions from a previous version of Fabric, you should remove the contents of this folder before copying over the new extensions.  This ensure that if any extensions are removed from the Fabric distribution (which may be because they are no longer compatible with the latest version of Fabric) then it won't cause problems.
+      </p></td></tr></table></div><p>
+      After copying the files into the folder specified you can verify that they are seen by Fabric by running the command as specified in the Test section for your module. After the <code class="code">createClient()</code> call, you should now see output that looks something like this:
+
+      </p><div class="informalfigure"><a name="extensions.output"></a><pre class="screen">
+&gt;&gt;&gt; fabric.createClient()
+[FABRIC] Searching extension directory '/home/user/.fabric/Exts'
+[FABRIC] [FabricTEEM] Extension registered
+[FABRIC] [FabricOGL] Extension registered
+[FABRIC] [FabricMath] Extension registered
+[FABRIC] [FabricFILESTREAM] Extension registered
+[FABRIC] [FabricLIDAR] Extension registered
+[FABRIC] [FabricOBJ] Extension registered
+[FABRIC] [TimeSample] Extension registered
+[FABRIC] [FabricHDR] Extension registered
+[FABRIC] [FabricPNG] Extension registered
+[FABRIC] [FabricVIDEO] Extension registered
+[FABRIC] [FabricBULLET] Extension registered
+[FABRIC] [ExceptSample] Extension registered
+[FABRIC] [FabricFILESYSTEM] Extension registered
+[FABRIC] [FabricALEMBIC] Extension registered
+[FABRIC] [FabricCIMG] Extension registered
+[FABRIC] [FabricTGA] Extension registered
+[FABRIC] [FabricEXR] Extension registered
+[FABRIC] Searching extension directory '/usr/lib/fabric/Exts'
+[FABRIC] Warning: unable to open extension directory '/usr/lib/fabric/Exts'
+&gt;&gt;&gt; 
+        </pre></div><p>
+
+      If your output is similar to that then the extensions have been successfully installed.
+    </p></div></div></body></html>
