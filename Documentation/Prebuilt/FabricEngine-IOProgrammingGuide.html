@@ -1,0 +1,299 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>IO Programming Guide</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="IO Programming Guide"><div class="titlepage"><div><div><h1 class="title"><a name="d5e1"></a>IO Programming Guide</h1></div><div><p class="releaseinfo">Fabric Engine Version 1.2.0-beta</p></div><div><p class="copyright">Copyright © 2010-2012 Fabric Engine Inc.</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#introduction">1. Introduction</a></span></dt><dt><span class="chapter"><a href="#fabricio.fabricfilehandle">2. FabricFileHandle</a></span></dt><dd><dl><dt><span class="section"><a href="#fabricio.fabricfilehandle.securitymodel">Security model</a></span></dt><dt><span class="section"><a href="#fabricio.fabricfilehandle.form">Forms</a></span></dt><dt><span class="section"><a href="#fabricio.fabricfilehandle.attributes">Associated attributes</a></span></dt></dl></dd><dt><span class="chapter"><a href="#fabricio.resourceloadnode">3. The Dependency Graph ResourceLoadNode</a></span></dt><dd><dl><dt><span class="section"><a href="#fabricio.resourceloadnode.datastorage">Data storage</a></span></dt><dt><span class="section"><a href="#fabricio.resourceloadnode.clientusage">Fabric Client Interface</a></span></dt><dd><dl><dt><span class="section"><a href="#fabricio.resourceloadnode.examplesection">Example</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#fabricio.functions">4. Fabric.IO Helper Functions</a></span></dt><dd><dl><dt><span class="section"><a href="#fabricio.functions.queryUserFileHandle">
+        IO.queryUserFileHandle
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.queryUserFileAndFolderHandle">
+        IO.queryUserFileAndFolderHandle
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.buildFileHandleFromRelativePath">
+        IO.buildFileHandleFromRelativePath
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.buildFolderHandleFromRelativePath">
+        IO.buildFolderHandleFromRelativePath
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.getFileHandleInfo">
+        IO.getFileHandleInfo
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.getTextFileContent">
+        IO.getTextFileContent
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.putTextFileContent">
+        IO.putTextFileContent
+      </a></span></dt></dl></dd><dt><span class="chapter"><a href="#fabricio.extensions">5. KL Extensions for IO</a></span></dt><dd><dl><dt><span class="section"><a href="#fabricio.extensions.filestream">The FabricFILESTREAM Extension</a></span></dt><dt><span class="section"><a href="#fabricio.extensions.filesystem">The FabricFILESYSTEM Extension</a></span></dt></dl></dd></dl></div><div class="list-of-examples"><p><b>List of Examples</b></p><dl><dt>3.1. <a href="#resourceloadnode.ex">Building and using a ResourceLoadNode</a></dt><dt>4.1. <a href="#fabricio.functions.ex">Fabric.IO functions example</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Introduction"><div class="titlepage"><div><div><h2 class="title"><a name="introduction"></a>Chapter&nbsp;1.&nbsp;Introduction</h2></div></div></div><p>
+      The Fabric Engine high-performance computing platform would not be complete without the ability to read and write external data.  Fabric IO collectively refers to a set of features that allows interaction with external data, including both local files and files obtained over HTTP, in the context of both KL programs and Fabric clients.  Fabric IO is a mix of Fabric client functions, specialized dependency graph features and functionality provided by Fabric extensions.  An important feature of Fabric IO is a secure IO model for the browser plugin client.
+    </p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;FabricFileHandle"><div class="titlepage"><div><div><h2 class="title"><a name="fabricio.fabricfilehandle"></a>Chapter&nbsp;2.&nbsp;FabricFileHandle</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#fabricio.fabricfilehandle.securitymodel">Security model</a></span></dt><dt><span class="section"><a href="#fabricio.fabricfilehandle.form">Forms</a></span></dt><dt><span class="section"><a href="#fabricio.fabricfilehandle.attributes">Associated attributes</a></span></dt></dl></div><p>
+      A FabricFileHandle is a KL <code class="code">String</code> which represents a local file or folder, along with a <span class="quote">“<span class="quote">writable</span>”</span> attribute. Depending on the client security model, a FabricFileHandle can be either a local file path (standalone or encoded as a URI) or a special URI that referes to a local file resource through a secure <span class="quote">“<span class="quote">proxy</span>”</span> handle.
+    </p><div class="section" title="Security model"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.fabricfilehandle.securitymodel"></a>Security model</h2></div></div></div><p>
+        The enforcement of local file system security and privacy by Fabric depends on the client type. In the context of an end-user browser plugin, Fabric IO will only grant access to the files and folders which have been explicitely selected by the user, along with its permission to modify them. However, this restriction does not apply to the Python and Node.js Fabric clients, and can be bypassed by trusted browser plugin configurations by means of the Fabric FILESYSTEM extension. In order to support both restricted and unrestricted local file system access, Fabric IO features share the FabricFileHandle concept that permits this abstraction.
+      </p></div><div class="section" title="Forms"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.fabricfilehandle.form"></a>Forms</h2></div></div></div><p>
+        Depending on the security model, a FabricFileHandle any of the following forms:
+
+        </p><div class="variablelist"><dl><dt><span class="term"><code class="code">fabricio://<em class="replaceable"><code>[encoded random bytes]</code></em></code></span></dt><dd><p>
+                 A URI-like cryptic String in the context of a secure browser plugin client. The content of the FabricFileHandle is generated by Fabric, and is associated to the actual file or folder path and attributes.  Example: <code class="code">fabricio://aWpv1PBn6caEMVFEBAJ+YF7Jj34FamQc</code>
+              </p><p>
+                 In the case of a writable folder, it is possible to append a relative path at the end of the FabricFileHandle, in which case it takes the form <code class="code">fabricio://<em class="replaceable"><code>[encoded random bytes]</code></em><em class="replaceable"><code>[relative path]</code></em></code>.  Example: <code class="code">fabricio://aWpv1PBn6caEMVFEBAJ+YF7Jj34FamQc/images/portrait.jpeg</code>
+              </p></dd><dt><span class="term"><code class="code">file://<em class="replaceable"><code>[local file path]</code></em></code></span></dt><dd><p>
+                A local file or folder URI, valid in the context of a trusted client.  Example: <code class="code">file://C/images/portrait.jpeg</code> (Windows), <code class="code">file://~/images/portrait.jpeg</code> (Mac OS X/Linux)
+              </p></dd><dt><span class="term"><code class="code"><em class="replaceable"><code>[local file path]</code></em></code></span></dt><dd><p>
+                Direct local file or folder path, valid in the context of a trusted client.  Example: <code class="code">C:\images\portrait.jpeg</code> (Windows), <code class="code">~/images/portrait.jpeg</code> (Mac OS X/Linux)
+              </p></dd></dl></div><p>
+      </p></div><div class="section" title="Associated attributes"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.fabricfilehandle.attributes"></a>Associated attributes</h2></div></div></div><p>
+        When a FabricFleHandle is constructed, it is associated with the following attributes:
+        </p><div class="variablelist"><dl><dt><span class="term">local path</span></dt><dd><p>A local filesystem path.</p></dd><dt><span class="term">writeAccess attribute</span></dt><dd><p>If writable, Fabric IO functions are allowed to modify the content of the file or folder.</p></dd><dt><span class="term">folder attribute</span></dt><dd><p>A FabricFileHandle represents either a file or a folder. This distinction is made since the ability to change the contents of a folder has different security implications from the ability to change the contents of a file.</p></dd></dl></div><p>
+      </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>A FabricFileHandle is valid only within the Fabric context in which it is built, and it remains valid until that context is destroyed.</p></li><li class="listitem"><p>It is valid to build a FabricFileHandle representing a non-existing file or folder. For example, it can be used to store the path of a file that will be created in the future.</p></li></ul></div></td></tr></table></div></div></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;The Dependency Graph ResourceLoadNode"><div class="titlepage"><div><div><h2 class="title"><a name="fabricio.resourceloadnode"></a>Chapter&nbsp;3.&nbsp;The Dependency Graph ResourceLoadNode</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#fabricio.resourceloadnode.datastorage">Data storage</a></span></dt><dt><span class="section"><a href="#fabricio.resourceloadnode.clientusage">Fabric Client Interface</a></span></dt><dd><dl><dt><span class="section"><a href="#fabricio.resourceloadnode.examplesection">Example</a></span></dt></dl></dd></dl></div><p>
+      The ResourceLoadNode is a specialized dependency graph Node that enables reading of external data asynchronously. The source data location is specified in its <code class="code">url</code> member (of type <code class="code">String</code>) which can contain either an HTTP URL (currently supported only by the browser plugin client) or a <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a>. Once available, the ResourceLoadNode’s retrieved external data is stored in its <code class="code">resource</code> member (of type <code class="code">FabricResource</code>) and a notification callback is issued; details are discussed below.
+    </p><div class="section" title="Data storage"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.resourceloadnode.datastorage"></a>Data storage</h2></div></div></div><p>
+        Depending on ResourceLoadNode’s <code class="code">storeDataAsFile</code> member value, the retrieved data can either be stored in a memory buffer or in a local file.  In either case, the results are stored as part of the <code class="code">resource</code> member, which is of type <code class="code">FabricResource</code> and contains the following fields:
+        </p><div class="variablelist"><dl><dt><span class="term"><code class="code">data</code></span></dt><dd><p>
+                 A <code class="code">Byte</code> variable-length array containing the retrieved data.  Only valid if ResourceLoadNode’s <code class="code">storeDataAsFile</code> member is <code class="code">false</code> (the default).
+              </p></dd><dt><span class="term"><code class="code">dataExternalLocation</code></span></dt><dd><p>
+                A  <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> (<code class="code">String</code>) associated with a local fila containing the retrieved data.  Only valid if ResourceLoadNode’s <code class="code">storeDataAsFile</code> member is <code class="code">true</code>.
+              </p></dd><dt><span class="term"><code class="code">url</code></span></dt><dd><p>
+                A <code class="code">String</code> containing a copy of ResourceLoadNode’s <code class="code">url</code> member (source data URI).
+              </p></dd><dt><span class="term"><code class="code">extension</code></span></dt><dd><p>
+                A <code class="code">String</code> containing the source file's extension (or a MIME type's subtype from an HTTP request). Example: <code class="code">jpeg</code>
+              </p></dd><dt><span class="term"><code class="code">mimeType</code></span></dt><dd><p>
+                A <code class="code">String</code> containing the source's full MIME type. Example: <code class="code">image/jpeg</code>
+              </p></dd></dl></div><p>
+      </p></div><div class="section" title="Fabric Client Interface"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.resourceloadnode.clientusage"></a>Fabric Client Interface</h2></div></div></div><p>
+        A ResourceLoadNode is created using a Fabric client’s <code class="code">DG.createResourceLoadNode(<em class="replaceable"><code>name</code></em>)</code> function. Once the <code class="code">url</code> member of the ResourceLoadNode is set, the first evaluation of the node will issue a request for the external data; this call may return before the data is retrieved (ie. asynchronously). The <code class="code">resource</code> member's data will remain empty until the data is fully retrieved.  Once the data is set into the <code class="code">resource</code> member, the dependency graph will not re-evaluate automatically; instead, notifications will be sent to the fabric client. The Fabric client’s ResourceLoadNode  provides the following methods to register for these notifications:
+        </p><div class="variablelist"><dl><dt><span class="term"><code class="code">addOnLoadSuccessCallback</code></span></dt><dd><p>
+                Registers a callback function on the ResourceLoadNode that will be triggered if the data is retrived successfully. The callback has takes parameter: the source ResourceLoadNode.
+              </p></dd><dt><span class="term"><code class="code">addOnLoadFailureCallback</code></span></dt><dd><p>
+                Registers a callback function on the ResourceLoadNode that will be triggered if there is an error retrieving the data. The callback takes one parameter: the source ResourceLoadNode.
+              </p></dd><dt><span class="term"><code class="code">addOnLoadProgressCallback</code></span></dt><dd><p>
+                Registers a callback function on the ResourceLoadNode that will be triggered a few times per second to provide progress information before the <code class="code">addOnLoadSuccessCallback</code>- or <code class="code">addOnLoadFailureCallback</code>- callback is triggered. The callback takes two parameters: the source ResourceLoadNode and a (dynamic language) object containing a <code class="code">total</code> field and a <code class="code">received</code> field, respectively the total number of bytes to be retrieved and the current retrived amount.
+              </p></dd></dl></div><p>
+      </p><p>
+        To complement the ResourceLoadNode features, each Node created through the dependency graph has a <code class="code">putResourceToFile(<em class="replaceable"><code>fabricFileHandle</code></em>, <em class="replaceable"><code>member</code></em>)</code> method that saves the data from a <code class="code">FabricResource</code> type member (such as ResourceLoadNode's <code class="code">resource</code> member) to a local file associated with a  <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a>.
+      </p><div class="section" title="Example"><div class="titlepage"><div><div><h3 class="title"><a name="fabricio.resourceloadnode.examplesection"></a>Example</h3></div></div></div><p>
+          The following code is an example of using a ResourceLoadNode in the context of a Node.js Fabric client. In order to trace both the client and the KL runtime aspect of ResourceLoadNode's behavior, an operator is bound to the ResourceLoadNode to provide a trace, and the client registers to the ResourceLoadNode notification callbacks. Although the example was built for the Node.js Fabric client, it is relevant to other Fabric clients types such as Python.
+          </p><div class="example"><a name="resourceloadnode.ex"></a><p class="title"><b>Example&nbsp;3.1.&nbsp;Building and using a ResourceLoadNode</b></p><div class="example-contents"><pre class="programlisting">
+            
+FABRIC = require(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Fabric'</span>).createClient();
+node = FABRIC.DependencyGraph.createResourceLoadNode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"node"</span>);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//Add an operator to the ResourceLoadNode so we can trace its runtime behavior</span>
+op = FABRIC.DependencyGraph.createOperator(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"loadop"</span>);
+op.setEntryPoint(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"onLoad"</span>);
+op.setSourceCode(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'\
+</span>operator onLoad( io FabricResource resource )\n\
+{\n\
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span>( resource.dataExternalLocation != <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">""</span> || resource.data.size() != <span class="hl-number">0</span> ) {\n\
+    report(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Loaded "</span> + resource.url);\n\
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span>( resource.dataExternalLocation )\n\
+      report( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Data loaded into file handle "</span> + resource.dataExternalLocation );\n\
+    <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">else</span>\n\
+      report( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Data loaded in data buffer of size "</span> + resource.data.size() );\n\
+  }\n\
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">else</span>\n\
+    report(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Data not loaded yet"</span>);\n\
+}\n\
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">');
+</span>binding = FABRIC.DG.createBinding();
+binding.setOperator(op);
+binding.setParameterLayout([
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"self.resource"</span>
+]);
+node.bindings.append(binding);
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//Trace the progress from the client side by registering to notification callbacks</span>
+node.addOnLoadFailureCallback( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span>( srcNode ) {
+  console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Error loading '</span> + srcNode.getData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'url'</span>, <span class="hl-number">0</span>) );
+  FABRIC.close();
+});
+
+node.addOnLoadProgressCallback( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span>( srcNode, progressInfo ) {
+  console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Load progress for '</span> + srcNode.getData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'url'</span>, <span class="hl-number">0</span>) + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">' : total = '</span> + progressInfo.total + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">', received = '</span> + progressInfo.received );
+});
+
+node.addOnLoadSuccessCallback( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">function</span>( srcNode ) {
+  node.evaluate();<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//Ensure we reevaluate now that the data has loaded</span>
+  console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Loading of '</span> + srcNode.getData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'url'</span>, <span class="hl-number">0</span>) + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">' succeeded'</span> );
+  <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> targetFileHandle = FABRIC.IO.buildFileHandleFromRelativePath(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'file://./loadedImage.jpeg'</span>);
+  srcNode.putResourceToFile(targetFileHandle, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'resource'</span>);
+  console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'Loaded data written to file ./loadedImage.jpeg'</span> );
+  FABRIC.close();
+});
+
+node.setData(<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'url'</span>,<span class="hl-number">0</span>,<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'file://image.jpeg'</span>);
+node.evaluate();
+            
+            </pre><p>Output:</p><pre class="screen">
+              
+[FABRIC] [MT] Data not loaded yet
+[FABRIC] [MT] Loaded file://image.jpeg
+[FABRIC] [MT] Data loaded in data buffer of size 829667
+Loading of file://image.jpeg succeeded
+Loaded data written to file ./loadedImage.jpeg
+            
+            </pre></div></div><p><br class="example-break">
+        </p></div></div></div><div class="chapter" title="Chapter&nbsp;4.&nbsp;Fabric.IO Helper Functions"><div class="titlepage"><div><div><h2 class="title"><a name="fabricio.functions"></a>Chapter&nbsp;4.&nbsp;Fabric.IO Helper Functions</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#fabricio.functions.queryUserFileHandle">
+        IO.queryUserFileHandle
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.queryUserFileAndFolderHandle">
+        IO.queryUserFileAndFolderHandle
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.buildFileHandleFromRelativePath">
+        IO.buildFileHandleFromRelativePath
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.buildFolderHandleFromRelativePath">
+        IO.buildFolderHandleFromRelativePath
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.getFileHandleInfo">
+        IO.getFileHandleInfo
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.getTextFileContent">
+        IO.getTextFileContent
+      </a></span></dt><dt><span class="section"><a href="#fabricio.functions.putTextFileContent">
+        IO.putTextFileContent
+      </a></span></dt></dl></div><p>
+      A Fabric client's <code class="code">IO</code> module contains several helper functions to support the <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> concept. They are most useful for the JavaScript browser plugin client (NPAPI) since they use <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a>'s <a class="link" href="#fabricio.fabricfilehandle.form" title="Forms">secure form</a> for their results. The following helper functions are available and described later:
+      </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+            <a class="link" href="#fabricio.functions.queryUserFileHandle" title="IO.queryUserFileHandle">IO.queryUserFileHandle</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="#fabricio.functions.queryUserFileAndFolderHandle" title="IO.queryUserFileAndFolderHandle">IO.queryUserFileAndFolderHandle</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="#fabricio.functions.buildFileHandleFromRelativePath" title="IO.buildFileHandleFromRelativePath">IO.buildFileHandleFromRelativePath</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="#fabricio.functions.buildFolderHandleFromRelativePath" title="IO.buildFolderHandleFromRelativePath">IO.buildFolderHandleFromRelativePath</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="#fabricio.functions.getFileHandleInfo" title="IO.getFileHandleInfo">IO.getFileHandleInfo</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="#fabricio.functions.getTextFileContent" title="IO.getTextFileContent">IO.getTextFileContent</a>
+          </p></li><li class="listitem"><p>
+            <a class="link" href="#fabricio.functions.putTextFileContent" title="IO.putTextFileContent">IO.putTextFileContent</a>
+          </p></li></ul></div><p>
+    </p><p>
+      </p><div class="example"><a name="fabricio.functions.ex"></a><p class="title"><b>Example&nbsp;4.1.&nbsp;Fabric.IO functions example</b></p><div class="example-contents"><p>
+          This example illustrates the use of most of the Fabric.IO helper functions, in the context of a browser plugin Fabric client (secure model).
+        </p><pre class="programlisting">
+          
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> handles = FABRIC.IO.queryUserFileAndFolderHandle( FABRIC.IO.forSave, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Fabric IO text file test"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"txt"</span>, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"testfile"</span> );
+console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Returned file &amp; folder cryptic file handles (random): "</span> + JSON.stringify( handles ) );
+
+FABRIC.IO.putTextFileContent( handles.file, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Test file body"</span>, false );
+console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"File content: "</span> + FABRIC.IO.getTextFileContent( handles.file ) );
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> selectedFileInfo = FABRIC.IO.getFileHandleInfo( handles.file );
+console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"File info: "</span> + JSON.stringify( selectedFileInfo ) );
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//In this example we requested the permission to write to the folder. Let's add another file:</span>
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> otherFileHandle = FABRIC.IO.buildFileHandleFromRelativePath( handles.folder + <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'/Other'</span> + selectedFileInfo.fileName );
+
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-comment">//Append some text content to Other file</span>
+FABRIC.IO.putTextFileContent( otherFileHandle, FABRIC.IO.getTextFileContent( handles.file ), false );
+FABRIC.IO.putTextFileContent( otherFileHandle, <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">" with appended content"</span>, true );
+<span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">var</span> otherContent = FABRIC.IO.getTextFileContent( otherFileHandle );
+console.log( <span xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xslthl="http://xslthl.sf.net" xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Other file content: "</span> + FABRIC.IO.getTextFileContent( otherFileHandle ) );
+        
+          </pre></div></div><p><br class="example-break">
+
+        </p><div class="informalfigure"><a name="fabricio.functions.ex.out"></a><p>Output:</p><pre class="screen">
+            
+Returned file &amp; folder cryptic file handles (random): {"file":"fabricio://enXGaI42F3rAmT9hE3j8U8oPUnShOyIa","folder":"fabricio://EqJs7FBMvWuRzQj8ob5BXuW86/hAnj8I"}
+File content: Test file body
+File info: {"type":"file","writeAccess":true,"exists":true,"fileName":"testfile.txt","fileSize":14}
+Other file content: Test file body with appended content
+        
+          </pre></div><p>
+    </p><div class="section" title="IO.queryUserFileHandle"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.functions.queryUserFileHandle"></a>
+        IO.queryUserFileHandle
+      </h2></div></div></div><code class="methodsynopsis"><span class="type">FabricFileHandle&nbsp;</span><span class="methodname">queryUserFileHandle</span>(<span class="methodparam"><span class="parameter">mode</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">uiTitle</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">extension</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">defaultFileName</span></span>);</code><p>
+        <span class="emphasis"><em>[browser plugin client only]</em></span> Opens a file browser allowing the user to select a local file, which is returned as a <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a>. Example: see <a class="xref" href="#fabricio.functions.ex" title="Example&nbsp;4.1.&nbsp;Fabric.IO functions example">Example&nbsp;4.1, “Fabric.IO functions example”</a>
+      </p><div class="simplesect" title="Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="d5e224"></a>Parameters</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <em class="parameter"><code>mode</code></em> : Access mode requested for the selected file. It can be one of the following:
+              </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>
+                    <code class="code">IO.forOpen</code> : open an existing file as read-only
+                  </p></li><li class="listitem"><p>
+                    <code class="code">IO.forOpenWithWriteAccess</code> : open an existing file with read-write access
+                  </p></li><li class="listitem"><p>
+                    <code class="code">IO.forSave</code> : creates a new file (or overwrites an exiting one) with write access
+                  </p></li></ul></div><p>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>uiTitle</code></em> : <span class="emphasis"><em>[optional]</em></span> title for the file browser dialog window. Note that for clarity and security reasons, Fabric will automatically be prepend it with "Open File: " (<em class="parameter"><code>mode</code></em> = <code class="code">IO.forOpen</code>), "Save File: " (<em class="parameter"><code>mode</code></em> = <code class="code">IO.forSave</code>) or "Open File with write access: " (<em class="parameter"><code>mode</code></em> = <code class="code">IO.forOpenWithWriteAccess</code>).
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>extension</code></em> : <span class="emphasis"><em>[optional]</em></span> default extension for the files to be opened or saved, for example: <span class="quote">“<span class="quote">*.jpeg</span>”</span>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>defaultFileName</code></em> : <span class="emphasis"><em>[optional]</em></span> default file name the file to be opened or saved, for example: <span class="quote">“<span class="quote">image.jpeg</span>”</span>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>Returned value</code></em> : a <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to the selected file. If <em class="parameter"><code>mode</code></em> = <code class="code">IO.forSave</code>, the file might not have beeen created yet.
+            </p></li></ul></div></div></div><div class="section" title="IO.queryUserFileAndFolderHandle"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.functions.queryUserFileAndFolderHandle"></a>
+        IO.queryUserFileAndFolderHandle
+      </h2></div></div></div><code class="methodsynopsis"><span class="type">Object&nbsp;</span><span class="methodname">queryUserFileAndFolderHandle</span>(<span class="methodparam"><span class="parameter">mode</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">uiTitle</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">extension</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">defaultFileName</span></span>);</code><p>
+        <span class="emphasis"><em>[browser plugin client only]</em></span> Opens a file browser allowing the user to select both local file and its folder, which are returned as an object containing a <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> for the file and another one for the folder. Note that the file browser title will warn the user that a premission to read or write the folder is requested. Example: see <a class="xref" href="#fabricio.functions.ex" title="Example&nbsp;4.1.&nbsp;Fabric.IO functions example">Example&nbsp;4.1, “Fabric.IO functions example”</a>
+      </p><div class="simplesect" title="Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="d5e283"></a>Parameters</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <em class="parameter"><code>mode</code></em> : Access mode requested for the selected file and folder. It can be one of the following:
+              </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>
+                    <code class="code">IO.forOpen</code> : open an existing file and folder as read-only
+                  </p></li><li class="listitem"><p>
+                    <code class="code">IO.forOpenWithWriteAccess</code> : open an existing file and folder with read-write access
+                  </p></li><li class="listitem"><p>
+                    <code class="code">IO.forSave</code> : creates a new file (or overwrites an exiting one) with write access to it and its folder
+                  </p></li></ul></div><p>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>uiTitle</code></em> : <span class="emphasis"><em>[optional]</em></span> title for the file browser dialog window. Note that for clarity and security reasons, Fabric will automatically be prepend it with "Open File with read access to folder: " (<em class="parameter"><code>mode</code></em> = <code class="code">IO.forOpen</code>), "Save File with access to folder: " (<em class="parameter"><code>mode</code></em> = <code class="code">IO.forSave</code>) or "Open File with read &amp; write access to folder: " (<em class="parameter"><code>mode</code></em> = <code class="code">IO.forOpenWithWriteAccess</code>).
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>extension</code></em> : <span class="emphasis"><em>[optional]</em></span> default extension for the files to be opened or saved, for example: <span class="quote">“<span class="quote">*.jpeg</span>”</span>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>defaultFileName</code></em> : <span class="emphasis"><em>[optional]</em></span> default file name the file to be opened or saved, for example: <span class="quote">“<span class="quote">image.jpeg</span>”</span>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>Returned value</code></em> : an <code class="code">Object</code> containing the following members:
+              </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>
+                    <code class="code">.file</code> : member of type <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to the selected file
+                    , and containing a <code class="code">folder</code> member of type <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to its containing folder. If <em class="parameter"><code>mode</code></em> = <code class="code">IO.forSave</code>, the file might not have beeen created yet.
+                  </p></li><li class="listitem"><p>
+                    <code class="code">.folder</code> : member of type <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to file's containing folder
+                  </p></li></ul></div><p>
+            </p></li></ul></div></div></div><div class="section" title="IO.buildFileHandleFromRelativePath"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.functions.buildFileHandleFromRelativePath"></a>
+        IO.buildFileHandleFromRelativePath
+      </h2></div></div></div><code class="methodsynopsis"><span class="type">FabricFileHandle&nbsp;</span><span class="methodname">buildFileHandleFromRelativePath</span>(<span class="methodparam"><span class="parameter">handleWithRelativePath</span></span>);</code><p>
+        Builds a file <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> from a folder <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> to which a relative path was appended. This method is mostly useful when FabricFileHandles are in a cryptic String <a class="link" href="#fabricio.fabricfilehandle.form" title="Forms">form</a> in the context of a <a class="link" href="#fabricio.fabricfilehandle.securitymodel" title="Security model">secure model</a>. The <span class="quote">“<span class="quote">writable</span>”</span> attribute of the folder handle gets propagated to the returned file handle. The method doesn't validate the existance of the file. Example: see <a class="xref" href="#fabricio.functions.ex" title="Example&nbsp;4.1.&nbsp;Fabric.IO functions example">Example&nbsp;4.1, “Fabric.IO functions example”</a>
+      </p><div class="simplesect" title="Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="d5e350"></a>Parameters</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <em class="parameter"><code>handleWithRelativePath</code></em> : A <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> to which a relative file path was appended, for example: <code class="code">fabricio://aWpv1PBn6caEMVFEBAJ+YF7Jj34FamQc/images/portrait.jpeg</code>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>Returned value</code></em> : a <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to the file of the provided relative path.
+            </p></li></ul></div></div></div><div class="section" title="IO.buildFolderHandleFromRelativePath"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.functions.buildFolderHandleFromRelativePath"></a>
+        IO.buildFolderHandleFromRelativePath
+      </h2></div></div></div><code class="methodsynopsis"><span class="type">FabricFileHandle&nbsp;</span><span class="methodname">buildFolderHandleFromRelativePath</span>(<span class="methodparam"><span class="parameter">handleWithRelativePath</span></span>);</code><p>
+        Builds a subfolder <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> from a parent folder <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> to which a relative path was appended. This method is mostly useful when FabricFileHandles are in a cryptic String <a class="link" href="#fabricio.fabricfilehandle.form" title="Forms">form</a> in the context of a <a class="link" href="#fabricio.fabricfilehandle.securitymodel" title="Security model">secure model</a>. The <span class="quote">“<span class="quote">writable</span>”</span> attribute of the parent folder handle gets propagated to the returned subfolder handle. Example: see <a class="xref" href="#fabricio.functions.ex" title="Example&nbsp;4.1.&nbsp;Fabric.IO functions example">Example&nbsp;4.1, “Fabric.IO functions example”</a>
+      </p><div class="simplesect" title="Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="d5e376"></a>Parameters</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <em class="parameter"><code>handleWithRelativePath</code></em> : A <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> to which a subfolder path was appended, for example: <code class="code">fabricio://aWpv1PBn6caEMVFEBAJ+YF7Jj34FamQc/images</code>
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>Returned value</code></em> : a <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to the subfolder of the provided relative path.
+            </p></li></ul></div></div></div><div class="section" title="IO.getFileHandleInfo"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.functions.getFileHandleInfo"></a>
+        IO.getFileHandleInfo
+      </h2></div></div></div><code class="methodsynopsis"><span class="type">Object&nbsp;</span><span class="methodname">getFileHandleInfo</span>(<span class="methodparam"><span class="parameter">fabricFileHandle</span></span>);</code><p>
+        Returns an <code class="code">Object</code> containing information associated to a <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a>. Note that, for security and privacy reasons, private information such as the full local file or folder path is not part of the returned object. Relative paths are supported. Example: see <a class="xref" href="#fabricio.functions.ex" title="Example&nbsp;4.1.&nbsp;Fabric.IO functions example">Example&nbsp;4.1, “Fabric.IO functions example”</a>
+      </p><div class="simplesect" title="Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="d5e399"></a>Parameters</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <em class="parameter"><code>fabricFileHandle</code></em> : the <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> for which the information is requested
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>Returned value</code></em> : an <code class="code">Object</code> containing the following members:
+              </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>
+                    <code class="code">.type</code> : a <code class="code">String</code> member indicating the type of the input FabricFileHandle. Its values can be <span class="quote">“<span class="quote">file</span>”</span>, <span class="quote">“<span class="quote">folder</span>”</span> or <span class="quote">“<span class="quote">unknown</span>”</span>. <span class="quote">“<span class="quote">unknown</span>”</span> will be returned if the input FabricFileHandle has a relative path pointing to a non-existing file or folder.
+                  </p></li><li class="listitem"><p>
+                    <code class="code">.writeAccess</code> : a <code class="code">Boolean</code> member indicating if the associated file or folder can be modified or written to
+                  </p></li><li class="listitem"><p>
+                    <code class="code">.exists</code> : a <code class="code">Boolean</code> member indicating if the associated file or folder currently exists in the local file system
+                  </p></li><li class="listitem"><p>
+                    <code class="code">.fileName</code> : a <code class="code">String</code> member indicating the name of the associated file (provided only if <code class="code">.type</code> is <span class="quote">“<span class="quote">file</span>”</span>)
+                  </p></li><li class="listitem"><p>
+                    <code class="code">.fileSize</code> : a <code class="code">String</code> member indicating the size of the associated file (provided only if <code class="code">.type</code> is <span class="quote">“<span class="quote">file</span>”</span> and <code class="code">.exists</code> is <code class="code">True</code>)
+                  </p></li></ul></div><p>
+            </p></li></ul></div></div></div><div class="section" title="IO.getTextFileContent"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.functions.getTextFileContent"></a>
+        IO.getTextFileContent
+      </h2></div></div></div><code class="methodsynopsis"><span class="type">String&nbsp;</span><span class="methodname">getTextFileContent</span>(<span class="methodparam"><span class="parameter">fabricFileHandle</span></span>);</code><p>
+        Reads the content of a file <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> and returns it as a <code class="code">String</code>. This method is not well suited for reading binary data. In the context of a dependency graph, binary data associated to a FabricFileHandle should rather be read using a ResourceLoadNode or the FabricFILESTREAM extension. Example: see <a class="xref" href="#fabricio.functions.ex" title="Example&nbsp;4.1.&nbsp;Fabric.IO functions example">Example&nbsp;4.1, “Fabric.IO functions example”</a>
+      </p><div class="simplesect" title="Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="d5e452"></a>Parameters</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <em class="parameter"><code>fabricFileHandle</code></em> : A <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to the file to be read.
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>Returned value</code></em> : a <code class="code">String</code> containing the source file content.
+            </p></li></ul></div></div></div><div class="section" title="IO.putTextFileContent"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.functions.putTextFileContent"></a>
+        IO.putTextFileContent
+      </h2></div></div></div><code class="methodsynopsis"><span class="methodname">putTextFileContent</span>(<span class="methodparam"><span class="parameter">fabricFileHandle</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">content</span></span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="methodparam"><span class="parameter">append</span></span>);</code><p>
+        Writes a <code class="code">String</code> to the file associated to the input <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a>, by replacing the file content or be appending to it. Note that the input FabricFileHandle must have a <span class="quote">“<span class="quote">writable</span>”</span> attribute. Example: see <a class="xref" href="#fabricio.functions.ex" title="Example&nbsp;4.1.&nbsp;Fabric.IO functions example">Example&nbsp;4.1, “Fabric.IO functions example”</a>
+      </p><div class="simplesect" title="Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="d5e478"></a>Parameters</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+              <em class="parameter"><code>fabricFileHandle</code></em> : A <a class="link" href="#fabricio.fabricfilehandle" title="Chapter&nbsp;2.&nbsp;FabricFileHandle">FabricFileHandle</a> associated to the file to be written.
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>content</code></em> : the <code class="code">String</code> which will be written to the file
+            </p></li><li class="listitem"><p>
+              <em class="parameter"><code>append</code></em> : a <code class="code">Boolean</code> indicating if the <em class="parameter"><code>content</code></em> <code class="code">String</code> is appended at the end of the file, else it will replace the file's content.
+            </p></li></ul></div></div></div></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;KL Extensions for IO"><div class="titlepage"><div><div><h2 class="title"><a name="fabricio.extensions"></a>Chapter&nbsp;5.&nbsp;KL Extensions for IO</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#fabricio.extensions.filestream">The FabricFILESTREAM Extension</a></span></dt><dt><span class="section"><a href="#fabricio.extensions.filesystem">The FabricFILESYSTEM Extension</a></span></dt></dl></div><p>
+      Fabric extensions are always trusted code in the sense that they have the same access priviliges as the process in which Fabric is running.  As such, they are given access to the private information associated to the FabricFileHandle, in particular the associated file or folder full path along with other attributes, through the EDK::FileHandleWrapper C++ helper class.
+    </p><p>
+      Fabric is built with the <span class="emphasis"><em>FabricFILESTREAM</em></span> and <span class="emphasis"><em>FabricFILESYSTEM</em></span> C++ extensions in order to enable runtime IO operations directly from KL. However, only the FileSTREAM extension is installed with the browser plugin Fabric client, since the FileSYSTEM extension would enable applications to bypass the browser's security model using KL.  In cases where this is acceptable, such as for the installation of a private, trusted Fabric application, the FileSYSTEM extension can installed separately.
+    </p><div class="section" title="The FabricFILESTREAM Extension"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.extensions.filestream"></a>The FabricFILESTREAM Extension</h2></div></div></div><p>
+        The FabricFILESTREAM extension provides the ability to read and write to files directly from KL though a FabricFileStream object that is initialized from a FabricFileHandle. Additionally, this extension gives the ability to read and write compressed binary data. This extension is considered secure because it respects the read-write permissions associated with the FabricFileHandle. See the FabricFILESTREAM reference guide for more details about the provided functions.
+      </p></div><div class="section" title="The FabricFILESYSTEM Extension"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="fabricio.extensions.filesystem"></a>The FabricFILESYSTEM Extension</h2></div></div></div><p>
+        The FabricFILESYSTEM extension enables browsing and modification of the local file system's folder hierarhchy. Because it enables full access to the local file system, this extension is not considered secure and is not installed by default with the Fabric browser plugin.  However, it can be downloaded and installed separately. See the FabricFILESYSTEM reference guide for more details about the provided functions.
+      </p></div></div></div></body></html>

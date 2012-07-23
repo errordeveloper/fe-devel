@@ -1,0 +1,419 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Extensions Reference</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Extensions Reference"><div class="titlepage"><div><div><h1 class="title"><a name="d5e1"></a>Extensions Reference</h1></div><div><p class="releaseinfo">Fabric Engine Version 1.2.0-beta</p></div><div><p class="copyright">Copyright © 2010-2012 Fabric Engine Inc.</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#d5e8">1. Introduction</a></span></dt><dt><span class="chapter"><a href="#d5e11">2. Alembic Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e92">3. Bullet Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e551">4. CIMG Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e576">5. FILESTREAM Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e675">6. FILESYSTEM Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e840">7. LIDAR Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e885">8. Math Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e902">9. OBJ Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e1025">10. OGL Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e1030">11. OPENCV Extension Guide</a></span></dt><dt><span class="chapter"><a href="#d5e1089">12. VIDEO Extension Guide</a></span></dt></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>2.1. <a href="#d5e15">AlembicHandle</a></dt><dt>3.1. <a href="#d5e95">BulletWorld</a></dt><dt>3.2. <a href="#d5e181">BulletShape</a></dt><dt>3.3. <a href="#d5e223">BulletRigidBody</a></dt><dt>3.4. <a href="#d5e293">BulletSoftBody</a></dt><dt>3.5. <a href="#d5e359">BulletConstraint</a></dt><dt>3.6. <a href="#d5e427">BulletForce</a></dt><dt>3.7. <a href="#d5e474">BulletAnchor</a></dt><dt>3.8. <a href="#d5e521">BulletContact</a></dt><dt>4.1. <a href="#d5e554">CIMG Functions</a></dt><dt>5.1. <a href="#d5e582">FabricFileStream</a></dt><dt>6.1. <a href="#d5e684">FabricFolderHandle</a></dt><dt>6.2. <a href="#d5e745">FabricFileHandleWrapper</a></dt><dt>7.1. <a href="#d5e843">LidarReader</a></dt><dt>8.1. <a href="#d5e888">Math Functions</a></dt><dt>9.1. <a href="#d5e905">OBJDataHandle</a></dt><dt>9.2. <a href="#d5e919">OBJ Functions</a></dt><dt>11.1. <a href="#d5e1033">FaceLocation</a></dt><dt>11.2. <a href="#d5e1059">FaceDetector</a></dt><dt>12.1. <a href="#d5e1092">VideoHandle</a></dt><dt>12.2. <a href="#d5e1126">VIDEO Functions</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Introduction"><div class="titlepage"><div><div><h2 class="title"><a name="d5e8"></a>Chapter&nbsp;1.&nbsp;Introduction</h2></div></div></div><p>Extensions are additions to Fabric Engine's Kernel Language called KL and provide
+      additional functions and types. Each extension is packaged for a particular use-case, for
+      example the Alembic extension deals with Alembic files. Extensions can be implemented using
+      Fabric Engine's EDK (Extension Developer Kit).</p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Alembic Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e11"></a>Chapter&nbsp;2.&nbsp;Alembic Extension Guide</h2></div></div></div><p>This extension adds a new type to KL, called the <span class="italic">AlembicHandle</span>. It is used to load Alembic.IO files. The AlembicHandle
+      represents a file handle to an Alembic file, and can be used to retrieve data.</p><div class="table"><a name="d5e15"></a><p class="title"><b>Table&nbsp;2.1.&nbsp;AlembicHandle</b></p><div class="table-contents"><table summary="AlembicHandle" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data pointer</span></td><td>The private data of the handle.</td></tr><tr><td><span class="italic">Vec2 timeRange</span></td><td>The min and max time of the Alembic file</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">loadResource(io FabricResource
+                resource)</span></td><td>Loads the content of a FabricResource onto the AlembicHandle if it doesn't
+                contain any content yet</td></tr><tr><td><span class="italic">loadFileHandle(io String
+                fileHandle)</span></td><td>Loads the Alembic file from a given FileHandle</td></tr><tr><td><span class="italic">getIdentifiers(io String
+                identifiers[])</span></td><td>Loads all of the identifiers of the Alembic file. This can be used to
+                determine how many and what kind of objects are stored in the Alembic
+                file.</td></tr><tr><td><span class="italic">parseXform(io String identifier, io Scalar time, io
+                  Xfo transform)</span></td><td>Parses a Xform Alembic node at a given time and returns the Fabric Engine
+                Xfo.</td></tr><tr><td><span class="italic">parseCamera(io String identifier, io Scalar time, io
+                  Scalar near, io Scalar far, io Scalar fovY)</span></td><td>Parses a Camera Alembic node at a given time and returns near and far
+                clipping, as well as vertical field of view.</td></tr><tr><td><span class="italic">parsePolyMeshCount(io String identifier, io Size
+                  count)</span></td><td>Parses a PolyMesh Alembic node and returns the number of vertices of that
+                mesh.</td></tr><tr><td><span class="italic">parsePolyMeshUniforms(io String identifier, io
+                  Integer indices[])</span></td><td>Parses a PolyMesh Alembic node and returns the face indices as a triangles
+                list.</td></tr><tr><td><span class="italic">parsePolyMeshAttributes(io String identifier, io
+                  Scalar time, io Vec3 vertices&lt;&gt;, io Vec3 normals&lt;&gt;, io Boolean uvsLoaded,
+                  io Vec2 uvs&lt;&gt;)</span></td><td>Parses a PolyMesh Alembic node at a given time and returns the mesh's
+                vertices, normals, and optionally, uvs. All arrays are per vertex data.</td></tr><tr><td><span class="italic">parsePointsCount(io String identifier, io Scalar
+                  time, io Size count)</span></td><td>Parses a Points Alembic node at a given time and returns its point
+                count</td></tr><tr><td><span class="italic">parsePointsAttributes(io String identifier, io Scalar
+                  time, io Vec3 positions&lt;&gt;, io Quat orientations&lt;&gt;, io Scalar sizes&lt;&gt;,
+                  io Vec3 scales&lt;&gt;, io Color colors&lt;&gt;)</span></td><td>Parses a Points Alembic node at a given time and returns its positions,
+                orientations, sizes, scales and colors. All arrays are per vertex data.</td></tr><tr><td><span class="italic">parseCurvesCount(io String identifier, io Size
+                  count)</span></td><td>Parses a Curves Alembic node at a given time and returns its vertex
+                count</td></tr><tr><td><span class="italic">parseCurvesUniforms(io String identifier, io Integer
+                  indices[])</span></td><td>Parses a Curves Alembic node and returns its line indices (as a from-to index
+                list)</td></tr><tr><td><span class="italic">parseCurvesAttributes(io String identifier, io Scalar
+                  time, io Vec3 vertices&lt;&gt;, io Scalar sizes&lt;&gt;, io Boolean uvsLoaded, io Vec2
+                  uvs&lt;&gt;, io Color colors&lt;&gt;)</span></td><td>Parses a Curves Alembic node at a given time and returns its vertices, sizes,
+                uvs and colors. All arrays are per vertex data.</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table></div></div><p><br class="table-break"></p></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;Bullet Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e92"></a>Chapter&nbsp;3.&nbsp;Bullet Extension Guide</h2></div></div></div><p>The Bullet Physics extension adds support for physics simulation in KL. It implements
+      all of the core Bullet types, and allows perform raycasting into the bullet scene. For
+      additional information please refer to the Bullet Physics Wiki
+      (http://bulletphysics.org/mediawiki-1.5.8/index.php/Main_Page)</p><div class="table"><a name="d5e95"></a><p class="title"><b>Table&nbsp;3.1.&nbsp;BulletWorld</b></p><div class="table-contents"><table summary="BulletWorld" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data localData</span></td><td>The private data of the Bullet type.</td></tr><tr><td><span class="italic">Vec3 gravity</span></td><td>The gravity applied during the simulation.</td></tr><tr><td><span class="italic">Size step</span></td><td>The current simulation step of the simulation.</td></tr><tr><td><span class="italic">Size substeps</span></td><td>The number of substeps to perform per simulation step.</td></tr><tr><td><span class="italic">Boolean hit</span></td><td>Indicates, after a raycast has been performed, if there is any hit
+              object.</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">create(io Boolean success)</span></td><td>Creates the simulation world and returns if successful.</td></tr><tr><td><span class="italic">step(io Scalar timeStep)</span></td><td>Steps through the simulation for a provided timeStep in seconds.</td></tr><tr><td><span class="italic">reset()</span></td><td>Resets the simulation world by moving all rigid and soft bodies to their
+              initial state and setting the simulation's step to 0.</td></tr><tr><td><span class="italic">raycast(io Vec3 from, io Vec3 to, io Boolean
+                filterPassiveObjects, io BulletContact contacts[])</span></td><td>Performs a raycast into the simulation world and returns the hit
+              contacts.</td></tr><tr><td><span class="italic">applyForce(io BulletForce force)</span></td><td>Applies a force to the simulation at the current simulation step.</td></tr><tr><td><span class="italic">getGravity(io Vec3 gravity)</span></td><td>Returns the current gravity of the simulation.</td></tr><tr><td><span class="italic">setGravity(io Vec3 gravity)</span></td><td>Sets the gravity of the simulation.</td></tr><tr><td><span class="italic">addRigidBody(io BulletRigidBody
+              body)</span></td><td>Adds a rigid body to the simulation.</td></tr><tr><td><span class="italic">removeRigidBody(io BulletRigidBody
+              body)</span></td><td>Removes a rigid body from the simulation.</td></tr><tr><td><span class="italic">addSoftBody(io BulletSoftBody body)</span></td><td>Adds a soft body to the simulation.</td></tr><tr><td><span class="italic">removeSoftBody(io BulletSoftBody
+              body)</span></td><td>Removes a soft body from the simulation.</td></tr><tr><td><span class="italic">addConstraint(io BulletConstraint
+                constraint)</span></td><td>Adds a constraint to the simulation.</td></tr><tr><td><span class="italic">removeConstraint(io BulletConstraint
+                constraint)</span></td><td>Removes a constraint from the simulation.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e181"></a><p class="title"><b>Table&nbsp;3.2.&nbsp;BulletShape</b></p><div class="table-contents"><table summary="BulletShape" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data localData</span></td><td>The private data of the Bullet type.</td></tr><tr><td><span class="italic">Integer type</span></td><td>The type of the shape. The Bullet extension also provides constants for this
+              type. The valid values are: BULLET_BOX_SHAPE, BULLET_CONVEX_HULL_SHAPE,
+              BULLET_SPHERE_SHAPE, BULLET_CAPSULE_SHAPE, BULLET_CONE_SHAPE, BULLET_CYLINDER_SHAPE,
+              BULLET_TRIANGLEMESH_SHAPE, BULLET_GIMPACT_SHAPE, BULLET_PLANE_SHAPE and
+              BULLET_COMPOUND_SHAPE.</td></tr><tr><td><span class="italic">String name</span></td><td>The name of the shape. Names have to be unique.</td></tr><tr><td><span class="italic">Scalar parameters[]</span></td><td>The parameter for the shape creation. The number of parameters varies for each
+              shape. To determine which parameters should be used create a shape without
+              parameters and read the thrown exception.</td></tr><tr><td><span class="italic">Vec3 vertices[]</span></td><td>For convex hull, gimpact or triangle mesh this stores the vertices of the
+              shape. For all other shape types it isn't used.</td></tr><tr><td><span class="italic">Integer indices[]</span></td><td>For gimpact or triangle mesh shapes this stores the triangle indices of the
+              shape. For all other shape types it isn't used.</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">create(io Boolean success)</span></td><td>Creates the shape and returns if successful.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e223"></a><p class="title"><b>Table&nbsp;3.3.&nbsp;BulletRigidBody</b></p><div class="table-contents"><table summary="BulletRigidBody" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data localData</span></td><td>The private data of the Bullet type.</td></tr><tr><td><span class="italic">String name</span></td><td>The name of the rigid body. Names have to be unique.</td></tr><tr><td><span class="italic">Xfo transform</span></td><td>The initial transform.</td></tr><tr><td><span class="italic">Scalar mass</span></td><td>The mass in kilograms. A mass of 0.0 indicates a passive, non-simulated rigid
+              body.</td></tr><tr><td><span class="italic">Scalar friction</span></td><td>The combined dynamic and static friciton (0.0 to 1.0).</td></tr><tr><td><span class="italic">Scalar restitution</span></td><td>The restitution factor, from 0.0 to 1.0</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">create(io BulletShape shape, io Boolean
+                success)</span></td><td>Creates the rigid body based on its member data and the provided shape, returns
+              if successful.</td></tr><tr><td><span class="italic">setMass(in Scalar mass)</span></td><td>Sets the mass</td></tr><tr><td><span class="italic">Xfo getTransform()</span></td><td>Returns the current simulated transform.</td></tr><tr><td><span class="italic">setTransform(in Xfo transform)</span></td><td>Sets the transform. This only works for passive rigid bodies (mass of
+              0.0)</td></tr><tr><td><span class="italic">Vec3 getLinearVelocity()</span></td><td>Returns the current linear velocity</td></tr><tr><td><span class="italic">setLinearVelocity(in Vec3 velocity)</span></td><td>Sets the linear velocity</td></tr><tr><td><span class="italic">Vec3 getAngularVelocity()</span></td><td>Returns the angular velocity (as euler angles in radians)</td></tr><tr><td><span class="italic">setAngularVelocity(in Vec3 velocity)</span></td><td>Sets the angular velocity (from euler angles in radians)</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e293"></a><p class="title"><b>Table&nbsp;3.4.&nbsp;BulletSoftBody</b></p><div class="table-contents"><table summary="BulletSoftBody" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data localData</span></td><td>The private data of the Bullet type.</td></tr><tr><td><span class="italic">String name</span></td><td>The name of the soft body. Names have to be unique.</td></tr><tr><td><span class="italic">Xfo transform</span></td><td>The initial transform.</td></tr><tr><td><span class="italic">Integer clusters</span></td><td>The cluster count to use for this softbody. When set to zero, the cluster
+              collision algorithm won't be used, and a per vertex spring model will be
+              used.</td></tr><tr><td><span class="italic">Integer constraints</span></td><td>The recursion depth level for bending constraints. Set to 1 there will be a
+              spring between each neighbor vertex, set to 2 introduces springs between neighbors
+              of neighbors etc.</td></tr><tr><td><span class="italic">Scalar mass</span></td><td>The mass of the softbody in kilograms.</td></tr><tr><td><span class="italic">Scalar stiffness</span></td><td>The linear stiffness factor for the springs (0.0 to 1.0)</td></tr><tr><td><span class="italic">Scalar friction</span></td><td>The dynamic friction of each softbody vertex (0.0 to 1.0)</td></tr><tr><td><span class="italic">Scalar conservation</span></td><td>The volume conservation of the softbody (0.0 to 1.0). This is a very sensitive
+              parameter and use of values higher than 0.1 is not recommended.</td></tr><tr><td><span class="italic">Scalar pressure</span></td><td>The internal pressure of the soft body in nm.</td></tr><tr><td><span class="italic">Scalar recover</span></td><td>The amount of shape recovery (0.0 to 1.0). If set to 0.5, for example, the
+              shape is blended back to its original shape by 50%.</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">create(io Boolean success, io BulletWorld world, io
+                Vec3 positions&lt;&gt;, io Vec3 normals&lt;&gt;, io Integer
+              indices[])</span></td><td>Creates the softbody in a provided simulation world, using the provided
+              positions, normals and indices arrays (triangles). Returns if successful.</td></tr><tr><td><span class="italic">getPosition(in Size index, io Vec3 position, io Vec3
+                normal)</span></td><td>Returns the current position and normal for a given vertex index.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e359"></a><p class="title"><b>Table&nbsp;3.5.&nbsp;BulletConstraint</b></p><div class="table-contents"><table summary="BulletConstraint" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data localData</span></td><td>The private data of the Bullet type.</td></tr><tr><td><span class="italic">Data bodyLocalDataA</span></td><td>The pointer to the private data of the first attached rigid body.</td></tr><tr><td><span class="italic">Data bodyLocalDataB</span></td><td>The pointer to the private data of the second attached rigid body.</td></tr><tr><td><span class="italic">Integer type</span></td><td>The type of the constraint. Valid values are 3 (point2point), 4 (hinge) and 7
+              (slider).</td></tr><tr><td><span class="italic">String name</span></td><td>The name of the constraint. Names have to be unique.</td></tr><tr><td><span class="italic">Xfo pivotA</span></td><td>The pivot transform in local space for the first attached rigid body</td></tr><tr><td><span class="italic">Xfo pivotB</span></td><td>The pivot transform in local space for the second attached rigid body</td></tr><tr><td><span class="italic">String nameA</span></td><td>The name of the first attached rigid body.</td></tr><tr><td><span class="italic">String nameB</span></td><td>The name of the second attached rigid body.</td></tr><tr><td><span class="italic">Integer indexA</span></td><td>The index of the first attached rigid body.</td></tr><tr><td><span class="italic">Integer indexB</span></td><td>The index of the second attached rigid body.</td></tr><tr><td><span class="italic">Scalar parameters[]</span></td><td>The parameters for the constraint creation. This member is obsolete and is not
+              being used.</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">create(io Boolean result, io BulletRigidBody bodiesA[],
+                io BulletRigidBody bodiesB[])</span></td><td>Creates the constraing based on its <span class="italic">indexA</span>
+              and <span class="italic">indexB</span> members. The private data pointers are
+              set by retreiving them from A and B rigid body arrays. This allows to construct a
+              large number of constraints on lists of rigid bodies.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e427"></a><p class="title"><b>Table&nbsp;3.6.&nbsp;BulletForce</b></p><div class="table-contents"><table summary="BulletForce" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">String name</span></td><td>The name of the force. Names have to be unique.</td></tr><tr><td><span class="italic">Vec3 origin</span></td><td>The point the force is coming from (global space).</td></tr><tr><td><span class="italic">Vec3 direction</span></td><td>The direction of the force (global space)</td></tr><tr><td><span class="italic">Scalar radius</span></td><td>The influence radius of the force</td></tr><tr><td><span class="italic">Scalar factor</span></td><td>The force factor in nm.</td></tr><tr><td><span class="italic">Boolean useTorque</span></td><td>Determines if the force should apply rotation or only linear velocity.</td></tr><tr><td><span class="italic">Boolean useFalloff</span></td><td>If set the force will use a linear falloff inside its radius.</td></tr><tr><td><span class="italic">Boolean enabled</span></td><td>If set to false the force will be ignored</td></tr><tr><td><span class="italic">Boolean autoDisable</span></td><td>If set to true the force's <span class="italic">enabled</span> flag will
+              be set once it is applied. This is useful for one-shot forces, based on mouse
+              clicks, for example.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e474"></a><p class="title"><b>Table&nbsp;3.7.&nbsp;BulletAnchor</b></p><div class="table-contents"><table summary="BulletAnchor" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data localData</span></td><td>The private data of the Bullet type.</td></tr><tr><td><span class="italic">Data rigidBodyLocalData</span></td><td>The pointer to the private data of the attached rigid body.</td></tr><tr><td><span class="italic">Data softBodyLocalData</span></td><td>The pointer to the private data of the attached soft body.</td></tr><tr><td><span class="italic">String name</span></td><td>The name of the anchor. Names have to be unique.</td></tr><tr><td><span class="italic">Integer rigidBodyIndex</span></td><td>The index of the attached rigid body.</td></tr><tr><td><span class="italic">Integer softBodyNodeIndices[]</span></td><td>The indices of the attached vertices of the soft body mesh.</td></tr><tr><td><span class="italic">Boolean disableCollision</span></td><td>Determines if the rigid body and soft body attached to the anchor should
+              intercollide.</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">create(io Boolean success, io BulletRigidBody
+                rigidBodies[], io BulletSoftBody softBody)</span></td><td>Creates the constraing based on its <span class="italic">rigidBodyIndex</span>. The private data pointers are set by retreiving them
+              from the rigid body array resp. the provided soft body. This allows to construct a
+              large number of anchors on a list of rigid bodies. Returns if successful.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e521"></a><p class="title"><b>Table&nbsp;3.8.&nbsp;BulletContact</b></p><div class="table-contents"><table summary="BulletContact" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Scalar fraction</span></td><td>The fraction of the ray</td></tr><tr><td><span class="italic">Vec3 normal</span></td><td>The normal of the hit surface position</td></tr><tr><td><span class="italic">Scalar mass</span></td><td>The mass of the collision object's surface position.</td></tr><tr><td><span class="italic">Vec3 linearVelocity</span></td><td>The linear velocity of the collision object.</td></tr><tr><td><span class="italic">Vec3 angularVelocity</span></td><td>The angular velocity of the collision object (euler angles in radians).</td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;4.&nbsp;CIMG Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e551"></a>Chapter&nbsp;4.&nbsp;CIMG Extension Guide</h2></div></div></div><p>The CIMG extension wraps the CIMG C++ image library (http://cimg.sourceforge.net) and
+      provides read and write access to image within Fabric Engine. The extension doesn't provide
+      any types, but KL functions to perform the image IO.</p><div class="table"><a name="d5e554"></a><p class="title"><b>Table&nbsp;4.1.&nbsp;CIMG Functions</b></p><div class="table-contents"><table summary="CIMG Functions" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="italic">FabricCIMGDecode( Data data, Size dataSize, io String
+                ext, io Size imageWidth, io Size imageHeight, io RGBA imagePixels[]
+              )</span></td><td>Decodes an image, stored as an encoded Byte array into its width, height and
+              pixel values. The extention has to be provided to inform CIMG what kind of image is
+              stored in the Byte array.</td></tr><tr><td><span class="italic">FabricCIMGOpenFileHandle( String fileHandle, io String
+                ext, io Size imageWidth, io Size imageHeight, io RGBA imagePixels[]
+              )</span></td><td>Opens an image from a provided FileHandle and reads the image data into the
+              width, height and pixel values. The extention has to be provided to inform CIMG what
+              kind of image is stored in the FileHandle.</td></tr><tr><td><span class="italic">FabricCIMGCreateFromText( String text, io Size
+                imageWidth, io Size imageHeight, io RGBA imagePixels[] ) </span></td><td>Encodes the text provided into a new image resulting in width, height and pixel
+              values. The image uses a fixed text size and is stored as black and white, where
+              white is the text and black is the background.</td></tr><tr><td><span class="italic">FabricCIMGSaveToFileHandle( String fileHandle, Size
+                imageWidth, Size imageHeight, Boolean mirrorVertically, io RGBA imagePixels[]
+                )</span></td><td>Saves a provided image, represented by with, height and pixels into a provided
+              writable FileHandle. If required, the image can be flipped vertically prior to
+              saving.</td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;FILESTREAM Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e576"></a>Chapter&nbsp;5.&nbsp;FILESTREAM Extension Guide</h2></div></div></div><p>
+      The FILESTREAM extension is a wrapper for standard file IO functionality, plus extra features such as
+      reading or writing to compressed formats. The <span class="italic">FabricFileStream</span> type wraps an open file handle. A <span class="italic">FabricFileStream</span>
+      is initialized from a <span class="italic">FabricFileHandle String</span>, which can be an abstract handle or a direct file
+      path depending on the client and its security model (see Fabric IO programming guide).
+    </p><div class="table"><a name="d5e582"></a><p class="title"><b>Table&nbsp;5.1.&nbsp;FabricFileStream</b></p><div class="table-contents"><table summary="FabricFileStream" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td>
+              <span class="bold"><strong>Members</strong></span>
+            </td><td>&nbsp;</td></tr><tr><td>
+              <span class="italic">Data m_data</span>
+            </td><td>The private data of the <span class="italic">FabricFileStream</span> type.</td></tr><tr><td>
+              <span class="bold"><strong>Methods</strong></span>
+            </td><td>&nbsp;</td></tr><tr><td>
+              <span class="italic">
+                open(in String handle, in String mode)
+              </span>
+            </td><td>
+              Opens the file associated to the <span class="italic">FabricFileHandle handle</span>. Mode can be "r" for read-only, "w" for write, and "a" for append. If "w" or "a", the handle must have a write permission.
+            </td></tr><tr><td>
+              <span class="italic">
+                close()
+              </span>
+            </td><td>Closes the file; the <span class="italic">FabricFileStream</span> is invalid unless <span class="italic">open</span> is called again.</td></tr><tr><td>
+              <span class="italic">
+                closeOnFullyRead(in Boolean close)
+              </span>
+            </td><td>Enables a special mode in which <span class="italic">close</span> will be called implicitely once all the file was read.</td></tr><tr><td>
+              <span class="italic">
+                Boolean isValid()
+              </span>
+            </td><td>Returns <span class="italic">true</span> if the <span class="italic">FabricFileStream</span> was opened successfully</td></tr><tr><td>
+              <span class="italic">
+                Boolean isWritable()
+              </span>
+            </td><td>Returns <span class="italic">true</span> if the <span class="italic">FabricFileStream</span> was opened with a writable mode ("w" or "a")</td></tr><tr><td>
+              <span class="italic">
+                Size getSize()
+              </span>
+            </td><td>Returns the file size (byte count).</td></tr><tr><td>
+              <span class="italic">
+                Size getSizeRead()
+              </span>
+            </td><td>Returns the total number of bytes that was read.</td></tr><tr><td>
+              <span class="italic">
+                Size getSeek()
+              </span>
+            </td><td>Returns the current file read or write position.</td></tr><tr><td>
+              <span class="italic">
+                setSeek(in Size seek)
+              </span>
+            </td><td>Sets the read or write file position.</td></tr><tr><td>
+              <span class="italic">
+                setSeekStart()
+              </span>
+            </td><td>Sets the read or write position at the start of the file.</td></tr><tr><td>
+              <span class="italic">
+                writeData(in Data data, in Size size)
+              </span>
+            </td><td>Writes <span class="italic">size</span> bytes from the <span class="italic">data</span> buffer.</td></tr><tr><td>
+              <span class="italic">
+                readData(in Data data, in Size size)
+              </span>
+            </td><td>
+              Reads <span class="italic">size</span> bytes to the <span class="italic">data</span> buffer.
+            </td></tr><tr><td>
+              <span class="italic">
+                writeDataCompressed(in Data data, in Size size)
+              </span>
+            </td><td>
+              Compresses and writes <span class="italic">size</span> bytes from the <span class="italic">data</span> buffer. Later, these bytes should be read with the <span class="italic">readDataCompressed</span> method.
+            </td></tr><tr><td>
+              <span class="italic">
+                readDataCompressed(in Data data, in Size size)
+              </span>
+            </td><td>
+              Uncompresses and reads <span class="italic">size</span> bytes to the <span class="italic">data</span> buffer. Originally, these bytes should have been written with the <span class="italic">writeDataCompressed</span> method.
+            </td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;6.&nbsp;FILESYSTEM Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e675"></a>Chapter&nbsp;6.&nbsp;FILESYSTEM Extension Guide</h2></div></div></div><p>
+      The FILESYSTEM extension enables to browse and modify the local file system. Because it enables unsecure operations,
+      this extension must be installed separately for Fabric browser plug-in clients. This extension's <span class="italic">FabricFolderHandle</span>
+      type wraps folders and <span class="italic">FabricFileHandleWrapper</span> type wraps a <span class="italic">FabricFileHandle</span> (see Fabric IO programming guide).
+      Note that the FILESTREAM extension initializes its FabricFileStream from a <span class="italic">FabricFileHandle</span>, which can be retrived from <span class="italic">FabricFileHandleWrapper</span>'s <span class="italic">getHandle</span> method.
+    </p><div class="table"><a name="d5e684"></a><p class="title"><b>Table&nbsp;6.1.&nbsp;FabricFolderHandle</b></p><div class="table-contents"><table summary="FabricFolderHandle" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td>
+              <span class="bold"><strong>Members</strong></span>
+            </td><td>&nbsp;</td></tr><tr><td>
+              <span class="italic">Data m_data</span>
+            </td><td>The private data of the FabricFolderHandle type.</td></tr><tr><td>
+              <span class="bold"><strong>Methods</strong></span>
+            </td><td>&nbsp;</td></tr><tr><td>
+              <span class="italic">
+                setAbsolutePath(in String path)
+              </span>
+            </td><td>
+              Sets the absolute path of the folder wrapper. No validation is done; call <span class="italic">exists</span> to know if it exists.
+            </td></tr><tr><td>
+              <span class="italic">
+                getAbsolutePath(io String result)
+              </span>
+            </td><td>
+              Gets the absolute path of the folder wrapper.
+            </td></tr><tr><td>
+              <span class="italic">
+                isValid(io Boolean result)
+              </span>
+            </td><td>
+              Returns <span class="italic">true</span> if the wrapper is associated to an existing folder.
+            </td></tr><tr><td>
+              <span class="italic">
+                isValid(io Boolean result)
+              </span>
+            </td><td>
+              Result is set to <span class="italic">true</span> if the absolute path was set.
+            </td></tr><tr><td>
+              <span class="italic">
+                exists(io Boolean result)
+              </span>
+            </td><td>
+              Result is set to <span class="italic">true</span> if the associated folder exists.
+            </td></tr><tr><td>
+              <span class="italic">
+                getParentFolder(io FabricFolderHandle result)
+              </span>
+            </td><td>
+              Result is set to the parent folder wrapper.
+            </td></tr><tr><td>
+              <span class="italic">
+                getSubFolders(io FabricFolderHandle subfolders[])
+              </span>
+            </td><td>
+              <span class="italic">subfolders</span> will contain wrappers for all sub folder.
+            </td></tr><tr><td>
+              <span class="italic">
+                getFiles(io FabricFileHandleWrapper files[])
+              </span>
+            </td><td>
+              <span class="italic">files</span> will contain wrappers for all sub files.
+            </td></tr><tr><td>
+              <span class="italic">
+                createFolder()
+              </span>
+            </td><td>
+              Creates a folder for the path that was set with <span class="italic">setAbsolutePath</span>.
+            </td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e745"></a><p class="title"><b>Table&nbsp;6.2.&nbsp;FabricFileHandleWrapper</b></p><div class="table-contents"><table summary="FabricFileHandleWrapper" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td>
+              <span class="bold"><strong>Members</strong></span>
+            </td><td>&nbsp;</td></tr><tr><td>
+              <span class="italic">String m_handle</span>
+            </td><td>
+              Contains a <span class="italic">FabricFileHandle String</span>, which can be an abstract handle or a direct file
+              path depending on the client and its security model (see Fabric IO programming guide).
+            </td></tr><tr><td>
+              <span class="bold"><strong>Methods</strong></span>
+            </td><td>&nbsp;</td></tr><tr><td>
+              <span class="italic">
+                String getHandle()
+              </span>
+            </td><td>
+              Simply returns the underlying <span class="italic">FabricFileHandle</span> (<span class="italic">m_handle</span> member).
+            </td></tr><tr><td>
+              <span class="italic">
+                setHandle(in String handle)
+              </span>
+            </td><td>
+              Sets the wrapped <span class="italic">FabricFileHandle</span> (<span class="italic">m_handle</span> member).
+            </td></tr><tr><td>
+              <span class="italic">
+                setAbsolutePath(in String path)
+              </span>
+            </td><td>
+              Builds a <span class="italic">FabricFileHandle</span> associated to the absolute path and puts it in <span class="italic">m_handle</span>.
+            </td></tr><tr><td>
+              <span class="italic">
+                getAbsolutePath(io String path)
+              </span>
+            </td><td>
+              Returns the absolute path associated to the <span class="italic">m_handle</span> <span class="italic">FabricFileHandle</span>.
+            </td></tr><tr><td>
+              <span class="italic">
+                getParentFolder(io FabricFolderHandle result)
+              </span>
+            </td><td>
+              Returns the parent folder FabricFolderHandle wrapper.
+            </td></tr><tr><td>
+              <span class="italic">
+                getName(io String name)
+              </span>
+            </td><td>
+              Returns the name of the file associated with <span class="italic">m_handle</span>.
+            </td></tr><tr><td>
+              <span class="italic">
+                getBaseName(io String baseName)
+              </span>
+            </td><td>
+              Returns the name without extension of the file associated with <span class="italic">m_handle</span>.
+            </td></tr><tr><td>
+              <span class="italic">
+                getExtension(io String extension)
+              </span>
+            </td><td>
+              Returns the extension of the file associated with <span class="italic">m_handle</span>.
+            </td></tr><tr><td>
+              <span class="italic">
+                getExtensionLower(io String extensionLower)
+              </span>
+            </td><td>
+              Returns the lower-case extension of the file associated with <span class="italic">m_handle</span>.
+            </td></tr><tr><td>
+              <span class="italic">
+                isValid(io Boolean result)
+              </span>
+            </td><td>
+              <span class="italic">result</span> is set to <span class="italic">true</span> if <span class="italic">m_handle</span> is a valid <span class="italic">FabricFileHandle</span>.
+            </td></tr><tr><td>
+              <span class="italic">
+                exists(io Boolean result)
+              </span>
+            </td><td>
+              <span class="italic">result</span> is set to <span class="italic">true</span> if <span class="italic">m_handle</span> is associated to an existing file.
+            </td></tr><tr><td>
+              <span class="italic">
+                isReadOnly(io Boolean result)
+              </span>
+            </td><td>
+              <span class="italic">result</span> is set to <span class="italic">true</span> if <span class="italic">m_handle</span> has no write permission.
+            </td></tr><tr><td>
+              <span class="italic">
+                getSize(io Size result)
+              </span>
+            </td><td>
+              <span class="italic">result</span> is set to the size (byte count) of the file associated with <span class="italic">m_handle</span>.
+            </td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;7.&nbsp;LIDAR Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e840"></a>Chapter&nbsp;7.&nbsp;LIDAR Extension Guide</h2></div></div></div><p>The LIDAR extension is a wrapper for the liblas library (http://liblas.org/). It
+      provides a type to read the contents of a LIDAR file and use it inside Fabric Engine.</p><div class="table"><a name="d5e843"></a><p class="title"><b>Table&nbsp;7.1.&nbsp;LidarReader</b></p><div class="table-contents"><table summary="LidarReader" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data pointer</span></td><td>The private data of the LidarReader type.</td></tr><tr><td><span class="italic">String url</span></td><td>The url of the parsed lidar file.</td></tr><tr><td><span class="italic">Boolean compressed</span></td><td>After the file is opened this will indicate if it is a compressed file or
+              not.</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">loadResource(io FabricResource resource, io String
+                url)</span></td><td>Loads a lidar file stored in memory. The url value is not used in this case,
+              and is just cosmetic.</td></tr><tr><td><span class="italic">loadFileHandle(in String handle)</span></td><td>Loads a lidar file stored in a readable FIleHandle.</td></tr><tr><td><span class="italic">getCount(io Size count)</span></td><td>Returs the number of points in the lidar file.</td></tr><tr><td><span class="italic">getPoints(io Vec3 positions&lt;&gt;, io Color
+                colors&lt;&gt;)</span></td><td>Returns all of the point positions and colors inside the lidar file. If the
+              lidar file doesn't contain any colors, they will be all black.</td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;8.&nbsp;Math Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e885"></a>Chapter&nbsp;8.&nbsp;Math Extension Guide</h2></div></div></div><p>The Math extension provides additional Math features to KL. Currently it only contains a
+      pseudo random number generator.</p><div class="table"><a name="d5e888"></a><p class="title"><b>Table&nbsp;8.1.&nbsp;Math Functions</b></p><div class="table-contents"><table summary="Math Functions" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="italic">Integer mathRandomInteger( in Size id, in Size offset
+                )</span></td><td>Returns the random integer number id with a provided random offset. The offset
+              can be understood as the seed, while the id is the index of the random number in the
+              sequence. The range is the full integer range.</td></tr><tr><td><span class="italic">Scalar mathRandomScalar( in Size id, in Size offset
+                )</span></td><td>Returns the random scalar number id with a provided random offset. The offset
+              can be understood as the seed, while the id is the index of the random number in the
+              sequence. The range is the full scalar range.</td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;9.&nbsp;OBJ Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e902"></a>Chapter&nbsp;9.&nbsp;OBJ Extension Guide</h2></div></div></div><p>The OBJ extension provides an OBJ parser to Fabric Engine. It is implemented as a simple
+      type storing the handle to the parser, and KL functions allowing to query the parser.</p><div class="table"><a name="d5e905"></a><p class="title"><b>Table&nbsp;9.1.&nbsp;OBJDataHandle</b></p><div class="table-contents"><table summary="OBJDataHandle" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data handle</span></td><td>The private data of the OBJDataHandle type.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e919"></a><p class="title"><b>Table&nbsp;9.2.&nbsp;OBJ Functions</b></p><div class="table-contents"><table summary="OBJ Functions" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="italic">FabricOBJDecode( Data objData, Size objDataSize,
+                Boolean splitByObjects, Boolean splitByGroups, Boolean splitByMaterials, io
+                OBJDataHandle handle )</span></td><td>Parses an OBJ file stored in memory as a Data pointer of a given size.
+              splitByObjects determines if objects should be merged or represented as separate
+              objects, splitByGroups determines is shading groups should be split into separate
+              objects or not, and splitByMaterial determines if per face shading should be
+              resulting in separate objects or not.</td></tr><tr><td><span class="italic">FabricOBJOpenFileHandle( String fileHandle, Boolean
+                splitByObjects, Boolean splitByGroups, Boolean splitByMaterials, io OBJDataHandle
+                handle )</span></td><td>Parses an OBJ file stored in a readable FileHandle. splitByObjects determines
+              if objects should be merged or represented as separate objects, splitByGroups
+              determines is shading groups should be split into separate objects or not, and
+              splitByMaterial determines if per face shading should be resulting in separate
+              objects or not.</td></tr><tr><td><span class="italic">FabricOBJIsHandleValid( OBJDataHandle handle, io
+                Boolean valid )</span></td><td>Checks if a provided OBJDataHandle is valid.</td></tr><tr><td><span class="italic">FabricOBJFreeParsedData( io OBJDataHandle handle
+                )</span></td><td>Frees the parsed data from memory. This is useful if the parser is no longer
+              required.</td></tr><tr><td><span class="italic">FabricOBJHadErrors( OBJDataHandle handle, io Boolean
+                hadErrors )</span></td><td>Checks if the parse contained any errors.</td></tr><tr><td><span class="italic">FabricOBJGetErrors( OBJDataHandle handle, io String
+                errors[] )</span></td><td>Returns the errors which happened during the parse.</td></tr><tr><td><span class="italic">FabricOBJHasTextureCoords( OBJDataHandle handle, io
+                Boolean hasTextureCoords )</span></td><td>Checks if the parsed OBJ file contains texture coordinates.</td></tr><tr><td><span class="italic">FabricOBJGetMaterialLibraries( OBJDataHandle handle, io
+                String names[] )</span></td><td>Returns the names of the material libraries contained in the parsed OBJ
+              file.</td></tr><tr><td><span class="italic">FabricOBJGetMaterialNames( OBJDataHandle handle, io
+                String names[] )</span></td><td>Returns the names of the materials contained in the parsed OBJ file.</td></tr><tr><td><span class="italic">FabricOBJGetNbEntities( OBJDataHandle handle, io Size
+                nbEntities )</span></td><td>Returns the number of entities in the parsed OBJ file.</td></tr><tr><td><span class="italic">FabricOBJGetEntityObjectName( OBJDataHandle handle,
+                Integer entity, io String name )</span></td><td>Returns the object name of a given entity.</td></tr><tr><td><span class="italic">FabricOBJGetEntityGroupName( OBJDataHandle handle,
+                Integer entity, io String name )</span></td><td>Returns the group name of a given entity.</td></tr><tr><td><span class="italic">FabricOBJGetEntityMaterialName( OBJDataHandle handle,
+                Integer entity, io String name )</span></td><td>Returns the material name of a given entity.</td></tr><tr><td><span class="italic">FabricOBJGetNbEntityPoints( OBJDataHandle handle,
+                Integer entity, io Size nbPoints )</span></td><td>Returns the number of points for a given entity</td></tr><tr><td><span class="italic">FabricOBJGetEntityPoints( OBJDataHandle handle, Integer
+                entity, io Vec3 points[] )</span></td><td>Returns the point positions of a given entity as a variable array</td></tr><tr><td><span class="italic">FabricOBJGetEntityPointsSliced( OBJDataHandle handle,
+                Integer entity, io Vec3 points&lt;&gt; )</span></td><td>Returns the point positions of a given entity as a sliced array</td></tr><tr><td><span class="italic">FabricOBJGetEntityNormals( OBJDataHandle handle,
+                Integer entity, io Vec3 normals[] )</span></td><td>Returns the point normals of a given entity as a variable array</td></tr><tr><td><span class="italic">FabricOBJGetEntityNormalsSliced( OBJDataHandle handle,
+                Integer entity, io Vec3 normals&lt;&gt; )</span></td><td>Returns the point normals of a given entity as a sliced array</td></tr><tr><td><span class="italic">FabricOBJGetEntityTextureCoords( OBJDataHandle handle,
+                Integer, io Vec2 texCoords[] )</span></td><td>Returns the point texture coordinates of a given entity as a variable
+              array</td></tr><tr><td><span class="italic">FabricOBJGetEntityTextureCoordsSliced( OBJDataHandle
+                handle, Integer entity, io Vec2 texCoords&lt;&gt; )</span></td><td>Returns the point texture coordinates of a given entity as a sliced
+              array</td></tr><tr><td><span class="italic">FabricOBJGetNbEntityTriangles( OBJDataHandle handle,
+                Integer entity, io Size nbTriangles )</span></td><td>Returns the number of triangles of a given entity</td></tr><tr><td><span class="italic">FabricOBJGetEntityTriangleIndices( OBJDataHandle
+                handle, Integer entity, io Integer triangleIndices[] )</span></td><td>Returns the triangle indices of a given entity as a variable array</td></tr><tr><td><span class="italic">FabricOBJGetEntityTriangleIndicesSliced( OBJDataHandle
+                handle, Integer entity, io Integer triangleIndices&lt;&gt; )</span></td><td>Returns the triangle indices of a given entity as a sliced array</td></tr><tr><td><span class="italic">FabricOBJGetEntityTriangleMaterialIndices(
+                OBJDataHandle handle, Integer entity, io Integer triangleIndices[]
+              )</span></td><td>Returns the triangle material indices of a given entity as a variable
+              array</td></tr><tr><td><span class="italic">FabricOBJGetEntityTriangleMaterialIndicesSliced(
+                OBJDataHandle handle, Integer entity, io Integer triangleIndices&lt;&gt;
+              )</span></td><td>Returns the triangle material indices of a given entity as a sliced
+              array</td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;10.&nbsp;OGL Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e1025"></a>Chapter&nbsp;10.&nbsp;OGL Extension Guide</h2></div></div></div><p>The OGL extension provides all valid OpenGL functions to KL. It acts as a wrapper for
+      Glew (http://glew.sourceforge.net/), essentially. With the OGL extension you can use any
+      OpenGL call inside KL. For example:</p><pre class="programlisting">use FabricOGL;
+
+glClearColor(1.0, 0.0, 0.0, 1.0);
+glEnable(GL_CULL_FACE);
+glPatchParameteri(GL_PATCH_VERTICES, 3);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);</pre><p>Please see any of the SceneGraph KL files for references of this. All of the
+      SceneGraph's rendering has been implemented using this extension.</p></div><div class="chapter" title="Chapter&nbsp;11.&nbsp;OPENCV Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e1030"></a>Chapter&nbsp;11.&nbsp;OPENCV Extension Guide</h2></div></div></div><p>The OpenCV FACE extension is a wrapper for the OpenCV library
+      (http://opencv.willowgarage.com/wiki). Currently only a very small subset of the
+      functionality is exposed, mainly focusing on face detection.</p><div class="table"><a name="d5e1033"></a><p class="title"><b>Table&nbsp;11.1.&nbsp;FaceLocation</b></p><div class="table-contents"><table summary="FaceLocation" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Size left</span></td><td>Left x coordinate of the face rectangle</td></tr><tr><td><span class="italic">Size right</span></td><td>Right x coordinate of the face rectangle</td></tr><tr><td><span class="italic">Size top</span></td><td>Top y coordinate of the face rectangle</td></tr><tr><td><span class="italic">Size bottom</span></td><td>Bottom y coordinate of the face rectangle</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e1059"></a><p class="title"><b>Table&nbsp;11.2.&nbsp;FaceDetector</b></p><div class="table-contents"><table summary="FaceDetector" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data pointer</span></td><td>The private data of the FaceDetector type.</td></tr><tr><td><span class="bold"><strong>Methods</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">init(in String fileHandle)</span></td><td>Initiates a face detector using a haarcascade xml file. The haarcascade
+              describes the face detection method. Please refer to the OpenCV documentation for
+              more details.</td></tr><tr><td><span class="italic">detectRGB(io RGB pixels[], Size width, Size height,
+                Scalar ratio, Size searchWidth, Size searchHeight, io FaceLocation
+                faces[])</span></td><td>Detect faces in a RGB provided image with pixels, width and height. Ratio is
+              used for the frame to frame move different (1.5 is the default), searchWidth and
+              searchHeight define the minimum size of a face in pixels. Found faces are returned
+              as an array of FaceLocation.</td></tr><tr><td><span class="italic">detectRGBA(io RGBA pixels[], Size width, Size height,
+                Scalar ratio, Size searchWidth, Size searchHeight, io FaceLocation
+                faces[])</span></td><td>Detect faces in a RGBA provided image with pixels, width and height. Ratio is
+              used for the frame to frame move different (1.5 is the default), searchWidth and
+              searchHeight define the minimum size of a face in pixels. Found faces are returned
+              as an array of FaceLocation</td></tr></tbody></table></div></div><br class="table-break"></div><div class="chapter" title="Chapter&nbsp;12.&nbsp;VIDEO Extension Guide"><div class="titlepage"><div><div><h2 class="title"><a name="d5e1089"></a>Chapter&nbsp;12.&nbsp;VIDEO Extension Guide</h2></div></div></div><p>The VIDEO extension is a wrapper for the ffmeg library (http://ffmpeg.org/). It provides
+      a type to read as well as write video. The VIDEO extension currently doesn't support audio
+      streams.</p><div class="table"><a name="d5e1092"></a><p class="title"><b>Table&nbsp;12.1.&nbsp;VideoHandle</b></p><div class="table-contents"><table summary="VideoHandle" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="bold"><strong>Members</strong></span></td><td>&nbsp;</td></tr><tr><td><span class="italic">Data pointer</span></td><td>The private data of the VideoHandle type.</td></tr><tr><td><span class="italic">Size width</span></td><td>The width of the video.</td></tr><tr><td><span class="italic">Size height</span></td><td>The height of the video.</td></tr><tr><td><span class="italic">Scalar duration</span></td><td>The duration of the video in seconds.</td></tr><tr><td><span class="italic">Scalar fps</span></td><td>The framerate of the video (frames per seconds).</td></tr><tr><td><span class="italic">Scalar time</span></td><td>The current time of the video.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="d5e1126"></a><p class="title"><b>Table&nbsp;12.2.&nbsp;VIDEO Functions</b></p><div class="table-contents"><table summary="VIDEO Functions" border="0"><colgroup><col width="349" class="c1"><col width="300" class="c2"></colgroup><tbody><tr><td><span class="italic">FabricVIDEOOpenResource( Data resourceData, Size
+                resourceDataSize, io VideoHandle handle )</span></td><td>Opens a video handle for reading from memory. The video is stored as a pointer
+              with a provided size.</td></tr><tr><td><span class="italic">FabricVIDEOOpenFileHandle( String fileHandle, io
+                VideoHandle handle )</span></td><td>Opens a video handle for reading from a readable FileHandle.</td></tr><tr><td><span class="italic">FabricVIDEOCreateFromFileHandle( String file, Size
+                width, Size height, io VideoHandle handle, )</span></td><td>Creates a video handle for writing from a writable FileHandle, with the
+              provided width and height.</td></tr><tr><td><span class="italic">FabricVIDEOFreeHandle( io VideoHandle handle
+                )</span></td><td>Closes the video handle.</td></tr><tr><td><span class="italic">FabricVIDEOSeekTime( io VideoHandle handle, io Scalar
+                time)</span></td><td>Seeks to a provided time in the video. This only works for reading video
+              handles.</td></tr><tr><td><span class="italic">FabricVIDEOGetAllPixels( io VideoHandle handle, io RGB
+                pixels[] )</span></td><td>Returns all RGB pixels of the current video frame. This only works for reading
+              video handles.</td></tr><tr><td><span class="italic">FabricVIDEOWriteAllPixels( io VideoHandle handle, io
+                RGB pixels[] )</span></td><td>Writes the provided RGB pixels as a new frame to the video handle. This only
+              works with writing video handles.</td></tr></tbody></table></div></div><br class="table-break"></div></div></body></html>
