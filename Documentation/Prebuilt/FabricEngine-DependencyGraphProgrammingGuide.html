@@ -1,0 +1,818 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Dependency Graph Programming Guide</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Dependency Graph Programming Guide"><div class="titlepage"><div><div><h1 class="title"><a name="d5e1"></a>Dependency Graph Programming Guide</h1></div><div><p class="releaseinfo">Fabric Engine Version 1.2.0-beta</p></div><div><p class="copyright">Copyright © 2010-2012 Fabric Engine Inc.</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#d5e8">1. Introduction</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e12">Playing with the Fabric Engine Core</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e16">Using the Browser's JavaScript Console</a></span></dt><dt><span class="section"><a href="#d5e24">Using the Fabric Engine Module for Node.js or Python</a></span></dt></dl></dd><dt><span class="section"><a href="#d5e29">Examples</a></span></dt><dt><span class="section"><a href="#d5e38">The <code class="code">FABRIC</code> Object</a></span></dt></dl></dd><dt><span class="chapter"><a href="#d5e50">2. Concepts</a></span></dt><dt><span class="chapter"><a href="#registered-types">3. Registered Types</a></span></dt><dt><span class="chapter"><a href="#nodes">4. Nodes</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e114">Node Creation</a></span></dt><dt><span class="section"><a href="#d5e132">Node Members</a></span></dt><dt><span class="section"><a href="#d5e155">Node Slice Counts</a></span></dt><dt><span class="section"><a href="#d5e172">Node Dependencies</a></span></dt><dt><span class="section"><a href="#d5e194">Node Evaluation</a></span></dt></dl></dd><dt><span class="chapter"><a href="#events-event-handlers">5. Event Graphs, Events and EventHandlers</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e233">Event Creation</a></span></dt><dt><span class="section"><a href="#d5e244">EventHandler Creation</a></span></dt><dt><span class="section"><a href="#d5e255">Operators and EventHandlers</a></span></dt><dt><span class="section"><a href="#d5e286">EventHandler Data</a></span></dt></dl></dd><dt><span class="chapter"><a href="#operators-bindings">6. Operators and Bindings</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e299">Operator Creation</a></span></dt><dt><span class="section"><a href="#d5e309">Setting Operator Source Code</a></span></dt><dt><span class="section"><a href="#d5e324">Setting the Operator Entry Point</a></span></dt><dt><span class="section"><a href="#d5e336">Bindings</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e350">Binding Parameter Layouts</a></span></dt></dl></dd></dl></dd></dl></div><div class="list-of-examples"><p><b>List of Examples</b></p><dl><dt>1.1. <a href="#d5e32">An example</a></dt><dt>1.2. <a href="#d5e43">Obtaining the <code class="code">FABRIC</code> object</a></dt><dt>3.1. <a href="#d5e104">Registered types</a></dt><dt>4.1. <a href="#d5e118">Node creation</a></dt><dt>4.2. <a href="#d5e126">Getting a node's name</a></dt><dt>4.3. <a href="#d5e138">Adding and getting node members</a></dt><dt>4.4. <a href="#d5e147"><code class="code">getData</code> and <code class="code">setData</code></a></dt><dt>4.5. <a href="#d5e166">Node slice counts</a></dt><dt>4.6. <a href="#d5e188">Node dependencies</a></dt><dt>4.7. <a href="#d5e222">Node Evaluation</a></dt><dt>5.1. <a href="#d5e238">Event creation</a></dt><dt>5.2. <a href="#d5e249">Creating EventHandlers and appending them to Events</a></dt><dt>5.3. <a href="#d5e262">Operators and EventHandlers</a></dt><dt>5.4. <a href="#d5e270">Child EventHandlers</a></dt><dt>5.5. <a href="#d5e279">The <code class="code">setScope</code> method</a></dt><dt>5.6. <a href="#d5e290">EventHandler data</a></dt><dt>6.1. <a href="#d5e303">Operator creation</a></dt><dt>6.2. <a href="#d5e318">Setting operator source code</a></dt><dt>6.3. <a href="#d5e330">Setting the operator entry point</a></dt><dt>6.4. <a href="#d5e344">Binding creation</a></dt><dt>6.5. <a href="#d5e418">Binding parameters</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Introduction"><div class="titlepage"><div><div><h2 class="title"><a name="d5e8"></a>Chapter&nbsp;1.&nbsp;Introduction</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d5e12">Playing with the Fabric Engine Core</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e16">Using the Browser's JavaScript Console</a></span></dt><dt><span class="section"><a href="#d5e24">Using the Fabric Engine Module for Node.js or Python</a></span></dt></dl></dd><dt><span class="section"><a href="#d5e29">Examples</a></span></dt><dt><span class="section"><a href="#d5e38">The <code class="code">FABRIC</code> Object</a></span></dt></dl></div><p>
+Fabric Engine is a platform for enabling high-performance computing inside of dynamic languages, running from both the command line and in the browser.  A Fabric Engine application can enable its high-performance components by creating and manipulating dependency graphs and associated event graphs using the dynamic language interface that Fabric Engine provides.  In many cases, such as through use of Fabric's JavaScript or Python scene graph, this work is done by a higher-level framework that provides specific functionality to applications; however, in some cases it may be necessary to work directly with the core of Fabric Engine to extend these frameworks, create new frameworks, or to do lower level computation.
+</p><p>
+This document explains the concepts that are central to Fabric Engine's dependency graph model of parallel computation, and explains in detail how to work directly with this model of Fabric Engine.
+</p><div class="section" title="Playing with the Fabric Engine Core"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e12"></a>Playing with the Fabric Engine Core</h2></div></div></div><p>
+The Fabric Engine <span class="emphasis"><em>core</em></span> refers to the lowest-level access to Fabric Engine that is available to a dynamic language, as opposed to higher-level interfaces such as through the JavaScript and Python scene graphs.  The Fabric Engine core is manipulated using a JavaScript or Python interface, and the easiest way to learn how to work directly with the dependency graph is through this interface.  This can be done either using the browser's JavaScript console or using the Fabric Engine module for Node.js or Python.
+</p><div class="section" title="Using the Browser's JavaScript Console"><div class="titlepage"><div><div><h3 class="title"><a name="d5e16"></a>Using the Browser's JavaScript Console</h3></div></div></div><p>
+A simple Fabric shell wrapper is provided at
+<code class="uri">
+<a class="link" href="http://demos.fabric-engine.com/Core/shell.html" target="_top">http://demos.fabric-engine.com/Core/shell.html</a>
+</code>
+Go to this link (if prompted to install the Fabric extension then follow the instructions and reload the page), then open the JavaScript console.  In Chrome, this is done by choosing
+<span class="guimenu">Developer</span> → <span class="guimenuitem">JavaScript Console</span>
+from the menu bar; in Firefox, you must install the Firebug extension to access a JavaScript console.  Once you have the JavaScript console running, you can start executing JavaScript commands to drive Fabric.
+</p></div><div class="section" title="Using the Fabric Engine Module for Node.js or Python"><div class="titlepage"><div><div><h3 class="title"><a name="d5e24"></a>Using the Fabric Engine Module for Node.js or Python</h3></div></div></div><p>
+Follow the instructions at
+<code class="uri">
+
+<a class="link" href="http://documentation.fabric-engine.com/latest/FabricEngine-LanguageBindingsReference.html" target="_top">http://documentation.fabric-engine.com/latest/FabricEngine-LanguageBindingsReference.html</a>
+</code>
+to install the Fabric Engine Node.js and/or Python module on your system and use Fabric Engine from the command line.
+</p></div></div><div class="section" title="Examples"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e29"></a>Examples</h2></div></div></div><p>
+This document includes lots of examples showing Fabric core commands and the resulting output.  The commands are presented as if entered on the Node.js (for JavaScript) or Python command line:
+</p><div class="example"><a name="d5e32"></a><p class="title"><b>Example&nbsp;1.1.&nbsp;An example</b></p><div class="example-contents"><p>JavaScript</p><pre class="screen">
+    &gt; console.log('Hello, world!');
+    Hello, world!
+    undefined
+    &gt;
+</pre><p>Python</p><pre class="screen">
+    &gt;&gt;&gt; print "Hello, world!"
+    Hello, world!
+    &gt;&gt;&gt;
+</pre></div></div><p><br class="example-break">
+</p></div><div class="section" title="The FABRIC Object"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e38"></a>The <code class="code">FABRIC</code> Object</h2></div></div></div><p>
+The Fabric shell wrapper running in a web browser provides you with a global object called <code class="code">FABRIC</code> through which you can manipulate the core.  The same object can be obtained as follows in Node.js and Python:
+</p><div class="example"><a name="d5e43"></a><p class="title"><b>Example&nbsp;1.2.&nbsp;Obtaining the <code class="code">FABRIC</code> object</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; FABRIC = require('Fabric').createClient()
+    [FABRIC] Fabric Engine version 1.0.22-release
+    [FABRIC] Searching extension directory '/Users/pzion/Library/Fabric/Exts'
+    [FABRIC] [ExceptSample] Extension registered
+    ...
+    [FABRIC] Searching extension directory '/Library/Fabric/Exts'
+    [FABRIC] Warning: unable to open extension directory '/Library/Fabric/Exts'
+    { build: 
+       { isExpired: [Function],
+         getName: [Function],
+         getPureVersion: [Function],
+         getFullVersion: [Function],
+    ...
+      close: [Function],
+      getMemoryUsage: [Function],
+      swapFabricClient: [Function] }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; import fabric
+    [FABRIC] Fabric Engine version 1.0.22-release
+    &gt;&gt;&gt; FABRIC = fabric.createClient()
+    [FABRIC] Fabric Engine version 1.0.22-release
+    [FABRIC] Searching extension directory '/Users/pzion/Library/Fabric/Exts'
+    [FABRIC] [ExceptSample] Extension registered
+    ...
+    [FABRIC] Searching extension directory '/Library/Fabric/Exts'
+    [FABRIC] Warning: unable to open extension directory '/Library/Fabric/Exts'
+    &gt;&gt;&gt;
+</pre></div></div><p><br class="example-break">
+</p></div></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Concepts"><div class="titlepage"><div><div><h2 class="title"><a name="d5e50"></a>Chapter&nbsp;2.&nbsp;Concepts</h2></div></div></div><p>
+In traditional software development, programmers create data structures and write functions to manipulate the data.  In order for the program to perform operations in parallel, thereby taking advantage of multi-core CPUs, the programmer must call functions within the programming language itself to schedule the execution of the parallel pieces of code.
+</p><p>
+In a Fabric Engine application, no explicit scheduling of execution is needed; the parallelism is instead expressed through higher-level models.  One of these models is the <em class="glossterm">dependency graph</em> model, the subject of this book.  A Fabric Engine application builds a dependency graph that describes the computation it needs perform; the Fabric Engine core then automatically executes in parallel operations which are not interdependent.  This model requires that the user express data dependencies rather than have them implicit in the program itself.  By analyzing these interdependencies, the Fabric code creates an execution schedule that runs independent parts of the computation in parallel; in this way, Fabric achieves <span class="emphasis"><em>task-based</em></span> parallelism.
+</p><p>
+In addition, Fabric supports the notion of <em class="glossterm">slicing</em> data.  A <em class="glossterm">Node</em> in Fabric is a generic, typed data container that has one or more members that contain data; each Node also has a <em class="glossterm">slice count</em> N, and the Node acts as if it were N independent copies of the same data that are operated on in parallel.  In this way, Fabric achieves <em class="glossterm">data-based</em> (or <span class="quote">“<span class="quote">SIMD</span>”</span>) parallelism.  For more information on Nodes, members, and slice counts, see <a class="xref" href="#nodes" title="Chapter&nbsp;4.&nbsp;Nodes">Chapter&nbsp;4, <i>Nodes</i></a>.
+</p><p>
+In addition to the dependency graph, Fabric provides a method of traversing the Nodes in the dependency graph through objects called Events and EventHandlers.  The Fabric SceneGraph uses Events and EventHandlers to draw OpenGL viewports in its rendering system.  For more information on Events and EventHandlers, see <a class="xref" href="#events-event-handlers" title="Chapter&nbsp;5.&nbsp;Event Graphs, Events and EventHandlers">Chapter&nbsp;5, <i>Event Graphs, Events and EventHandlers</i></a>.
+</p><p>
+The actual code that performs computation in Fabric is contained in objects called <em class="glossterm">Operators</em>.  Operators can then be <span class="emphasis"><em>bound</em></span> to Nodes and EventHandlers using glue objects called Bindings; Bindings tell Fabric what data should be passed to the functions defined in the code in an Operator.  For more information on Operators, see <a class="xref" href="#operators-bindings" title="Chapter&nbsp;6.&nbsp;Operators and Bindings">Chapter&nbsp;6, <i>Operators and Bindings</i></a>.
+</p></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;Registered Types"><div class="titlepage"><div><div><h2 class="title"><a name="registered-types"></a>Chapter&nbsp;3.&nbsp;Registered Types</h2></div></div></div><p>
+Fabric supports a <em class="glossterm">registered types</em> system whereby user-defined compound types (ie. structures) are defined through JavaScript.  Once a type has been registered, it can be used to define members of Nodes and EventHandlers (see below) as well as used in KL code.
+</p><p>
+To register a new type, call the <code class="code">FABRIC.RT.registerType</code> function with the name of the type as the first parameter and the <em class="glossterm">specification</em> object as the second parameter.  The specification object has the following members:
+</p><div class="variablelist"><dl><dt><span class="term">members</span></dt><dd><p>
+An object containing the members to be contained in the type.  The key names are the member names for the type and the key values are the names of already-registered types or built-in KL types (see the
+
+<a class="link" href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.html" target="_top">KL Programming Guide</a>
+for more information on atomic types).
+</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+It is possible to append brackets to obtain variable- or fixed-length arrays as members, eg. <code class="code">Scalar[2][2]</code>, <code class="code">Scalar[][]</code> and <code class="code">Scalar[2][][4]</code>.
+</p></td></tr></table></div><p>
+</p></dd><dt><span class="term">constructor</span></dt><dd><p>
+A JavaScript or Python constructor that is used to provide the JavaScript or Python <span class="quote">“<span class="quote">prototype</span>”</span> for objects values returned from the Fabric core, as well as to provide a default value if none is given.
+</p></dd><dt><span class="term">defaultValue</span></dt><dd><p>
+(optional) The default value for the type.
+</p></dd><dt><span class="term">klBindings</span></dt><dd><p>
+(optional) KL code to include which provides operations involving the type, such as constructors, methods and operators
+</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+It is expected that KL source code to be bound to types will usually be loaded from another web resource, eg. through the <code class="code">FABRIC.loadResourceURL</code> function.  However, in the example below we use an explicit string to illustrate that a string is what the core needs.
+</p></td></tr></table></div><p>
+</p></dd></dl></div><p>
+To get an object containing information about all the currently-registered types, call <code class="code">FABRIC.RT.getRegisteredTypes()</code>.
+</p><div class="example"><a name="d5e104"></a><p class="title"><b>Example&nbsp;3.1.&nbsp;Registered types</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    // Registered types
+    &gt; Vec3 = function(x, y, z) {
+      if (typeof x === 'number' &amp;&amp; typeof y === 'number' &amp;&amp; typeof z === 'number') {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+      }
+      else if (x === undefined &amp;&amp; y === undefined &amp;&amp; z === undefined) {
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+      }
+      else throw'new Vec3: invalid arguments';
+    };
+    
+    &gt; vec3KLBindings = "\n\
+    // Construct a Vec3 from three Scalars\n\
+    function Vec3(Scalar x, Scalar y, Scalar z) {\n\
+      this.x = x;\n\
+      this.y = y;\n\
+      this.z = z;\n\
+    }\n\
+    \n\
+    // Add two Vec3s\n\
+    function Vec3 + (Vec3 a, Vec3 b) {\n\
+      return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);\n\
+    }\n\
+    ";
+    
+    &gt; FABRIC.RT.registerType('Vec3', {
+      members: [{x: 'Scalar'}, {y: 'Scalar'}, {z: 'Scalar'}],
+      constructor: Vec3,
+      klBindings: {
+        filename: "inline",
+        sourceCode: vec3KLBindings
+      }
+    });
+    
+    &gt; FABRIC.RT.getRegisteredTypes().Vec3;
+    { name: 'Vec3',
+      size: 12,
+      defaultValue: { x: 0, y: 0, z: 0 },
+      internalType: 'struct',
+      members: 
+       [ { name: 'x', type: 'Scalar' },
+         { name: 'y', type: 'Scalar' },
+         { name: 'z', type: 'Scalar' } ] }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; # Registered types
+    class Vec3():
+      def __init__( self, x = None, y = None, z = None ):
+        if type( x ) is float and type( y ) is float and type( z ) is float:
+          self.x = x
+          self.y = y
+          self.z = z
+        elif x is None and y is None and z is None:
+          self.x = 0
+          self.y = 0
+          self.z = 0
+        else:
+          raise Exception( 'Vec3: invalid arguments' )
+    
+    &gt;&gt;&gt; vec3KLBindings = """
+    // Construct a Vec3 from three Scalars
+    function Vec3(Scalar x, Scalar y, Scalar z) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
+    // Add two Vec3s
+    function Vec3 + (Vec3 a, Vec3 b) {
+      return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+    """
+    
+    &gt;&gt;&gt; vec3TypeDesc = {
+      'members': [{'x': 'Scalar'}, {'y': 'Scalar'}, {'z': 'Scalar'}],
+      'constructor': Vec3,
+      'klBindings': {
+        'filename': "(inline)",
+        'sourceCode': vec3KLBindings
+       }
+    }
+    
+    &gt;&gt;&gt; FABRIC.RT.registerType('Vec3', vec3TypeDesc)
+    
+    &gt;&gt;&gt; FABRIC.RT.getRegisteredTypes()['Vec3']
+    {u'defaultValue': {u'y': 0, u'x': 0, u'z': 0}, u'internalType': u'struct', u'name': u'Vec3', u'members': [{u'type': u'Scalar', u'name': u'x'}, {u'type': u'Scalar', u'name': u'y'}, {u'type': u'Scalar', u'name': u'z'}], u'size': 12}
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div><div class="chapter" title="Chapter&nbsp;4.&nbsp;Nodes"><div class="titlepage"><div><div><h2 class="title"><a name="nodes"></a>Chapter&nbsp;4.&nbsp;Nodes</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d5e114">Node Creation</a></span></dt><dt><span class="section"><a href="#d5e132">Node Members</a></span></dt><dt><span class="section"><a href="#d5e155">Node Slice Counts</a></span></dt><dt><span class="section"><a href="#d5e172">Node Dependencies</a></span></dt><dt><span class="section"><a href="#d5e194">Node Evaluation</a></span></dt></dl></div><p>
+The fundamental unit of the Fabric dependency graph is called a <em class="glossterm">Node</em>.  A Node contains data and has a list of Operators, written in the KL programming language, that manipulate the data.
+</p><div class="section" title="Node Creation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e114"></a>Node Creation</h2></div></div></div><p>
+Each node must have a unique name which is specified when it node is created.  The name of the node must not conflict with the name of any Event, EventHandler or Operator (see below).  To create a node, call <code class="code">FABRIC.DG.createNode</code>.
+</p><div class="example"><a name="d5e118"></a><p class="title"><b>Example&nbsp;4.1.&nbsp;Node creation</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">&gt; node = FABRIC.DG.createNode( "vertices" );
+{ getName: [Function],
+  getErrors: [Function],
+...
+  evaluateAsync: [Function],
+  bindings: 
+   { empty: [Function],
+     getLength: [Function],
+     getOperator: [Function],
+     append: [Function],
+     insert: [Function],
+     remove: [Function] } }
+&gt;</pre><p>Python:</p><pre class="screen">&gt;&gt;&gt; node = FABRIC.DG.createNode('vertices')
+&gt;&gt;&gt; 
+</pre></div></div><br class="example-break"><p>
+The name of a node can be retrieved through the <code class="code">getName</code> method.
+</p><div class="example"><a name="d5e126"></a><p class="title"><b>Example&nbsp;4.2.&nbsp;Getting a node's name</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">&gt; node.getName();
+'vertices'
+&gt;</pre><p>Python:</p><pre class="screen">&gt;&gt;&gt; node.getName()
+'vertices'
+&gt;&gt;&gt; 
+</pre></div></div><br class="example-break"></div><div class="section" title="Node Members"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e132"></a>Node Members</h2></div></div></div><p>
+A Node has zero or more <em class="glossterm">members</em>.  Each member has a name (a non-empty string), a type (referred to as the name of a registered type), and, optionally, a default value.  Members can be added to nodes with the <code class="code">addMember</code> method and an object with details of all the members can be retrieved with the <code class="code">getMembers</code> method.
+</p><div class="example"><a name="d5e138"></a><p class="title"><b>Example&nbsp;4.3.&nbsp;Adding and getting node members</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; node.addMember("position", "Vec3", new Vec3(0, 0, 0));
+    undefined
+    &gt; node.getMembers().position;
+    { name: 'position',
+      type: 'Vec3',
+      defaultValue: { x: 0, y: 0, z: 0 } }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; node.addMember("position", "Vec3", Vec3(0.0, 0.0, 0.0))
+    &gt;&gt;&gt; node.getMembers()['position']
+    {'defaultValue': &lt;__main__.Vec3 instance at 0x1109727e8&gt;, 'type': 'Vec3', 'name': 'position'}
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"><p>
+Each member has a value, or in the case of a node with a slice count greater than one (see below), one value per slice.  The value of a member is retrieved using the <code class="code">getData</code> method and set using the <code class="code">setData</code> method.  Both methods take the member name as the first argument and the slice index as the second argument.
+</p><div class="example"><a name="d5e147"></a><p class="title"><b>Example&nbsp;4.4.&nbsp;<code class="code">getData</code> and <code class="code">setData</code></b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; node.getData('position', 0);
+    { x: 0, y: 0, z: 0 }
+    &gt; node.setData('position', 0, new Vec3(1, 2, 3));
+    undefined
+    &gt; node.getData('position', 0);
+    { x: 1, y: 2, z: 3 }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; vars(node.getData('position', 0))
+    {'y': 0, 'x': 0, 'z': 0}
+    &gt;&gt;&gt; node.setData('position', 0, Vec3(1.0, 2.0, 3.0))
+    &gt;&gt;&gt; vars(node.getData('position', 0))
+    {'y': 2, 'x': 1, 'z': 3}
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div><div class="section" title="Node Slice Counts"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e155"></a>Node Slice Counts</h2></div></div></div><p>
+Each Node has a <em class="glossterm">slice count</em>.  Setting the slice count of a node to a number greater than one enables the core to compute over an array of data (<span class="quote">“<span class="quote">SIMD parallelization</span>”</span>); each member has one value for each slice of the node.  The default slice count for a node is one.
+</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>Operators can run on nodes per-slice or on all slices at once, depending on how the operator is bound to the node.  This will be explained below.</p></td></tr></table></div><p>
+The slice count for a node is set with the <code class="code">setSliceCount</code> (or <code class="code">setSize</code>) method and retrieved with the <code class="code">getSliceCount</code> (or <code class="code">getSize</code>) method.
+</p><div class="example"><a name="d5e166"></a><p class="title"><b>Example&nbsp;4.5.&nbsp;Node slice counts</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; node.getCount();
+    1
+    &gt; node.getData('position', 1);
+    Fabric core exception: DG.vertices.getData('{"memberName":"position","sliceI...'): index (1) out of range (1)
+    &gt; node.setCount(2);
+    undefined
+    &gt; node.getCount();
+    2
+    &gt; node.getData('position', 1);
+    { x: 0, y: 0, z: 0 }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; node.getCount()
+    1
+    &gt;&gt;&gt; node.getData('position', 1)
+    Traceback (most recent call last):
+      File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+      File "/home/andrew/src/python_modules/fabric/__init__.py", line 883, in getData
+        self._dg._executeQueuedCommands()
+      File "/home/andrew/src/python_modules/fabric/__init__.py", line 460, in _executeQueuedCommands
+        self.__client.executeQueuedCommands()
+      File "/home/andrew/src/python_modules/fabric/__init__.py", line 315, in executeQueuedCommands
+        raise Exception( 'Fabric core exception: ' + result[ 'exception' ] )
+    Exception: Fabric core exception: DG.verticies.getData('{"sliceIndex": 1, "memberName": ...'): index (1) out of range (1)
+    &gt;&gt;&gt; node.setCount(2)
+    &gt;&gt;&gt; node.getCount()
+    2
+    &gt;&gt;&gt; vars(node.getData('position', 1))
+    {'y': 0, 'x': 0, 'z': 0}
+</pre></div></div><br class="example-break"></div><div class="section" title="Node Dependencies"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e172"></a>Node Dependencies</h2></div></div></div><p>
+Each node has zero or more named <em class="glossterm">dependencies</em>; the dependency is another node.  If a node A has a dependency on another node B, then all of the operators of node A will run after all of those on node B have finished running.
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>The name of a dependency must be a non-empty string.</p></li><li class="listitem"><p>The name of the dependency is used to bind operators to the data in the dependency node</p></li><li class="listitem"><p>Each dependency of a node must have a different name</p></li><li class="listitem"><p>You cannot create a dependency loop between Nodes, ie. you cannot have Node A dependent on Node B at the same time as Node B is dependent on Node A.</p></li></ul></div><p>
+</p><p>
+Dependencies are added using the <code class="code">setDependency</code> method, and dependencies of a node are retrieved using the <code class="code">getDependencies</code> method.
+</p><div class="example"><a name="d5e188"></a><p class="title"><b>Example&nbsp;4.6.&nbsp;Node dependencies</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; anotherNode = FABRIC.DG.createNode( "originalVertices" );
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+         insert: [Function],
+         remove: [Function] } }
+    &gt; node.setDependency( anotherNode, "original" );
+    undefined
+    &gt; node.getDependencies();
+    { original: 
+       { getName: [Function],
+         getErrors: [Function],
+    ...
+            append: [Function],
+            insert: [Function],
+            remove: [Function] } } }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; anotherNode = FABRIC.DG.createNode("originalVertices")
+    &gt;&gt;&gt; node.setDependency(anotherNode, "original")
+    &gt;&gt;&gt; node.getDependencies()
+    {'original': &lt;fabric._NODE object at 0x1050ffb10&gt;}
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div><div class="section" title="Node Evaluation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e194"></a>Node Evaluation</h2></div></div></div><p>
+Each node is either <em class="glossterm">clean</em> or <em class="glossterm">dirty</em>.  A node become dirty if any of the following happen:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>The node's <code class="code">setData</code> method is called</p></li><li class="listitem"><p>Anything about the node changes (eg. added dependencies, added members)</p></li><li class="listitem"><p>Any of the node's dependencies becomes dirty</p></li></ul></div><p>
+</p><p>
+Nodes can be <em class="glossterm">evaluated</em>.  Evaluating a node does the following: if the node is clean, nothing happens.  Otherwise,
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>All the dependencies of the node are evaluated</p></li><li class="listitem"><p>All of the operators bound to the node are executed</p></li><li class="listitem"><p>The node is marked as clean</p></li></ul></div><p>
+</p><p>
+A node can be manually evaluated by calling the `evaluate` method.  Nodes are automatically evaluated when:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>A node is a dependency of another node that is evaluated</p></li><li class="listitem"><p>An EventHandler (see below) has an operator bound to the data in the node, and the EventHandler is executed</p></li></ul></div><p>
+</p><div class="example"><a name="d5e222"></a><p class="title"><b>Example&nbsp;4.7.&nbsp;Node Evaluation</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; op = FABRIC.DG.createOperator( "offsetPosition" );
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setEntryPoint: [Function],
+      getDiagnostics: [Function] }
+    &gt; op.setEntryPoint( "offset" );
+    undefined
+    &gt; op.setSourceCode( "require Vec3; operator offset( io Vec3 position, io Vec3 newPosition ) { newPosition = position + Vec3(1.0,1.0,1.0); }" );
+    undefined
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(op);
+    undefined
+    &gt; binding.setParameterLayout(["self.position","self.newPosition"]);
+    undefined
+    &gt; node.addMember( "newPosition", "Vec3" );
+    undefined
+    &gt; node.bindings.append( binding );
+    undefined
+    &gt; node.getData( "position", 0 );
+    { x: 1, y: 2, z: 3 }
+    &gt; node.getData( "newPosition", 0 );
+    { x: 0, y: 0, z: 0 }
+    &gt; node.evaluate();
+    undefined
+    &gt; node.getData( "newPosition", 0 );
+    { x: 2, y: 3, z: 4 }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; op = FABRIC.DG.createOperator("offsetPosition")
+    &gt;&gt;&gt; op.setEntryPoint("offset")
+    &gt;&gt;&gt; op.setSourceCode("require Vec3; operator offset(io Vec3 position, io Vec3 newPosition) { newPosition = position + Vec3(1.0,1.0,1.0); }")
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(op)
+    &gt;&gt;&gt; binding.setParameterLayout(["self.position", "self.newPosition"])
+    &gt;&gt;&gt; node.addMember("newPosition", "Vec3")
+    &gt;&gt;&gt; node.bindings.append(binding)
+    &gt;&gt;&gt; vars(node.getData("position", 0))
+    {'y': 2, 'x': 1, 'z': 3}
+    &gt;&gt;&gt; vars(node.getData( "newPosition", 0 ))
+    {'y': 0, 'x': 0, 'z': 0}
+    &gt;&gt;&gt; node.evaluate();
+    &gt;&gt;&gt; vars(node.getData( "newPosition", 0 ))
+    {'y': 3, 'x': 2, 'z': 4}
+</pre></div></div><br class="example-break"></div></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;Event Graphs, Events and EventHandlers"><div class="titlepage"><div><div><h2 class="title"><a name="events-event-handlers"></a>Chapter&nbsp;5.&nbsp;Event Graphs, Events and EventHandlers</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d5e233">Event Creation</a></span></dt><dt><span class="section"><a href="#d5e244">EventHandler Creation</a></span></dt><dt><span class="section"><a href="#d5e255">Operators and EventHandlers</a></span></dt><dt><span class="section"><a href="#d5e286">EventHandler Data</a></span></dt></dl></div><p>
+Fabric provides a method of traversing the Nodes in the dependency graph through objects called Events and EventHandlers.  An Event can be fired, which will then fire a list of EventHandlers; each EventHandler has a list of child EventHandlers which are visited in turn, and each EventHandler has a list of <em class="glossterm">pre-descend operators</em> that are executed before the child EventHandlers are visited and a list of <em class="glossterm">post-descend operators</em> that are executed after the child EventHandlers are visit.  Each event handler can also bind to Nodes in the dependency graph to access from its Operators.  A typical use of Events and EventHandlers is for OpenGL rendering.  When an OpenGL viewport is created, a "redraw Event" is associated with it; this event is automatically fired whenever the viewport needs to be redrawn.  The EventHandlers that "chain" off of the redraw Event can then issue OpenGL calls to draw the viewport contents.
+</p><div class="section" title="Event Creation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e233"></a>Event Creation</h2></div></div></div><p>
+To create an Event, call the <code class="code">FABRIC.DG.createEvent</code> function.  Like Nodes, Events must have a unique name that is not the same as that of a Node, Operator or EventHandler.  To get an existing event's name, call its <code class="code">getName</code> method.
+</p><div class="example"><a name="d5e238"></a><p class="title"><b>Example&nbsp;5.1.&nbsp;Event creation</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; event = FABRIC.DG.createEvent("anEvent");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setSelectType: [Function],
+      select: [Function] }
+    &gt; event.getName();
+    'anEvent'
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; event = FABRIC.DG.createEvent("anEvent")
+    &gt;&gt;&gt; event.getName()
+    'anEvent'
+</pre></div></div><br class="example-break"></div><div class="section" title="EventHandler Creation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e244"></a>EventHandler Creation</h2></div></div></div><p>
+Event event has a list of EventHandlers attached so it.  When an Event is fired, each attached EventHandler is fired in sequence.  To create an EventHandler, call <code class="code">FABRIC.DG.createEventHandler</code>.  To append the EventHandler to an Event, call the Event's <code class="code">appendEventHandler</code> method.
+</p><div class="example"><a name="d5e249"></a><p class="title"><b>Example&nbsp;5.2.&nbsp;Creating EventHandlers and appending them to Events</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; eventHandler = FABRIC.DG.createEventHandler("trivialEventHandler");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+         insert: [Function],
+         remove: [Function] } }
+    &gt; event.appendEventHandler(eventHandler);
+    undefined
+    &gt; event.getEventHandlers();
+    [ { getName: [Function],
+        getErrors: [Function],
+    ...
+           insert: [Function],
+           remove: [Function] } } ]
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; eventHandler = FABRIC.DG.createEventHandler("trivialEventHandler")
+    &gt;&gt;&gt; event.appendEventHandler(eventHandler)
+    &gt;&gt;&gt; event.getEventHandlers()
+    [&lt;fabric._EVENTHANDLER object at 0x2cebfd0&gt;]
+</pre></div></div><br class="example-break"></div><div class="section" title="Operators and EventHandlers"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e255"></a>Operators and EventHandlers</h2></div></div></div><p>
+Each EventHandler has two lists of Operators (or, rather, Bindings) called <code class="code">preDescendBindings</code> and <code class="code">postDescendBindings</code>, as well as a list of child EventHandlers.  When an Event is fired, each of its EventHandlers is visited.  For each EventHandler, Bindings in <code class="code">preDescendBindings</code> are executed in sequence, then its child EventHandlers are visited in the same way, then Bindings in <code class="code">postDescendBindings</code> are executed in sequence.
+</p><div class="example"><a name="d5e262"></a><p class="title"><b>Example&nbsp;5.3.&nbsp;Operators and EventHandlers</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; op = FABRIC.DG.createOperator("trivialOperator");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setEntryPoint: [Function],
+      getDiagnostics: [Function] }
+    &gt; op.setSourceCode("operator entry() { report('Ran trivialOperator'); }");
+    undefined
+    &gt; op.setEntryPoint('entry');
+    undefined
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(op);
+    undefined
+    &gt; binding.setParameterLayout([]);
+    undefined
+    &gt; eventHandler.preDescendBindings.append(binding);
+    undefined
+    &gt; event.fire();
+    [FABRIC] [MT] Ran trivialOperator
+    undefined
+    &gt; anotherOp = FABRIC.DG.createOperator("trivialOperatorTwo");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setEntryPoint: [Function],
+      getDiagnostics: [Function] }
+    &gt; anotherOp.setSourceCode("operator entry() { report('Ran trivialOperatorTwo'); }");
+    undefined
+    &gt; anotherOp.setEntryPoint('entry');
+    undefined
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(anotherOp);
+    undefined
+    &gt; binding.setParameterLayout([]);
+    undefined
+    &gt; eventHandler.postDescendBindings.append(binding);
+    undefined
+    &gt; event.fire();
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    undefined
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; op = FABRIC.DG.createOperator("trivialOperator")
+    &gt;&gt;&gt; op.setSourceCode("operator entry() { report('Ran trivialOperator'); }")
+    &gt;&gt;&gt; op.setEntryPoint('entry')
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(op)
+    &gt;&gt;&gt; binding.setParameterLayout([])
+    &gt;&gt;&gt; eventHandler.preDescendBindings.append(binding)
+    &gt;&gt;&gt; event.fire()
+    [FABRIC] [MT] Ran trivialOperator
+    &gt;&gt;&gt; anotherOp = FABRIC.DG.createOperator("trivialOperatorTwo")
+    &gt;&gt;&gt; anotherOp.setSourceCode("operator entry() { report('Ran trivialOperatorTwo'); }")
+    &gt;&gt;&gt; anotherOp.setEntryPoint('entry')
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(anotherOp)
+    &gt;&gt;&gt; binding.setParameterLayout([])
+    &gt;&gt;&gt; eventHandler.postDescendBindings.append(binding)
+    &gt;&gt;&gt; event.fire()
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"><p>
+EventHandlers in turn can have child EventHandlers.  The child EventHandlers of a given EventHandler are fired, in order, after the pre-descend operators are executed and before the post-descend operators are executed.  Child EventHandlers are added by calling the EventHandler's <code class="code">appendChildEventHandler</code> method:
+</p><div class="example"><a name="d5e270"></a><p class="title"><b>Example&nbsp;5.4.&nbsp;Child EventHandlers</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(op);
+    undefined
+    &gt; binding.setParameterLayout([]);
+    undefined
+    &gt; ceh = FABRIC.DG.createEventHandler("childEventHandler");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+         insert: [Function],
+         remove: [Function] } }
+    &gt; ceh.preDescendBindings.append(binding);
+    undefined
+    &gt; eventHandler.appendChildEventHandler(ceh);
+    undefined
+    &gt; event.fire();
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    undefined
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(op)
+    &gt;&gt;&gt; binding.setParameterLayout([])
+    &gt;&gt;&gt; ceh = FABRIC.DG.createEventHandler("childEventHandler")
+    &gt;&gt;&gt; ceh.preDescendBindings.append(binding)
+    &gt;&gt;&gt; eventHandler.appendChildEventHandler(ceh)
+    &gt;&gt;&gt; event.fire()
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+</pre></div></div><br class="example-break"><p>
+EventHandlers can access data stored in Nodes by using their <code class="code">setScope</code> method.  Once a Node is bound to an EventHandler, that Node is guaranteed to be evaluated (if it is dirty) before any Event that could fire the EventHandler is fired.  The name given in the <code class="code">setScope</code> method is also available to child EventHandlers, their children, and so on, for binding.  If a child EventHandler binds a scope with the same name, it overrides the parent's scope.
+</p><div class="example"><a name="d5e279"></a><p class="title"><b>Example&nbsp;5.5.&nbsp;The <code class="code">setScope</code> method</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; node = FABRIC.DG.createNode("someNode");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+         insert: [Function],
+         remove: [Function] } }
+    &gt; node.addMember( "x", "Scalar" );
+    undefined
+    &gt; node.addMember( "y", "Scalar" );
+    undefined
+    &gt; squareOp = FABRIC.DG.createOperator("squareOp");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setEntryPoint: [Function],
+      getDiagnostics: [Function] }
+    &gt; squareOp.setSourceCode("operator entry( io Scalar x, io Scalar y ) { y = x * x; }");
+    undefined
+    &gt; squareOp.setEntryPoint("entry");
+    undefined
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(squareOp);
+    undefined
+    &gt; binding.setParameterLayout(['self.x','self.y']);
+    undefined
+    &gt; node.bindings.append(binding);
+    undefined
+    &gt; displayOp = FABRIC.DG.createOperator("displayOp");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setEntryPoint: [Function],
+      getDiagnostics: [Function] }
+    &gt; displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report(x + ' squared is ' + y); }" );
+    undefined
+    &gt; displayOp.setEntryPoint("entry");
+    undefined
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(displayOp);
+    undefined
+    &gt; binding.setParameterLayout(['mynode.x','mynode.y']);
+    undefined
+    &gt; eventHandler.setScope("mynode",node);
+    undefined
+    &gt; eventHandler.postDescendBindings.append(binding);
+    undefined
+    &gt; event.fire();
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 0 squared is 0
+    undefined
+    &gt; node.setData('x',5.0);
+    undefined
+    &gt; event.fire();
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 5 squared is 25
+    undefined
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; node = FABRIC.DG.createNode("someNode")
+    &gt;&gt;&gt; node.addMember( "x", "Scalar" )
+    &gt;&gt;&gt; node.addMember( "y", "Scalar" )
+    &gt;&gt;&gt; squareOp = FABRIC.DG.createOperator("squareOp")
+    &gt;&gt;&gt; squareOp.setSourceCode("operator entry( io Scalar x, io Scalar y ) { y = x * x; }")
+    &gt;&gt;&gt; squareOp.setEntryPoint("entry")
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(squareOp)
+    &gt;&gt;&gt; binding.setParameterLayout(['self.x','self.y'])
+    &gt;&gt;&gt; node.bindings.append(binding)
+    &gt;&gt;&gt; displayOp = FABRIC.DG.createOperator("displayOp")
+    &gt;&gt;&gt; displayOp.setSourceCode( "operator entry( io Scalar x, io Scalar y ) { report(x + ' squared is ' + y); }" )
+    &gt;&gt;&gt; displayOp.setEntryPoint("entry")
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(displayOp)
+    &gt;&gt;&gt; binding.setParameterLayout(['mynode.x','mynode.y'])
+    &gt;&gt;&gt; eventHandler.setScope("mynode",node)
+    &gt;&gt;&gt; eventHandler.postDescendBindings.append(binding)
+    &gt;&gt;&gt; event.fire()
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 0 squared is 0
+    &gt;&gt;&gt; node.setData('x',5.0)
+    &gt;&gt;&gt; event.fire()
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 5 squared is 25
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div><div class="section" title="EventHandler Data"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e286"></a>EventHandler Data</h2></div></div></div><p>
+EventHandlers themselves can also have data, and they set the name of their own scope, as seen by child EventHandlers, through <code class="code">setScopeName</code>:
+</p><div class="example"><a name="d5e290"></a><p class="title"><b>Example&nbsp;5.6.&nbsp;EventHandler data</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; eventHandler.setScopeName("childEventHandler");
+    undefined
+    &gt; eventHandler.addMember("x","Scalar");
+    undefined
+    &gt; eventHandler.addMember("y","Scalar");
+    undefined
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(squareOp);
+    undefined
+    &gt; binding.setParameterLayout(['childEventHandler.x','childEventHandler.y']);
+    undefined
+    &gt; ceh.preDescendBindings.append(binding);
+    undefined
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(displayOp);
+    undefined
+    &gt; binding.setParameterLayout(['childEventHandler.x','childEventHandler.y']);
+    undefined
+    &gt; ceh.preDescendBindings.append(binding);
+    undefined
+    &gt; event.fire();
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] 0 squared is 0
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 5 squared is 25
+    undefined
+    &gt; eventHandler.setData("x",7.31);
+    undefined
+    &gt; event.fire();
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] 7.31 squared is 53.4361
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 5 squared is 25
+    undefined
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; eventHandler.setScopeName("childEventHandler")
+    &gt;&gt;&gt; eventHandler.addMember("x","Scalar")
+    &gt;&gt;&gt; eventHandler.addMember("y","Scalar")
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(squareOp)
+    &gt;&gt;&gt; binding.setParameterLayout(['childEventHandler.x','childEventHandler.y'])
+    &gt;&gt;&gt; ceh.preDescendBindings.append(binding)
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(displayOp)
+    &gt;&gt;&gt; binding.setParameterLayout(['childEventHandler.x','childEventHandler.y'])
+    &gt;&gt;&gt; ceh.preDescendBindings.append(binding)
+    &gt;&gt;&gt; event.fire()
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] 0 squared is 0
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 5 squared is 25
+    &gt;&gt;&gt; eventHandler.setData("x",7.31)
+    &gt;&gt;&gt; event.fire()
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] Ran trivialOperator
+    [FABRIC] [MT] 7.31 squared is 53.4361
+    [FABRIC] [MT] Ran trivialOperatorTwo
+    [FABRIC] [MT] 5 squared is 25
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div></div><div class="chapter" title="Chapter&nbsp;6.&nbsp;Operators and Bindings"><div class="titlepage"><div><div><h2 class="title"><a name="operators-bindings"></a>Chapter&nbsp;6.&nbsp;Operators and Bindings</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d5e299">Operator Creation</a></span></dt><dt><span class="section"><a href="#d5e309">Setting Operator Source Code</a></span></dt><dt><span class="section"><a href="#d5e324">Setting the Operator Entry Point</a></span></dt><dt><span class="section"><a href="#d5e336">Bindings</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e350">Binding Parameter Layouts</a></span></dt></dl></dd></dl></div><p>
+The KL code that runs within the dependency graph and event graph is contained in objects called Operators.  The same operator can be bound to multiple Nodes and EventHandlers by using different Bindings (see below) that share the same Operator.
+</p><div class="section" title="Operator Creation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e299"></a>Operator Creation</h2></div></div></div><p>
+An Operator is created by calling <code class="code">FABRIC.RT.createOperator</code>, passing the name of the Operator as the first argument.  Operator names must be unique and not shared with any Nodes, Events or EventHandlers.
+</p><div class="example"><a name="d5e303"></a><p class="title"><b>Example&nbsp;6.1.&nbsp;Operator creation</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; op = FABRIC.DG.createOperator( "doSomething" );
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setEntryPoint: [Function],
+      getDiagnostics: [Function] }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; op = FABRIC.DG.createOperator("doSomething")
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div><div class="section" title="Setting Operator Source Code"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e309"></a>Setting Operator Source Code</h2></div></div></div><p>
+The source code contained in the Operator is set using the Operator's <code class="code">setSourceCode</code> method.  It takes a string containing the KL source code.
+</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>Source code is first usually loaded from an external resource, using eg. the <code class="code">FABRIC.loadResourceURL</code> function, rather than being included as an inline string as is done in these examples.</p></td></tr></table></div><p>
+After setting the source code, you can check if any warnings or errors were generated by the KL compiler by calling the <code class="code">getDiagnostics</code> method, which returns an array of objects describing the warnings/errors, including the level (warning/error), line number, column number and message.  You can later retrieve the source code by calling the <code class="code">getSourceCode</code> method.
+</p><div class="example"><a name="d5e318"></a><p class="title"><b>Example&nbsp;6.2.&nbsp;Setting operator source code</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; op.setSourceCode("operator entry( io Scalar result, in Size index, in Container self ) { result = 3.14 }");
+    undefined
+    &gt; op.getDiagnostics();
+    [ { filename: '(unknown)',
+        line: 1,
+        column: 82,
+        level: 'error',
+        desc: 'syntax error, unexpected }, expecting ;' } ]
+    &gt; op.setSourceCode("operator entry( io Scalar result, in Size index, in Container self ) { result = 3.14; }");
+    undefined
+    &gt; op.getDiagnostics();
+    []
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; op.setSourceCode("operator entry( io Scalar result, in Size index, in Container self ) { result = 3.14 }")
+    &gt;&gt;&gt; op.getDiagnostics()
+    [{u'column': 82, u'line': 1, u'level': u'error', u'desc': u'syntax error, unexpected }, expecting ;', u'filename': u'(unknown)'}]
+    &gt;&gt;&gt; op.setSourceCode("operator entry( io Scalar result, in Size index, in Container self ) { result = 3.14; }")
+    &gt;&gt;&gt; op.getDiagnostics()
+    []
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div><div class="section" title="Setting the Operator Entry Point"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e324"></a>Setting the Operator Entry Point</h2></div></div></div><p>
+In addition to source code, an operator needs an entry point, which is the name of the KL operator (see the
+
+<a class="link" href="http://documentation.fabric-engine.com/latest/FabricEngine-KLProgrammingGuide.html" target="_top">KL Programming Guide</a>
+) in the source code that should be called when the operator is invoked.  Note that this <span class="emphasis"><em>must</em></span> be an KL operator and not a KL function.  The entry point is specified by calling the <code class="code">setEntryPoint</code> method.  By specifying the source code and entry point separately, it is possible to have multiple possible entry points into the same source code.
+</p><div class="example"><a name="d5e330"></a><p class="title"><b>Example&nbsp;6.3.&nbsp;Setting the operator entry point</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; op.setEntryPoint('entry');
+    undefined
+    &gt; op.getEntryPoint();
+    'entry'
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; op.setEntryPoint('entry')
+    &gt;&gt;&gt; op.getEntryPoint()
+    'entry'
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"></div><div class="section" title="Bindings"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e336"></a>Bindings</h2></div></div></div><p>
+To make an operator run on a Node or EventHandler, you must create a Binding object which describes what data the KL operator arguments are bound to when the operator is run.
+</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>It is possible to have multiple bindings that all share a single operator.</p></td></tr></table></div><p>
+A binding object is created by calling <code class="code">FABRIC.DG.createBinding</code>, and you set the Operator called by the Binding by calling the Binding's <code class="code">setOperator</code> method.  This operator can later be retrieved by calling the Binding's <code class="code">getOperator</code> method.
+</p><div class="example"><a name="d5e344"></a><p class="title"><b>Example&nbsp;6.4.&nbsp;Binding creation</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; binding = FABRIC.DG.createBinding();
+    { getOperator: [Function],
+      setOperator: [Function],
+      getParameterLayout: [Function],
+      setParameterLayout: [Function] }
+    &gt; binding.setOperator(op);
+    undefined
+    &gt; binding.getOperator();
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+      setEntryPoint: [Function],
+      getDiagnostics: [Function] }
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; binding = FABRIC.DG.createBinding()
+    &gt;&gt;&gt; binding.setOperator(op)
+    &gt;&gt;&gt; binding.getOperator()
+    &lt;fabric._OPERATOR object at 0x1958e50&gt;
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"><div class="section" title="Binding Parameter Layouts"><div class="titlepage"><div><div><h3 class="title"><a name="d5e350"></a>Binding Parameter Layouts</h3></div></div></div><p>
+The way in which the KL operator arguments are bound is specified by calling the Binding's <code class="code">setParameterLayout</code> method.  <code class="code">setParameterLayout</code> takes a single parameter that is an array of strings.  The length of the array must be equal to the number of parameters taken by the KL operator in the Operator's source code, and each string describes what data that parameter should bind to.
+</p><p>
+Such string is of the format <code class="code"><em class="replaceable"><code>object</code></em>.<em class="replaceable"><code>member</code></em></code>, or <code class="code"><em class="replaceable"><code>object</code></em></code> for a special usage which we will detail later.  The <code class="code"><em class="replaceable"><code>object</code></em></code> part refers to what Node, EventHandler or Event object contains the data to be bound, as follows:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>If <code class="code"><em class="replaceable"><code>object</code></em></code> is <code class="code">self</code>, the data is contained on the object where the binding is attached</p></li><li class="listitem"><p>For Bindings that live on Nodes, <code class="code"><em class="replaceable"><code>object</code></em></code> is the name of the direct dependency Node that contains the data</p></li><li class="listitem"><p>For Bindings that live on EventHandlers, <code class="code"><em class="replaceable"><code>object</code></em></code> is the name of an ancestor EventHandler in the call chain as specified by a call to its <code class="code">setScopeName</code> method, or a Node that is connected to the EventHandler through a call to the EventHandlers's <code class="code">setScope</code> method.</p></li></ul></div><p>
+The <code class="code"><em class="replaceable"><code>member</code></em></code> part refers to the data member on the object specified by <code class="code"><em class="replaceable"><code>object</code></em></code>, with support for the following additional syntaxes:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>If <code class="code"><em class="replaceable"><code>member</code></em></code> is simply the name of a member (eg. "position"), the parameter will be bound to that member once for each slice.  The operator will be invoked once for each slice of the Node, potentially in parallel.  The KL parameter in the operator must be an <code class="code">io</code> parameter whose type is the type of the member.</p></li><li class="listitem"><p>If <code class="code"><em class="replaceable"><code>member</code></em></code> is the name of a member followed by <code class="code">[]</code> (eg. <code class="code">position[]</code>), the parameter will be bound to a variable-length array that contains the data for <span class="emphasis"><em>all</em></span> the slices for that member.  The length of the array will be equal to the slice count of the Node.  The KL parameter in the operator must be an <code class="code">io</code> parameter whose type is a variable-length array of the type of the member.</p></li><li class="listitem"><p>If <code class="code"><em class="replaceable"><code>member</code></em></code> is <code class="code">index</code>, the parameter will be index of the current slice for which the operator is being executed.  The parameter must be an <code class="code">in</code> parameter of type <code class="code">Index</code> (or, equivalently, <code class="code">Size</code>)</p></li><li class="listitem"><p>If <code class="code"><em class="replaceable"><code>object</code></em></code> is specified (instead of <code class="code"><em class="replaceable"><code>object</code></em>.<em class="replaceable"><code>member</code></em></code>), then the parameter must be of type <code class="code">Container</code>, which allows you to get or set the Node slice count in KL. Calling <code class="code">Container</code>'s <code class="code">resize(Size)</code> method will immediately change the slice count of the Node, and the <code class="code">size()</code> method will return its current slice count. The <code class="code">resize(Size)</code> method requires that the parameter is specified as <code class="code">io</code>.</p></li></ul></div><p>
+</p><div class="example"><a name="d5e418"></a><p class="title"><b>Example&nbsp;6.5.&nbsp;Binding parameters</b></p><div class="example-contents"><p>JavaScript:</p><pre class="screen">
+    &gt; binding.setParameterLayout( ["self.result","self.index","self"] );
+    undefined
+    &gt; node = FABRIC.DG.createNode("foo");
+    { getName: [Function],
+      getErrors: [Function],
+    ...
+         insert: [Function],
+         remove: [Function] } }
+    &gt; node.bindings.append(binding);
+    undefined
+    &gt; node.getErrors();
+    [ 'binding 0: operator \'doSomething\': node \'self\': parameter 1: member \'result\': \'result\': no such member' ]
+    &gt; node.addMember("result","Scalar");
+    undefined
+    &gt; node.getErrors();
+    []
+    &gt;
+</pre><p>Python:</p><pre class="screen">
+    &gt;&gt;&gt; binding.setParameterLayout( ["self.result","self.index","self"] )
+    &gt;&gt;&gt; node = FABRIC.DG.createNode("foo")
+    &gt;&gt;&gt; node.bindings.append(binding)
+    &gt;&gt;&gt; node.getErrors()
+    [u"binding 0: operator 'doSomething': node 'self': parameter 1: member 'result': 'result': no such member"]
+    &gt;&gt;&gt; node.addMember("result","Scalar")
+    &gt;&gt;&gt; node.getErrors()
+    []
+    &gt;&gt;&gt;
+</pre></div></div><br class="example-break"><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>Even when a Binding binds a parameter to a member of a dependency of a Node, rather than a member of the Node itself, the parameter must still be declared as an <code class="code">io</code> parameter in KL.  This is a limitation of the system which will be removed in the future; in fact, it will become required that members of non-<code class="code">self</code> objects be bound to <code class="code">in</code> parameters.</p></td></tr></table></div></div></div></div></div></body></html>
